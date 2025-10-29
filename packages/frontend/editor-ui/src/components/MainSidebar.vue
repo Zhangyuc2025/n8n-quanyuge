@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, nextTick, type Ref, useTemplateRef } from 'vue';
 import { onClickOutside, type VueInstance } from '@vueuse/core';
+import { useRouter } from 'vue-router';
 
 import { useI18n } from '@n8n/i18n';
 import {
@@ -20,6 +21,7 @@ import {
 import type { IMenuItem } from '@n8n/design-system';
 import {
 	ABOUT_MODAL_KEY,
+	AUTH_MODAL_KEY,
 	EXPERIMENT_TEMPLATE_RECO_V2_KEY,
 	EXPERIMENT_TEMPLATE_RECO_V3_KEY,
 	RELEASE_NOTES_URL,
@@ -58,6 +60,7 @@ import ProjectNavigation from '@/features/collaboration/projects/components/Proj
 import MainSidebarSourceControl from './MainSidebarSourceControl.vue';
 import MainSidebarUserArea from '@/components/MainSidebarUserArea.vue';
 
+const router = useRouter();
 const becomeTemplateCreatorStore = useBecomeTemplateCreatorStore();
 const cloudPlanStore = useCloudPlanStore();
 const rootStore = useRootStore();
@@ -98,13 +101,16 @@ const user = useTemplateRef('user');
 const basePath = ref('');
 const fullyExpanded = ref(false);
 
-const showWhatsNewNotification = computed(
-	() =>
+// [多租户改造] 延迟检查 What's New 通知，避免未登录时访问数据
+const showWhatsNewNotification = computed(() => {
+	if (!isAuthenticated.value) return false;
+	return (
 		versionsStore.hasVersionUpdates ||
 		versionsStore.whatsNewArticles.some(
 			(article) => !versionsStore.isWhatsNewArticleRead(article.id),
-		),
-);
+		)
+	);
+});
 
 const mainMenuItems = computed<IMenuItem[]>(() => [
 	{
@@ -120,95 +126,34 @@ const mainMenuItems = computed<IMenuItem[]>(() => [
 		position: 'bottom',
 		label: 'Admin Panel',
 		icon: 'cloud',
-		available:
-			isAuthenticated.value && settingsStore.isCloudDeployment && hasPermission(['instanceOwner']),
+		// [多租户改造] 始终显示，点击时再检查权限和认证
+		available: true,
 	},
 	{
 		id: 'chat',
 		icon: 'message-circle',
 		label: 'Chat',
 		position: 'bottom',
-		route: { to: { name: CHAT_VIEW } },
-		available:
-			isAuthenticated.value &&
-			settingsStore.isChatFeatureEnabled &&
-			hasPermission(['rbac'], { rbac: { scope: 'chatHub:message' } }),
+		// [多租户改造] 移除 route，由 handleSelect 控制跳转
+		// route: { to: { name: CHAT_VIEW } },
+		available: true,
 	},
 	{
-		// Link to in-app pre-built agent templates, available experiment is enabled
+		// [多租户改造] 简化 Templates 菜单项，合并所有版本，延迟判断具体跳转逻辑
 		id: 'templates',
 		icon: 'package-open',
 		label: i18n.baseText('mainSidebar.templates'),
 		position: 'bottom',
-		available:
-			isAuthenticated.value &&
-			settingsStore.isTemplatesEnabled &&
-			calloutHelpers.isPreBuiltAgentsCalloutVisible.value &&
-			!(
-				personalizedTemplatesV2Store.isFeatureEnabled() ||
-				personalizedTemplatesV3Store.isFeatureEnabled()
-			),
-		route: { to: { name: VIEWS.PRE_BUILT_AGENT_TEMPLATES } },
-	},
-	{
-		// Link to personalized template modal, available when V2 or V3 experiment is enabled
-		id: 'templates',
-		icon: 'package-open',
-		label: i18n.baseText('mainSidebar.templates'),
-		position: 'bottom',
-		available:
-			isAuthenticated.value &&
-			settingsStore.isTemplatesEnabled &&
-			(personalizedTemplatesV2Store.isFeatureEnabled() ||
-				personalizedTemplatesV3Store.isFeatureEnabled()),
-	},
-	{
-		// Link to in-app templates, available if custom templates are enabled and experiment is disabled
-		id: 'templates',
-		icon: 'package-open',
-		label: i18n.baseText('mainSidebar.templates'),
-		position: 'bottom',
-		available:
-			isAuthenticated.value &&
-			settingsStore.isTemplatesEnabled &&
-			!calloutHelpers.isPreBuiltAgentsCalloutVisible.value &&
-			templatesStore.hasCustomTemplatesHost &&
-			!(
-				personalizedTemplatesV2Store.isFeatureEnabled() ||
-				personalizedTemplatesV3Store.isFeatureEnabled()
-			),
-		route: { to: { name: VIEWS.TEMPLATES } },
-	},
-	{
-		// Link to website templates, available if custom templates are not enabled
-		id: 'templates',
-		icon: 'package-open',
-		label: i18n.baseText('mainSidebar.templates'),
-		position: 'bottom',
-		available:
-			isAuthenticated.value &&
-			settingsStore.isTemplatesEnabled &&
-			!calloutHelpers.isPreBuiltAgentsCalloutVisible.value &&
-			!templatesStore.hasCustomTemplatesHost &&
-			!(
-				personalizedTemplatesV2Store.isFeatureEnabled() ||
-				personalizedTemplatesV3Store.isFeatureEnabled()
-			),
-		link: {
-			href: templatesStore.websiteTemplateRepositoryURL,
-			target: '_blank',
-		},
+		available: true,
 	},
 	{
 		id: 'insights',
 		icon: 'chart-column-decreasing',
 		label: 'Insights',
 		position: 'bottom',
-		route: { to: { name: VIEWS.INSIGHTS } },
-		available:
-			isAuthenticated.value &&
-			settingsStore.isModuleActive('insights') &&
-			hasPermission(['rbac'], { rbac: { scope: 'insights:list' } }),
+		// [多租户改造] 移除 route，由 handleSelect 控制跳转
+		// route: { to: { name: VIEWS.INSIGHTS } },
+		available: true,
 	},
 	{
 		id: 'help',
@@ -252,20 +197,12 @@ const mainMenuItems = computed<IMenuItem[]>(() => [
 					target: '_blank',
 				},
 			},
-			// [多租户改造] Report Bug 需要访问 settings，未登录时不显示
-			...(isAuthenticated.value
-				? [
-						{
-							id: 'report-bug',
-							icon: 'bug',
-							label: i18n.baseText('mainSidebar.helpMenuItems.reportBug'),
-							link: {
-								href: getReportingURL(),
-								target: '_blank',
-							},
-						},
-					]
-				: []),
+			{
+				// [多租户改造] Report Bug 始终显示，点击时再处理认证和获取 URL
+				id: 'report-bug',
+				icon: 'bug',
+				label: i18n.baseText('mainSidebar.helpMenuItems.reportBug'),
+			},
 			{
 				id: 'about',
 				icon: 'info',
@@ -280,22 +217,28 @@ const mainMenuItems = computed<IMenuItem[]>(() => [
 		notification: showWhatsNewNotification.value,
 		label: i18n.baseText('mainSidebar.whatsNew'),
 		position: 'bottom',
-		available: versionsStore.hasVersionUpdates || versionsStore.whatsNewArticles.length > 0,
+		// [多租户改造] 始终显示，延迟加载数据
+		available: true,
 		children: [
-			...versionsStore.whatsNewArticles.map(
-				(article) =>
-					({
-						id: `whats-new-article-${article.id}`,
-						label: article.title,
-						size: 'small',
-						customIconSize: 'small',
-						icon: {
-							type: 'emoji',
-							value: '•',
-							color: !versionsStore.isWhatsNewArticleRead(article.id) ? 'primary' : 'text-light',
-						},
-					}) satisfies IMenuItem,
-			),
+			// [多租户改造] 只在已登录时加载文章列表，避免未登录时访问 store
+			...(isAuthenticated.value
+				? versionsStore.whatsNewArticles.map(
+						(article) =>
+							({
+								id: `whats-new-article-${article.id}`,
+								label: article.title,
+								size: 'small',
+								customIconSize: 'small',
+								icon: {
+									type: 'emoji',
+									value: '•',
+									color: !versionsStore.isWhatsNewArticleRead(article.id)
+										? 'primary'
+										: 'text-light',
+								},
+							}) satisfies IMenuItem,
+					)
+				: []),
 			{
 				id: 'full-changelog',
 				icon: 'external-link',
@@ -310,7 +253,8 @@ const mainMenuItems = computed<IMenuItem[]>(() => [
 			{
 				id: 'version-upgrade-cta',
 				component: VersionUpdateCTA,
-				available: versionsStore.hasVersionUpdates,
+				// [多租户改造] 只在已登录时检查更新状态
+				available: isAuthenticated.value && versionsStore.hasVersionUpdates,
 				props: {
 					disabled: !usersStore.canUserUpdateVersion,
 					tooltipText: !usersStore.canUserUpdateVersion
@@ -331,7 +275,8 @@ const createBtn = ref<InstanceType<typeof N8nNavigationDropdown>>();
 const isCollapsed = computed(() => uiStore.sidebarMenuCollapsed);
 
 const showUserArea = computed(() => hasPermission(['authenticated']));
-const userIsTrialing = computed(() => cloudPlanStore.userIsTrialing);
+// [多租户改造] 只在已登录时检查试用状态，避免未登录时访问 cloudPlanStore
+const userIsTrialing = computed(() => isAuthenticated.value && cloudPlanStore.userIsTrialing);
 
 onMounted(async () => {
 	window.addEventListener('resize', onResize);
@@ -342,13 +287,19 @@ onMounted(async () => {
 		});
 	}
 
-	becomeTemplateCreatorStore.startMonitoringCta();
+	// [多租户改造] 只在已登录时启动 CTA 监控,避免未登录时的 401 错误
+	if (isAuthenticated.value) {
+		becomeTemplateCreatorStore.startMonitoringCta();
+	}
 
 	await nextTick(onResizeEnd);
 });
 
 onBeforeUnmount(() => {
-	becomeTemplateCreatorStore.stopMonitoringCta();
+	// [多租户改造] 只在已登录时停止 CTA 监控
+	if (isAuthenticated.value) {
+		becomeTemplateCreatorStore.stopMonitoringCta();
+	}
 	window.removeEventListener('resize', onResize);
 });
 
@@ -372,8 +323,24 @@ const toggleCollapse = () => {
 };
 
 const handleSelect = (key: string) => {
+	// [多租户改造] 需要认证的功能列表
+	const requiresAuth = ['cloud-admin', 'chat', 'templates', 'insights'];
+
+	// [多租户改造] 如果功能需要认证但用户未登录，打开登录弹窗
+	if (requiresAuth.includes(key) && !isAuthenticated.value) {
+		uiStore.openModal(AUTH_MODAL_KEY);
+		return;
+	}
+
 	switch (key) {
-		case 'templates':
+		case 'templates': {
+			// [多租户改造] 延迟判断 Templates 的具体跳转逻辑
+			if (!isAuthenticated.value) {
+				uiStore.openModal(AUTH_MODAL_KEY);
+				return;
+			}
+
+			// 只在已登录时才访问 store 数据
 			if (personalizedTemplatesV3Store.isFeatureEnabled()) {
 				personalizedTemplatesV3Store.markTemplateRecommendationInteraction();
 				uiStore.openModalWithData({
@@ -391,13 +358,58 @@ const handleSelect = (key: string) => {
 				trackTemplatesClick(TemplateClickSource.sidebarButton);
 			}
 			break;
+		}
 		case 'about': {
 			trackHelpItemClick('about');
 			uiStore.openModal(ABOUT_MODAL_KEY);
 			break;
 		}
 		case 'cloud-admin': {
+			// [多租户改造] 延迟检查权限
+			if (!isAuthenticated.value) {
+				uiStore.openModal(AUTH_MODAL_KEY);
+				return;
+			}
+			if (!settingsStore.isCloudDeployment || !hasPermission(['instanceOwner'])) {
+				// 没有权限，显示提示或静默处理
+				return;
+			}
 			void pageRedirectionHelper.goToDashboard();
+			break;
+		}
+		case 'chat': {
+			// [多租户改造] 延迟检查权限和功能开关
+			if (!isAuthenticated.value) {
+				uiStore.openModal(AUTH_MODAL_KEY);
+				return;
+			}
+			if (
+				!settingsStore.isChatFeatureEnabled ||
+				!hasPermission(['rbac'], { rbac: { scope: 'chatHub:message' } })
+			) {
+				// 功能未开启或无权限
+				return;
+			}
+			// [多租户改造] 移除 route 配置后，手动进行路由跳转
+			void router.push({ name: CHAT_VIEW });
+			break;
+		}
+		case 'insights': {
+			// [多租户改造] 延迟检查权限
+			if (!isAuthenticated.value) {
+				uiStore.openModal(AUTH_MODAL_KEY);
+				return;
+			}
+			if (
+				!settingsStore.isModuleActive('insights') ||
+				!hasPermission(['rbac'], { rbac: { scope: 'insights:list' } })
+			) {
+				// 模块未激活或无权限
+				return;
+			}
+			telemetry.track('User clicked insights link from side menu');
+			// [多租户改造] 移除 route 配置后，手动进行路由跳转
+			void router.push({ name: VIEWS.INSIGHTS });
 			break;
 		}
 		case 'quickstart':
@@ -407,8 +419,17 @@ const handleSelect = (key: string) => {
 			trackHelpItemClick(key);
 			break;
 		}
-		case 'insights':
-			telemetry.track('User clicked insights link from side menu');
+		case 'report-bug': {
+			// [多租户改造] Report Bug 需要登录后才能获取正确的 URL
+			trackHelpItemClick('report-bug');
+			if (!isAuthenticated.value) {
+				uiStore.openModal(AUTH_MODAL_KEY);
+				return;
+			}
+			// 已登录时打开 Bug 报告页面
+			window.open(getReportingURL(), '_blank');
+			break;
+		}
 		default:
 			if (key.startsWith('whats-new-article-')) {
 				const articleId = Number(key.replace('whats-new-article-', ''));
@@ -568,28 +589,9 @@ onClickOutside(createBtn as Ref<VueInstance>, () => {
 					:plan-name="cloudPlanStore.currentPlanData?.displayName"
 				/>
 
-				<!-- [多租户改造] 未登录状态显示登录/注册按钮 -->
-				<div v-if="!isAuthenticated && !isCollapsed" :class="$style.authActions">
-					<N8nButton
-						type="primary"
-						size="medium"
-						block
-						@click="() => $router.push({ name: VIEWS.SIGNIN })"
-					>
-						{{ i18n.baseText('homePage.login') }}
-					</N8nButton>
-					<N8nButton
-						type="secondary"
-						size="medium"
-						block
-						@click="() => $router.push({ name: VIEWS.SIGNUP })"
-					>
-						{{ i18n.baseText('homePage.register') }}
-					</N8nButton>
-				</div>
-
 				<div :class="$style.bottomMenu">
-					<BecomeTemplateCreatorCta v-if="fullyExpanded && !userIsTrialing" />
+					<!-- [多租户改造] BecomeTemplateCreatorCta 只在已登录且非试用用户时显示 -->
+					<BecomeTemplateCreatorCta v-if="isAuthenticated && fullyExpanded && !userIsTrialing" />
 					<div :class="$style.bottomMenuItems">
 						<template v-for="item in visibleMenuItems" :key="item.id">
 							<N8nPopoverReka
@@ -704,14 +706,6 @@ onClickOutside(createBtn as Ref<VueInstance>, () => {
 	&:hover {
 		color: var(--color--primary--shade-1);
 	}
-}
-
-.authActions {
-	padding: var(--spacing--sm);
-	display: flex;
-	flex-direction: column;
-	gap: var(--spacing--xs);
-	margin-bottom: var(--spacing--sm);
 }
 
 .bottomMenu {

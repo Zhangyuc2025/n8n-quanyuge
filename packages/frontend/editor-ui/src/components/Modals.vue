@@ -2,6 +2,7 @@
 import {
 	ABOUT_MODAL_KEY,
 	ANNOTATION_TAGS_MANAGER_MODAL_KEY,
+	AUTH_MODAL_KEY,
 	CHANGE_PASSWORD_MODAL_KEY,
 	CHAT_EMBED_MODAL_KEY,
 	CONTACT_PROMPT_MODAL_KEY,
@@ -59,6 +60,7 @@ import {
 import { API_KEY_CREATE_OR_EDIT_MODAL_KEY } from '@/features/settings/apiKeys/apiKeys.constants';
 import AboutModal from '@/components/AboutModal.vue';
 import ActivationModal from '@/components/ActivationModal.vue';
+import AuthModal from '@/components/AuthModal.vue';
 import ApiKeyCreateOrEditModal from '@/features/settings/apiKeys/components/ApiKeyCreateOrEditModal.vue';
 import NewAssistantSessionModal from '@/features/ai/assistant/components/Chat/NewAssistantSessionModal.vue';
 import ChangePasswordModal from '@/features/core/auth/components/ChangePasswordModal.vue';
@@ -138,6 +140,10 @@ import VariableModal from '@/features/settings/environments.ee/components/Variab
 
 		<ModalRoot :name="ABOUT_MODAL_KEY">
 			<AboutModal />
+		</ModalRoot>
+
+		<ModalRoot :name="AUTH_MODAL_KEY">
+			<AuthModal />
 		</ModalRoot>
 
 		<ModalRoot :name="CHAT_EMBED_MODAL_KEY">

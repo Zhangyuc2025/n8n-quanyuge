@@ -3,6 +3,7 @@ export const MODAL_CONFIRM = 'confirm';
 export const MODAL_CLOSE = 'close';
 
 export const ABOUT_MODAL_KEY = 'about';
+export const AUTH_MODAL_KEY = 'authModal';
 export const CHAT_EMBED_MODAL_KEY = 'chatEmbed';
 export const CHANGE_PASSWORD_MODAL_KEY = 'changePassword';
 export const CONFIRM_PASSWORD_MODAL_KEY = 'confirmPassword';
