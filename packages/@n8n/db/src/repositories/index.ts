@@ -20,6 +20,8 @@ export { RoleRepository } from './role.repository';
 export { ProcessedDataRepository } from './processed-data.repository';
 export { SettingsRepository } from './settings.repository';
 export { TagRepository } from './tag.repository';
+export { TeamRepository } from './team.repository';
+export { TeamMemberRepository } from './team-member.repository';
 export { TestCaseExecutionRepository } from './test-case-execution.repository.ee';
 export { TestRunRepository } from './test-run.repository.ee';
 export { VariablesRepository } from './variables.repository';

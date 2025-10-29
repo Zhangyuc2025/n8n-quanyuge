@@ -369,6 +369,102 @@ MainSidebar
 - [ ] BalanceController（余额充值、消费 API）
 - [ ] ProjectController 扩展（支持团队项目切换）
 
+### Phase 3.5: 注册登录改造（Week 6.5）⭐ 新增
+
+> **重要：** 多租户SaaS必须调整注册登录流程，在Phase 4前端开发之前完成
+
+#### 3.5.1 后端改造（1-2天）
+- [ ] **扩展 UserService.registerTenant()**
+  - 自动创建用户账号（设置 tier/tenantStatus 等字段）
+  - 自动创建默认个人工作区（Personal Project，isDefault=true）
+  - 自动创建 ProjectRelation（用户是 admin）
+  - 记录注册事件到 EventService
+  - **简化版：** firstName = username，lastName = ''（开发期间）
+
+- [ ] **扩展 AuthController 登录响应**
+  - POST /auth/register - 简化的注册API（邮箱+用户名+密码）
+  - POST /auth/login - 返回用户信息+工作区列表
+  - 返回数据结构：
+    ```typescript
+    {
+      token: string,
+      user: {
+        id: string,
+        email: string,
+        username: string,
+        tier: 'free' | 'pro' | 'enterprise',
+        tenantStatus: 'active' | 'suspended'
+      },
+      workspaces: Array<{
+        id: string,
+        name: string,
+        type: 'personal' | 'team',
+        isDefault: boolean,
+        teamId?: string,
+        icon?: string
+      }>,
+      defaultWorkspace: string  // 默认工作区ID
+    }
+    ```
+
+- [ ] **简化验证规则**（开发期间）
+  - 邮箱：基本格式验证
+  - 用户名：至少2个字符
+  - 密码：至少6位（无复杂度要求）
+  - 暂不做邮箱验证
+
+#### 3.5.2 前端改造（2-3天）
+- [ ] **侧边栏首页入口**
+  - 在 MainSidebar 添加"首页"菜单项
+  - 未登录用户可访问首页
+  - 首页展示产品介绍、功能特性、价格方案
+
+- [ ] **AuthDialog 组件（登录/注册弹窗）**
+  - Tab切换：密码登录 / 账号注册
+  - 点击侧边栏功能按钮时弹出（未登录用户）
+  - 弹窗样式参考 DeepSeek（清爽简洁）
+
+- [ ] **LoginForm 组件（登录表单）**
+  - 邮箱或用户名输入
+  - 密码输入（显示/隐藏切换）
+  - 记住我 checkbox
+  - 忘记密码占位符（disabled）
+
+- [ ] **RegisterForm 组件（注册表单）**
+  - 邮箱输入
+  - 用户名输入
+  - 密码输入（至少6位）
+  - 提示：未注册的邮箱将自动创建账号
+
+- [ ] **第三方登录占位符**
+  - 微信登录按钮（disabled，显示"即将开放"）
+  - 手机验证码登录按钮（disabled，显示"即将开放"）
+  - 预留扩展接口
+
+- [ ] **用户协议和隐私��策**
+  - 底部显示协议链接
+  - 注册登录即表示同意
+
+- [ ] **AuthStore（认证状态管理）**
+  - login() / register() 方法
+  - 保存 token 和用户信息到 localStorage
+  - 保存工作区列表到 Pinia Store
+  - 自动选择默认工作区
+
+- [ ] **路由守卫调整**
+  - 未登录访问功能页面 → 弹出登录弹窗
+  - 登录成功后跳转到工作台或返回原页面
+
+#### 3.5.3 测试验证（0.5天）
+- [ ] 新用户注册 → 自动创建默认工作区
+- [ ] 登录后 → 正确加载工作区列表
+- [ ] 默认工作区 → 正确标记和选择
+- [ ] 未登录访问功能 → 正确弹出登录弹窗
+- [ ] 工作区切换 → 前端状态正确更新
+
+**预计工期：** 3-4天
+**依赖关系：** Phase 3 完成后开始，Phase 4 依赖此阶段
+
 ### Phase 4: 前端实现（Week 7-8）
 - [ ] ProjectSwitcher 组件（替代 WorkspaceSwitcher）
 - [ ] CreateTeamDialog 组件
@@ -600,15 +696,56 @@ pnpm migration:run
 
 ---
 
-**文档版本：** v2.0
+**文档版本：** v2.2
 **更新时间：** 2025-10-29
 **负责人：** 老王
-**预计工期：** 8-10 周
+**预计工期：** 10-11 周
 **风险评估：** 低（基于现有架构，改动最小）
 
 ---
 
 ## 📝 更新日志
+
+### v2.2 - 2025-10-29：新增注册登录改造（Phase 3.5）
+
+**背景：** 多租户SaaS平台必须调整注册登录流程，确保每个新用户自动成为一个租户并拥有默认工作区
+
+**新增内容：**
+
+1. **Phase 3.5：注册登录改造（Week 6.5，3-4天）**
+   - 后端：扩展 UserService.registerTenant()，自动创建默认工作区
+   - 后端：扩展 AuthController，登录响应返回工作区列表
+   - 前端：侧边栏添加首页入口（产品介绍、功能特性、价格方案）
+   - 前端：AuthDialog 弹窗组件（Tab切换：密码登录/账号注册）
+   - 前端：LoginForm / RegisterForm 组件（简化验证规则）
+   - 前端：第三方登录占位符（微信/手机验证码，disabled）
+   - 前端：AuthStore / WorkspaceStore（认证和工作区状态管理）
+   - 前端：路由守卫调整（未登录弹窗，不跳转页面）
+
+2. **设计理念：**
+   - ✅ 侧边栏首页入口（不是独立公开页面）
+   - ✅ 弹窗式登录/注册（参考DeepSeek设计）
+   - ✅ 简化验证规则（开发期间：邮箱格式+用户名2字符+密码6位）
+   - ✅ 占位符设计（为微信/手机登录预留扩展空间）
+   - ✅ 多租户核心：User = Tenant，注册即创建独立工作区
+
+3. **关键决策：**
+   - 注册时自动创建默认工作区（isDefault=true）
+   - 登录响应包含工作区列表（个人+团队）
+   - 前端自动选择默认工作区
+   - 未登录访问功能时弹出登录弹窗（不跳转）
+
+4. **依赖关系：**
+   - Phase 3.5 必须在 Phase 4 之前完成
+   - Phase 4（前端工作区组件）依赖 Phase 3.5 的工作区数据结构
+
+**对整体方案的影响：**
+- ✅ 确保多租户架构的完整性（每个用户=独立租户）
+- ✅ 为 Phase 4 前端开发提供必需的数据结构
+- ✅ 提升用户体验（现代SaaS产品标准）
+- ⚠️ 工期不变（3-4天插入到 Week 6.5，不影响总工期）
+
+---
 
 ### v2.1 - 2025-10-29：补充完整计费系统
 

@@ -33,6 +33,11 @@ export { DeleteProjectDto } from './project/delete-project.dto';
 export { AddUsersToProjectDto } from './project/add-users-to-project.dto';
 export { ChangeUserRoleInProject } from './project/change-user-role-in-project.dto';
 
+export { CreateTeamDto } from './team/create-team.dto';
+export { UpdateTeamDto } from './team/update-team.dto';
+export { AddMembersToTeamDto, AddMemberToTeamDto } from './team/add-members-to-team.dto';
+export { UpdateMemberRoleDto } from './team/update-member-role.dto';
+
 export { SamlAcsDto } from './saml/saml-acs.dto';
 export { SamlPreferences } from './saml/saml-preferences.dto';
 export { SamlToggleDto } from './saml/saml-toggle.dto';

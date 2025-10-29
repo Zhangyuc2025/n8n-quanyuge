@@ -1,10 +1,7 @@
-import { Logger } from '@n8n/backend-common';
 import { Service } from '@n8n/di';
-import { DataSource, EntityManager, In, Not, Repository } from '@n8n/typeorm';
+import { DataSource, EntityManager, In, Repository } from '@n8n/typeorm';
 
-import { Team } from '../entities/team';
 import { TeamMember } from '../entities/team-member';
-import { User } from '../entities/user';
 import { withTransaction } from '../utils/transaction';
 
 /**
@@ -15,7 +12,7 @@ import { withTransaction } from '../utils/transaction';
  */
 @Service()
 export class TeamMemberRepository extends Repository<TeamMember> {
-	constructor(private readonly dataSource: DataSource) {
+	constructor(dataSource: DataSource) {
 		super(TeamMember, dataSource.manager);
 	}
 
@@ -69,7 +66,7 @@ export class TeamMemberRepository extends Repository<TeamMember> {
 	async addMember(
 		teamId: string,
 		userId: string,
-		role: 'team:admin' | 'team:member' | 'team:viewer' = 'team:member',
+		role: 'team:owner' | 'team:admin' | 'team:member' | 'team:viewer' = 'team:member',
 		trx?: EntityManager,
 	): Promise<TeamMember> {
 		return await withTransaction(this.manager, trx, async (em: EntityManager) => {
@@ -114,7 +111,7 @@ export class TeamMemberRepository extends Repository<TeamMember> {
 	async addMembers(
 		teamId: string,
 		userIds: string[],
-		role: 'team:admin' | 'team:member' | 'team:viewer' = 'team:member',
+		role: 'team:owner' | 'team:admin' | 'team:member' | 'team:viewer' = 'team:member',
 		trx?: EntityManager,
 	): Promise<TeamMember[]> {
 		return await withTransaction(this.manager, trx, async (em: EntityManager) => {
@@ -316,19 +313,20 @@ export class TeamMemberRepository extends Repository<TeamMember> {
 		};
 
 		stats.forEach((stat) => {
-			result.total += parseInt(stat.count);
+			const count = parseInt(String(stat.count), 10);
+			result.total += count;
 			switch (stat.role) {
 				case 'team:owner':
-					result.owners = parseInt(stat.count);
+					result.owners = count;
 					break;
 				case 'team:admin':
-					result.admins = parseInt(stat.count);
+					result.admins = count;
 					break;
 				case 'team:member':
-					result.members = parseInt(stat.count);
+					result.members = count;
 					break;
 				case 'team:viewer':
-					result.viewers = parseInt(stat.count);
+					result.viewers = count;
 					break;
 			}
 		});

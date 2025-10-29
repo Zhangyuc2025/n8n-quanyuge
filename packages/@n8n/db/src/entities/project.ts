@@ -5,7 +5,6 @@ import type { ProjectRelation } from './project-relation';
 import type { SharedCredentials } from './shared-credentials';
 import type { SharedWorkflow } from './shared-workflow';
 import { Team } from './team';
-import type { User } from './user';
 import type { Variables } from './variables';
 
 @Entity()

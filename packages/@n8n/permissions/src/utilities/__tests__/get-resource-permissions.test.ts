@@ -118,6 +118,7 @@ describe('permissions', () => {
 				read: true,
 				update: true,
 			},
+			team: {},
 			user: {
 				list: true,
 			},

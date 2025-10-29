@@ -1,4 +1,3 @@
-import { Logger } from '@n8n/backend-common';
 import { Service } from '@n8n/di';
 import { DataSource, EntityManager, In, Repository } from '@n8n/typeorm';
 
@@ -13,7 +12,7 @@ import { withTransaction } from '../utils/transaction';
  */
 @Service()
 export class TeamRepository extends Repository<Team> {
-	constructor(private readonly dataSource: DataSource) {
+	constructor(dataSource: DataSource) {
 		super(Team, dataSource.manager);
 	}
 
@@ -118,7 +117,7 @@ export class TeamRepository extends Repository<Team> {
 	): Promise<Team | null> {
 		return await withTransaction(this.manager, trx, async (em: EntityManager) => {
 			// 过滤掉 undefined 值
-			const filteredData: any = {};
+			const filteredData: Partial<Team> = {};
 			if (updateData.name !== undefined) filteredData.name = updateData.name;
 			if (updateData.slug !== undefined) filteredData.slug = updateData.slug;
 			if (updateData.billingMode !== undefined) filteredData.billingMode = updateData.billingMode;
@@ -126,7 +125,9 @@ export class TeamRepository extends Repository<Team> {
 			if (updateData.description !== undefined) filteredData.description = updateData.description;
 			if (updateData.icon !== undefined) filteredData.icon = updateData.icon;
 
-			const updateResult = await em.update(Team, teamId, filteredData);
+			// TypeScript workaround: TypeORM update() 方法存在深度类型实例化问题
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
+			const updateResult = await em.update(Team, teamId, filteredData as any);
 
 			if ((updateResult.affected ?? 0) === 0) {
 				return null;
@@ -198,12 +199,15 @@ export class TeamRepository extends Repository<Team> {
 	 * @returns 是否已被使用
 	 */
 	async isSlugTaken(slug: string, excludeTeamId?: string): Promise<boolean> {
-		const where: any = { slug, status: 'active' };
+		const queryBuilder = this.createQueryBuilder('team')
+			.where('team.slug = :slug', { slug })
+			.andWhere('team.status = :status', { status: 'active' });
+
 		if (excludeTeamId) {
-			where.id = { $ne: excludeTeamId };
+			queryBuilder.andWhere('team.id != :excludeTeamId', { excludeTeamId });
 		}
 
-		const count = await this.count({ where });
+		const count = await queryBuilder.getCount();
 		return count > 0;
 	}
 

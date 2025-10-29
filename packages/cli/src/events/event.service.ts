@@ -5,8 +5,9 @@ import { TypedEmitter } from '@/typed-emitter';
 import type { AiEventMap } from './maps/ai.event-map';
 import type { QueueMetricsEventMap } from './maps/queue-metrics.event-map';
 import type { RelayEventMap } from './maps/relay.event-map';
+import type { TeamEventMap } from './maps/team.event-map';
 
-type EventMap = RelayEventMap & QueueMetricsEventMap & AiEventMap;
+type EventMap = RelayEventMap & QueueMetricsEventMap & AiEventMap & TeamEventMap;
 
 @Service()
 export class EventService extends TypedEmitter<EventMap> {}
