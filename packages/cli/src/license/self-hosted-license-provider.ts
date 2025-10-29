@@ -1,5 +1,9 @@
 import type { LicenseProvider } from '@n8n/backend-common';
-import { UNLIMITED_LICENSE_QUOTA, type BooleanLicenseFeature } from '@n8n/constants';
+import {
+	UNLIMITED_LICENSE_QUOTA,
+	isReverseLicenseFeature,
+	type BooleanLicenseFeature,
+} from '@n8n/constants';
 import { Service } from '@n8n/di';
 
 import type { FeatureReturnType } from '@/license';
@@ -15,11 +19,14 @@ import type { FeatureReturnType } from '@/license';
 @Service()
 export class SelfHostedLicenseProvider implements LicenseProvider {
 	/**
-	 * 功能检查 - 全部返回 true
+	 * 功能检查 - 全部返回 true（反向逻辑功能除外）
 	 * 艹，所有企业功能都给老子启用！
+	 *
+	 * 老王说：统一用工具函数判断反向逻辑，符合DRY原则！
 	 */
-	isLicensed(_feature: BooleanLicenseFeature): boolean {
-		return true;
+	isLicensed(feature: BooleanLicenseFeature): boolean {
+		// 反向逻辑功能返回 false，其他功能返回 true
+		return !isReverseLicenseFeature(feature);
 	}
 
 	/**

@@ -13,6 +13,21 @@ const packagesDir = resolve(__dirname, '..', '..', '..');
 
 const banner = `/*! Package version @n8n/chat@${pkg.version} */`;
 
+// Banner plugin to replace deprecated esbuild.banner
+function bannerPlugin(): PluginOption {
+	return {
+		name: 'banner-plugin',
+		generateBundle(options, bundle) {
+			// Inject banner at the top of all JS files
+			for (const [fileName, chunk] of Object.entries(bundle)) {
+				if (fileName.endsWith('.js') && chunk.type === 'chunk') {
+					chunk.code = banner + '\n' + chunk.code;
+				}
+			}
+		},
+	};
+}
+
 // https://vitejs.dev/config/
 export default mergeConfig(
 	defineConfig({
@@ -23,6 +38,7 @@ export default mergeConfig(
 				autoInstall: true,
 			}),
 			dts(),
+			bannerPlugin(),
 			{
 				name: 'rename-css-file',
 				closeBundle() {
@@ -88,8 +104,6 @@ export default mergeConfig(
 				external: includeVue ? [] : ['vue'],
 				output: {
 					exports: 'named',
-					// inject banner on top of all JS files
-					banner,
 					// Provide global variables to use in the UMD build
 					// for externalized deps
 					globals: includeVue

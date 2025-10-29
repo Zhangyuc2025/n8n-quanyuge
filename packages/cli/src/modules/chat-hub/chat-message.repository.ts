@@ -43,7 +43,7 @@ export class ChatHubMessageRepository extends Repository<ChatHubMessage> {
 			this.manager,
 			trx,
 			async (em) => {
-				return await em.update(ChatHubMessage, { id }, fields);
+				return await em.update(ChatHubMessage, { id }, fields as any);
 			},
 			false,
 		);

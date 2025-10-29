@@ -6,6 +6,7 @@ import {
 	LICENSE_FEATURES,
 	LICENSE_QUOTAS,
 	UNLIMITED_LICENSE_QUOTA,
+	isReverseLicenseFeature,
 	type BooleanLicenseFeature,
 	type NumericLicenseFeature,
 } from '@n8n/constants';
@@ -58,6 +59,8 @@ export class License implements LicenseProvider {
 
 	private isShuttingDown = false;
 
+	private isSelfHostedMode = false;
+
 	constructor(
 		private readonly logger: Logger,
 		private readonly instanceSettings: InstanceSettings,
@@ -77,6 +80,7 @@ export class License implements LicenseProvider {
 		if (true) {
 			// process.env.N8N_SELF_HOSTED_ENTERPRISE === 'true'
 			this.logger.info('🔓 Running in self-hosted enterprise mode - all features enabled');
+			this.isSelfHostedMode = true;
 			const selfHostedProvider = Container.get(SelfHostedLicenseProvider);
 			const licenseState = Container.get(LicenseState);
 			licenseState.setLicenseProvider(selfHostedProvider);
@@ -262,6 +266,11 @@ export class License implements LicenseProvider {
 	}
 
 	isLicensed(feature: BooleanLicenseFeature) {
+		// 🔓 自托管企业版模式 - 所有功能都启用
+		if (this.isSelfHostedMode) {
+			// 老王说：用统一的工具函数判断反向逻辑，别tm写重复代码！
+			return !isReverseLicenseFeature(feature);
+		}
 		return this.manager?.hasFeatureEnabled(feature) ?? false;
 	}
 
@@ -390,6 +399,19 @@ export class License implements LicenseProvider {
 	}
 
 	getValue<T extends keyof FeatureReturnType>(feature: T): FeatureReturnType[T] {
+		// 🔓 自托管企业版模式
+		if (this.isSelfHostedMode) {
+			// AI Credits 特殊处理
+			if (feature === 'quota:aiCredits') {
+				return 999999 as FeatureReturnType[T];
+			}
+			// planName 返回自托管企业版
+			if (feature === 'planName') {
+				return 'Self-Hosted Enterprise' as FeatureReturnType[T];
+			}
+			// 其他所有配额返回无限制
+			return UNLIMITED_LICENSE_QUOTA as FeatureReturnType[T];
+		}
 		return this.manager?.getFeatureValue(feature) as FeatureReturnType[T];
 	}
 
@@ -421,6 +443,10 @@ export class License implements LicenseProvider {
 	}
 
 	getConsumerId() {
+		// 🔓 自托管企业版模式 - 返回固定 ID
+		if (this.isSelfHostedMode) {
+			return 'self-hosted-enterprise';
+		}
 		return this.manager?.getConsumerId() ?? 'unknown';
 	}
 

@@ -214,7 +214,7 @@ export default mergeConfig(
 			target,
 		},
 		optimizeDeps: {
-			esbuildOptions: {
+			rollupOptions: {
 				target,
 			},
 		},

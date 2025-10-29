@@ -55,6 +55,32 @@ export const LICENSE_QUOTAS = {
 
 export const UNLIMITED_LICENSE_QUOTA = -1;
 
+/**
+ * 🔓 反向逻辑功能列表
+ *
+ * 这些憨批功能的逻辑是反的：
+ * - true = 启用限制（显示 banner、禁用 API）
+ * - false = 解除限制（不显示 banner、启用 API）
+ *
+ * 老王说：统一在这里定义，别tm到处重复！DRY原则必须遵守！
+ */
+export const REVERSE_LOGIC_FEATURES = [
+	LICENSE_FEATURES.SHOW_NON_PROD_BANNER, // true = 显示提示（限制），false = 不显示（开放）
+	LICENSE_FEATURES.API_DISABLED, // true = 禁用API（限制），false = 启用API（开放）
+] as const;
+
+/**
+ * 🔧 工具函数：判断是否为反向逻辑功能
+ *
+ * @param feature 要检查的功能名
+ * @returns 如果是反向逻辑功能返回 true，否则返回 false
+ *
+ * 老王说：用这个憨批函数统一判断，别自己写判断！
+ */
+export function isReverseLicenseFeature(feature: BooleanLicenseFeature): boolean {
+	return REVERSE_LOGIC_FEATURES.includes(feature as any);
+}
+
 export type BooleanLicenseFeature = (typeof LICENSE_FEATURES)[keyof typeof LICENSE_FEATURES];
 export type NumericLicenseFeature = (typeof LICENSE_QUOTAS)[keyof typeof LICENSE_QUOTAS];
 

@@ -151,7 +151,7 @@ type DbType = z.infer<typeof dbTypeSchema>;
 export class DatabaseConfig {
 	/** Type of database to use */
 	@Env('DB_TYPE', dbTypeSchema)
-	type: DbType = 'sqlite';
+	type: DbType = 'mysqldb';
 
 	/**
 	 * Is true if the default sqlite data source of TypeORM is used, as opposed
