@@ -90,11 +90,11 @@ export class User extends WithTimestamps implements IUser, AuthPrincipal {
 	tier: 'free' | 'pro' | 'enterprise';
 
 	/** 最大团队数量 */
-	@Column({ default: 3 })
+	@Column({ type: 'int', default: 3 })
 	maxTeams: number;
 
 	/** 最大存储空间（MB） */
-	@Column({ default: 1024 })
+	@Column({ type: 'int', default: 1024 })
 	maxStorageMb: number;
 
 	/** 租户状态 */

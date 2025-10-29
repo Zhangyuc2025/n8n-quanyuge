@@ -1,10 +1,11 @@
 # n8n 多租户改造进度跟踪 - v2.0 版本
 
 > **更新时间:** 2025-10-29
-> **当前状态:** 🔄 切换到干净上游版本，准备重新开始
+> **当前状态:** ✅ Phase 1 完成 - 数据库层改造完成
 > **当前方案:** 基于 Project 架构扩展（最小改动策略）
 > **预计总工期:** 8-10 周
 > **当前版本:** n8n@1.118.1 (上游最新)
+> **下一步:** 开始 Phase 2 - 服务层实现
 
 ---
 
@@ -46,8 +47,8 @@
 | 阶段 | 任务 | 状态 | 完成时间 | 代码量 |
 |------|------|------|----------|--------|
 | **准备阶段** | 备份和切换到干净上游 | ✅ 完成 | 2025-10-29 | - |
-| **Phase 1** | 数据库层改造 | 📋 待开始 | - | - |
-| **Phase 2** | 服务层实现 | 📋 待开始 | - | - |
+| **Phase 1** | 数据库层改造 | ✅ 完成 | 2025-10-29 | ~500行 |
+| **Phase 2** | 服务层实现 | ⏳ 进行中 | - | - |
 | **Phase 3** | API 层实现 | 📋 待开始 | - | - |
 | **Phase 4** | 前端组件实现 | 📋 待开始 | - | - |
 | **Phase 5** | 计费系统集成 | 📋 待开始 | - | - |
@@ -86,6 +87,24 @@ User → Project → 扩展现有架构
 
 ---
 
+### ✅ Phase 1：数据库层改造（2025-10-29）
+
+**核心文件：** `packages/@n8n/db/src/migrations/mysqldb/1761701813576-AddMultiTenantTables.ts`
+
+**完成内容：**
+- ✅ 创建 Team 表（团队管理）和 TeamMember 表（成员关系）
+- ✅ 扩展 User 表（tier, maxTeams, maxStorageMb, tenantStatus）
+- ✅ 扩展 Project 表（teamId, isDefault）
+- ✅ 创建所有索引和外键约束（4个外键，9个索引）
+
+**关键Bug修复：**
+1. **索引表引用错误**：修复 `project_relation` → `project` (line 66)
+2. **排序规则冲突**：移除显式 `COLLATE utf8mb4_unicode_ci`，继承数据库默认 `utf8mb4_0900_ai_ci`
+
+**数据库验证结果：** 2个新表 + 6个扩展字段 + 4个外键 + 9个索引 = 全部创建成功 ✅
+
+---
+
 ## 🔧 技术要点
 
 ### 核心设计原则
@@ -119,26 +138,49 @@ User (用户/租户)
 
 ## 🚀 下一步任务
 
-### 📋 Phase 1: 数据库层改造（Week 1-2）
+### ✅ Phase 1: 数据库层改造（Week 1-2）- 已完成
 
 **任务清单：**
 1. **创建新表实体**
-   - [ ] Team 实体（团队表）
-   - [ ] TeamMember 实体（团队成员表）
-   - [ ] UserBalance 实体（用户余额表）
+   - [x] Team 实体（团队表）
+   - [x] TeamMember 实体（团队成员表）
+   - [ ] UserBalance 实体（用户余额表）- 暂缓到 Phase 5
 
 2. **扩展现有实体**
-   - [ ] 扩展 Project 实体（添加 teamId, isDefault 字段）
-   - [ ] 扩展 User 实体（添加 tier, maxTeams, tenantStatus 字段）
+   - [x] 扩展 Project 实体（添加 teamId, isDefault 字段）
+   - [x] 扩展 User 实体（添加 tier, maxTeams, tenantStatus 字段）
 
 3. **创建 Repository 层**
-   - [ ] TeamRepository（团队数据访问）
-   - [ ] TeamMemberRepository（成员管理数据访问）
-   - [ ] UserBalanceRepository（余额管理数据访问）
+   - [x] TeamRepository（团队数据访问）
+   - [x] TeamMemberRepository（成员管理数据访问）
+   - [ ] UserBalanceRepository（余额管理数据访问）- 暂缓到 Phase 5
 
 4. **创建数据库 Migration**
-   - [ ] 多租户表创建 Migration
-   - [ ] 现有表扩展 Migration
+   - [x] 多租户表创建 Migration
+   - [x] 现有表扩展 Migration
+
+---
+
+### 📋 Phase 2: 服务层实现（Week 3-4）- 进行中
+
+**任务清单：**
+1. **TeamService 实现**
+   - [ ] 创建团队（createTeam）
+   - [ ] 获取团队信息（getTeam, getTeamById）
+   - [ ] 更新团队信息（updateTeam）
+   - [ ] 删除团队（deleteTeam）
+   - [ ] 团队成员验证（validateTeamOwnership）
+
+2. **TeamMemberService 实现**
+   - [ ] 添加成员（addMember）
+   - [ ] 移除成员（removeMember）
+   - [ ] 更新成员角色（updateMemberRole）
+   - [ ] 获取团队成员列表（getTeamMembers）
+   - [ ] 成员权限验证（checkMemberPermission）
+
+3. **单元测试**
+   - [ ] TeamService 测试用例
+   - [ ] TeamMemberService 测试用例
 
 ---
 
@@ -288,11 +330,11 @@ export class UserBalanceService {
 
 ## 🎯 里程碑节点
 
-### Week 1-2: 数据库层 ✅
-- [ ] 所有实体创建完成
-- [ ] 所有 Repository 实现完成
-- [ ] Migration 脚本编写完成
-- [ ] 数据库结构验证通过
+### Week 1-2: 数据库层 ✅ 已完成
+- [x] 所有实体创建完成
+- [x] 所有 Repository 实现完成
+- [x] Migration 脚本编写完成
+- [x] 数据库结构验证通过
 
 ### Week 3-4: 服务层 ✅
 - [ ] TeamService 实现完成

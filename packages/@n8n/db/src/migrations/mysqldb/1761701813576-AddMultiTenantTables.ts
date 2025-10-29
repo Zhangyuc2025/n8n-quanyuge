@@ -1,14 +1,10 @@
-import type { MigrationInterface, QueryRunner } from '@n8n/typeorm';
+import type { MigrationContext, ReversibleMigration } from '../migration-types';
 
-export class AddMultiTenantTables1761701813576 implements MigrationInterface {
-	name = 'AddMultiTenantTables1761701813576';
-
-	public async up(queryRunner: QueryRunner): Promise<void> {
-		const tablePrefix = this.getTablePrefix();
-
+export class AddMultiTenantTables1761701813576 implements ReversibleMigration {
+	async up({ queryRunner, tablePrefix }: MigrationContext): Promise<void> {
 		// 1. 创建团队表 (team)
 		await queryRunner.query(`
-			CREATE TABLE \`${tablePrefix}team\` (
+			CREATE TABLE IF NOT EXISTS \`${tablePrefix}team\` (
 				\`id\` varchar(36) NOT NULL,
 				\`name\` varchar(255) NOT NULL,
 				\`slug\` varchar(100) NULL,
@@ -25,12 +21,12 @@ export class AddMultiTenantTables1761701813576 implements MigrationInterface {
 				INDEX \`IDX_${tablePrefix}team_owner\` (\`ownerId\`),
 				CONSTRAINT \`CHK_${tablePrefix}team_status\` CHECK (\`status\` IN ('active', 'suspended', 'deleted')),
 				CONSTRAINT \`CHK_${tablePrefix}team_billing\` CHECK (\`billingMode\` IN ('owner_pays', 'member_pays'))
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 		`);
 
 		// 2. 创建团队成员表 (team_member)
 		await queryRunner.query(`
-			CREATE TABLE \`${tablePrefix}team_member\` (
+			CREATE TABLE IF NOT EXISTS \`${tablePrefix}team_member\` (
 				\`id\` varchar(36) NOT NULL,
 				\`teamId\` varchar(36) NOT NULL,
 				\`userId\` varchar(36) NOT NULL,
@@ -43,7 +39,7 @@ export class AddMultiTenantTables1761701813576 implements MigrationInterface {
 				INDEX \`IDX_${tablePrefix}team_member_team\` (\`teamId\`),
 				INDEX \`IDX_${tablePrefix}team_member_user\` (\`userId\`),
 				CONSTRAINT \`CHK_${tablePrefix}team_member_role\` CHECK (\`role\` IN ('team:owner', 'team:admin', 'team:member', 'team:viewer'))
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 		`);
 
 		// 3. 扩展用户表，添加多租户字段
@@ -63,12 +59,18 @@ export class AddMultiTenantTables1761701813576 implements MigrationInterface {
 		`);
 
 		// 5. 添加索引
-		await queryRunner.query(`
-			CREATE INDEX \`IDX_${tablePrefix}user_tier\` ON \`${tablePrefix}user\` (\`tier\`);
-			CREATE INDEX \`IDX_${tablePrefix}user_tenant_status\` ON \`${tablePrefix}user\` (\`tenantStatus\`);
-			CREATE INDEX \`IDX_${tablePrefix}project_team\` ON \`${tablePrefix}project\` (\`teamId\`);
-			CREATE INDEX \`IDX_${tablePrefix}project_owner_default\` ON \`${tablePrefix}project_relation\` (\`userId\`, \`isDefault\`);
-		`);
+		await queryRunner.query(
+			`CREATE INDEX \`IDX_${tablePrefix}user_tier\` ON \`${tablePrefix}user\` (\`tier\`)`,
+		);
+		await queryRunner.query(
+			`CREATE INDEX \`IDX_${tablePrefix}user_tenant_status\` ON \`${tablePrefix}user\` (\`tenantStatus\`)`,
+		);
+		await queryRunner.query(
+			`CREATE INDEX \`IDX_${tablePrefix}project_team\` ON \`${tablePrefix}project\` (\`teamId\`)`,
+		);
+		await queryRunner.query(
+			`CREATE INDEX \`IDX_${tablePrefix}project_is_default\` ON \`${tablePrefix}project\` (\`isDefault\`)`,
+		);
 
 		// 6. 添加约束
 		await queryRunner.query(`
@@ -103,9 +105,7 @@ export class AddMultiTenantTables1761701813576 implements MigrationInterface {
 		`);
 	}
 
-	public async down(queryRunner: QueryRunner): Promise<void> {
-		const tablePrefix = this.getTablePrefix();
-
+	async down({ queryRunner, tablePrefix }: MigrationContext): Promise<void> {
 		// 删除外键约束
 		await queryRunner.query(`
 			ALTER TABLE \`${tablePrefix}team_member\` DROP FOREIGN KEY \`FK_${tablePrefix}team_member_team\`;
@@ -122,17 +122,29 @@ export class AddMultiTenantTables1761701813576 implements MigrationInterface {
 		`);
 
 		// 删除索引
-		await queryRunner.query(`
-			DROP INDEX \`IDX_${tablePrefix}user_tier\` ON \`${tablePrefix}user\`;
-			DROP INDEX \`IDX_${tablePrefix}user_tenant_status\` ON \`${tablePrefix}user\`;
-			DROP INDEX \`IDX_${tablePrefix}project_team\` ON \`${tablePrefix}project\`;
-			DROP INDEX \`IDX_${tablePrefix}project_owner_default\` ON \`${tablePrefix}project_relation\`;
-			DROP INDEX \`IDX_${tablePrefix}team_member_unique\` ON \`${tablePrefix}team_member\`;
-			DROP INDEX \`IDX_${tablePrefix}team_member_team\` ON \`${tablePrefix}team_member\`;
-			DROP INDEX \`IDX_${tablePrefix}team_member_user\` ON \`${tablePrefix}team_member\`;
-			DROP INDEX \`IDX_${tablePrefix}team_slug\` ON \`${tablePrefix}team\`;
-			DROP INDEX \`IDX_${tablePrefix}team_owner\` ON \`${tablePrefix}team\`;
-		`);
+		await queryRunner.query(`DROP INDEX \`IDX_${tablePrefix}user_tier\` ON \`${tablePrefix}user\``);
+		await queryRunner.query(
+			`DROP INDEX \`IDX_${tablePrefix}user_tenant_status\` ON \`${tablePrefix}user\``,
+		);
+		await queryRunner.query(
+			`DROP INDEX \`IDX_${tablePrefix}project_team\` ON \`${tablePrefix}project\``,
+		);
+		await queryRunner.query(
+			`DROP INDEX \`IDX_${tablePrefix}project_is_default\` ON \`${tablePrefix}project\``,
+		);
+		await queryRunner.query(
+			`DROP INDEX \`IDX_${tablePrefix}team_member_unique\` ON \`${tablePrefix}team_member\``,
+		);
+		await queryRunner.query(
+			`DROP INDEX \`IDX_${tablePrefix}team_member_team\` ON \`${tablePrefix}team_member\``,
+		);
+		await queryRunner.query(
+			`DROP INDEX \`IDX_${tablePrefix}team_member_user\` ON \`${tablePrefix}team_member\``,
+		);
+		await queryRunner.query(`DROP INDEX \`IDX_${tablePrefix}team_slug\` ON \`${tablePrefix}team\``);
+		await queryRunner.query(
+			`DROP INDEX \`IDX_${tablePrefix}team_owner\` ON \`${tablePrefix}team\``,
+		);
 
 		// 删除扩展的字段
 		await queryRunner.query(`
@@ -147,13 +159,5 @@ export class AddMultiTenantTables1761701813576 implements MigrationInterface {
 		// 删除表
 		await queryRunner.query(`DROP TABLE \`${tablePrefix}team_member\``);
 		await queryRunner.query(`DROP TABLE \`${tablePrefix}team\``);
-	}
-
-	/**
-	 * 获取表前缀
-	 */
-	private getTablePrefix(): string {
-		// 在 n8n 中，表没有前缀，直接返回空字符串
-		return '';
 	}
 }

@@ -15,11 +15,11 @@ import { User } from './user';
 @Index(['ownerId'])
 export class Team extends WithTimestampsAndStringId {
 	/** 团队名称 */
-	@Column({ length: 255 })
+	@Column({ type: 'varchar', length: 255 })
 	name: string;
 
 	/** 团队标识符（用于 URL 或子域名） */
-	@Column({ length: 100, unique: true, nullable: true })
+	@Column({ type: 'varchar', length: 100, unique: true, nullable: true })
 	slug: string | null;
 
 	/** 团队描述 */
@@ -47,7 +47,7 @@ export class Team extends WithTimestampsAndStringId {
 	billingMode: 'owner_pays' | 'member_pays';
 
 	/** 最大成员数量 */
-	@Column({ default: 10 })
+	@Column({ type: 'int', default: 10 })
 	maxMembers: number;
 
 	/** 团队所有者 */
