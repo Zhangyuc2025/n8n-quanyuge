@@ -2,6 +2,8 @@
 
 > **核心理念：基于 n8n 现有 Project 架构扩展，添加 Team 计费层级**
 > **改造策略：最小改动，最大化兼容，快速实现 MVP**
+> **预计工期：10-11周**（含完整计费系统）
+> **最后更新：2025-10-29** - 补充完整计费系统设计
 
 ---
 
@@ -17,7 +19,8 @@
 - **基于现有架构**：n8n 的 Project 系统已经很成熟
 - **最小改动原则**：只添加必要的 Team 和计费功能
 - **完全兼容**：不破坏现有功能，易于升级
-- **快速实施**：预计 8-10 周完成 MVP
+- **完整计费系统**⭐：补充了用户余额、消费记录、充值管理等核心功能
+- **快速实施**：预计 10-11 周完成 MVP（包含完整计费）
 
 ---
 
@@ -91,7 +94,9 @@ CredentialsEntity (凭证实体)
 
 ## 🗂️ 数据库设计变更
 
-### 1. 新增表（3 张）
+### 1. 新增表（6 张）
+
+> **说明：** Phase 1-2 实现团队管理（表1-2），Phase 5 实现计费系统（表3-6）
 
 #### 1.1 团队表 (`team`)
 ```sql
@@ -133,7 +138,8 @@ CREATE INDEX idx_team_member_team ON team_member(team_id);
 CREATE INDEX idx_team_member_user ON team_member(user_id);
 ```
 
-#### 1.3 用户余额表 (`user_balance`)
+#### 1.3 用户余额表 (`user_balance`) - Phase 5
+
 ```sql
 CREATE TABLE user_balance (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -143,15 +149,124 @@ CREATE TABLE user_balance (
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
 
-  UNIQUE(user_id)
+  UNIQUE(user_id),
+  CONSTRAINT chk_user_balance_positive CHECK (balance >= 0)
 );
 
 CREATE INDEX idx_user_balance_user ON user_balance(user_id);
 ```
 
-### 2. 修改现有表（1 张）
+#### 1.4 消费记录表 (`usage_record`) - Phase 5
 
-#### 2.1 扩展 Project 表
+```sql
+CREATE TABLE usage_record (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+  -- 用户信息
+  user_id UUID NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
+  billing_user_id UUID NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,  -- 实际付费的用户
+
+  -- 资源信息
+  resource_type VARCHAR(50) NOT NULL,  -- 'workflow_execution' | 'ai_token' | 'storage'
+  resource_id UUID,                    -- execution_id, workflow_id 等
+
+  -- 计费信息
+  amount DECIMAL(10,4) NOT NULL,       -- 消费金额
+  currency VARCHAR(10) NOT NULL DEFAULT 'USD',
+  quantity DECIMAL(10,2),              -- 使用量（如 AI tokens 数量）
+  unit_price DECIMAL(10,4),            -- 单价
+
+  -- 元数据
+  metadata JSONB,                      -- 额外信息（如 AI 模型名称、token 详情等）
+  description TEXT,
+
+  -- 时间
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+
+  CONSTRAINT chk_usage_amount_positive CHECK (amount >= 0)
+);
+
+-- 索引
+CREATE INDEX idx_usage_record_user ON usage_record(user_id, created_at DESC);
+CREATE INDEX idx_usage_record_billing_user ON usage_record(billing_user_id, created_at DESC);
+CREATE INDEX idx_usage_record_resource ON usage_record(resource_type, resource_id);
+CREATE INDEX idx_usage_record_created_at ON usage_record(created_at DESC);  -- 用于分区和清理
+```
+
+#### 1.5 充值记录表 (`recharge_record`) - Phase 5
+
+```sql
+CREATE TABLE recharge_record (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+  -- 用户信息
+  user_id UUID NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
+
+  -- 充值信息
+  amount DECIMAL(10,2) NOT NULL,
+  currency VARCHAR(10) NOT NULL DEFAULT 'USD',
+
+  -- 支付信息
+  payment_method VARCHAR(50),          -- 'alipay' | 'wechat' | 'stripe' | 'manual'
+  transaction_id VARCHAR(255),         -- 第三方支付流水号
+  status VARCHAR(50) NOT NULL DEFAULT 'pending',  -- 'pending' | 'completed' | 'failed' | 'refunded'
+
+  -- 元数据
+  metadata JSONB,
+  notes TEXT,
+
+  -- 时间
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  completed_at TIMESTAMP,
+
+  CONSTRAINT chk_recharge_amount_positive CHECK (amount > 0),
+  CONSTRAINT chk_recharge_status CHECK (status IN ('pending', 'completed', 'failed', 'refunded'))
+);
+
+-- 索引
+CREATE INDEX idx_recharge_record_user ON recharge_record(user_id, created_at DESC);
+CREATE INDEX idx_recharge_record_status ON recharge_record(status);
+CREATE INDEX idx_recharge_record_transaction ON recharge_record(transaction_id);
+```
+
+#### 1.6 团队邀请表 (`team_invitation`) - 可选，后续迭代
+
+```sql
+CREATE TABLE team_invitation (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+  -- 团队和邀请人
+  team_id UUID NOT NULL REFERENCES team(id) ON DELETE CASCADE,
+  inviter_id UUID NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
+
+  -- 被邀请人
+  invitee_email VARCHAR(255) NOT NULL,
+  invitee_id UUID REFERENCES "user"(id) ON DELETE SET NULL,  -- 接受邀请后填充
+
+  -- 邀请信息
+  role VARCHAR(50) NOT NULL DEFAULT 'team:member',
+  token VARCHAR(255) NOT NULL UNIQUE,  -- 邀请令牌
+  status VARCHAR(50) NOT NULL DEFAULT 'pending',  -- 'pending' | 'accepted' | 'rejected' | 'expired'
+
+  -- 时间
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  expires_at TIMESTAMP NOT NULL,
+  accepted_at TIMESTAMP,
+
+  CONSTRAINT chk_invitation_role CHECK (role IN ('team:admin', 'team:member', 'team:viewer')),
+  CONSTRAINT chk_invitation_status CHECK (status IN ('pending', 'accepted', 'rejected', 'expired'))
+);
+
+-- 索引
+CREATE INDEX idx_team_invitation_team ON team_invitation(team_id);
+CREATE INDEX idx_team_invitation_email ON team_invitation(invitee_email);
+CREATE INDEX idx_team_invitation_token ON team_invitation(token);
+CREATE INDEX idx_team_invitation_expires ON team_invitation(expires_at) WHERE status = 'pending';
+```
+
+### 2. 修改现有表（3 张）
+
+#### 2.1 扩展 Project 表 - Phase 1
 ```sql
 -- 添加团队关联字段
 ALTER TABLE "project"
@@ -170,7 +285,7 @@ CREATE INDEX idx_project_team ON project(team_id) WHERE team_id IS NOT NULL;
 CREATE INDEX idx_project_owner_default ON project(project_relations_project_id, is_default);
 ```
 
-### 3. 扩展 User 表
+#### 2.2 扩展 User 表 - Phase 1
 ```sql
 -- 添加租户相关字段
 ALTER TABLE "user"
@@ -187,6 +302,21 @@ ALTER TABLE "user"
 -- 添加索引
 CREATE INDEX idx_user_tier ON "user"(tier);
 CREATE INDEX idx_user_tenant_status ON "user"(tenant_status);
+```
+
+#### 2.3 扩展 Execution 表 - Phase 5
+```sql
+-- 添加计费用户追踪字段
+ALTER TABLE "execution_entity"
+  ADD COLUMN billing_user_id UUID REFERENCES "user"(id) ON DELETE SET NULL;
+
+-- 添加索引（用于查询用户的消费记录）
+CREATE INDEX idx_execution_billing_user ON execution_entity(billing_user_id, finished_at DESC);
+
+-- billing_user_id 说明：
+-- 1. owner_pays 模式：billing_user_id = team.owner_id
+-- 2. member_pays 模式：billing_user_id = execution.user_id
+-- 3. 个人项目：billing_user_id = execution.user_id
 ```
 
 ---
@@ -246,11 +376,97 @@ MainSidebar
 - [ ] BalancePage 余额页面
 - [ ] 适配所有现有页面使用 Project
 
-### Phase 5: 计费集成（Week 9-10）
-- [ ] 工作流执行计费
-- [ ] AI Token 计量
-- [ ] 实时扣费逻辑
-- [ ] 消费明细追踪
+### Phase 5: 计费系统（Week 9-11）⭐ 扩展
+
+> **重要：** 计费系统是多租户的核心价值，必须完整实现！
+
+#### 5.1 数据库层（Week 9）
+- [ ] 创建 `usage_record` 表（消费记录）
+- [ ] 创建 `recharge_record` 表（充值记录）
+- [ ] 扩展 `execution_entity` 表（添加 `billing_user_id`）
+- [ ] 编写 Migration 脚本
+
+#### 5.2 服务层（Week 9-10）
+- [ ] **UserBalanceService**（用户余额管理）
+  - `getBalance(userId)` - 获取用户余额
+  - `addBalance(userId, amount)` - 增加余额（充值）
+  - `deductBalance(userId, amount)` - 扣减余额（消费）
+  - `hasSufficientBalance(userId, amount)` - 检查余额是否充足
+  - 使用事务确保余额操作的原子性
+
+- [ ] **UsageRecordService**（消费记录管理）
+  - `createRecord(data)` - 创建消费记录
+  - `getUserRecords(userId, filters)` - 查询用户消费记录
+  - `getTeamRecords(teamId, filters)` - 查询团队消费记录
+  - 支持分页和时间范围筛选
+
+- [ ] **RechargeService**（充值管理）
+  - `createRecharge(userId, amount, paymentMethod)` - 创建充值记录
+  - `completeRecharge(rechargeId)` - 完成充值（更新余额）
+  - `failRecharge(rechargeId, reason)` - 充值失败处理
+  - 支持支付宝、微信、Stripe等支付渠道
+
+- [ ] **BillingService**（计费逻辑核心）
+  - `calculateExecutionCost(execution)` - 计算工作流执行费用
+  - `calculateAiTokenCost(tokens, model)` - 计算AI Token费用
+  - `getBillingUser(execution)` - 确定付费用户（owner_pays/member_pays）
+  - `chargeExecution(execution)` - 执行计费（扣费+记录）
+  - 集成余额检查和扣费逻辑
+
+#### 5.3 业务集成（Week 10）
+- [ ] **工作流执行计费**
+  - 在 `WorkflowRunner` 执行前检查余额
+  - 执行完成后自动扣费
+  - 余额不足时中断执行并提示用户
+
+- [ ] **AI Token计量**
+  - 集成 AI 节点的 token 统计
+  - 按模型计算费用（GPT-4、Claude等不同单价）
+  - 实时扣费和记录
+
+- [ ] **计费用户确定逻辑**
+  - 获取 execution.projectId → project.teamId
+  - 如果是团队项目，读取 team.billing_mode
+  - owner_pays：从 team.ownerId 扣费
+  - member_pays：从 execution.userId 扣费
+  - 个人项目：从 execution.userId 扣费
+
+#### 5.4 API层（Week 10）
+- [ ] **BalanceController**
+  - `GET /balance` - 获取当前用户余额
+  - `POST /balance/recharge` - 创建充值订单
+  - `GET /balance/records` - 查询充值记录
+
+- [ ] **UsageController**
+  - `GET /usage/records` - 查询消费记录
+  - `GET /usage/stats` - 消费统计（按天/周/月）
+  - `GET /usage/team/:teamId/records` - 查询团队消费
+
+#### 5.5 前端实现（Week 11）
+- [ ] **BalanceDisplay 组件**（顶部导航栏余额显示）
+  - 实时显示用户余额
+  - 余额不足时高亮提示
+  - 点击跳转充值页面
+
+- [ ] **RechargeDialog 组件**（充值对话框）
+  - 选择充值金额（预设+自定义）
+  - 选择支付方式（支付宝/微信/Stripe）
+  - 支付二维码展示
+
+- [ ] **UsageRecordsPage 页面**（消费记录查询）
+  - 消费记录列表（时间、类型、金额）
+  - 筛选和分页
+  - 导出功能（CSV）
+
+- [ ] **余额不足提示**
+  - 工作流执行前检查余额
+  - 余额不足时弹窗提示充值
+  - 引导用户到充值页面
+
+#### 5.6 测试验证（Week 11）
+- [ ] 单元测试（服务层）
+- [ ] 集成测试（计费流程）
+- [ ] 端到端测试（用户充值→执行工作流→扣费）
 
 ---
 
@@ -274,20 +490,59 @@ MainSidebar
 
 ---
 
-## 🎯 MVP 功能范围
+## 🎯 MVP 功能范围（调整后）
 
-### ✅ 包含功能
-1. **用户注册**：自动创建个人项目和用户余额
-2. **团队创建**：支持创建团队，设置计费模式
-3. **成员管理**：邀请成员，分配角色
-4. **项目切换**：在个人项目和团队项目间切换
-5. **基础计费**：简单的余额管理和扣费
+### ✅ 包含功能（核心价值）
+1. **用户管理**
+   - 用户注册自动创建个人项目
+   - 用户注册自动创建余额账户（初始余额可配置）
+   - 用户tier管理（free/pro/enterprise）
 
-### ❌ 暂不包含
-1. **复杂计费**：按资源类型差异化定价
-2. **企业功能**：SSO、LDAP、企业权限
-3. **高级统计**：详细的使用报表
-4. **API 限流**：基于用户的 API 调用限制
+2. **团队管理**
+   - 创建团队，设置计费模式（owner_pays/member_pays）
+   - 成员管理（添加、移除、角色变更）
+   - 团队项目创建和管理
+
+3. **项目切换**
+   - ProjectSwitcher 组件（个人/团队项目切换）
+   - 项目列表展示
+   - 默认项目设置
+
+4. **完整计费系统**⭐ **新增**
+   - 用户余额管理（查询、充值、扣费）
+   - 工作流执行计费（按执行次数或时长）
+   - AI Token计量和扣费（按模型差异化定价）
+   - 消费记录查询和统计
+   - 充值记录管理
+   - 余额不足提示和中断机制
+   - 前端余额显示和充值入口
+
+5. **计费模式支持**
+   - 个人项目：用户自己付费
+   - 团队项目（owner_pays）：创建者统一付费
+   - 团队项目（member_pays）：使用者各自付费
+
+### ❌ 暂不包含（后续迭代）
+1. **团队邀请系统**
+   - 邀请链接生成和管理
+   - 邀请过期机制
+   - 邮件通知
+   - ⚠️ Phase 1-5 暂时通过直接添加成员实现
+
+2. **高级计费功能**
+   - 按资源类型差异化定价配置
+   - 定价策略表（pricing_config）
+   - 套餐和订阅管理
+
+3. **企业功能**
+   - SSO、LDAP集成
+   - 企业权限管理
+   - 审计日志
+
+4. **高级统计**
+   - 详细的使用报表
+   - API调用限流
+   - 资源使用趋势分析
 
 ---
 
@@ -350,3 +605,54 @@ pnpm migration:run
 **负责人：** 老王
 **预计工期：** 8-10 周
 **风险评估：** 低（基于现有架构，改动最小）
+
+---
+
+## 📝 更新日志
+
+### v2.1 - 2025-10-29：补充完整计费系统
+
+**背景：** 对比旧版方案后发现新版v2.0缺少完整的计费系统，这是多租户SaaS的核心价值！
+
+**新增内容：**
+
+1. **数据库设计扩展**
+   - 新增 `usage_record` 表（消费记录）
+   - 新增 `recharge_record` 表（充值记录）
+   - 新增 `team_invitation` 表（团队邀请，可选）
+   - 扩展 `execution_entity` 表（添加 `billing_user_id` 字段）
+
+2. **Phase 5 大幅扩展**（从简单的4个任务扩展为6个子阶段）
+   - 5.1 数据库层：创建计费相关表
+   - 5.2 服务层：UserBalanceService, UsageRecordService, RechargeService, BillingService
+   - 5.3 业务集成：工作流执行计费、AI Token计量、计费用户确定逻辑
+   - 5.4 API层：BalanceController, UsageController
+   - 5.5 前端实现：BalanceDisplay, RechargeDialog, UsageRecordsPage, 余额不足提示
+   - 5.6 测试验证：单元测试、集成测试、端到端测试
+
+3. **MVP功能范围调整**
+   - ✅ 新增：完整计费系统（余额管理、充值、消费记录、余额检查）
+   - ✅ 新增：前端余额显示和充值入口
+   - ❌ 暂缓：团队邀请系统（可后续迭代）
+   - ❌ 暂缓：定价配置表（初期硬编码）
+
+4. **工期调整**
+   - 从 8-10周 调整为 **10-11周**（增加1周用于完整计费系统）
+
+**核心价值：**
+- ✅ 保持了v2.0基于Project扩展的架构优势
+- ✅ 补齐了SaaS多租户的核心计费功能
+- ✅ 确保方案与实际代码开发保持一致
+- ✅ MVP交付时具备完整的商业价值
+
+**对比旧版方案：**
+- ✅ 架构更简洁（无需废弃Project）
+- ✅ 兼容性更好（不破坏现有功能）
+- ✅ 计费功能完整（与旧版相当）
+- ✅ 总工期更短（10-11周 vs 14-16周）
+
+---
+
+**维护者：** 老王
+**文档版本：** v2.1
+

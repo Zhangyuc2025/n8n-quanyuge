@@ -1,12 +1,11 @@
 import type { LicenseState } from '@n8n/backend-common';
 import type { WorkflowRepository } from '@n8n/db';
-import type { TEntitlement } from '@n8n_io/license-sdk';
 import axios, { AxiosError } from 'axios';
 import { mock } from 'jest-mock-extended';
 
 import { BadRequestError } from '@/errors/response-errors/bad-request.error';
 import type { EventService } from '@/events/event.service';
-import type { License } from '@/license';
+import type { License, TEntitlement } from '@/license';
 import { LicenseErrors, LicenseService } from '@/license/license.service';
 
 jest.mock('axios');

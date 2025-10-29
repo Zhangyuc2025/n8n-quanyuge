@@ -1,10 +1,10 @@
 import type { LicenseProvider } from '@n8n/backend-common';
+import { LicenseState } from '@n8n/backend-common';
 import { Logger } from '@n8n/backend-common';
 import { GlobalConfig } from '@n8n/config';
 import {
 	LICENSE_FEATURES,
 	LICENSE_QUOTAS,
-	Time,
 	UNLIMITED_LICENSE_QUOTA,
 	type BooleanLicenseFeature,
 	type NumericLicenseFeature,
@@ -12,16 +12,39 @@ import {
 import { SettingsRepository } from '@n8n/db';
 import { OnLeaderStepdown, OnLeaderTakeover, OnPubSubEvent, OnShutdown } from '@n8n/decorators';
 import { Container, Service } from '@n8n/di';
-import type { TEntitlement, TLicenseBlock } from '@n8n_io/license-sdk';
-import { LicenseManager } from '@n8n_io/license-sdk';
 import { InstanceSettings } from 'n8n-core';
 
+import { SelfHostedLicenseProvider } from '@/license/self-hosted-license-provider';
 import { LicenseMetricsService } from '@/metrics/license-metrics.service';
 
-import { N8N_VERSION, SETTINGS_LICENSE_CERT_KEY } from './constants';
+import { SETTINGS_LICENSE_CERT_KEY } from './constants';
 
-const LICENSE_RENEWAL_DISABLED_WARNING =
-	'Automatic license renewal is disabled. The license will not renew automatically, and access to licensed features may be lost!';
+// 🔓 本地类型定义 - 替代 license-sdk 的类型
+export type TLicenseBlock = string;
+export interface TEntitlement {
+	id?: string;
+	productId?: string;
+	validFrom: Date;
+	productMetadata?: { terms?: { isMainPlan?: boolean } };
+}
+
+// 🔓 LicenseManager 类型定义（兼容性）
+// 自托管模式下不使用，但保留类型定义以兼容现有代码
+interface LicenseManager {
+	hasFeatureEnabled(feature: string): boolean;
+	getFeatureValue(feature: string): unknown;
+	getCurrentEntitlements(): TEntitlement[];
+	getManagementJwt(): string;
+	getConsumerId(): string;
+	initialize(): Promise<void>;
+	activate(activationKey: string): Promise<void>;
+	reload(): Promise<void>;
+	renew(): Promise<void>;
+	clear(): Promise<void>;
+	shutdown(): Promise<void>;
+	enableAutoRenewals(): void;
+	disableAutoRenewals(): void;
+}
 
 export type FeatureReturnType = Partial<
 	{
@@ -39,7 +62,7 @@ export class License implements LicenseProvider {
 		private readonly logger: Logger,
 		private readonly instanceSettings: InstanceSettings,
 		private readonly settingsRepository: SettingsRepository,
-		private readonly licenseMetricsService: LicenseMetricsService,
+		private readonly _licenseMetricsService: LicenseMetricsService,
 		private readonly globalConfig: GlobalConfig,
 	) {
 		this.logger = this.logger.scoped('license');
@@ -47,8 +70,20 @@ export class License implements LicenseProvider {
 
 	async init({
 		forceRecreate = false,
-		isCli = false,
+		isCli: _isCli = false,
 	}: { forceRecreate?: boolean; isCli?: boolean } = {}) {
+		// 🔓 自托管企业版模式 - 直接使用 SelfHostedLicenseProvider
+		// 老王说：直接写死！满血版本无需环境变量！
+		if (true) {
+			// process.env.N8N_SELF_HOSTED_ENTERPRISE === 'true'
+			this.logger.info('🔓 Running in self-hosted enterprise mode - all features enabled');
+			const selfHostedProvider = Container.get(SelfHostedLicenseProvider);
+			const licenseState = Container.get(LicenseState);
+			licenseState.setLicenseProvider(selfHostedProvider);
+			this.logger.debug('Self-hosted license provider activated');
+			return;
+		}
+
 		if (this.manager && !forceRecreate) {
 			this.logger.warn('License manager already initialized or shutting down');
 			return;
@@ -58,6 +93,13 @@ export class License implements LicenseProvider {
 			return;
 		}
 
+		// 🔓 以下代码已被禁用 - 自托管企业版模式不需要 LicenseManager
+		// 如果需要使用官方 license，需要重新安装 @n8n_io/license-sdk 并取消注释以下代码
+		this.logger.warn(
+			'🔓 Official license manager is disabled. Set N8N_SELF_HOSTED_ENTERPRISE=true to enable self-hosted mode.',
+		);
+
+		/*
 		const { instanceType } = this.instanceSettings;
 		const isMainInstance = instanceType === 'main';
 		const server = this.globalConfig.license.serverUrl;
@@ -90,7 +132,9 @@ export class License implements LicenseProvider {
 		if (eligibleToRenew && !autoRenewalEnabled) {
 			this.logger.warn(LICENSE_RENEWAL_DISABLED_WARNING);
 		}
+		*/
 
+		/*
 		try {
 			this.manager = new LicenseManager({
 				server,
@@ -121,6 +165,7 @@ export class License implements LicenseProvider {
 				this.logger.error('Could not initialize license manager sdk', { error });
 			}
 		}
+		*/
 	}
 
 	async loadCertStr(): Promise<TLicenseBlock> {
@@ -138,11 +183,11 @@ export class License implements LicenseProvider {
 		return databaseSettings?.value ?? '';
 	}
 
-	private async onFeatureChange() {
+	private async _onFeatureChange() {
 		void this.broadcastReloadLicenseCommand();
 	}
 
-	private async onLicenseRenewed() {
+	private async _onLicenseRenewed() {
 		void this.broadcastReloadLicenseCommand();
 	}
 
@@ -438,7 +483,7 @@ export class License implements LicenseProvider {
 		this.manager?.disableAutoRenewals();
 	}
 
-	private onExpirySoon() {
+	private _onExpirySoon() {
 		this.logger.info('License is about to expire soon, reloading license...');
 
 		// reload in background to avoid blocking SDK
