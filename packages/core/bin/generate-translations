@@ -12,7 +12,8 @@ const PURPLE_ANSI_COLOR_CODE = 35;
 
 function getNodeTranslationPaths() {
 	const nodeDistPaths = require(`${packageDir}/package.json`).n8n.nodes;
-	const { N8N_DEFAULT_LOCALE: locale } = process.env;
+	// 🌏 中文支持：函数内也需要默认值，避免 undefined 传给 path.join
+	const { N8N_DEFAULT_LOCALE: locale = 'zh-CN' } = process.env;
 
 	return nodeDistPaths.reduce((acc, cur) => {
 		const nodeTranslationPath = path.join(
@@ -80,11 +81,12 @@ const colorize = (ansiColorCode, string) =>
 /**
  * Write node translation headers to single file at `/dist/nodes/headers.js`.
  */
-const { N8N_DEFAULT_LOCALE: locale } = process.env;
+// 🌏 中文支持：构建时默认使用简体中文
+const { N8N_DEFAULT_LOCALE: locale = 'zh-CN' } = process.env;
 
-log(`Default locale set to: ${colorize(PURPLE_ANSI_COLOR_CODE, locale || 'en')}`);
+log(`Default locale set to: ${colorize(PURPLE_ANSI_COLOR_CODE, locale)}`);
 
-if (!locale || locale === 'en') {
+if (locale === 'en') {
 	log('No translation required - Skipping translations build...');
 	return;
 }

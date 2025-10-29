@@ -173,7 +173,7 @@ export const projectsRoutes: RouteRecordRaw[] = [
 	},
 	{
 		path: '/home',
-		name: VIEWS.HOMEPAGE,
+		name: VIEWS.WORKFLOWS_HOME,
 		meta: {
 			middleware: ['authenticated'],
 		},

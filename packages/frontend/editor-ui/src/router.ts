@@ -25,6 +25,7 @@ import { useEnvFeatureFlag } from './features/shared/envFeatureFlag/useEnvFeatur
 
 const ChangePasswordView = async () =>
 	await import('@/features/core/auth/views/ChangePasswordView.vue');
+const HomePage = async () => await import('./views/HomePage.vue');
 const ErrorView = async () => await import('./views/ErrorView.vue');
 const EntityNotFound = async () => await import('./views/EntityNotFound.vue');
 const EntityUnAuthorised = async () => await import('./views/EntityUnAuthorised.vue');
@@ -107,9 +108,16 @@ function getTemplatesRedirect(defaultRedirect: VIEWS[keyof VIEWS]): { name: stri
 export const routes: RouteRecordRaw[] = [
 	{
 		path: '/',
-		redirect: '/home/workflows',
+		name: VIEWS.HOMEPAGE,
+		components: {
+			default: HomePage,
+			sidebar: MainSidebar,
+		},
 		meta: {
-			middleware: ['authenticated'],
+			// [多租户改造] 平台首页公开访问，不需要认证
+			telemetry: {
+				pageCategory: 'home',
+			},
 		},
 	},
 	{
@@ -904,24 +912,22 @@ router.beforeEach(async (to: RouteLocationNormalized, from, next) => {
 		/**
 		 * Initialize application core
 		 * This step executes before first route is loaded and is required for permission checks
+		 *
+		 * [多租户改造] 公开首页不需要初始化认证相关功能
 		 */
 
-		await initializeCore();
-		// Pass undefined for first param to use default
-		await initializeAuthenticatedFeatures(undefined, to.name as string);
+		const isHomePage = to.name === VIEWS.HOMEPAGE || to.path === '/';
+		if (!isHomePage) {
+			await initializeCore();
+			// Pass undefined for first param to use default
+			await initializeAuthenticatedFeatures(undefined, to.name as string);
+		}
 
 		/**
-		 * Redirect to setup page. User should be redirected to this only once
+		 * [多租户改造] 移除单Owner初始化的强制跳转逻辑
+		 * 原逻辑：检查 settingsStore.showSetupPage，强制跳转到 /setup
+		 * 新逻辑：允许用户通过 /register 自主注册，不再需要 Owner 初始化流程
 		 */
-
-		const settingsStore = useSettingsStore();
-		if (settingsStore.showSetupPage) {
-			if (to.name === VIEWS.SETUP) {
-				return next();
-			}
-
-			return next({ name: VIEWS.SETUP });
-		}
 
 		/**
 		 * Verify user permissions for current route
@@ -987,8 +993,11 @@ router.afterEach((to, from) => {
 		}
 		telemetry.page(to);
 
-		const { trackResourceOpened } = useRecentResources();
-		trackResourceOpened(to);
+		// [多租户改造] 首页不需要 trackResourceOpened（需要认证功能）
+		if (to.name !== VIEWS.HOMEPAGE) {
+			const { trackResourceOpened } = useRecentResources();
+			trackResourceOpened(to);
+		}
 	} catch (failure) {
 		if (isNavigationFailure(failure)) {
 			console.log(failure);

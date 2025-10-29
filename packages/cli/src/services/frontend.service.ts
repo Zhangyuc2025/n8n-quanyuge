@@ -166,7 +166,8 @@ export class FrontendService {
 			defaultLocale: this.globalConfig.defaultLocale,
 			userManagement: {
 				quota: this.license.getUsersLimit(),
-				showSetupOnFirstLoad: !config.getEnv('userManagement.isInstanceOwnerSetUp'),
+				// [多租户改造] 禁用单Owner初始化流程，使用 /register 端点自主注册
+				showSetupOnFirstLoad: false,
 				smtpSetup: this.mailer.isEmailSetUp,
 				authenticationMethod: getCurrentAuthenticationMethod(),
 			},
@@ -327,7 +328,8 @@ export class FrontendService {
 		Object.assign(this.settings.userManagement, {
 			quota: this.license.getUsersLimit(),
 			authenticationMethod: getCurrentAuthenticationMethod(),
-			showSetupOnFirstLoad: !config.getEnv('userManagement.isInstanceOwnerSetUp'),
+			// [多租户改造] 禁用单Owner初始化流程，使用 /register 端点自主注册
+			showSetupOnFirstLoad: false,
 		});
 
 		let dismissedBanners: string[] = [];

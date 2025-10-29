@@ -71,6 +71,14 @@ const sourceControlStore = useSourceControlStore();
 const personalizedTemplatesV2Store = usePersonalizedTemplatesV2Store();
 const personalizedTemplatesV3Store = usePersonalizedTemplatesV3Store();
 
+// [多租户改造] 检查是否已登录
+const isAuthenticated = computed(() => usersStore.currentUserId !== null);
+
+// [多租户改造] 未登录状态下不访问settings，避免报错
+const releaseChannel = computed(() =>
+	isAuthenticated.value ? settingsStore.settings.releaseChannel : undefined,
+);
+
 const { callDebounced } = useDebounce();
 const externalHooks = useExternalHooks();
 const i18n = useI18n();
@@ -100,11 +108,20 @@ const showWhatsNewNotification = computed(
 
 const mainMenuItems = computed<IMenuItem[]>(() => [
 	{
+		id: 'home',
+		icon: 'home',
+		label: i18n.baseText('mainSidebar.home'),
+		position: 'top',
+		route: { to: { name: VIEWS.HOMEPAGE } },
+		available: true,
+	},
+	{
 		id: 'cloud-admin',
 		position: 'bottom',
 		label: 'Admin Panel',
 		icon: 'cloud',
-		available: settingsStore.isCloudDeployment && hasPermission(['instanceOwner']),
+		available:
+			isAuthenticated.value && settingsStore.isCloudDeployment && hasPermission(['instanceOwner']),
 	},
 	{
 		id: 'chat',
@@ -113,6 +130,7 @@ const mainMenuItems = computed<IMenuItem[]>(() => [
 		position: 'bottom',
 		route: { to: { name: CHAT_VIEW } },
 		available:
+			isAuthenticated.value &&
 			settingsStore.isChatFeatureEnabled &&
 			hasPermission(['rbac'], { rbac: { scope: 'chatHub:message' } }),
 	},
@@ -123,6 +141,7 @@ const mainMenuItems = computed<IMenuItem[]>(() => [
 		label: i18n.baseText('mainSidebar.templates'),
 		position: 'bottom',
 		available:
+			isAuthenticated.value &&
 			settingsStore.isTemplatesEnabled &&
 			calloutHelpers.isPreBuiltAgentsCalloutVisible.value &&
 			!(
@@ -138,6 +157,7 @@ const mainMenuItems = computed<IMenuItem[]>(() => [
 		label: i18n.baseText('mainSidebar.templates'),
 		position: 'bottom',
 		available:
+			isAuthenticated.value &&
 			settingsStore.isTemplatesEnabled &&
 			(personalizedTemplatesV2Store.isFeatureEnabled() ||
 				personalizedTemplatesV3Store.isFeatureEnabled()),
@@ -149,6 +169,7 @@ const mainMenuItems = computed<IMenuItem[]>(() => [
 		label: i18n.baseText('mainSidebar.templates'),
 		position: 'bottom',
 		available:
+			isAuthenticated.value &&
 			settingsStore.isTemplatesEnabled &&
 			!calloutHelpers.isPreBuiltAgentsCalloutVisible.value &&
 			templatesStore.hasCustomTemplatesHost &&
@@ -165,6 +186,7 @@ const mainMenuItems = computed<IMenuItem[]>(() => [
 		label: i18n.baseText('mainSidebar.templates'),
 		position: 'bottom',
 		available:
+			isAuthenticated.value &&
 			settingsStore.isTemplatesEnabled &&
 			!calloutHelpers.isPreBuiltAgentsCalloutVisible.value &&
 			!templatesStore.hasCustomTemplatesHost &&
@@ -184,6 +206,7 @@ const mainMenuItems = computed<IMenuItem[]>(() => [
 		position: 'bottom',
 		route: { to: { name: VIEWS.INSIGHTS } },
 		available:
+			isAuthenticated.value &&
 			settingsStore.isModuleActive('insights') &&
 			hasPermission(['rbac'], { rbac: { scope: 'insights:list' } }),
 	},
@@ -229,15 +252,20 @@ const mainMenuItems = computed<IMenuItem[]>(() => [
 					target: '_blank',
 				},
 			},
-			{
-				id: 'report-bug',
-				icon: 'bug',
-				label: i18n.baseText('mainSidebar.helpMenuItems.reportBug'),
-				link: {
-					href: getReportingURL(),
-					target: '_blank',
-				},
-			},
+			// [多租户改造] Report Bug 需要访问 settings，未登录时不显示
+			...(isAuthenticated.value
+				? [
+						{
+							id: 'report-bug',
+							icon: 'bug',
+							label: i18n.baseText('mainSidebar.helpMenuItems.reportBug'),
+							link: {
+								href: getReportingURL(),
+								target: '_blank',
+							},
+						},
+					]
+				: []),
 			{
 				id: 'about',
 				icon: 'info',
@@ -449,11 +477,7 @@ onClickOutside(createBtn as Ref<VueInstance>, () => {
 			<N8nIcon v-else icon="chevron-left" size="xsmall" class="mr-5xs" />
 		</div>
 		<div :class="$style.logo">
-			<N8nLogo
-				size="small"
-				:collapsed="isCollapsed"
-				:release-channel="settingsStore.settings.releaseChannel"
-			>
+			<N8nLogo size="small" :collapsed="isCollapsed" :release-channel="releaseChannel">
 				<N8nTooltip
 					v-if="sourceControlStore.preferences.branchReadOnly && !isCollapsed"
 					placement="bottom"
@@ -479,6 +503,7 @@ onClickOutside(createBtn as Ref<VueInstance>, () => {
 				</N8nTooltip>
 			</N8nLogo>
 			<N8nNavigationDropdown
+				v-if="isAuthenticated"
 				ref="createBtn"
 				data-test-id="universal-add"
 				:menu="menu"
@@ -538,9 +563,30 @@ onClickOutside(createBtn as Ref<VueInstance>, () => {
 		<N8nScrollArea as-child>
 			<div :class="$style.scrollArea">
 				<ProjectNavigation
+					v-if="isAuthenticated"
 					:collapsed="isCollapsed"
 					:plan-name="cloudPlanStore.currentPlanData?.displayName"
 				/>
+
+				<!-- [多租户改造] 未登录状态显示登录/注册按钮 -->
+				<div v-if="!isAuthenticated && !isCollapsed" :class="$style.authActions">
+					<N8nButton
+						type="primary"
+						size="medium"
+						block
+						@click="() => $router.push({ name: VIEWS.SIGNIN })"
+					>
+						{{ i18n.baseText('homePage.login') }}
+					</N8nButton>
+					<N8nButton
+						type="secondary"
+						size="medium"
+						block
+						@click="() => $router.push({ name: VIEWS.SIGNUP })"
+					>
+						{{ i18n.baseText('homePage.register') }}
+					</N8nButton>
+				</div>
 
 				<div :class="$style.bottomMenu">
 					<BecomeTemplateCreatorCta v-if="fullyExpanded && !userIsTrialing" />
@@ -658,6 +704,14 @@ onClickOutside(createBtn as Ref<VueInstance>, () => {
 	&:hover {
 		color: var(--color--primary--shade-1);
 	}
+}
+
+.authActions {
+	padding: var(--spacing--sm);
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing--xs);
+	margin-bottom: var(--spacing--sm);
 }
 
 .bottomMenu {

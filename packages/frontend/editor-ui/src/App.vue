@@ -153,7 +153,7 @@ useExposeCssVar('--ask-assistant-floating-button-bottom-offset', askAiFloatingBu
 			<div id="header" :class="$style.header">
 				<RouterView name="header" />
 			</div>
-			<div v-if="usersStore.currentUser" id="sidebar" :class="$style.sidebar">
+			<div id="sidebar" :class="$style.sidebar">
 				<RouterView name="sidebar" />
 			</div>
 			<div id="content" :class="$style.content">

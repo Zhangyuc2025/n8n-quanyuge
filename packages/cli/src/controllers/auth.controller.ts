@@ -206,25 +206,38 @@ export class AuthController {
 		res: Response,
 		@Body payload: RegisterRequestDto,
 	): Promise<PublicUser> {
-		const { email, password, username } = payload;
+		const { password, username } = payload;
+		const email = payload.email || null; // Email can be NULL
 
-		// 1. Check if email already exists
-		const existingUser = await this.userRepository.findOne({
-			where: { email },
+		// 1. Check if username already exists (username is stored in firstName field)
+		const existingUserByUsername = await this.userRepository.findOne({
+			where: { firstName: username },
 		});
 
-		if (existingUser) {
-			this.logger.debug('Registration failed - email already exists', { email });
-			throw new BadRequestError('A user with this email address already exists');
+		if (existingUserByUsername) {
+			this.logger.debug('Registration failed - username already exists', { username });
+			throw new BadRequestError('This username is already taken');
 		}
 
-		// 2. Hash the password
+		// 2. Check if email already exists (only if email is provided)
+		if (email) {
+			const existingUserByEmail = await this.userRepository.findOne({
+				where: { email },
+			});
+
+			if (existingUserByEmail) {
+				this.logger.debug('Registration failed - email already exists', { email });
+				throw new BadRequestError('A user with this email address already exists');
+			}
+		}
+
+		// 3. Hash the password
 		const hashedPassword = await this.passwordUtility.hash(password);
 
-		// 3. Register the tenant (create user + default workspace)
+		// 4. Register the tenant (create user + default workspace)
 		// Note: registerTenant() already emits 'user-signed-up' event
 		const { user } = await this.userService.registerTenant({
-			email,
+			email: email!, // Pass null if email is not provided
 			password: hashedPassword,
 			firstName: username,
 			lastName: '',

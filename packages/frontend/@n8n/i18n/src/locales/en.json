@@ -3808,5 +3808,8 @@
 	"commandBar.projects.create": "Create project",
 	"commandBar.projects.open": "Open project",
 	"commandBar.projects.searchPlaceholder": "Search by project name...",
-	"commandBar.projects.unnamed": "(unnamed project)"
+	"commandBar.projects.unnamed": "(unnamed project)",
+	"homePage.welcome": "Welcome to n8n",
+	"homePage.subtitle": "Automate your workflows with ease",
+	"mainSidebar.home": "Home"
 }

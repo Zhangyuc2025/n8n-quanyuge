@@ -3800,5 +3800,8 @@
 	"dataMapping.schemaView.previewLastExecution": "以下字段来自上次成功执行。{execute} 以刷新它们。",
 	"dataMapping.schemaView.previewLastExecution.executePreviousNodes": "执行节点",
 	"generic.projects": "项目",
-	"runData.pinData.insertedExecutionData": "💡 已插入上次成功执行的数据。您可以根据需要进行编辑。"
+	"runData.pinData.insertedExecutionData": "💡 已插入上次成功执行的数据。您可以根据需要进行编辑。",
+	"homePage.welcome": "欢迎使用 n8n",
+	"homePage.subtitle": "轻松实现工作流自动化",
+	"mainSidebar.home": "首页"
 }

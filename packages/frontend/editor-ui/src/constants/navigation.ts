@@ -1,5 +1,6 @@
 export const enum VIEWS {
 	HOMEPAGE = 'Homepage',
+	WORKFLOWS_HOME = 'WorkflowsHome',
 	COLLECTION = 'TemplatesCollectionView',
 	EXECUTIONS = 'Executions',
 	EXECUTION_PREVIEW = 'ExecutionPreview',
