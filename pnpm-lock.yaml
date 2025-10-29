@@ -194,8 +194,11 @@ overrides:
   '@mistralai/mistralai': ^1.10.0
   '@n8n/typeorm>@sentry/node': ^9.42.1
   '@types/node': ^20.17.50
+  '@types/express-serve-static-core': 5.0.6
+  '@types/psl': 1.1.0
   axios: 1.12.0
   chokidar: 4.0.3
+  ts-essentials: 10.0.2
   esbuild: ^0.25.0
   multer: ^2.0.2
   prebuild-install: 7.1.3
@@ -1833,7 +1836,7 @@ importers:
         specifier: 'catalog:'
         version: 4.17.17
       '@types/psl':
-        specifier: ^1.1.0
+        specifier: 1.1.0
         version: 1.1.0
       '@types/replacestream':
         specifier: ^4.0.1
@@ -1887,8 +1890,8 @@ importers:
         specifier: ^12.1.3
         version: 12.1.3
       ts-essentials:
-        specifier: ^7.0.3
-        version: 7.0.3(typescript@5.9.2)
+        specifier: 10.0.2
+        version: 10.0.2(typescript@5.9.2)
 
   packages/core:
     dependencies:
@@ -16853,11 +16856,6 @@ packages:
       typescript:
         optional: true
 
-  ts-essentials@7.0.3:
-    resolution: {integrity: sha512-8+gr5+lqO3G84KdiTSMRLtuyJ+nTBVRKuCrK4lidMPdVeEp0uqC875uE5NMcaA7YYMN7XsNiFQuMvasF8HT/xQ==}
-    peerDependencies:
-      typescript: 5.9.2
-
   ts-graphviz@2.1.6:
     resolution: {integrity: sha512-XyLVuhBVvdJTJr2FJJV2L1pc4MwSjMhcunRVgDE9k4wbb2ee7ORYnPewxMWUav12vxyfUM686MSGsqnVRIInuw==}
     engines: {node: '>=18'}
@@ -29925,13 +29923,13 @@ snapshots:
   jest-mock-extended@3.0.4(jest@29.6.2(@types/node@20.17.57)(ts-node@10.9.2(@types/node@20.17.57)(typescript@5.9.2)))(typescript@5.9.2):
     dependencies:
       jest: 29.6.2(@types/node@20.17.57)(ts-node@10.9.2(@types/node@20.17.57)(typescript@5.9.2))
-      ts-essentials: 7.0.3(typescript@5.9.2)
+      ts-essentials: 10.0.2(typescript@5.9.2)
       typescript: 5.9.2
 
   jest-mock-extended@3.0.4(jest@29.7.0(@types/node@20.19.21)(ts-node@10.9.2(@types/node@20.19.21)(typescript@5.9.2)))(typescript@5.9.2):
     dependencies:
       jest: 29.7.0(@types/node@20.19.21)(ts-node@10.9.2(@types/node@20.19.21)(typescript@5.9.2))
-      ts-essentials: 7.0.3(typescript@5.9.2)
+      ts-essentials: 10.0.2(typescript@5.9.2)
       typescript: 5.9.2
 
   jest-mock@29.6.2:
@@ -35037,10 +35035,6 @@ snapshots:
 
   ts-essentials@10.0.2(typescript@5.9.2):
     optionalDependencies:
-      typescript: 5.9.2
-
-  ts-essentials@7.0.3(typescript@5.9.2):
-    dependencies:
       typescript: 5.9.2
 
   ts-graphviz@2.1.6:

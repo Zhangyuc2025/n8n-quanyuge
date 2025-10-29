@@ -10,9 +10,12 @@ export class ChatHubSessionRepository extends Repository<ChatHubSession> {
 		super(ChatHubSession, dataSource.manager);
 	}
 
-	async createChatSession(session: Partial<ChatHubSession>, trx?: EntityManager) {
-		return await withTransaction(this.manager, trx, async (em) => {
-			await em.insert(ChatHubSession, session);
+	async createChatSession(
+		session: Partial<ChatHubSession>,
+		trx?: EntityManager,
+	): Promise<ChatHubSession> {
+		return await withTransaction<ChatHubSession>(this.manager, trx, async (em) => {
+			await em.insert(ChatHubSession, session as any);
 			return await em.findOneOrFail(ChatHubSession, {
 				where: { id: session.id },
 				relations: ['messages'],
@@ -33,6 +36,16 @@ export class ChatHubSessionRepository extends Repository<ChatHubSession> {
 	async updateChatTitle(id: string, title: string, trx?: EntityManager) {
 		return await withTransaction(this.manager, trx, async (em) => {
 			await em.update(ChatHubSession, { id }, { title });
+			return await em.findOneOrFail(ChatHubSession, {
+				where: { id },
+				relations: ['messages'],
+			});
+		});
+	}
+
+	async updateChatSession(id: string, updates: Partial<ChatHubSession>, trx?: EntityManager) {
+		return await withTransaction(this.manager, trx, async (em) => {
+			await em.update(ChatHubSession, { id }, updates);
 			return await em.findOneOrFail(ChatHubSession, {
 				where: { id },
 				relations: ['messages'],

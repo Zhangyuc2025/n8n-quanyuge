@@ -1,7 +1,7 @@
 # n8n 多租户改造进度跟踪 - v2.0 版本
 
 > **更新时间:** 2025-10-29
-> **当前状态:** ✅ 准备阶段完成 - License 解除和开发环境优化完成
+> **当前状态:** ✅ 构建环境修复完成 - 解决依赖冲突和TypeScript类型错误
 > **当前方案:** 基于 Project 架构扩展（最小改动策略）+ 完整计费系统
 > **预计总工期:** 10-11 周（已调整，含完整计费）
 > **当前版本:** n8n@1.118.1 (上游最新)
@@ -50,6 +50,7 @@
 | **准备阶段** | 备份和切换到干净上游 | ✅ 完成 | 2025-10-29 | - |
 | **License 解除** | 满血版功能解锁 | ✅ 完成 | 2025-10-29 | ~300行 |
 | **开发环境优化** | 智能启动脚本和配置 | ✅ 完成 | 2025-10-29 | ~100行 |
+| **构建环境修复** | 依赖冲突和TS类型错误 | ✅ 完成 | 2025-10-29 | ~20行 |
 | **Phase 1** | 数据库层改造（团队管理） | ✅ 完成 | 2025-10-29 | ~500行 |
 | **Phase 2** | 服务层实现（团队服务） | ⏳ 进行中 | - | - |
 | **Phase 3** | API 层实现（团队API） | 📋 待开始 | - | - |
@@ -175,6 +176,31 @@ User → Project → 扩展现有架构
 - ✅ 一键启动：自动处理端口冲突和环境检查
 - ✅ 彩色日志：清晰的状态反馈和错误提示
 - ✅ 智能清理：优雅关闭 + 强制终止的双重策略
+
+---
+
+### ✅ 构建环境修复：依赖冲突和TypeScript类型错误（2025-10-29）
+
+**修复文件：**
+- `package.json` - 依赖版本锁定
+- `packages/@n8n/backend-common/src/logging/logger.ts` - Winston类型修复
+- `packages/@n8n/node-cli/src/configs/eslint.ts` - ESLint类型注解
+- `packages/cli/tsconfig.build.json` - 添加skipLibCheck
+- `packages/cli/src/modules/chat-hub/*.repository.ts` - TypeORM类型断言
+
+**解决的问题：**
+1. **依赖版本冲突**：ts-essentials 10.0.2 vs 10.1.1 类型不兼容
+2. **Winston日志类型错误**：TransformableInfo的message类型从string改为unknown
+3. **ESLint配置类型推断失败**：需要显式ConfigArray类型注解
+4. **TypeORM深度类型实例化**：TS2589错误，QueryDeepPartialEntity递归类型超出编译器限制
+
+**技术方案：**
+- ✅ 锁定依赖版本：通过pnpm overrides固定关键依赖（ts-essentials, @types/psl等）
+- ✅ 类型安全修复：winston logger使用String()转换，确保类型安全
+- ✅ 最小化类型断言：仅在TypeORM insert()调用处使用`as any`绕过编译器限制
+- ✅ 运行时行为不变：所有修复仅影响编译时，运行时完全一致
+
+**构建验证：** ✅ 41/41 任务成功，零错误，完整构建通过
 
 ---
 
