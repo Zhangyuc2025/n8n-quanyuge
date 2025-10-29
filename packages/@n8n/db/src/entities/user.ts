@@ -79,6 +79,32 @@ export class User extends WithTimestamps implements IUser, AuthPrincipal {
 	@Column({ type: Boolean, default: false })
 	disabled: boolean;
 
+	// === 多租户字段 ===
+
+	/** 租户等级 */
+	@Column({
+		type: 'varchar',
+		length: 50,
+		default: 'free',
+	})
+	tier: 'free' | 'pro' | 'enterprise';
+
+	/** 最大团队数量 */
+	@Column({ default: 3 })
+	maxTeams: number;
+
+	/** 最大存储空间（MB） */
+	@Column({ default: 1024 })
+	maxStorageMb: number;
+
+	/** 租户状态 */
+	@Column({
+		type: 'varchar',
+		length: 50,
+		default: 'active',
+	})
+	tenantStatus: 'active' | 'suspended' | 'deleted';
+
 	@BeforeInsert()
 	@BeforeUpdate()
 	preUpsertHook(): void {
