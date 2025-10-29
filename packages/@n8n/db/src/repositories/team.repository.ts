@@ -19,11 +19,11 @@ export class TeamRepository extends Repository<Team> {
 	/**
 	 * 根据用户ID查询拥有的团队
 	 * @param userId - 用户ID
-	 * @returns 该用户拥有的所有团队
+	 * @returns 该用户拥有的所有团队（包括active和suspended状态，不包括deleted）
 	 */
 	async findByOwner(userId: string): Promise<Team[]> {
 		return await this.find({
-			where: { ownerId: userId, status: 'active' },
+			where: { ownerId: userId, status: In(['active', 'suspended']) },
 			order: { createdAt: 'DESC' },
 			relations: ['owner'],
 		});
@@ -183,11 +183,11 @@ export class TeamRepository extends Repository<Team> {
 	 * 检查用户是否是团队的所有者
 	 * @param teamId - 团队ID
 	 * @param userId - 用户ID
-	 * @returns 是否是所有者
+	 * @returns 是否是所有者（包括active和suspended状态的团队）
 	 */
 	async isOwner(teamId: string, userId: string): Promise<boolean> {
 		const count = await this.count({
-			where: { id: teamId, ownerId: userId, status: 'active' },
+			where: { id: teamId, ownerId: userId, status: In(['active', 'suspended']) },
 		});
 		return count > 0;
 	}

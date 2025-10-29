@@ -115,7 +115,6 @@ export class TeamController {
 	 * 创建新团队
 	 */
 	@Post('/')
-	@GlobalScope('team:create')
 	async createTeam(
 		req: AuthenticatedRequest,
 		_res: Response,

@@ -10,6 +10,7 @@ export { BinaryDataQueryDto } from './binary-data/binary-data-query.dto';
 export { BinaryDataSignedQueryDto } from './binary-data/binary-data-signed-query.dto';
 
 export { LoginRequestDto } from './auth/login-request.dto';
+export { RegisterRequestDto } from './auth/register-request.dto';
 export { ResolveSignupTokenQueryDto } from './auth/resolve-signup-token-query.dto';
 
 export { OptionsRequestDto } from './dynamic-node-parameters/options-request.dto';

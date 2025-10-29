@@ -1,10 +1,9 @@
-import { LoginRequestDto, ResolveSignupTokenQueryDto } from '@n8n/api-types';
+import { LoginRequestDto, RegisterRequestDto, ResolveSignupTokenQueryDto } from '@n8n/api-types';
 import { Logger } from '@n8n/backend-common';
 import type { User, PublicUser } from '@n8n/db';
 import { UserRepository, AuthenticatedRequest, GLOBAL_OWNER_ROLE } from '@n8n/db';
 import { Body, Get, Post, Query, RestController } from '@n8n/decorators';
 import { Container } from '@n8n/di';
-import { isEmail } from 'class-validator';
 import { Response } from 'express';
 
 import { handleEmailLogin } from '@/auth';
@@ -16,6 +15,7 @@ import { ForbiddenError } from '@/errors/response-errors/forbidden.error';
 import { EventService } from '@/events/event.service';
 import { License } from '@/license';
 import { MfaService } from '@/mfa/mfa.service';
+import { PasswordUtility } from '@/services/password.utility';
 import { PostHogClient } from '@/posthog';
 import { AuthlessRequest } from '@/requests';
 import { UserService } from '@/services/user.service';
@@ -36,6 +36,7 @@ export class AuthController {
 		private readonly license: License,
 		private readonly userRepository: UserRepository,
 		private readonly eventService: EventService,
+		private readonly passwordUtility: PasswordUtility,
 		private readonly postHog?: PostHogClient,
 	) {}
 
@@ -52,9 +53,8 @@ export class AuthController {
 
 		let usedAuthenticationMethod = getCurrentAuthenticationMethod();
 
-		if (usedAuthenticationMethod === 'email' && !isEmail(emailOrLdapLoginId)) {
-			throw new BadRequestError('Invalid email address');
-		}
+		// Multi-tenant SaaS: Support both email and username login
+		// No strict email validation here - let handleEmailLogin handle it
 
 		if (isSamlCurrentAuthenticationMethod() || isOidcCurrentAuthenticationMethod()) {
 			// attempt to fetch user data with the credentials, but don't log in yet
@@ -192,5 +192,51 @@ export class AuthController {
 		await this.authService.invalidateToken(req);
 		this.authService.clearCookie(res);
 		return { loggedOut: true };
+	}
+
+	/**
+	 * Register a new user (tenant) with default workspace.
+	 *
+	 * This is the entry point for new users in the multi-tenant SaaS system.
+	 * Each registered user becomes an independent tenant with their own workspace.
+	 */
+	@Post('/register', { skipAuth: true, rateLimit: true })
+	async register(
+		req: AuthlessRequest,
+		res: Response,
+		@Body payload: RegisterRequestDto,
+	): Promise<PublicUser> {
+		const { email, password, username } = payload;
+
+		// 1. Check if email already exists
+		const existingUser = await this.userRepository.findOne({
+			where: { email },
+		});
+
+		if (existingUser) {
+			this.logger.debug('Registration failed - email already exists', { email });
+			throw new BadRequestError('A user with this email address already exists');
+		}
+
+		// 2. Hash the password
+		const hashedPassword = await this.passwordUtility.hash(password);
+
+		// 3. Register the tenant (create user + default workspace)
+		// Note: registerTenant() already emits 'user-signed-up' event
+		const { user } = await this.userService.registerTenant({
+			email,
+			password: hashedPassword,
+			firstName: username,
+			lastName: '',
+		});
+
+		// 4. Issue cookie for automatic login after registration
+		this.authService.issueCookie(res, user, false, req.browserId);
+
+		// 7. Return public user info
+		return await this.userService.toPublic(user, {
+			posthog: this.postHog,
+			withScopes: true,
+		});
 	}
 }

@@ -1,7 +1,7 @@
 import type { RoleChangeRequestDto } from '@n8n/api-types';
 import { Logger } from '@n8n/backend-common';
 import type { PublicUser } from '@n8n/db';
-import { User, UserRepository } from '@n8n/db';
+import { Project, User, UserRepository } from '@n8n/db';
 import { Service } from '@n8n/di';
 import { getGlobalScopes, type AssignableGlobalRole } from '@n8n/permissions';
 import type { IUserSettings } from 'n8n-workflow';
@@ -285,5 +285,62 @@ export class UserService {
 				await this.publicApiKeyService.removeOwnerOnlyScopesFromApiKeys(targetUser, trx);
 			}
 		});
+	}
+
+	/**
+	 * Register a new tenant (user) with a default personal workspace.
+	 *
+	 * This is the entry point for new users in the multi-tenant SaaS system.
+	 * Each registered user becomes an independent tenant with their own workspace.
+	 *
+	 * @param data - Registration data (email, password, username/firstName)
+	 * @returns The created user and their default project
+	 */
+	async registerTenant(data: {
+		email: string;
+		password: string;
+		firstName: string;
+		lastName?: string;
+	}): Promise<{ user: User; project: Project }> {
+		const { email, password, firstName, lastName = '' } = data;
+
+		// 1. Create user with default personal project
+		const { user, project } = await this.userRepository.createUserWithProject(
+			{
+				email,
+				password,
+				firstName,
+				lastName,
+				role: {
+					slug: 'global:member', // New users are members by default
+				},
+				// Multi-tenant fields
+				tier: 'free',
+				maxTeams: 3,
+				maxStorageMb: 1024,
+				tenantStatus: 'active',
+			},
+			// Let createUserWithProject handle transaction
+			undefined,
+		);
+
+		// 2. Mark the project as default
+		await this.userRepository.manager.update('project', { id: project.id }, { isDefault: true });
+
+		// 3. Emit user registration event
+		this.eventService.emit('user-signed-up', {
+			user,
+			userType: 'email',
+			wasDisabledLdapUser: false,
+		});
+
+		this.logger.info('New tenant registered successfully', {
+			userId: user.id,
+			email: user.email,
+			tier: user.tier,
+			projectId: project.id,
+		});
+
+		return { user, project };
 	}
 }
