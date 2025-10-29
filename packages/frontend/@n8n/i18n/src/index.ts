@@ -4,6 +4,8 @@ import { ref } from 'vue';
 import { createI18n } from 'vue-i18n';
 
 import englishBaseText from './locales/en.json';
+// 🌏 中文支持：导入简体中文翻译
+import chineseBaseText from './locales/zh-CN.json';
 import type { BaseTextKey, LocaleMessages, INodeTranslationHeaders } from './types';
 import {
 	deriveMiddleKey,
@@ -16,9 +18,13 @@ export type * from './types';
 
 export const i18nInstance = createI18n({
 	legacy: false,
-	locale: 'en',
+	// 🌏 中文支持：默认使用简体中文
+	locale: 'zh-CN',
 	fallbackLocale: 'en',
-	messages: { en: englishBaseText },
+	messages: {
+		en: englishBaseText,
+		'zh-CN': chineseBaseText,
+	},
 	warnHtmlMessage: false,
 });
 
