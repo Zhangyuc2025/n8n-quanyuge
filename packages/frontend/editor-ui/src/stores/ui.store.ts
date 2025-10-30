@@ -75,11 +75,8 @@ import type {
 	TabOptions,
 } from '@/Interface';
 import { defineStore } from 'pinia';
-import { useRootStore } from '@n8n/stores/useRootStore';
 import { useWorkflowsStore } from '@/stores/workflows.store';
 import { useSettingsStore } from '@/stores/settings.store';
-import { dismissBannerPermanently } from '@n8n/rest-api-client';
-import type { BannerName } from '@n8n/api-types';
 import { applyThemeToBody, getThemeOverride, isValidTheme } from './ui.utils';
 import { computed, ref } from 'vue';
 import type { IMenuItem } from '@n8n/design-system';
@@ -261,8 +258,6 @@ export const useUIStore = defineStore(STORES.UI, () => {
 	const nodeViewOffsetPosition = ref<[number, number]>([0, 0]);
 	const nodeViewInitialized = ref<boolean>(false);
 	const addFirstStepOnLoad = ref<boolean>(false);
-	const bannersHeight = ref<number>(0);
-	const bannerStack = ref<BannerName[]>([]);
 	const pendingNotificationsForViews = ref<{ [key in VIEWS]?: NotificationOptions[] }>({});
 	const processingExecutionResults = ref<boolean>(false);
 	const isBlankRedirect = ref<boolean>(false);
@@ -308,7 +303,6 @@ export const useUIStore = defineStore(STORES.UI, () => {
 
 	const settingsStore = useSettingsStore();
 	const workflowsStore = useWorkflowsStore();
-	const rootStore = useRootStore();
 
 	const isDarkThemePreferred = useMediaQuery('(prefers-color-scheme: dark)');
 	const preferredSystemTheme = computed<AppliedThemeOption>(() =>
@@ -421,7 +415,7 @@ export const useUIStore = defineStore(STORES.UI, () => {
 
 	const headerHeight = computed(() => {
 		const style = getComputedStyle(document.body);
-		return Number(style.getPropertyValue('--header-height'));
+		return Number(style.getPropertyValue('--header--height'));
 	});
 
 	const isAnyModalOpen = computed(() => {
@@ -568,35 +562,6 @@ export const useUIStore = defineStore(STORES.UI, () => {
 		sidebarMenuCollapsed.value = newCollapsedState;
 	};
 
-	const removeBannerFromStack = (name: BannerName) => {
-		bannerStack.value = bannerStack.value.filter((bannerName) => bannerName !== name);
-	};
-
-	const dismissBanner = async (name: BannerName, type: 'temporary' | 'permanent' = 'temporary') => {
-		if (type === 'permanent') {
-			await dismissBannerPermanently(rootStore.restApiContext, {
-				bannerName: name,
-				dismissedBanners: settingsStore.permanentlyDismissedBanners,
-			});
-			removeBannerFromStack(name);
-			return;
-		}
-		removeBannerFromStack(name);
-	};
-
-	const updateBannersHeight = (newHeight: number) => {
-		bannersHeight.value = newHeight;
-	};
-
-	const pushBannerToStack = (name: BannerName) => {
-		if (bannerStack.value.includes(name)) return;
-		bannerStack.value.push(name);
-	};
-
-	const clearBannerStack = () => {
-		bannerStack.value = [];
-	};
-
 	const setNotificationsForView = (view: VIEWS, notifications: NotificationOptions[]) => {
 		pendingNotificationsForViews.value[view] = notifications;
 	};
@@ -629,10 +594,6 @@ export const useUIStore = defineStore(STORES.UI, () => {
 	 */
 	const setProcessingExecutionResults = (value: boolean) => {
 		processingExecutionResults.value = value;
-	};
-
-	const initialize = (options: { banners: BannerName[] }) => {
-		options.banners.forEach(pushBannerToStack);
 	};
 
 	/**
@@ -697,7 +658,6 @@ export const useUIStore = defineStore(STORES.UI, () => {
 		isBlankRedirect,
 		activeCredentialType,
 		lastSelectedNode,
-		bannersHeight,
 		lastInteractedWithNodeConnection,
 		lastInteractedWithNodeHandle,
 		lastInteractedWithNodeId,
@@ -708,7 +668,6 @@ export const useUIStore = defineStore(STORES.UI, () => {
 		addFirstStepOnLoad,
 		sidebarMenuCollapsed,
 		sidebarMenuCollapsedPreference,
-		bannerStack,
 		theme: computed(() => theme.value),
 		modalsById,
 		currentView,
@@ -729,16 +688,11 @@ export const useUIStore = defineStore(STORES.UI, () => {
 		addActiveAction,
 		removeActiveAction,
 		toggleSidebarMenuCollapse,
-		dismissBanner,
-		updateBannersHeight,
-		pushBannerToStack,
-		clearBannerStack,
 		setNotificationsForView,
 		resetLastInteractedWith,
 		setProcessingExecutionResults,
 		openDeleteFolderModal,
 		openMoveToFolderModal,
-		initialize,
 		moduleTabs,
 		registerCustomTabs,
 		registerSettingsPages,

@@ -97,6 +97,12 @@ export const GLOBAL_OWNER_SCOPES: Scope[] = [
 	'mcpApiKey:rotate',
 	'chatHub:manage',
 	'chatHub:message',
+	'chatHubAgent:create',
+	'chatHubAgent:read',
+	'chatHubAgent:update',
+	'chatHubAgent:delete',
+	'chatHubAgent:list',
+	'breakingChanges:list',
 ];
 
 export const GLOBAL_ADMIN_SCOPES = GLOBAL_OWNER_SCOPES.concat();
@@ -121,4 +127,9 @@ export const GLOBAL_MEMBER_SCOPES: Scope[] = [
 	'mcpApiKey:create',
 	'mcpApiKey:rotate',
 	'chatHub:message',
+	'chatHubAgent:create',
+	'chatHubAgent:read',
+	'chatHubAgent:update',
+	'chatHubAgent:delete',
+	'chatHubAgent:list',
 ];
