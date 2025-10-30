@@ -6,7 +6,7 @@ import {
 	ChangeUserRoleInProject,
 } from '@n8n/api-types';
 import type { Project } from '@n8n/db';
-import { AuthenticatedRequest, ProjectRepository } from '@n8n/db';
+import { AuthenticatedRequest, ProjectRepository, TeamMemberRepository } from '@n8n/db';
 import {
 	Get,
 	Post,
@@ -42,13 +42,44 @@ export class ProjectController {
 	constructor(
 		private readonly projectsService: ProjectService,
 		private readonly projectRepository: ProjectRepository,
+		private readonly teamMemberRepository: TeamMemberRepository,
 		private readonly eventService: EventService,
 		private readonly userManagementMailer: UserManagementMailer,
 	) {}
 
 	@Get('/')
-	async getAllProjects(req: AuthenticatedRequest): Promise<Project[]> {
-		return await this.projectsService.getAccessibleProjects(req.user);
+	async getAllProjects(
+		req: AuthenticatedRequest,
+	): Promise<Array<Project & { teamRole?: string | null }>> {
+		const projects = await this.projectsService.getAccessibleProjects(req.user);
+
+		// 为团队项目附加用户在团队中的角色
+		const teamProjects = projects.filter((p) => p.type === 'team' && p.teamId);
+		const teamIds = [...new Set(teamProjects.map((p) => p.teamId).filter(Boolean))];
+
+		// 批量查询用户在这些团队中的角色
+		const teamRolesMap = new Map<string, string>();
+		if (teamIds.length > 0) {
+			const memberships = await this.teamMemberRepository.find({
+				where: teamIds.map((teamId) => ({ teamId: teamId as string, userId: req.user.id })),
+				select: ['teamId', 'role'],
+			});
+
+			for (const membership of memberships) {
+				teamRolesMap.set(membership.teamId, membership.role);
+			}
+		}
+
+		// 附加角色信息到项目
+		return projects.map((project) => {
+			if (project.type === 'team' && project.teamId) {
+				return {
+					...project,
+					teamRole: teamRolesMap.get(project.teamId) || null,
+				};
+			}
+			return { ...project, teamRole: null };
+		});
 	}
 
 	@Get('/count')

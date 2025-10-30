@@ -17,6 +17,7 @@ import { BadRequestError } from '@/errors/response-errors/bad-request.error';
 import { NotFoundError } from '@/errors/response-errors/not-found.error';
 import { EventService } from '@/events/event.service';
 import { TeamService } from '@/services/team.service';
+import { TeamMemberService } from '@/services/team-member.service';
 
 /**
  * 团队控制器
@@ -28,8 +29,22 @@ import { TeamService } from '@/services/team.service';
 export class TeamController {
 	constructor(
 		private readonly teamService: TeamService,
+		private readonly teamMemberService: TeamMemberService,
 		private readonly eventService: EventService,
 	) {}
+
+	/**
+	 * 验证用户是否是团队成员（私有辅助方法）
+	 * @param teamId - 团队ID
+	 * @param userId - 用户ID
+	 * @throws NotFoundError 如果用户不是团队成员
+	 */
+	private async verifyTeamMembership(teamId: string, userId: string): Promise<void> {
+		const isMember = await this.teamMemberService.isMember(teamId, userId);
+		if (!isMember) {
+			throw new NotFoundError('Team not found or access denied');
+		}
+	}
 
 	/**
 	 * GET /teams
@@ -60,12 +75,7 @@ export class TeamController {
 		@Param('id') teamId: string,
 	): Promise<Team> {
 		// 验证用户是否有权限访问该团队
-		const isMember = await this.teamService.getUserMemberTeams(req.user.id);
-		const hasAccess = isMember.some((team) => team.id === teamId);
-
-		if (!hasAccess) {
-			throw new NotFoundError('Team not found or access denied');
-		}
+		await this.verifyTeamMembership(teamId, req.user.id);
 
 		return await this.teamService.getTeamById(teamId);
 	}
@@ -77,12 +87,7 @@ export class TeamController {
 	@Get('/:id/stats')
 	async getTeamStats(req: AuthenticatedRequest, _res: Response, @Param('id') teamId: string) {
 		// 验证用户是否有权限访问该团队
-		const isMember = await this.teamService.getUserMemberTeams(req.user.id);
-		const hasAccess = isMember.some((team) => team.id === teamId);
-
-		if (!hasAccess) {
-			throw new NotFoundError('Team not found or access denied');
-		}
+		await this.verifyTeamMembership(teamId, req.user.id);
 
 		return await this.teamService.getTeamStats(teamId);
 	}
@@ -100,12 +105,7 @@ export class TeamController {
 		const team = await this.teamService.getTeamBySlug(slug);
 
 		// 验证用户是否有权限访问该团队
-		const isMember = await this.teamService.getUserMemberTeams(req.user.id);
-		const hasAccess = isMember.some((t) => t.id === team.id);
-
-		if (!hasAccess) {
-			throw new NotFoundError('Team not found or access denied');
-		}
+		await this.verifyTeamMembership(team.id, req.user.id);
 
 		return team;
 	}

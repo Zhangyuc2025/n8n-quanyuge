@@ -1,4 +1,4 @@
-import type { AuthenticatedRequest, ProjectRepository } from '@n8n/db';
+import type { AuthenticatedRequest, ProjectRepository, TeamMemberRepository } from '@n8n/db';
 import { mock } from 'jest-mock-extended';
 
 import type { EventService } from '@/events/event.service';
@@ -11,11 +11,13 @@ describe('ProjectController (members endpoints)', () => {
 	const eventService = mock<EventService>();
 	const projectsService = mock<ProjectService>();
 	const projectRepository = mock<ProjectRepository>();
+	const teamMemberRepository = mock<TeamMemberRepository>();
 	const userManagementMailer = mock<UserManagementMailer>();
 
 	const controller = new ProjectController(
 		projectsService as unknown as ProjectService,
 		projectRepository as unknown as ProjectRepository,
+		teamMemberRepository as unknown as TeamMemberRepository,
 		eventService as unknown as EventService,
 		userManagementMailer as unknown as UserManagementMailer,
 	);

@@ -3311,6 +3311,8 @@
 	"workspace.role.owner": "所有者",
 	"workspace.role.admin": "管理员",
 	"workspace.role.member": "成员",
+	"workspace.loadError.title": "加载工作区失败",
+	"workspace.switchError.title": "切换工作区失败",
 	"workspace.menu.workflows": "工作流",
 	"workspace.menu.credentials": "凭证",
 	"projects.settings": "项目设置",

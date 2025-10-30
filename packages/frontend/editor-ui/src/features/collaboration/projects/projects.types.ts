@@ -30,6 +30,7 @@ export type ProjectSharingData = {
 	updatedAt: string;
 	teamId?: string | null; // 关联团队ID（team类型项目才有）
 	isDefault?: boolean; // 是否为默认项目
+	teamRole?: string | null; // 用户在团队中的角色（team:owner | team:admin | team:member | team:viewer）
 };
 export type Project = ProjectSharingData & {
 	relations: ProjectRelation[];

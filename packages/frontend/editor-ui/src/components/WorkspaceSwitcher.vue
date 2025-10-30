@@ -2,6 +2,7 @@
 import { computed, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from '@n8n/i18n';
+import { useToast } from '@/composables/useToast';
 import { N8nPopoverReka, N8nInput, N8nText, N8nIcon, N8nButton } from '@n8n/design-system';
 import { useProjectsStore } from '@/features/collaboration/projects/projects.store';
 import { ProjectTypes } from '@/features/collaboration/projects/projects.types';
@@ -15,6 +16,7 @@ type Props = {
 const props = defineProps<Props>();
 
 const i18n = useI18n();
+const toast = useToast();
 const router = useRouter();
 const projectsStore = useProjectsStore();
 const uiStore = useUIStore();
@@ -23,6 +25,8 @@ const uiStore = useUIStore();
 const isOpen = ref(false);
 // 搜索关键词
 const searchQuery = ref('');
+// localStorage键名
+const RECENT_WORKSPACES_KEY = 'n8n-recent-workspaces';
 
 // 获取个人空间列表
 const personalWorkspaces = computed(() => {
@@ -41,13 +45,18 @@ const personalWorkspaces = computed(() => {
 
 // 获取团队空间列表
 const teamWorkspaces = computed(() => {
-	return projectsStore.teamProjects.map((project) => ({
-		id: project.id,
-		name: project.name ?? i18n.baseText('projects.settings.newProjectName'),
-		type: ProjectTypes.Team,
-		icon: (project.icon as any) || 'users',
-		role: 'owner', // TODO: 从TeamMember表获取实际角色
-	}));
+	return projectsStore.teamProjects.map((project) => {
+		// 使用后端返回的真实角色，移除 'team:' 前缀以匹配前端显示
+		const role = project.teamRole ? project.teamRole.replace('team:', '') : 'member';
+
+		return {
+			id: project.id,
+			name: project.name ?? i18n.baseText('projects.settings.newProjectName'),
+			type: ProjectTypes.Team,
+			icon: (project.icon as any) || 'users',
+			role, // 真实角色：'owner' | 'admin' | 'member' | 'viewer'
+		};
+	});
 });
 
 // 所有工作区列表
@@ -60,9 +69,22 @@ const filteredWorkspaces = computed(() => {
 	return allWorkspaces.value.filter((ws) => ws.name.toLowerCase().includes(query));
 });
 
-// 最近使用的工作区（暂时使用全部，TODO: 实现真实的最近使用逻辑）
+// 最近使用的工作区（基于localStorage记录的访问时间）
 const recentWorkspaces = computed(() => {
-	return filteredWorkspaces.value.slice(0, 4); // 只显示最近4个
+	try {
+		const recentData = localStorage.getItem(RECENT_WORKSPACES_KEY);
+		if (!recentData) return filteredWorkspaces.value.slice(0, 4);
+
+		const recentMap = JSON.parse(recentData) as Record<string, number>;
+		// 按访问时间倒序排序，只显示最近4个
+		return filteredWorkspaces.value
+			.filter((ws) => recentMap[ws.id])
+			.sort((a, b) => (recentMap[b.id] || 0) - (recentMap[a.id] || 0))
+			.slice(0, 4);
+	} catch (error) {
+		console.error('Failed to load recent workspaces:', error);
+		return filteredWorkspaces.value.slice(0, 4);
+	}
 });
 
 // 个人空间分组
@@ -100,14 +122,29 @@ const getRoleText = (role: string) => {
 const handleWorkspaceChange = async (workspaceId: string) => {
 	if (!workspaceId) return;
 
-	// 关闭popover
-	isOpen.value = false;
+	try {
+		// 记录访问时间到localStorage
+		try {
+			const recentData = localStorage.getItem(RECENT_WORKSPACES_KEY);
+			const recentMap = recentData ? JSON.parse(recentData) : {};
+			recentMap[workspaceId] = Date.now();
+			localStorage.setItem(RECENT_WORKSPACES_KEY, JSON.stringify(recentMap));
+		} catch (storageError) {
+			console.warn('Failed to save recent workspace:', storageError);
+		}
 
-	// 导航到工作区首页
-	await router.push({
-		name: VIEWS.PROJECTS_WORKFLOWS,
-		params: { projectId: workspaceId },
-	});
+		// 关闭popover
+		isOpen.value = false;
+
+		// 导航到工作区首页
+		await router.push({
+			name: VIEWS.PROJECTS_WORKFLOWS,
+			params: { projectId: workspaceId },
+		});
+	} catch (error) {
+		console.error('Failed to switch workspace:', error);
+		toast.showError(error, i18n.baseText('workspace.switchError.title'));
+	}
 };
 
 // 创建新团队
@@ -119,13 +156,18 @@ const handleCreateTeam = () => {
 
 // [多租户改造] 组件加载时确保项目数据已加载
 onMounted(async () => {
-	// 如果还没有加载个人项目，则加载
-	if (!projectsStore.personalProject) {
-		await projectsStore.getPersonalProject();
-	}
-	// 如果还没有加载所有项目（包括团队项目），则加载
-	if (projectsStore.teamProjects.length === 0) {
-		await projectsStore.getAllProjects();
+	try {
+		// 如果还没有加载个人项目，则加载
+		if (!projectsStore.personalProject) {
+			await projectsStore.getPersonalProject();
+		}
+		// 如果还没有加载所有项目（包括团队项目），则加载
+		if (projectsStore.teamProjects.length === 0) {
+			await projectsStore.getAllProjects();
+		}
+	} catch (error) {
+		console.error('Failed to load workspaces:', error);
+		toast.showError(error, i18n.baseText('workspace.loadError.title'));
 	}
 });
 </script>

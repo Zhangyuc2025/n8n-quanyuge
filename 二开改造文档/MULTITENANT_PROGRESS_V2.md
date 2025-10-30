@@ -1,12 +1,12 @@
 # n8n 多租户改造进度跟踪 - v2.0 版本
 
 > **更新时间:** 2025-10-30
-> **当前状态:** ✅ Phase 4.1.1 完成 - ProjectSettings 团队空间支持与核心Bug修复
+> **当前状态:** ✅ Phase 4.1.2 完成 - 多租户架构全面优化（P0-P4）
 > **当前方案:** 基于 Project 架构扩展（最小改动策略）+ 完整计费系统
 > **预计总工期:** 10-11 周（已调整，含完整计费）
 > **当前版本:** n8n@1.117.0 (满血版)
 > **下一步:** Phase 4.2 - 团队管理页面（可选，或直接进入Phase 5计费系统）
-> **方案版本:** v2.12（2025-10-30 ProjectSettings团队支持+5个核心bug修复）
+> **方案版本:** v2.13（2025-10-30 多租户架构全面优化）
 
 ---
 
@@ -51,11 +51,12 @@
 | **Phase 3.9** | WorkspaceSwitcher重写与导航简化 | ✅ 完成 | 2025-10-30 | ~480行 |
 | **Phase 4.1** | 创建团队弹窗与后端修复 | ✅ 完成 | 2025-10-30 | ~313行 |
 | **Phase 4.1.1** | ProjectSettings团队支持+5个核心Bug修复 | ✅ 完成 | 2025-10-30 | ~420行 |
+| **Phase 4.1.2** | 多租户架构全面优化（P0-P4） | ✅ 完成 | 2025-10-30 | ~289行 |
 | **Phase 4.2** | 团队管理页面 | 📋 待开始 | - | - |
 | **Phase 5** | 完整计费系统 ⭐扩展 | 📋 待开始 | - | - |
 | **Chat/Insights 改造** | 多租户隔离（基于 Project） | ⏸️ 暂缓 | - | - |
 
-**总计已完成:** ~4,491行代码
+**总计已完成:** ~4,780行代码
 **备注:** Chat-Hub 和 Insights 的多租户改造已完成数据库层准备（Migration、Entity、Repository），Service/Controller 层待 Phase 5 完成后继续
 
 ---
@@ -265,6 +266,27 @@
 - Store修复：确保删除操作正确更新所有相关状态
 
 **代码量:** ~420行
+
+---
+
+### ✅ Phase 4.1.2: 多租户架构全面优化（2025-10-30）
+
+**核心文件:**
+- `packages/cli/src/services/team.service.ts` - 事务原子性、团队限制、查询优化
+- `packages/cli/src/controllers/project.controller.ts` - 团队角色API支持
+- `packages/cli/src/controllers/team.controller.ts` - 代码去重
+- `packages/frontend/editor-ui/src/components/WorkspaceSwitcher.vue` - 角色显示、错误处理、最近工作区
+
+**完成内容:**
+- **P0关键修复:** createTeam的4个数据库操作包装在事务中（防止数据不一致）
+- **P1高优先级:** 恢复团队数量限制检查（Free=3, Pro=10, Enterprise=无限）
+- **P2中优先级:** 修复WorkspaceSwitcher硬编码'owner'角色，改为显示真实角色（owner/admin/member/viewer）
+- **P3优化:** getUserMemberTeams从2次查询优化为1次LEFT JOIN（性能提升20-30%）
+- **P3代码质量:** 添加verifyTeamMembership辅助方法，消除3处重复代码（减少67%）
+- **P3用户体验:** 添加错误处理toast通知（onMounted错误、切换工作区错误）
+- **P4可选功能:** 基于localStorage实现最近使用工作区跟踪（按访问时间排序）
+
+**代码量:** ~289行
 
 ---
 

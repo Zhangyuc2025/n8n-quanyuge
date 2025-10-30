@@ -305,6 +305,7 @@ export declare namespace ProjectRequest {
 		description: string | null;
 		teamId?: string | null;
 		isDefault?: boolean;
+		teamRole?: string | null; // 用户在团队中的角色 (team:owner | team:admin | team:member | team:viewer)
 		relations: ProjectRelationResponse[];
 		scopes: Scope[];
 	};
