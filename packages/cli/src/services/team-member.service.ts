@@ -1,11 +1,18 @@
 import { Logger } from '@n8n/backend-common';
-import { TeamMember, TeamMemberRepository, TeamRepository, UserRepository } from '@n8n/db';
+import {
+	TeamMember,
+	TeamMemberRepository,
+	TeamRepository,
+	UserRepository,
+	ProjectRepository,
+} from '@n8n/db';
 import { Service } from '@n8n/di';
 import { UnexpectedError } from 'n8n-workflow';
 
 import { BadRequestError } from '@/errors/response-errors/bad-request.error';
 import { NotFoundError } from '@/errors/response-errors/not-found.error';
 import { EventService } from '@/events/event.service';
+import { ProjectService } from '@/services/project.service.ee';
 
 /**
  * 团队成员服务
@@ -20,6 +27,8 @@ export class TeamMemberService {
 		private readonly teamMemberRepository: TeamMemberRepository,
 		private readonly teamRepository: TeamRepository,
 		private readonly userRepository: UserRepository,
+		private readonly projectRepository: ProjectRepository,
+		private readonly projectService: ProjectService,
 		private readonly eventService: EventService,
 	) {}
 
@@ -68,6 +77,10 @@ export class TeamMemberService {
 
 		try {
 			const member = await this.teamMemberRepository.addMember(teamId, userId, role);
+
+			// [多租户改造] 自动将用户添加到团队的所有项目
+			// 实现 Coze 风格：加入团队 = 自动访问团队所有资源
+			await this.addUserToTeamProjects(teamId, userId, role);
 
 			// 记录事件
 			this.eventService.emit('team-member.added', {
@@ -181,6 +194,9 @@ export class TeamMemberService {
 		const success = await this.teamMemberRepository.removeMember(teamId, userId);
 
 		if (success) {
+			// [多租户改造] 自动从团队的所有项目中移除用户
+			await this.removeUserFromTeamProjects(teamId, userId);
+
 			// 记录事件
 			this.eventService.emit('team-member.removed', {
 				teamId,
@@ -236,6 +252,9 @@ export class TeamMemberService {
 		if (!member) {
 			throw new NotFoundError('Member not found in this team');
 		}
+
+		// [多租户改造] 自动更新用户在团队所有项目中的角色
+		await this.updateUserRoleInTeamProjects(teamId, userId, newRole);
 
 		// 记录事件
 		this.eventService.emit('team-member.role-updated', {
@@ -353,5 +372,214 @@ export class TeamMemberService {
 	private async getTeamMemberCount(teamId: string): Promise<number> {
 		const members = await this.teamMemberRepository.findByTeam(teamId);
 		return members.length;
+	}
+
+	/**
+	 * [多租户改造] 将团队角色映射为项目角色
+	 * 实现 Coze 风格的自动权限同步：团队成员自动拥有团队内所有项目的访问权限
+	 *
+	 * 映射规则：
+	 * - team:owner  → project:admin  (团队所有者在项目中是管理员)
+	 * - team:admin  → project:admin  (团队管理员在项目中是管理员)
+	 * - team:member → project:editor (团队成员在项目中是编辑者)
+	 * - team:viewer → project:viewer (团队查看者在项目中是查看者)
+	 *
+	 * @param teamRole - 团队角色
+	 * @returns 对应的项目角色
+	 */
+	private mapTeamRoleToProjectRole(
+		teamRole: 'team:owner' | 'team:admin' | 'team:member' | 'team:viewer',
+	): string {
+		const roleMapping: Record<string, string> = {
+			'team:owner': 'project:admin',
+			'team:admin': 'project:admin',
+			'team:member': 'project:editor',
+			'team:viewer': 'project:viewer',
+		};
+
+		return roleMapping[teamRole] || 'project:viewer';
+	}
+
+	/**
+	 * [多租户改造] 将用户添加到团队的所有项目
+	 * 实现 Coze 风格：加入团队 = 自动访问团队所有资源
+	 *
+	 * @param teamId - 团队ID
+	 * @param userId - 用户ID
+	 * @param teamRole - 团队角色
+	 */
+	private async addUserToTeamProjects(
+		teamId: string,
+		userId: string,
+		teamRole: 'team:owner' | 'team:admin' | 'team:member' | 'team:viewer',
+	): Promise<void> {
+		try {
+			// 1. 获取该团队的所有项目
+			const teamProjects = await this.projectRepository.find({ where: { teamId } });
+
+			if (teamProjects.length === 0) {
+				this.logger.warn('No projects found for team, skipping project member addition', {
+					teamId,
+				});
+				return;
+			}
+
+			// 2. 映射团队角色到项目角色
+			const projectRole = this.mapTeamRoleToProjectRole(teamRole);
+
+			// 3. 将用户添加到所有团队项目
+			for (const project of teamProjects) {
+				try {
+					await this.projectService.addUser(project.id, {
+						userId,
+						role: projectRole,
+					});
+
+					this.logger.debug('Added user to team project', {
+						teamId,
+						projectId: project.id,
+						projectName: project.name,
+						userId,
+						projectRole,
+					});
+				} catch (error) {
+					// 如果用户已经是项目成员，忽略错误
+					if (error instanceof Error && error.message.includes('already')) {
+						this.logger.debug('User already in project, skipping', {
+							projectId: project.id,
+							userId,
+						});
+						continue;
+					}
+					throw error;
+				}
+			}
+
+			this.logger.info('User added to all team projects', {
+				teamId,
+				userId,
+				projectCount: teamProjects.length,
+				projectRole,
+			});
+		} catch (error) {
+			this.logger.error('Failed to add user to team projects', {
+				teamId,
+				userId,
+				error: error instanceof Error ? error.message : 'Unknown error',
+			});
+			throw new UnexpectedError('Failed to synchronize project permissions');
+		}
+	}
+
+	/**
+	 * [多租户改造] 从团队的所有项目中移除用户
+	 *
+	 * @param teamId - 团队ID
+	 * @param userId - 用户ID
+	 */
+	private async removeUserFromTeamProjects(teamId: string, userId: string): Promise<void> {
+		try {
+			// 获取该团队的所有项目
+			const teamProjects = await this.projectRepository.find({ where: { teamId } });
+
+			if (teamProjects.length === 0) {
+				return;
+			}
+
+			// 从所有团队项目中移除用户
+			for (const project of teamProjects) {
+				try {
+					await this.projectService.deleteUserFromProject(project.id, userId);
+					this.logger.debug('Removed user from team project', {
+						teamId,
+						projectId: project.id,
+						userId,
+					});
+				} catch (error) {
+					// 如果用户不在项目中，忽略错误
+					if (error instanceof NotFoundError) {
+						continue;
+					}
+					throw error;
+				}
+			}
+
+			this.logger.info('User removed from all team projects', {
+				teamId,
+				userId,
+				projectCount: teamProjects.length,
+			});
+		} catch (error) {
+			this.logger.error('Failed to remove user from team projects', {
+				teamId,
+				userId,
+				error: error instanceof Error ? error.message : 'Unknown error',
+			});
+			throw new UnexpectedError('Failed to synchronize project permissions');
+		}
+	}
+
+	/**
+	 * [多租户改造] 更新用户在团队所有项目中的角色
+	 *
+	 * @param teamId - 团队ID
+	 * @param userId - 用户ID
+	 * @param newTeamRole - 新的团队角色
+	 */
+	private async updateUserRoleInTeamProjects(
+		teamId: string,
+		userId: string,
+		newTeamRole: 'team:owner' | 'team:admin' | 'team:member' | 'team:viewer',
+	): Promise<void> {
+		try {
+			// 获取该团队的所有项目
+			const teamProjects = await this.projectRepository.find({ where: { teamId } });
+
+			if (teamProjects.length === 0) {
+				return;
+			}
+
+			// 映射新角色
+			const newProjectRole = this.mapTeamRoleToProjectRole(newTeamRole);
+
+			// 更新所有项目中的角色
+			for (const project of teamProjects) {
+				try {
+					await this.projectService.changeUserRoleInProject(project.id, userId, newProjectRole);
+					this.logger.debug('Updated user role in team project', {
+						teamId,
+						projectId: project.id,
+						userId,
+						newProjectRole,
+					});
+				} catch (error) {
+					// 如果用户不在项目中，尝试添加
+					if (error instanceof NotFoundError) {
+						await this.projectService.addUser(project.id, {
+							userId,
+							role: newProjectRole,
+						});
+						continue;
+					}
+					throw error;
+				}
+			}
+
+			this.logger.info('User role updated in all team projects', {
+				teamId,
+				userId,
+				newTeamRole,
+				newProjectRole,
+				projectCount: teamProjects.length,
+			});
+		} catch (error) {
+			this.logger.error('Failed to update user role in team projects', {
+				teamId,
+				userId,
+				newTeamRole,
+				error: error instanceof Error ? error.message : 'Unknown error',
+			});
+			throw new UnexpectedError('Failed to synchronize project permissions');
+		}
 	}
 }

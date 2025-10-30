@@ -133,14 +133,13 @@ const handleWorkspaceChange = async (workspaceId: string) => {
 			console.warn('Failed to save recent workspace:', storageError);
 		}
 
+		// [多租户改造] 仅切换工作区上下文，不进行页面跳转（Coze风格）
+		// 调用 setActiveProject 持久化工作区选择，刷新页面后仍能保持工作区状态
+		// 后续用户点击 Workflows、Credentials 等导航时，会自动使用新工作区的数据
+		await projectsStore.setActiveProject(workspaceId);
+
 		// 关闭popover
 		isOpen.value = false;
-
-		// 导航到工作区首页
-		await router.push({
-			name: VIEWS.PROJECTS_WORKFLOWS,
-			params: { projectId: workspaceId },
-		});
 	} catch (error) {
 		console.error('Failed to switch workspace:', error);
 		toast.showError(error, i18n.baseText('workspace.switchError.title'));

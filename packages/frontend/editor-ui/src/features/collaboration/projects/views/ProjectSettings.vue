@@ -858,7 +858,7 @@ onMounted(() => {
 
 .teamSelect,
 .teamInput {
-	max-width: var(--project-field-width);
+	max-width: 400px; // 修复 CSS 变量命名规范问题
 	width: 100%;
 }
 </style>

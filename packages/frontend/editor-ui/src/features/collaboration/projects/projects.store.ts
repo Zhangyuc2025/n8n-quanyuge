@@ -26,6 +26,9 @@ export type ResourceCounts = {
 	dataTables: number;
 };
 
+// localStorage 键名常量
+const ACTIVE_PROJECT_ID_KEY = 'n8n-active-project-id';
+
 export const useProjectsStore = defineStore(STORES.PROJECTS, () => {
 	const route = useRoute();
 	const rootStore = useRootStore();
@@ -45,6 +48,18 @@ export const useProjectsStore = defineStore(STORES.PROJECTS, () => {
 	});
 	const projectNavActiveIdState = ref<string | string[] | null>(null);
 
+	// [多租户改造] 全局活动工作区ID（持久化到 localStorage）
+	// 优先级：activeProjectId > route.params.projectId > personalProject.id
+	const getInitialActiveProjectId = (): string | null => {
+		try {
+			return localStorage.getItem(ACTIVE_PROJECT_ID_KEY);
+		} catch (error) {
+			console.warn('Failed to load active project from localStorage:', error);
+			return null;
+		}
+	};
+	const activeProjectId = ref<string | null>(getInitialActiveProjectId());
+
 	const globalProjectPermissions = computed(
 		() => getResourcePermissions(usersStore.currentUser?.globalScopes).project,
 	);
@@ -52,8 +67,11 @@ export const useProjectsStore = defineStore(STORES.PROJECTS, () => {
 		globalProjectPermissions.value.list ? projects.value : myProjects.value,
 	);
 
+	// [多租户改造] 优先级调整：activeProjectId > route.params.projectId > personalProject.id
+	// 这样刷新页面后仍能保持工作区选择
 	const currentProjectId = computed(
 		() =>
+			activeProjectId.value ??
 			(route.params?.projectId as string | undefined) ??
 			(route.query?.projectId as string | undefined) ??
 			currentProject.value?.id,
@@ -90,6 +108,44 @@ export const useProjectsStore = defineStore(STORES.PROJECTS, () => {
 
 	const setCurrentProject = (project: Project | null) => {
 		currentProject.value = project;
+	};
+
+	/**
+	 * [多租户改造] 设置活动工作区并持久化到 localStorage
+	 * 用于工作区切换时保存用户选择，刷新页面后仍保持选择
+	 * @param projectId - 工作区（Project）ID
+	 */
+	const setActiveProject = async (projectId: string | null) => {
+		if (!projectId) {
+			activeProjectId.value = null;
+			try {
+				localStorage.removeItem(ACTIVE_PROJECT_ID_KEY);
+			} catch (error) {
+				console.warn('Failed to remove active project from localStorage:', error);
+			}
+			return;
+		}
+
+		// 更新内存状态
+		activeProjectId.value = projectId;
+
+		// 持久化到 localStorage
+		try {
+			localStorage.setItem(ACTIVE_PROJECT_ID_KEY, projectId);
+		} catch (error) {
+			console.warn('Failed to save active project to localStorage:', error);
+		}
+
+		// 加载工作区详情
+		try {
+			await fetchAndSetProject(projectId);
+		} catch (error) {
+			console.error('Failed to fetch and set project:', error);
+			// 如果加载失败，清除持久化状态
+			activeProjectId.value = null;
+			localStorage.removeItem(ACTIVE_PROJECT_ID_KEY);
+			throw error;
+		}
 	};
 
 	const getAllProjects = async () => {
@@ -308,6 +364,7 @@ export const useProjectsStore = defineStore(STORES.PROJECTS, () => {
 		personalProject,
 		currentProject,
 		currentProjectId,
+		activeProjectId, // [多租户改造] 导出全局活动工作区ID
 		isProjectHome,
 		personalProjects,
 		teamProjects,
@@ -318,6 +375,7 @@ export const useProjectsStore = defineStore(STORES.PROJECTS, () => {
 		isTeamProjectFeatureEnabled,
 		projectNavActiveId,
 		setCurrentProject,
+		setActiveProject, // [多租户改造] 导出设置活动工作区方法
 		getAllProjects,
 		getMyProjects,
 		getPersonalProject,

@@ -225,7 +225,20 @@ sourceControlStore.$onAction(({ name, after }) => {
 	});
 });
 
+// [多租户改造] 监听 route.params.projectId 变化（通过 URL 导航时触发）
 watch(() => route?.params?.projectId, initialize);
+
+// [多租户改造] 监听全局工作区切换（通过 WorkspaceSwitcher 切换时触发）
+// 这样切换工作区后，当前页面会自动重新加载对应工作区的数据（Coze 风格）
+watch(
+	() => projectsStore.currentProjectId,
+	async (newProjectId, oldProjectId) => {
+		// 只在工作区真正发生变化时重新加载，避免初始化时重复加载
+		if (newProjectId !== oldProjectId && oldProjectId !== undefined) {
+			await initialize();
+		}
+	},
+);
 
 watch(
 	() => props.credentialId,

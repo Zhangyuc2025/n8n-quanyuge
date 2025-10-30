@@ -206,6 +206,29 @@ export async function initializeAuthenticatedFeatures(
 		rolesStore.fetchRoles(),
 	]);
 
+	// [多租户改造] 自动恢复上次选择的工作区
+	// 如果 localStorage 中存在 activeProjectId，则尝试加载该工作区
+	if (projectsStore.activeProjectId) {
+		try {
+			// 验证该工作区是否还存在于用户的项目列表中
+			const projectExists =
+				projectsStore.myProjects.some((p) => p.id === projectsStore.activeProjectId) ||
+				projectsStore.personalProject?.id === projectsStore.activeProjectId;
+
+			if (projectExists) {
+				await projectsStore.fetchAndSetProject(projectsStore.activeProjectId);
+			} else {
+				// 如果工作区不存在（可能已被删除），清除持久化状态
+				console.warn('Saved active project no longer exists, clearing localStorage');
+				await projectsStore.setActiveProject(null);
+			}
+		} catch (error) {
+			console.error('Failed to restore active project:', error);
+			// 恢复失败时清除持久化状态，避免一直尝试加载无效的工作区
+			await projectsStore.setActiveProject(null);
+		}
+	}
+
 	// Initialize modules
 	registerModuleResources();
 	registerModuleProjectTabs();
