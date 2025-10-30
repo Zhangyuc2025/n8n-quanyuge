@@ -8,6 +8,7 @@ import { useUsersStore } from '@/features/settings/users/users.store';
 import { useSettingsStore } from '@/stores/settings.store';
 import { useUIStore } from '@/stores/ui.store';
 import { useToast } from '@/composables/useToast';
+import { useProjectsStore } from '@/features/collaboration/projects/projects.store';
 import { VIEWS, AUTH_MODAL_KEY } from '@/constants';
 
 const i18n = useI18n();
@@ -15,6 +16,7 @@ const router = useRouter();
 const usersStore = useUsersStore();
 const settingsStore = useSettingsStore();
 const uiStore = useUIStore();
+const projectsStore = useProjectsStore();
 const toast = useToast();
 
 // Tab状态：'signin' | 'signup'
@@ -68,18 +70,23 @@ const handleSignin = async () => {
 			emailOrLdapLoginId: signinForm.value.email,
 			password: signinForm.value.password,
 		});
-		await settingsStore.getSettings();
 
-		toast.showMessage({
-			title: i18n.baseText('authModal.signin.success'),
-			type: 'success',
-		});
+		// 登录成功后，获取个人项目并重定向到个人项目页面
+		await projectsStore.getPersonalProject();
 
 		// 关闭弹窗
 		uiStore.closeModal(AUTH_MODAL_KEY);
 
-		// 登录成功后刷新页面，确保数据更新
-		window.location.reload();
+		// 重定向到个人项目的工作流页面
+		if (projectsStore.personalProject?.id) {
+			void router.push({
+				name: VIEWS.PROJECTS_WORKFLOWS,
+				params: { projectId: projectsStore.personalProject.id },
+			});
+		} else {
+			// 如果获取不到个人项目，刷新页面
+			window.location.reload();
+		}
 	} catch (error) {
 		toast.showError(error, i18n.baseText('authModal.signin.error'));
 	} finally {
@@ -112,12 +119,27 @@ const handleSignup = async () => {
 
 	try {
 		loading.value = true;
-		// 注册功能暂未实现
-		toast.showMessage({
-			title: i18n.baseText('authModal.signup.comingSoon'),
-			message: i18n.baseText('authModal.signup.comingSoonMessage'),
-			type: 'info',
+		await usersStore.registerWithCreds({
+			username: signupForm.value.username,
+			password: signupForm.value.password,
 		});
+
+		// 注册成功后，获取个人项目并重定向到个人项目页面
+		await projectsStore.getPersonalProject();
+
+		// 关闭弹窗
+		uiStore.closeModal(AUTH_MODAL_KEY);
+
+		// 重定向到个人项目的工作流页面
+		if (projectsStore.personalProject?.id) {
+			void router.push({
+				name: VIEWS.PROJECTS_WORKFLOWS,
+				params: { projectId: projectsStore.personalProject.id },
+			});
+		} else {
+			// 如果获取不到个人项目，刷新页面
+			window.location.reload();
+		}
 	} catch (error) {
 		toast.showError(error, i18n.baseText('authModal.signup.error'));
 	} finally {

@@ -22,8 +22,6 @@ import type { IMenuItem } from '@n8n/design-system';
 import {
 	ABOUT_MODAL_KEY,
 	AUTH_MODAL_KEY,
-	EXPERIMENT_TEMPLATE_RECO_V2_KEY,
-	EXPERIMENT_TEMPLATE_RECO_V3_KEY,
 	RELEASE_NOTES_URL,
 	VIEWS,
 	WHATS_NEW_MODAL_KEY,
@@ -34,7 +32,6 @@ import { hasPermission } from '@/utils/rbac/permissions';
 import { useCloudPlanStore } from '@/stores/cloudPlan.store';
 import { useRootStore } from '@n8n/stores/useRootStore';
 import { useSettingsStore } from '@/stores/settings.store';
-import { useTemplatesStore } from '@/features/workflows/templates/templates.store';
 import { useUIStore } from '@/stores/ui.store';
 import { useUsersStore } from '@/features/settings/users/users.store';
 import { useVersionsStore } from '@/stores/versions.store';
@@ -45,34 +42,30 @@ import { useExternalHooks } from '@/composables/useExternalHooks';
 import { useTelemetry } from '@/composables/useTelemetry';
 import { useBugReporting } from '@/composables/useBugReporting';
 import { usePageRedirectionHelper } from '@/composables/usePageRedirectionHelper';
+import { useCalloutHelpers } from '@/composables/useCalloutHelpers';
 import { useGlobalEntityCreation } from '@/composables/useGlobalEntityCreation';
 import { useBecomeTemplateCreatorStore } from '@/components/BecomeTemplateCreatorCta/becomeTemplateCreatorStore';
 import BecomeTemplateCreatorCta from '@/components/BecomeTemplateCreatorCta/BecomeTemplateCreatorCta.vue';
 import VersionUpdateCTA from '@/components/VersionUpdateCTA.vue';
-import { TemplateClickSource, trackTemplatesClick } from '@/utils/experiments';
 import { I18nT } from 'vue-i18n';
-import { usePersonalizedTemplatesV2Store } from '@/experiments/templateRecoV2/stores/templateRecoV2.store';
-import { usePersonalizedTemplatesV3Store } from '@/experiments/personalizedTemplatesV3/stores/personalizedTemplatesV3.store';
-import TemplateTooltip from '@/experiments/personalizedTemplatesV3/components/TemplateTooltip.vue';
 import { useKeybindings } from '@/composables/useKeybindings';
-import { useCalloutHelpers } from '@/composables/useCalloutHelpers';
+import { useToast } from '@/composables/useToast';
 import ProjectNavigation from '@/features/collaboration/projects/components/ProjectNavigation.vue';
+import WorkspaceSwitcher from '@/components/WorkspaceSwitcher.vue';
 import MainSidebarSourceControl from './MainSidebarSourceControl.vue';
 import MainSidebarUserArea from '@/components/MainSidebarUserArea.vue';
 
 const router = useRouter();
+const toast = useToast();
 const becomeTemplateCreatorStore = useBecomeTemplateCreatorStore();
 const cloudPlanStore = useCloudPlanStore();
 const rootStore = useRootStore();
 const settingsStore = useSettingsStore();
-const templatesStore = useTemplatesStore();
 const uiStore = useUIStore();
 const usersStore = useUsersStore();
 const versionsStore = useVersionsStore();
 const workflowsStore = useWorkflowsStore();
 const sourceControlStore = useSourceControlStore();
-const personalizedTemplatesV2Store = usePersonalizedTemplatesV2Store();
-const personalizedTemplatesV3Store = usePersonalizedTemplatesV3Store();
 
 // [多租户改造] 检查是否已登录
 const isAuthenticated = computed(() => usersStore.currentUserId !== null);
@@ -121,14 +114,7 @@ const mainMenuItems = computed<IMenuItem[]>(() => [
 		route: { to: { name: VIEWS.HOMEPAGE } },
 		available: true,
 	},
-	{
-		id: 'cloud-admin',
-		position: 'bottom',
-		label: 'Admin Panel',
-		icon: 'cloud',
-		// [多租户改造] 始终显示，点击时再检查权限和认证
-		available: true,
-	},
+	// [多租户改造] 移除 cloud-admin，本地部署用不到
 	{
 		id: 'chat',
 		icon: 'message-circle',
@@ -139,7 +125,7 @@ const mainMenuItems = computed<IMenuItem[]>(() => [
 		available: true,
 	},
 	{
-		// [多租户改造] 简化 Templates 菜单项，合并所有版本，延迟判断具体跳转逻辑
+		// [多租户改造] Templates 改为平台内路由，不再跳转外部网站
 		id: 'templates',
 		icon: 'package-open',
 		label: i18n.baseText('mainSidebar.templates'),
@@ -270,6 +256,15 @@ const visibleMenuItems = computed(() =>
 	mainMenuItems.value.filter((item) => item.available !== false),
 );
 
+// 分别过滤顶部和底部菜单项
+const topMenuItems = computed(() =>
+	visibleMenuItems.value.filter((item) => item.position === 'top'),
+);
+
+const bottomMenuItems = computed(() =>
+	visibleMenuItems.value.filter((item) => item.position === 'bottom'),
+);
+
 const createBtn = ref<InstanceType<typeof N8nNavigationDropdown>>();
 
 const isCollapsed = computed(() => uiStore.sidebarMenuCollapsed);
@@ -323,8 +318,8 @@ const toggleCollapse = () => {
 };
 
 const handleSelect = (key: string) => {
-	// [多租户改造] 需要认证的功能列表
-	const requiresAuth = ['cloud-admin', 'chat', 'templates', 'insights'];
+	// [多租户改造] 需要认证的功能列表（已移除 cloud-admin）
+	const requiresAuth = ['chat', 'templates', 'insights'];
 
 	// [多租户改造] 如果功能需要认证但用户未登录，打开登录弹窗
 	if (requiresAuth.includes(key) && !isAuthenticated.value) {
@@ -334,29 +329,24 @@ const handleSelect = (key: string) => {
 
 	switch (key) {
 		case 'templates': {
-			// [多租户改造] 延迟判断 Templates 的具体跳转逻辑
+			// [多租户改造] Templates 改为平台内路由，始终跳转到内部模板页面
 			if (!isAuthenticated.value) {
 				uiStore.openModal(AUTH_MODAL_KEY);
 				return;
 			}
 
-			// 只在已登录时才访问 store 数据
-			if (personalizedTemplatesV3Store.isFeatureEnabled()) {
-				personalizedTemplatesV3Store.markTemplateRecommendationInteraction();
-				uiStore.openModalWithData({
-					name: EXPERIMENT_TEMPLATE_RECO_V3_KEY,
-					data: {},
+			if (!settingsStore.isTemplatesEnabled) {
+				toast.showMessage({
+					title: i18n.baseText('mainSidebar.templates.notEnabled'),
+					message: i18n.baseText('mainSidebar.templates.featureDisabled'),
+					type: 'info',
 				});
-				trackTemplatesClick(TemplateClickSource.sidebarButton);
-			} else if (personalizedTemplatesV2Store.isFeatureEnabled()) {
-				uiStore.openModalWithData({
-					name: EXPERIMENT_TEMPLATE_RECO_V2_KEY,
-					data: {},
-				});
-				trackTemplatesClick(TemplateClickSource.sidebarButton);
-			} else if (settingsStore.isTemplatesEnabled && !templatesStore.hasCustomTemplatesHost) {
-				trackTemplatesClick(TemplateClickSource.sidebarButton);
+				return;
 			}
+
+			// [多租户改造] 直接跳转到平台内的模板页面，不再打开外部网站
+			trackTemplatesClick(TemplateClickSource.sidebarButton);
+			void router.push({ name: VIEWS.TEMPLATES });
 			break;
 		}
 		case 'about': {
@@ -364,30 +354,27 @@ const handleSelect = (key: string) => {
 			uiStore.openModal(ABOUT_MODAL_KEY);
 			break;
 		}
-		case 'cloud-admin': {
-			// [多租户改造] 延迟检查权限
-			if (!isAuthenticated.value) {
-				uiStore.openModal(AUTH_MODAL_KEY);
-				return;
-			}
-			if (!settingsStore.isCloudDeployment || !hasPermission(['instanceOwner'])) {
-				// 没有权限，显示提示或静默处理
-				return;
-			}
-			void pageRedirectionHelper.goToDashboard();
-			break;
-		}
+		// [多租户改造] 已移除 cloud-admin case
 		case 'chat': {
 			// [多租户改造] 延迟检查权限和功能开关
 			if (!isAuthenticated.value) {
 				uiStore.openModal(AUTH_MODAL_KEY);
 				return;
 			}
-			if (
-				!settingsStore.isChatFeatureEnabled ||
-				!hasPermission(['rbac'], { rbac: { scope: 'chatHub:message' } })
-			) {
-				// 功能未开启或无权限
+			if (!settingsStore.isChatFeatureEnabled) {
+				toast.showMessage({
+					title: i18n.baseText('mainSidebar.chat.notEnabled'),
+					message: i18n.baseText('mainSidebar.chat.featureDisabled'),
+					type: 'info',
+				});
+				return;
+			}
+			if (!hasPermission(['rbac'], { rbac: { scope: 'chatHub:message' } })) {
+				toast.showMessage({
+					title: i18n.baseText('mainSidebar.chat.noPermission'),
+					message: i18n.baseText('mainSidebar.chat.contactAdmin'),
+					type: 'warning',
+				});
 				return;
 			}
 			// [多租户改造] 移除 route 配置后，手动进行路由跳转
@@ -400,11 +387,20 @@ const handleSelect = (key: string) => {
 				uiStore.openModal(AUTH_MODAL_KEY);
 				return;
 			}
-			if (
-				!settingsStore.isModuleActive('insights') ||
-				!hasPermission(['rbac'], { rbac: { scope: 'insights:list' } })
-			) {
-				// 模块未激活或无权限
+			if (!settingsStore.isModuleActive('insights')) {
+				toast.showMessage({
+					title: i18n.baseText('mainSidebar.insights.notEnabled'),
+					message: i18n.baseText('mainSidebar.insights.moduleDisabled'),
+					type: 'info',
+				});
+				return;
+			}
+			if (!hasPermission(['rbac'], { rbac: { scope: 'insights:list' } })) {
+				toast.showMessage({
+					title: i18n.baseText('mainSidebar.insights.noPermission'),
+					message: i18n.baseText('mainSidebar.insights.contactAdmin'),
+					type: 'warning',
+				});
 				return;
 			}
 			telemetry.track('User clicked insights link from side menu');
@@ -583,6 +579,20 @@ onClickOutside(createBtn as Ref<VueInstance>, () => {
 		</div>
 		<N8nScrollArea as-child>
 			<div :class="$style.scrollArea">
+				<!-- 顶部菜单项（平台首页等） -->
+				<div v-if="topMenuItems.length > 0" :class="$style.topMenuItems">
+					<N8nMenuItem
+						v-for="item in topMenuItems"
+						:key="item.id"
+						:item="item"
+						:compact="isCollapsed"
+						@click="() => handleSelect(item.id)"
+					/>
+				</div>
+
+				<!-- [多租户改造] 工作区切换器 - 显示在项目导航上方 -->
+				<WorkspaceSwitcher v-if="isAuthenticated" :collapsed="isCollapsed" />
+
 				<ProjectNavigation
 					v-if="isAuthenticated"
 					:collapsed="isCollapsed"
@@ -593,7 +603,7 @@ onClickOutside(createBtn as Ref<VueInstance>, () => {
 					<!-- [多租户改造] BecomeTemplateCreatorCta 只在已登录且非试用用户时显示 -->
 					<BecomeTemplateCreatorCta v-if="isAuthenticated && fullyExpanded && !userIsTrialing" />
 					<div :class="$style.bottomMenuItems">
-						<template v-for="item in visibleMenuItems" :key="item.id">
+						<template v-for="item in bottomMenuItems" :key="item.id">
 							<N8nPopoverReka
 								v-if="item.children"
 								:key="item.id"
@@ -706,6 +716,10 @@ onClickOutside(createBtn as Ref<VueInstance>, () => {
 	&:hover {
 		color: var(--color--primary--shade-1);
 	}
+}
+
+.topMenuItems {
+	padding: var(--spacing--xs);
 }
 
 .bottomMenu {

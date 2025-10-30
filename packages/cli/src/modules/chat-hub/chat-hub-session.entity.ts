@@ -36,6 +36,14 @@ export class ChatHubSession extends WithTimestamps {
 	@JoinColumn({ name: 'ownerId' })
 	owner?: User;
 
+	/**
+	 * [多租户改造] ID of the project this chat session belongs to.
+	 * Used for multi-tenant data isolation and permission control.
+	 * Aligns with n8n's existing architecture (WorkflowEntity, CredentialsEntity also link to Project).
+	 */
+	@Column({ type: 'varchar', length: 36, nullable: true })
+	projectId: string | null;
+
 	/*
 	 * Timestamp of the last active message in the session.
 	 * Used to sort chat sessions by recent activity.

@@ -1,16 +1,13 @@
 <script lang="ts" setup>
-import { useGlobalEntityCreation } from '@/composables/useGlobalEntityCreation';
 import { VIEWS } from '@/constants';
 import { sourceControlEventBus } from '@/features/integrations/sourceControl.ee/sourceControl.eventBus';
 import { useUsersStore } from '@/features/settings/users/users.store';
-import { useSettingsStore } from '@/stores/settings.store';
 import type { IMenuItem } from '@n8n/design-system/types';
 import { useI18n } from '@n8n/i18n';
 import { computed, onBeforeMount, onBeforeUnmount } from 'vue';
 import { useProjectsStore } from '../projects.store';
-import type { ProjectListItem } from '../projects.types';
 
-import { N8nButton, N8nHeading, N8nMenuItem, N8nTooltip } from '@n8n/design-system';
+import { N8nMenuItem } from '@n8n/design-system';
 
 type Props = {
 	collapsed: boolean;
@@ -20,64 +17,39 @@ type Props = {
 const props = defineProps<Props>();
 
 const locale = useI18n();
-const globalEntityCreation = useGlobalEntityCreation();
 
 const projectsStore = useProjectsStore();
-const settingsStore = useSettingsStore();
 const usersStore = useUsersStore();
 
-const isCreatingProject = computed(() => globalEntityCreation.isCreatingProject.value);
-const displayProjects = computed(() => globalEntityCreation.displayProjects.value);
-const isFoldersFeatureEnabled = computed(() => settingsStore.isFoldersFeatureEnabled);
-const hasMultipleVerifiedUsers = computed(
-	() => usersStore.allUsers.filter((user) => !user.isPendingUser).length > 1,
-);
-
-const home = computed<IMenuItem>(() => ({
-	id: 'home',
-	label: locale.baseText('projects.menu.overview'),
-	icon: 'house',
+// [多租户改造] 方案A：简化导航菜单
+const workflows = computed<IMenuItem>(() => ({
+	id: 'workflows',
+	label: locale.baseText('workspace.menu.workflows'),
+	icon: 'network-wired',
 	route: {
-		to: { name: VIEWS.HOMEPAGE },
+		to: { name: VIEWS.WORKFLOWS_HOME },
 	},
 }));
 
-const shared = computed<IMenuItem>(() => ({
-	id: 'shared',
-	label: locale.baseText('projects.menu.shared'),
-	icon: 'share',
-	route: {
-		to: { name: VIEWS.SHARED_WITH_ME },
-	},
-}));
+const credentials = computed<IMenuItem>(() => {
+	const projectId = projectsStore.currentProjectId;
 
-const getProjectMenuItem = (project: ProjectListItem): IMenuItem => ({
-	id: project.id,
-	label: project.name ?? '',
-	icon: project.icon as IMenuItem['icon'],
-	route: {
-		to: {
-			name: VIEWS.PROJECTS_WORKFLOWS,
-			params: { projectId: project.id },
+	return {
+		id: 'credentials',
+		label: locale.baseText('workspace.menu.credentials'),
+		icon: 'key',
+		route: {
+			to: projectId
+				? {
+						name: VIEWS.PROJECTS_CREDENTIALS,
+						params: { projectId },
+					}
+				: {
+						name: VIEWS.CREDENTIALS,
+					},
 		},
-	},
+	};
 });
-
-const personalProject = computed<IMenuItem>(() => ({
-	id: projectsStore.personalProject?.id ?? '',
-	label: locale.baseText('projects.menu.personal'),
-	icon: 'user',
-	route: {
-		to: {
-			name: VIEWS.PROJECTS_WORKFLOWS,
-			params: { projectId: projectsStore.personalProject?.id },
-		},
-	},
-}));
-
-const showAddFirstProject = computed(
-	() => projectsStore.isTeamProjectFeatureEnabled && !displayProjects.value.length,
-);
 
 const activeTabId = computed(() => {
 	return (
@@ -103,158 +75,38 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-	<div :class="$style.projects">
-		<div class="home">
+	<!-- [多租户改造] 方案A：精简导航 - 工作流 + 凭证 -->
+	<div :class="$style.navigation">
+		<div class="menu-items">
+			<!-- 工作流 -->
 			<N8nMenuItem
-				:item="home"
+				:item="workflows"
 				:compact="props.collapsed"
-				:active="activeTabId === 'home'"
-				data-test-id="project-home-menu-item"
+				:active="activeTabId === 'workflows'"
+				data-test-id="workspace-workflows-menu-item"
 			/>
+			<!-- 凭证 -->
 			<N8nMenuItem
-				v-if="projectsStore.isTeamProjectFeatureEnabled || isFoldersFeatureEnabled"
-				:item="personalProject"
+				:item="credentials"
 				:compact="props.collapsed"
-				:active="activeTabId === personalProject.id"
-				data-test-id="project-personal-menu-item"
-			/>
-			<N8nMenuItem
-				v-if="
-					(projectsStore.isTeamProjectFeatureEnabled || isFoldersFeatureEnabled) &&
-					hasMultipleVerifiedUsers
-				"
-				:item="shared"
-				:compact="props.collapsed"
-				:active="activeTabId === 'shared'"
-				data-test-id="project-shared-menu-item"
+				:active="activeTabId === 'credentials'"
+				data-test-id="workspace-credentials-menu-item"
 			/>
 		</div>
-		<N8nHeading
-			v-if="!props.collapsed && projectsStore.isTeamProjectFeatureEnabled"
-			:class="[$style.projectsLabel]"
-			bold
-			size="small"
-			color="text-light"
-			tag="h3"
-		>
-			<span>{{ locale.baseText('projects.menu.title') }}</span>
-			<N8nTooltip
-				v-if="projectsStore.canCreateProjects"
-				placement="right"
-				:disabled="projectsStore.hasPermissionToCreateProjects"
-				:content="locale.baseText('projects.create.permissionDenied')"
-			>
-				<N8nButton
-					icon="plus"
-					text
-					data-test-id="project-plus-button"
-					:disabled="isCreatingProject || !projectsStore.hasPermissionToCreateProjects"
-					:class="$style.plusBtn"
-					@click="globalEntityCreation.createProject('add_icon')"
-				/>
-			</N8nTooltip>
-		</N8nHeading>
-		<div
-			v-if="projectsStore.isTeamProjectFeatureEnabled || isFoldersFeatureEnabled"
-			:class="$style.projectItems"
-		>
-			<N8nMenuItem
-				v-for="project in displayProjects"
-				:key="project.id"
-				:class="{
-					[$style.collapsed]: props.collapsed,
-				}"
-				:item="getProjectMenuItem(project)"
-				:compact="props.collapsed"
-				:active="activeTabId === project.id"
-				data-test-id="project-menu-item"
-			/>
-		</div>
-		<N8nTooltip
-			v-if="showAddFirstProject"
-			placement="right"
-			:disabled="projectsStore.hasPermissionToCreateProjects"
-			:content="locale.baseText('projects.create.permissionDenied')"
-		>
-			<N8nButton
-				:class="[
-					$style.addFirstProjectBtn,
-					{
-						[$style.collapsed]: props.collapsed,
-					},
-				]"
-				:disabled="isCreatingProject || !projectsStore.hasPermissionToCreateProjects"
-				type="secondary"
-				icon="plus"
-				data-test-id="add-first-project-button"
-				@click="globalEntityCreation.createProject('add_first_project_button')"
-			>
-				<span>{{ locale.baseText('projects.menu.addFirstProject') }}</span>
-			</N8nButton>
-		</N8nTooltip>
 	</div>
 </template>
 
 <style lang="scss" module>
-.projects {
+/* [多租户改造] 简化样式：只保留基本导航布局 */
+.navigation {
 	width: 100%;
 	align-items: start;
 	gap: var(--spacing--3xs);
-	&:hover {
-		.plusBtn {
-			display: block;
-		}
-	}
-}
-
-.projectItems {
-	padding: var(--spacing--xs);
-}
-
-.upgradeLink {
-	color: var(--color--primary);
-	cursor: pointer;
-}
-
-.projectsLabel {
-	display: flex;
-	justify-content: space-between;
-	text-overflow: ellipsis;
-	overflow: hidden;
-	box-sizing: border-box;
-	padding: 0 var(--spacing--sm);
-	margin-top: var(--spacing--md);
-
-	&.collapsed {
-		padding: 0;
-		margin-left: 0;
-		justify-content: center;
-	}
-}
-
-.plusBtn {
-	margin: 0;
-	padding: 0;
-	color: var(--color--text--tint-1);
-	display: none;
-}
-
-.addFirstProjectBtn {
-	font-size: var(--font-size--xs);
-	margin: 0 var(--spacing--sm);
-	width: calc(100% - var(--spacing--sm) * 2);
-
-	&.collapsed {
-		> span:last-child {
-			display: none;
-			margin: 0 var(--spacing--sm) var(--spacing--md);
-		}
-	}
 }
 </style>
 
 <style lang="scss" scoped>
-.home {
+.menu-items {
 	padding: 0 var(--spacing--xs);
 }
 </style>

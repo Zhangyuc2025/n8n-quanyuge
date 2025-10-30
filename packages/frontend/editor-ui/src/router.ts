@@ -913,12 +913,14 @@ router.beforeEach(async (to: RouteLocationNormalized, from, next) => {
 		 * Initialize application core
 		 * This step executes before first route is loaded and is required for permission checks
 		 *
-		 * [多租户改造] 公开首页不需要初始化认证相关功能
+		 * [多租户改造] 首页也需要初始化用户状态（通过 cookie 恢复登录），但允许未登录用户访问
 		 */
 
+		await initializeCore();
+
+		// [多租户改造] 首页跳过 initializeAuthenticatedFeatures，避免未登录时报错
 		const isHomePage = to.name === VIEWS.HOMEPAGE || to.path === '/';
 		if (!isHomePage) {
-			await initializeCore();
 			// Pass undefined for first param to use default
 			await initializeAuthenticatedFeatures(undefined, to.name as string);
 		}

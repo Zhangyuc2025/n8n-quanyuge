@@ -59,9 +59,32 @@ export class ChatHubSessionRepository extends Repository<ChatHubSession> {
 		});
 	}
 
+	/**
+	 * [多租户改造] 获取用户在所有项目中的会话（跨项目查询）
+	 */
 	async getManyByUserId(userId: string) {
 		return await this.find({
 			where: { ownerId: userId },
+			order: { lastMessageAt: 'DESC', id: 'ASC' },
+		});
+	}
+
+	/**
+	 * [多租户改造] 获取指定项目中的所有会话
+	 */
+	async getManyByProjectId(projectId: string) {
+		return await this.find({
+			where: { projectId },
+			order: { lastMessageAt: 'DESC', id: 'ASC' },
+		});
+	}
+
+	/**
+	 * [多租户改造] 获取用户在指定项目中的会话
+	 */
+	async getManyByUserIdAndProjectId(userId: string, projectId: string) {
+		return await this.find({
+			where: { ownerId: userId, projectId },
 			order: { lastMessageAt: 'DESC', id: 'ASC' },
 		});
 	}
@@ -73,6 +96,23 @@ export class ChatHubSessionRepository extends Repository<ChatHubSession> {
 			async (em) => {
 				return await em.findOne(ChatHubSession, {
 					where: { id, ownerId: userId },
+					relations: ['messages'],
+				});
+			},
+			false,
+		);
+	}
+
+	/**
+	 * [多租户改造] 获取指定会话（带 projectId 验证）
+	 */
+	async getOneByIdAndProjectId(id: string, projectId: string, trx?: EntityManager) {
+		return await withTransaction(
+			this.manager,
+			trx,
+			async (em) => {
+				return await em.findOne(ChatHubSession, {
+					where: { id, projectId },
 					relations: ['messages'],
 				});
 			},

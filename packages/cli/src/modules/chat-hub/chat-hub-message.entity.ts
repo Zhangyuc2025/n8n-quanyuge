@@ -31,6 +31,13 @@ export class ChatHubMessage extends WithTimestamps {
 	session: Relation<ChatHubSession>;
 
 	/**
+	 * [多租户改造] ID of the project this message belongs to.
+	 * Used for multi-tenant data isolation.
+	 */
+	@Column({ type: 'varchar', length: 36, nullable: true })
+	projectId: string | null;
+
+	/**
 	 * Type of the message, e.g. 'human', 'ai', 'system', 'tool', 'generic'.
 	 */
 	@Column({ type: 'varchar', length: 16 })

@@ -23,6 +23,7 @@ export const useRBACStore = defineStore(STORES.RBAC, () => {
 		externalSecretsProvider: {},
 		externalSecret: {},
 		project: {},
+		team: {}, // [多租户改造] 新增team资源类型
 		orchestration: {},
 		workersView: {},
 		eventBusDestination: {},

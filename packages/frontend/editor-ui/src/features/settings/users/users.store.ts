@@ -1,6 +1,7 @@
 import { useAsyncState } from '@vueuse/core';
 import {
 	type LoginRequestDto,
+	type RegisterRequestDto,
 	type PasswordUpdateRequestDto,
 	type SettingsUpdateRequestDto,
 	type UserUpdateRequestDto,
@@ -209,6 +210,15 @@ export const useUsersStore = defineStore(STORES.USERS, () => {
 
 	const loginWithCreds = async (params: LoginRequestDto) => {
 		const user = await usersApi.login(rootStore.restApiContext, params);
+		if (!user) {
+			return;
+		}
+
+		setCurrentUser(user);
+	};
+
+	const registerWithCreds = async (params: RegisterRequestDto) => {
+		const user = await usersApi.register(rootStore.restApiContext, params);
 		if (!user) {
 			return;
 		}
@@ -461,6 +471,7 @@ export const useUsersStore = defineStore(STORES.USERS, () => {
 		initialize,
 		setPersonalizationAnswers,
 		loginWithCreds,
+		registerWithCreds,
 		logout,
 		registerLoginHook,
 		registerLogoutHook,
