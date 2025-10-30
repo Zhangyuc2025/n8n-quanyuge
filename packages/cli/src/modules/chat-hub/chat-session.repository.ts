@@ -15,9 +15,7 @@ export class ChatHubSessionRepository extends Repository<ChatHubSession> {
 		trx?: EntityManager,
 	): Promise<ChatHubSession> {
 		return await withTransaction<ChatHubSession>(this.manager, trx, async (em) => {
-			// 使用类型断言避免TypeScript过度推断导致的无限递归
-			// ChatHubMessage entity有6个自引用关系，可能导致类型推断循环
-			await em.insert(ChatHubSession, session as any);
+			await em.insert(ChatHubSession, session);
 			return await em.findOneOrFail(ChatHubSession, {
 				where: { id: session.id },
 				relations: ['messages'],
