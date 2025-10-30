@@ -14,7 +14,7 @@ describe('Middleware', () => {
 			setActivePinia(createPinia());
 		});
 
-		it('should redirect to signin if no current user is present', async () => {
+		it('should redirect to homepage with requireAuth if no current user is present', async () => {
 			vi.mocked(useUsersStore).mockReturnValue({ currentUser: null } as ReturnType<
 				typeof useUsersStore
 			>);
@@ -25,9 +25,10 @@ describe('Middleware', () => {
 
 			await authenticatedMiddleware(toMock, fromMock, nextMock, {});
 
+			// [多租户改造] 跳转到首页并自动弹出登录弹窗（不再跳转到 /signin 页面）
 			expect(nextMock).toHaveBeenCalledWith({
-				name: VIEWS.SIGNIN,
-				query: { redirect: encodeURIComponent('/') },
+				name: VIEWS.HOMEPAGE,
+				query: { requireAuth: 'true', redirect: encodeURIComponent('/') },
 			});
 		});
 
@@ -42,9 +43,10 @@ describe('Middleware', () => {
 
 			await authenticatedMiddleware(toMock, fromMock, nextMock, {});
 
+			// [多租户改造] 跳转到首页并自动弹出登录弹窗（不再跳转到 /signin 页面）
 			expect(nextMock).toHaveBeenCalledWith({
-				name: VIEWS.SIGNIN,
-				query: { redirect: '/' },
+				name: VIEWS.HOMEPAGE,
+				query: { requireAuth: 'true', redirect: '/' },
 			});
 		});
 

@@ -112,7 +112,8 @@ const onSetupClick = async () => {
 		});
 		if (settingsStore.isMFAEnforced) {
 			await userStore.logout();
-			await router.push({ name: VIEWS.SIGNIN });
+			// [多租户改造] 跳转到首页并自动弹出登录弹窗（不再跳转到 /signin 页面）
+			await router.push({ name: VIEWS.HOMEPAGE, query: { requireAuth: 'true' } });
 		}
 	} catch (e) {
 		if (e.errorCode === MFA_AUTHENTICATION_CODE_WINDOW_EXPIRED) {

@@ -3863,5 +3863,22 @@
 	"authModal.validation.passwordMismatch": "两次输入的密码不一致",
 	"authModal.backToSignin": "返回登录",
 	"authModal.qrcode.hint": "微信扫码登录",
-	"authModal.qrcode.comingSoon": "二维码登录功能即将推出"
+	"authModal.qrcode.comingSoon": "二维码登录功能即将推出",
+	"createTeamDialog.title": "创建新团队",
+	"createTeamDialog.field.name.label": "团队名称",
+	"createTeamDialog.field.name.placeholder": "请输入团队名称",
+	"createTeamDialog.field.description.label": "团队描述",
+	"createTeamDialog.field.description.placeholder": "请输入团队描述（可选）",
+	"createTeamDialog.field.billingMode.label": "计费模式",
+	"createTeamDialog.field.billingMode.hint": "选择团队的费用支付方式",
+	"createTeamDialog.billingMode.ownerPays": "创建者付费 - 所有费用由团队所有者承担",
+	"createTeamDialog.billingMode.memberPays": "成员付费 - 费用由各成员各自承担",
+	"createTeamDialog.button.cancel": "取消",
+	"createTeamDialog.button.create": "创建团队",
+	"createTeamDialog.validation.nameRequired": "团队名称不能为空",
+	"createTeamDialog.validation.nameTooLong": "团队名称不能超过255个字符",
+	"createTeamDialog.error.title": "创建团队失败",
+	"createTeamDialog.error.createFailed": "创建团队时发生错误，请稍后重试",
+	"createTeamDialog.success.title": "创建成功",
+	"createTeamDialog.success.message": "团队 {teamName} 已成功创建！"
 }

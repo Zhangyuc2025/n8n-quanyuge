@@ -67,7 +67,8 @@ const onSubmit = async (values: { [key: string]: string }) => {
 				message: locale.baseText('auth.changePassword.passwordUpdatedMessage'),
 			});
 
-			await router.push({ name: VIEWS.SIGNIN });
+			// [多租户改造] 跳转到首页并自动弹出登录弹窗（不再跳转到 /signin 页面）
+			await router.push({ name: VIEWS.HOMEPAGE, query: { requireAuth: 'true' } });
 		} else {
 			toast.showError(
 				new Error(locale.baseText('auth.validation.missingParameters')),
@@ -152,7 +153,8 @@ onMounted(async () => {
 		await usersStore.validatePasswordToken({ token });
 	} catch (e) {
 		toast.showError(e, locale.baseText('auth.changePassword.tokenValidationError'));
-		void router.replace({ name: VIEWS.SIGNIN });
+		// [多租户改造] 跳转到首页并自动弹出登录弹窗（不再跳转到 /signin 页面）
+		void router.replace({ name: VIEWS.HOMEPAGE, query: { requireAuth: 'true' } });
 	}
 });
 </script>

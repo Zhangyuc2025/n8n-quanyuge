@@ -58,8 +58,7 @@ const SettingsApiView = async () =>
 const SettingsLogStreamingView = async () =>
 	await import('@/features/integrations/logStreaming.ee/views/SettingsLogStreamingView.vue');
 const SetupView = async () => await import('@/features/core/auth/views/SetupView.vue');
-const SigninView = async () => await import('@/features/core/auth/views/SigninView.vue');
-const SignupView = async () => await import('@/features/core/auth/views/SignupView.vue');
+// [多租户改造] 已移除 SigninView 和 SignupView，改用 AuthModal 弹窗
 const TemplatesCollectionView = async () =>
 	await import('@/features/workflows/templates/views/TemplatesCollectionView.vue');
 const TemplatesWorkflowView = async () =>
@@ -446,32 +445,7 @@ export const routes: RouteRecordRaw[] = [
 		path: '/workflow',
 		redirect: '/workflow/new',
 	},
-	{
-		path: '/signin',
-		name: VIEWS.SIGNIN,
-		components: {
-			default: SigninView,
-		},
-		meta: {
-			telemetry: {
-				pageCategory: 'auth',
-			},
-			middleware: ['guest'],
-		},
-	},
-	{
-		path: '/signup',
-		name: VIEWS.SIGNUP,
-		components: {
-			default: SignupView,
-		},
-		meta: {
-			telemetry: {
-				pageCategory: 'auth',
-			},
-			middleware: ['guest'],
-		},
-	},
+	// [多租户改造] 已移除 /signin 和 /signup 路由，改用 AuthModal 弹窗
 	{
 		path: '/signout',
 		name: VIEWS.SIGNOUT,

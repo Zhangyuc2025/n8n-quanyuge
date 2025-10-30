@@ -17,7 +17,8 @@ export const authenticatedMiddleware: RouterMiddleware<AuthenticatedPermissionOp
 
 	const valid = isAuthenticated(options);
 	if (!valid) {
-		return next({ name: VIEWS.SIGNIN, query: { redirect } });
+		// [多租户改造] 跳转到首页并自动弹出登录弹窗（不再跳转到 /signin 页面）
+		return next({ name: VIEWS.HOMEPAGE, query: { requireAuth: 'true', redirect } });
 	}
 
 	// If MFA is not enabled, and the instance enforces MFA, redirect to personal settings

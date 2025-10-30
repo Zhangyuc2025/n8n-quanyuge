@@ -1,12 +1,12 @@
 # n8n 多租户改造进度跟踪 - v2.0 版本
 
 > **更新时间:** 2025-10-30
-> **当前状态:** ✅ Phase 3.9 完成 - WorkspaceSwitcher 重写与侧边栏简化
+> **当前状态:** ✅ Phase 4.1 完成 - 创建团队弹窗与后端修复
 > **当前方案:** 基于 Project 架构扩展（最小改动策略）+ 完整计费系统
 > **预计总工期:** 10-11 周（已调整，含完整计费）
 > **当前版本:** n8n@1.117.0 (满血版)
-> **下一步:** Phase 4 - 前端组件实现（团队管理页面、成员管理），Phase 5 后再完成 Chat/Insights 改造
-> **方案版本:** v2.10（2025-10-30 Coze风格工作区切换器 + 导航菜单简化）
+> **下一步:** Phase 4.2 - 团队管理页面（TeamSettings.vue），参考 ProjectSettings.vue 架构
+> **方案版本:** v2.11（2025-10-30 创建团队功能完整实现）
 
 ---
 
@@ -49,11 +49,12 @@
 | **Phase 3.7** | 登录注册弹窗改造 | ✅ 完成 | 2025-10-30 | ~550行 |
 | **Phase 3.8** | 侧边栏优化和模块启用准备 | ✅ 完成 | 2025-10-30 | ~170行 |
 | **Phase 3.9** | WorkspaceSwitcher重写与导航简化 | ✅ 完成 | 2025-10-30 | ~480行 |
-| **Phase 4** | 前端组件实现 | 🚧 进行中 | - | - |
+| **Phase 4.1** | 创建团队弹窗与后端修复 | ✅ 完成 | 2025-10-30 | ~313行 |
+| **Phase 4.2** | 团队管理页面 | 📋 待开始 | - | - |
 | **Phase 5** | 完整计费系统 ⭐扩展 | 📋 待开始 | - | - |
 | **Chat/Insights 改造** | 多租户隔离（基于 Project） | ⏸️ 暂缓 | - | - |
 
-**总计已完成:** ~3,758行代码
+**总计已完成:** ~4,071行代码
 **备注:** Chat-Hub 和 Insights 的多租户改造已完成数据库层准备（Migration、Entity、Repository），Service/Controller 层待 Phase 5 完成后继续
 
 ---
@@ -213,6 +214,28 @@
 - 添加完整的中英文国际化翻译（workspace.search/recent/role.*）
 
 **代码量:** ~480行
+
+---
+
+### ✅ Phase 4.1: 创建团队弹窗与后端修复（2025-10-30）
+
+**核心文件:**
+- `packages/frontend/editor-ui/src/components/CreateTeamDialog.vue` (新建，212行)
+- `packages/frontend/editor-ui/src/features/teams/teams.api.ts` (新建，33行)
+- `packages/cli/src/services/team.service.ts` (修复，68行修改)
+
+**完成内容:**
+- CreateTeamDialog 弹窗组件：表单验证、计费模式选择、成功跳转
+- teams.api.ts API客户端：createTeam/getAllTeams/getTeam 方法
+- 后端修复1：临时禁用团队数量限制检查（开发测试用）
+- 后端修复2：修复数据库约束错误（CHK_project_team_consistency）
+  - 问题：先创建project再更新teamId违反约束
+  - 解决：一次性创建project并设置所有必需字段（teamId、isDefault）
+  - 自动添加项目管理员关系（ProjectService.addUser）
+- 完整的中英文i18n翻译（17个翻译键）
+- 测试验证：创建成功、自动创建默认项目、显示在工作区列表、自动跳转
+
+**代码量:** ~313行
 
 ---
 

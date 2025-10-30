@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from '@n8n/i18n';
 import { N8nPopoverReka, N8nInput, N8nText, N8nIcon, N8nButton } from '@n8n/design-system';
 import { useProjectsStore } from '@/features/collaboration/projects/projects.store';
 import { ProjectTypes } from '@/features/collaboration/projects/projects.types';
-import { VIEWS } from '@/constants';
+import { useUIStore } from '@/stores/ui.store';
+import { VIEWS, CREATE_TEAM_MODAL_KEY } from '@/constants';
 
 type Props = {
 	collapsed?: boolean;
@@ -16,6 +17,7 @@ const props = defineProps<Props>();
 const i18n = useI18n();
 const router = useRouter();
 const projectsStore = useProjectsStore();
+const uiStore = useUIStore();
 
 // 控制popover开关
 const isOpen = ref(false);
@@ -111,9 +113,21 @@ const handleWorkspaceChange = async (workspaceId: string) => {
 // 创建新团队
 const handleCreateTeam = () => {
 	isOpen.value = false;
-	// TODO: Phase 4 - 打开创建团队对话框
-	console.log('[WorkspaceSwitcher] 创建新团队功能待实现');
+	// [多租户改造] Phase 4 - 打开创建团队弹窗
+	uiStore.openModal(CREATE_TEAM_MODAL_KEY);
 };
+
+// [多租户改造] 组件加载时确保项目数据已加载
+onMounted(async () => {
+	// 如果还没有加载个人项目，则加载
+	if (!projectsStore.personalProject) {
+		await projectsStore.getPersonalProject();
+	}
+	// 如果还没有加载所有项目（包括团队项目），则加载
+	if (projectsStore.teamProjects.length === 0) {
+		await projectsStore.getAllProjects();
+	}
+});
 </script>
 
 <template>

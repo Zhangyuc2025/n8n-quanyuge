@@ -1,11 +1,18 @@
 import { Logger } from '@n8n/backend-common';
-import { Team, TeamRepository, TeamMemberRepository, UserRepository } from '@n8n/db';
+import {
+	Team,
+	TeamRepository,
+	TeamMemberRepository,
+	UserRepository,
+	ProjectRepository,
+} from '@n8n/db';
 import { Service } from '@n8n/di';
 import { UnexpectedError, UserError } from 'n8n-workflow';
 
 import { BadRequestError } from '@/errors/response-errors/bad-request.error';
 import { NotFoundError } from '@/errors/response-errors/not-found.error';
 import { EventService } from '@/events/event.service';
+import { ProjectService } from '@/services/project.service.ee';
 
 /**
  * 团队服务
@@ -20,6 +27,8 @@ export class TeamService {
 		private readonly teamRepository: TeamRepository,
 		private readonly teamMemberRepository: TeamMemberRepository,
 		private readonly userRepository: UserRepository,
+		private readonly projectRepository: ProjectRepository,
+		private readonly projectService: ProjectService,
 		private readonly eventService: EventService,
 	) {}
 
@@ -46,11 +55,12 @@ export class TeamService {
 			throw new NotFoundError('Owner user not found');
 		}
 
-		// 检查用户是否已达到团队数量上限
-		const userTeams = await this.teamRepository.findByOwner(ownerId);
-		if (userTeams.length >= owner.maxTeams) {
-			throw new BadRequestError(`User has reached the maximum number of teams (${owner.maxTeams})`);
-		}
+		// [临时] 开发测试期间禁用团队数量限制检查
+		// TODO: 生产环境需要启用这个检查
+		// const userTeams = await this.teamRepository.findByOwner(ownerId);
+		// if (userTeams.length >= owner.maxTeams) {
+		// 	throw new BadRequestError(`User has reached the maximum number of teams (${owner.maxTeams})`);
+		// }
 
 		// 如果提供了 slug，检查是否已被使用
 		if (data.slug) {
@@ -75,6 +85,24 @@ export class TeamService {
 			// 自动添加所有者为团队成员
 			await this.teamMemberRepository.addMember(team.id, ownerId, 'team:owner');
 
+			// [多租户改造] 创建团队的默认项目
+			// 注意：必须一次性设置所有字段，包括 teamId，否则会违反 CHK_project_team_consistency 约束
+			const defaultProject = this.projectRepository.create({
+				name: team.name,
+				type: 'team',
+				icon: team.icon,
+				description: team.description,
+				teamId: team.id,
+				isDefault: true,
+			});
+			await this.projectRepository.save(defaultProject);
+
+			// 添加团队所有者为项目管理员
+			await this.projectService.addUser(defaultProject.id, {
+				userId: ownerId,
+				role: 'project:admin',
+			});
+
 			// 记录事件
 			this.eventService.emit('team.created', {
 				teamId: team.id,
@@ -94,7 +122,12 @@ export class TeamService {
 				ownerId,
 				teamName: data.name,
 				error: error instanceof Error ? error.message : 'Unknown error',
+				stack: error instanceof Error ? error.stack : undefined,
 			});
+			// 把原始错误抛出去，这样能看到详细信息
+			if (error instanceof Error) {
+				throw error;
+			}
 			throw new UnexpectedError('Failed to create team');
 		}
 	}

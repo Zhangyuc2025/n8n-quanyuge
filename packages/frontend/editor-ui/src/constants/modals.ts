@@ -5,6 +5,7 @@ export const MODAL_CLOSE = 'close';
 export const ABOUT_MODAL_KEY = 'about';
 export const AUTH_MODAL_KEY = 'authModal';
 export const CHAT_EMBED_MODAL_KEY = 'chatEmbed';
+export const CREATE_TEAM_MODAL_KEY = 'createTeam';
 export const CHANGE_PASSWORD_MODAL_KEY = 'changePassword';
 export const CONFIRM_PASSWORD_MODAL_KEY = 'confirmPassword';
 export const DUPLICATE_MODAL_KEY = 'duplicate';

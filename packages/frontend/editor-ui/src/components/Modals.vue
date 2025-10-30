@@ -6,6 +6,7 @@ import {
 	CHANGE_PASSWORD_MODAL_KEY,
 	CHAT_EMBED_MODAL_KEY,
 	CONTACT_PROMPT_MODAL_KEY,
+	CREATE_TEAM_MODAL_KEY,
 	DUPLICATE_MODAL_KEY,
 	EXTERNAL_SECRETS_PROVIDER_MODAL_KEY,
 	FROM_AI_PARAMETERS_MODAL_KEY,
@@ -67,6 +68,7 @@ import ChangePasswordModal from '@/features/core/auth/components/ChangePasswordM
 import ConfirmPasswordModal from '@/features/core/auth/components/ConfirmPasswordModal.vue';
 import ChatEmbedModal from '@/components/ChatEmbedModal.vue';
 import CommunityPackageInstallModal from '@/features/settings/communityNodes/components/CommunityPackageInstallModal.vue';
+import CreateTeamDialog from '@/components/CreateTeamDialog.vue';
 import CommunityPackageManageConfirmModal from '@/features/settings/communityNodes/components/CommunityPackageManageConfirmModal.vue';
 import CommunityPlusEnrollmentModal from '@/features/settings/usage/components/CommunityPlusEnrollmentModal.vue';
 import ContactPromptModal from '@/components/ContactPromptModal.vue';
@@ -144,6 +146,10 @@ import VariableModal from '@/features/settings/environments.ee/components/Variab
 
 		<ModalRoot :name="AUTH_MODAL_KEY">
 			<AuthModal />
+		</ModalRoot>
+
+		<ModalRoot :name="CREATE_TEAM_MODAL_KEY">
+			<CreateTeamDialog />
 		</ModalRoot>
 
 		<ModalRoot :name="CHAT_EMBED_MODAL_KEY">

@@ -16,7 +16,10 @@ export const enum VIEWS {
 	DEMO = 'WorkflowDemo',
 	TEMPLATE_IMPORT = 'WorkflowTemplate',
 	WORKFLOW_ONBOARDING = 'WorkflowOnboarding',
+	// [多租户改造] 已废弃：SIGNIN 和 SIGNUP 改用 AuthModal 弹窗，保留常量仅为兼容性
+	/** @deprecated 已废弃，使用 AuthModal 弹窗代替 */
 	SIGNIN = 'SigninView',
+	/** @deprecated 已废弃，使用 AuthModal 弹窗代替 */
 	SIGNUP = 'SignupView',
 	SIGNOUT = 'SignoutView',
 	SETUP = 'SetupView',

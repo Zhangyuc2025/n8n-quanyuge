@@ -14,7 +14,11 @@ const i18n = useI18n();
 const logout = async () => {
 	try {
 		await usersStore.logout();
-		window.location.href = router.resolve({ name: VIEWS.SIGNIN }).href;
+		// [多租户改造] 退出登录后跳转到首页并自动弹出登录弹窗（不再跳转到 /signin 页面）
+		window.location.href = router.resolve({
+			name: VIEWS.HOMEPAGE,
+			query: { requireAuth: 'true' },
+		}).href;
 	} catch (e) {
 		toast.showError(e, i18n.baseText('auth.signout.error'));
 	}

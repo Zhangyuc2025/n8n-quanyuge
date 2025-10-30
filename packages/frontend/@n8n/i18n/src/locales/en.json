@@ -3871,5 +3871,22 @@
 	"authModal.validation.passwordMismatch": "Passwords do not match",
 	"authModal.backToSignin": "Back to Sign In",
 	"authModal.qrcode.hint": "WeChat QR Code Sign In",
-	"authModal.qrcode.comingSoon": "QR code sign in coming soon"
+	"authModal.qrcode.comingSoon": "QR code sign in coming soon",
+	"createTeamDialog.title": "Create New Team",
+	"createTeamDialog.field.name.label": "Team Name",
+	"createTeamDialog.field.name.placeholder": "Enter team name",
+	"createTeamDialog.field.description.label": "Team Description",
+	"createTeamDialog.field.description.placeholder": "Enter team description (optional)",
+	"createTeamDialog.field.billingMode.label": "Billing Mode",
+	"createTeamDialog.field.billingMode.hint": "Choose how team expenses will be paid",
+	"createTeamDialog.billingMode.ownerPays": "Owner Pays - All expenses paid by team owner",
+	"createTeamDialog.billingMode.memberPays": "Member Pays - Each member pays their own expenses",
+	"createTeamDialog.button.cancel": "Cancel",
+	"createTeamDialog.button.create": "Create Team",
+	"createTeamDialog.validation.nameRequired": "Team name is required",
+	"createTeamDialog.validation.nameTooLong": "Team name must not exceed 255 characters",
+	"createTeamDialog.error.title": "Create Team Failed",
+	"createTeamDialog.error.createFailed": "An error occurred while creating team, please try again later",
+	"createTeamDialog.success.title": "Success",
+	"createTeamDialog.success.message": "Team {teamName} has been created successfully!"
 }
