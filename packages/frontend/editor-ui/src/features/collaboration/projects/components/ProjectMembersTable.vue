@@ -65,10 +65,18 @@ const headers = ref<Array<TableHeader<ProjectMemberData>>>([
 	},
 ]);
 
+// 翻译角色显示名称
+const getRoleDisplayName = (slug: string): string => {
+	const roleKey = slug.replace('project:', '');
+	const i18nKey = `projects.settings.role.${roleKey}` as const;
+	// @ts-ignore - 动态生成的i18n key
+	return i18n.baseText(i18nKey);
+};
+
 const roleActions = computed<Array<ActionDropdownItem<string>>>(() =>
 	props.projectRoles.map((role) => ({
 		id: role.slug,
-		label: role.displayName,
+		label: getRoleDisplayName(role.slug),
 		disabled: !role.licensed,
 		description: role.description ?? undefined,
 		badge: !role.licensed ? i18n.baseText('generic.upgrade') : undefined,
@@ -116,7 +124,7 @@ const filterActions = (member: ProjectMemberData) => {
 					@badge-click="emit('show-upgrade-dialog')"
 				/>
 				<N8nText v-else color="text-dark">
-					{{ props.projectRoles.find((role) => role.slug === item.role)?.displayName ?? item.role }}
+					{{ getRoleDisplayName(item.role) }}
 				</N8nText>
 			</template>
 			<template #[`item.actions`]="{ item }">
