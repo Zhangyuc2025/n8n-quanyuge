@@ -117,6 +117,7 @@ export const GLOBAL_MEMBER_SCOPES: Scope[] = [
 	'variable:list',
 	'variable:read',
 	'dataTable:list',
+	'insights:list',
 	'mcpApiKey:create',
 	'mcpApiKey:rotate',
 	'chatHub:message',

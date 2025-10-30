@@ -185,6 +185,8 @@ export const useProjectsStore = defineStore(STORES.PROJECTS, () => {
 	const deleteProject = async (projectId: string, transferId?: string): Promise<void> => {
 		await projectsApi.deleteProject(rootStore.restApiContext, projectId, transferId);
 		await getProjectsCount();
+		// [多租户改造] 删除后需要同时更新 projects 和 myProjects，确保 WorkspaceSwitcher 能正确显示
+		projects.value = projects.value.filter((p) => p.id !== projectId);
 		myProjects.value = myProjects.value.filter((p) => p.id !== projectId);
 	};
 

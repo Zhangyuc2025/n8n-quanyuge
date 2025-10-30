@@ -303,6 +303,8 @@ export declare namespace ProjectRequest {
 		icon: ProjectIcon | null;
 		type: ProjectType;
 		description: string | null;
+		teamId?: string | null;
+		isDefault?: boolean;
 		relations: ProjectRelationResponse[];
 		scopes: Scope[];
 	};

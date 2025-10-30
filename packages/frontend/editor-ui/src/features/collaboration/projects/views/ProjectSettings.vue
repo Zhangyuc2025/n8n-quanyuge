@@ -8,6 +8,7 @@ import { useUsersStore } from '@/features/settings/users/users.store';
 import { useI18n } from '@n8n/i18n';
 import { type ResourceCounts, useProjectsStore } from '../projects.store';
 import type { Project, ProjectRelation, ProjectMemberData } from '../projects.types';
+import { ProjectTypes } from '../projects.types';
 import { useToast } from '@/composables/useToast';
 import { VIEWS } from '@/constants';
 import ProjectDeleteDialog from '../components/ProjectDeleteDialog.vue';
@@ -22,6 +23,8 @@ import { isIconOrEmoji, type IconOrEmoji } from '@n8n/design-system/components/N
 import type { TableOptions } from '@n8n/design-system/components/N8nDataTableServer';
 import type { UserAction } from '@n8n/design-system';
 import { isProjectRole } from '@/utils/typeGuards';
+import { teamsApi, type Team } from '@/features/teams/teams.api';
+import { useRootStore } from '@n8n/stores/useRootStore';
 
 import {
 	N8nButton,
@@ -29,6 +32,8 @@ import {
 	N8nIcon,
 	N8nIconPicker,
 	N8nInput,
+	N8nOption,
+	N8nSelect,
 	N8nText,
 	N8nUserSelect,
 } from '@n8n/design-system';
@@ -49,6 +54,19 @@ const toast = useToast();
 const router = useRouter();
 const telemetry = useTelemetry();
 const documentTitle = useDocumentTitle();
+const rootStore = useRootStore();
+
+// 团队相关状态
+const teamData = ref<Team | null>(null);
+const isLoadingTeam = ref(false);
+
+// 判断是否为团队空间
+const isTeamSpace = computed(() => projectsStore.currentProject?.type === ProjectTypes.Team);
+
+// 判断是否为个人空间
+const isPersonalSpace = computed(
+	() => projectsStore.currentProject?.type === ProjectTypes.Personal,
+);
 
 const showSaveError = (error: Error) => {
 	toast.showError(error, i18n.baseText('projects.settings.save.error.title'));
@@ -327,6 +345,25 @@ const onSubmit = async () => {
 	}
 	try {
 		await updateProject();
+
+		// 如果是团队空间，同时更新团队信息
+		if (isTeamSpace.value && teamData.value && projectsStore.currentProject?.teamId) {
+			try {
+				const updatedTeam = await teamsApi.updateTeam(
+					rootStore.restApiContext,
+					projectsStore.currentProject.teamId,
+					{
+						billingMode: teamData.value.billingMode,
+						maxMembers: teamData.value.maxMembers,
+					},
+				);
+				teamData.value = updatedTeam;
+			} catch (error) {
+				toast.showError(error, i18n.baseText('teams.settings.save.error.title'));
+				throw error;
+			}
+		}
+
 		const diff = makeFormDataDiff();
 		sendTelemetry(diff);
 		toast.showMessage({
@@ -405,6 +442,23 @@ watch(
 		selectProjectNameIfMatchesDefault();
 		if (projectsStore.currentProject?.icon && isIconOrEmoji(projectsStore.currentProject.icon)) {
 			projectIcon.value = projectsStore.currentProject.icon;
+		}
+
+		// 如果是团队空间，获取团队数据
+		if (isTeamSpace.value && projectsStore.currentProject?.teamId) {
+			isLoadingTeam.value = true;
+			try {
+				teamData.value = await teamsApi.getTeam(
+					rootStore.restApiContext,
+					projectsStore.currentProject.teamId,
+				);
+			} catch (error) {
+				toast.showError(error, i18n.baseText('teams.settings.load.error.title'));
+			} finally {
+				isLoadingTeam.value = false;
+			}
+		} else {
+			teamData.value = null;
 		}
 	},
 	{ immediate: true },
@@ -486,7 +540,11 @@ onMounted(() => {
 			<ProjectHeader />
 			<div :class="$style.headerRow">
 				<N8nText tag="h1" size="xlarge" class="pt-xs pb-m">
-					{{ i18n.baseText('projects.settings.info') }}
+					{{
+						isTeamSpace
+							? i18n.baseText('teams.settings.info')
+							: i18n.baseText('personalSpace.settings.info')
+					}}
 				</N8nText>
 				<div :class="$style.headerButtons">
 					<N8nButton
@@ -550,11 +608,56 @@ onMounted(() => {
 					@validate="isValid = $event"
 				/>
 			</fieldset>
-			<fieldset>
+
+			<!-- 团队特有字段 -->
+			<fieldset v-if="isTeamSpace && teamData" :class="$style.teamFields">
+				<h3>{{ i18n.baseText('teams.settings.teamInfo') }}</h3>
+
+				<div :class="$style.teamFieldRow">
+					<label for="teamBillingMode">{{ i18n.baseText('teams.settings.billingMode') }}</label>
+					<N8nSelect
+						id="teamBillingMode"
+						v-model="teamData.billingMode"
+						:class="$style.teamSelect"
+						data-test-id="team-billing-mode-select"
+						@update:model-value="onTextInput"
+					>
+						<N8nOption
+							value="owner_pays"
+							:label="i18n.baseText('teams.settings.billingMode.ownerPays')"
+						/>
+						<N8nOption
+							value="member_pays"
+							:label="i18n.baseText('teams.settings.billingMode.memberPays')"
+						/>
+					</N8nSelect>
+					<small :class="$style.fieldHint">
+						{{ i18n.baseText('teams.settings.billingMode.hint') }}
+					</small>
+				</div>
+
+				<div :class="$style.teamFieldRow">
+					<label for="teamMaxMembers">{{ i18n.baseText('teams.settings.maxMembers') }}</label>
+					<N8nInput
+						id="teamMaxMembers"
+						v-model.number="teamData.maxMembers"
+						type="number"
+						:min="1"
+						:max="1000"
+						:class="$style.teamInput"
+						data-test-id="team-max-members-input"
+						@input="onTextInput"
+					/>
+					<small :class="$style.fieldHint">
+						{{ i18n.baseText('teams.settings.maxMembers.hint') }}
+					</small>
+				</div>
+			</fieldset>
+
+			<!-- 成员管理（仅团队空间显示） -->
+			<fieldset v-if="!isPersonalSpace">
 				<h3>
-					<label for="projectMembers">{{
-						i18n.baseText('projects.settings.projectMembers')
-					}}</label>
+					<label for="projectMembers">{{ i18n.baseText('teams.settings.teamMembers') }}</label>
 				</h3>
 				<div :class="[$style.membersInputRow, 'mb-s']">
 					<N8nUserSelect
@@ -726,5 +829,36 @@ onMounted(() => {
 .danger {
 	display: block;
 	padding-bottom: var(--spacing--lg);
+}
+
+/* 团队字段样式 */
+.teamFields {
+	h3 {
+		font-size: var(--font-size--lg);
+		margin-bottom: var(--spacing--md);
+	}
+}
+
+.teamFieldRow {
+	margin-bottom: var(--spacing--md);
+
+	label {
+		display: block;
+		margin-bottom: var(--spacing--xs);
+		font-weight: var(--font-weight--bold);
+	}
+
+	.fieldHint {
+		display: block;
+		margin-top: var(--spacing--2xs);
+		color: var(--color--text--tint-2);
+		font-size: var(--font-size--2xs);
+	}
+}
+
+.teamSelect,
+.teamInput {
+	max-width: var(--project-field-width);
+	width: 100%;
 }
 </style>

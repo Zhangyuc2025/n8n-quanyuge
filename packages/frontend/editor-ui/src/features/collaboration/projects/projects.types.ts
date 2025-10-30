@@ -28,6 +28,8 @@ export type ProjectSharingData = {
 	description?: string | null;
 	createdAt: string;
 	updatedAt: string;
+	teamId?: string | null; // 关联团队ID（team类型项目才有）
+	isDefault?: boolean; // 是否为默认项目
 };
 export type Project = ProjectSharingData & {
 	relations: ProjectRelation[];
