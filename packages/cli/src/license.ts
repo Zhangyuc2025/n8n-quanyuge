@@ -38,7 +38,7 @@ interface LicenseManager {
 	getManagementJwt(): string;
 	getConsumerId(): string;
 	initialize(): Promise<void>;
-	activate(activationKey: string): Promise<void>;
+	activate(activationKey: string, eulaUri?: string): Promise<void>;
 	reload(): Promise<void>;
 	renew(): Promise<void>;
 	clear(): Promise<void>;

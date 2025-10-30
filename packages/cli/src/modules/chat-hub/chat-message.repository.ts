@@ -16,11 +16,12 @@ export class ChatHubMessageRepository extends Repository<ChatHubMessage> {
 	}
 
 	async createChatMessage(message: Partial<ChatHubMessage>, trx?: EntityManager) {
-		return await withTransaction(
+		return await withTransaction<ChatHubMessage>(
 			this.manager,
 			trx,
 			async (em) => {
-				await em.insert(ChatHubMessage, message);
+				// 使用类型断言避免TypeScript过度推断导致无限递归
+				await em.insert(ChatHubMessage, message as Parameters<typeof em.insert<ChatHubMessage>>[1]);
 				const saved = await em.findOneOrFail(ChatHubMessage, {
 					where: { id: message.id },
 				});
