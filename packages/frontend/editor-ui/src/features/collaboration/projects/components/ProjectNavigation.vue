@@ -25,7 +25,7 @@ const usersStore = useUsersStore();
 const workflows = computed<IMenuItem>(() => ({
 	id: 'workflows',
 	label: locale.baseText('workspace.menu.workflows'),
-	icon: 'network-wired',
+	icon: 'network',
 	route: {
 		to: { name: VIEWS.WORKFLOWS_HOME },
 	},
@@ -37,7 +37,7 @@ const credentials = computed<IMenuItem>(() => {
 	return {
 		id: 'credentials',
 		label: locale.baseText('workspace.menu.credentials'),
-		icon: 'key',
+		icon: 'key-round',
 		route: {
 			to: projectId
 				? {

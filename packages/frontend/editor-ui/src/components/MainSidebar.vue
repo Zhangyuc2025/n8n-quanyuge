@@ -41,9 +41,8 @@ import { useDebounce } from '@/composables/useDebounce';
 import { useExternalHooks } from '@/composables/useExternalHooks';
 import { useTelemetry } from '@/composables/useTelemetry';
 import { useBugReporting } from '@/composables/useBugReporting';
-import { usePageRedirectionHelper } from '@/composables/usePageRedirectionHelper';
-import { useCalloutHelpers } from '@/composables/useCalloutHelpers';
 import { useGlobalEntityCreation } from '@/composables/useGlobalEntityCreation';
+import { trackTemplatesClick, TemplateClickSource } from '@/utils/experiments';
 import { useBecomeTemplateCreatorStore } from '@/components/BecomeTemplateCreatorCta/becomeTemplateCreatorStore';
 import BecomeTemplateCreatorCta from '@/components/BecomeTemplateCreatorCta/BecomeTemplateCreatorCta.vue';
 import VersionUpdateCTA from '@/components/VersionUpdateCTA.vue';
@@ -72,16 +71,14 @@ const isAuthenticated = computed(() => usersStore.currentUserId !== null);
 
 // [多租户改造] 未登录状态下不访问settings，避免报错
 const releaseChannel = computed(() =>
-	isAuthenticated.value ? settingsStore.settings.releaseChannel : undefined,
+	isAuthenticated.value ? settingsStore.settings.releaseChannel : 'stable',
 );
 
 const { callDebounced } = useDebounce();
 const externalHooks = useExternalHooks();
 const i18n = useI18n();
 const telemetry = useTelemetry();
-const pageRedirectionHelper = usePageRedirectionHelper();
 const { getReportingURL } = useBugReporting();
-const calloutHelpers = useCalloutHelpers();
 
 useKeybindings({
 	ctrl_alt_o: () => handleSelect('about'),
@@ -108,7 +105,7 @@ const showWhatsNewNotification = computed(() => {
 const mainMenuItems = computed<IMenuItem[]>(() => [
 	{
 		id: 'home',
-		icon: 'home',
+		icon: 'house',
 		label: i18n.baseText('mainSidebar.home'),
 		position: 'top',
 		route: { to: { name: VIEWS.HOMEPAGE } },
