@@ -5,7 +5,7 @@ export class AddMultiTenantTables1761701813576 implements ReversibleMigration {
 		// 1. 创建团队表 (team)
 		await queryRunner.query(`
 			CREATE TABLE IF NOT EXISTS "${tablePrefix}team" (
-				"id" uuid NOT NULL DEFAULT gen_random_uuid(),
+				"id" varchar(21) NOT NULL,
 				"name" varchar(255) NOT NULL,
 				"slug" varchar(100) NULL,
 				"description" text NULL,
@@ -34,8 +34,8 @@ export class AddMultiTenantTables1761701813576 implements ReversibleMigration {
 		// 2. 创建团队成员表 (team_member)
 		await queryRunner.query(`
 			CREATE TABLE IF NOT EXISTS "${tablePrefix}team_member" (
-				"id" uuid NOT NULL DEFAULT gen_random_uuid(),
-				"teamId" uuid NOT NULL,
+				"id" varchar(21) NOT NULL,
+				"teamId" varchar(21) NOT NULL,
 				"userId" uuid NOT NULL,
 				"role" varchar(50) NOT NULL DEFAULT 'team:member',
 				"joinedAt" timestamp NOT NULL DEFAULT NOW(),
@@ -71,7 +71,7 @@ export class AddMultiTenantTables1761701813576 implements ReversibleMigration {
 		// 4. 扩展项目表，添加多租户字段
 		await queryRunner.query(`
 			ALTER TABLE "${tablePrefix}project"
-			ADD COLUMN "teamId" uuid NULL,
+			ADD COLUMN "teamId" varchar(21) NULL,
 			ADD COLUMN "isDefault" boolean NOT NULL DEFAULT false;
 		`);
 
