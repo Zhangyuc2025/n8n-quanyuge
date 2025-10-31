@@ -103,7 +103,7 @@ export class ExportWorkflowsCommand extends BaseCommand<z.infer<typeof flagsSche
 
 		const workflows = await Container.get(WorkflowRepository).find({
 			where: flags.id ? { id: flags.id } : {},
-			relations: ['tags', 'shared', 'shared.project'],
+			relations: ['tags', 'project'],
 		});
 
 		if (workflows.length === 0) {
