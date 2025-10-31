@@ -1,11 +1,12 @@
 import { Logger } from '@n8n/backend-common';
 import type { User } from '@n8n/db';
-import { SharedWorkflowRepository, WorkflowRepository } from '@n8n/db';
+import { WorkflowRepository } from '@n8n/db';
 import { Service } from '@n8n/di';
 import { hasGlobalScope } from '@n8n/permissions';
 
 import { ActivationErrorsService } from '@/activation-errors.service';
 import { BadRequestError } from '@/errors/response-errors/bad-request.error';
+import { WorkflowSharingService } from '@/workflows/workflow-sharing.service';
 import { WorkflowFinderService } from '@/workflows/workflow-finder.service';
 
 @Service()
@@ -13,7 +14,7 @@ export class ActiveWorkflowsService {
 	constructor(
 		private readonly logger: Logger,
 		private readonly workflowRepository: WorkflowRepository,
-		private readonly sharedWorkflowRepository: SharedWorkflowRepository,
+		private readonly workflowSharingService: WorkflowSharingService,
 		private readonly activationErrorsService: ActivationErrorsService,
 		private readonly workflowFinderService: WorkflowFinderService,
 	) {}
@@ -33,9 +34,16 @@ export class ActiveWorkflowsService {
 			return activeWorkflowIds.filter((workflowId) => !activationErrors[workflowId]);
 		}
 
-		const sharedWorkflowIds =
-			await this.sharedWorkflowRepository.getSharedWorkflowIds(activeWorkflowIds);
-		return sharedWorkflowIds.filter((workflowId) => !activationErrors[workflowId]);
+		// Exclusive mode: Get workflows from user's accessible projects
+		const accessibleWorkflowIds = await this.workflowSharingService.getSharedWorkflowIds(user, {
+			scopes: ['workflow:read'],
+		});
+
+		// Filter to only include active workflows that user has access to
+		const userActiveWorkflowIds = activeWorkflowIds.filter((id) =>
+			accessibleWorkflowIds.includes(id),
+		);
+		return userActiveWorkflowIds.filter((workflowId) => !activationErrors[workflowId]);
 	}
 
 	async getActivationError(workflowId: string, user: User) {

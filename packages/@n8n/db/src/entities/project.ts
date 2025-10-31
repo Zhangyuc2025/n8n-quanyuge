@@ -1,11 +1,11 @@
 import { Column, Entity, Index, ManyToOne, OneToMany } from '@n8n/typeorm';
 
 import { WithTimestampsAndStringId } from './abstract-entity';
+import { CredentialsEntity } from './credentials-entity';
 import type { ProjectRelation } from './project-relation';
-import type { SharedCredentials } from './shared-credentials';
-import type { SharedWorkflow } from './shared-workflow';
 import { Team } from './team';
 import type { Variables } from './variables';
+import { WorkflowEntity } from './workflow-entity';
 
 @Entity()
 export class Project extends WithTimestampsAndStringId {
@@ -24,14 +24,26 @@ export class Project extends WithTimestampsAndStringId {
 	@OneToMany('ProjectRelation', 'project')
 	projectRelations: ProjectRelation[];
 
-	@OneToMany('SharedCredentials', 'project')
-	sharedCredentials: SharedCredentials[];
-
-	@OneToMany('SharedWorkflow', 'project')
-	sharedWorkflows: SharedWorkflow[];
-
 	@OneToMany('Variables', 'project')
 	variables: Variables[];
+
+	/**
+	 * Exclusive mode: Workflows belong directly to projects
+	 */
+	@OneToMany(
+		() => WorkflowEntity,
+		(workflow) => workflow.project,
+	)
+	workflows: WorkflowEntity[];
+
+	/**
+	 * Exclusive mode: Credentials belong directly to projects
+	 */
+	@OneToMany(
+		() => CredentialsEntity,
+		(credential) => credential.project,
+	)
+	credentials: CredentialsEntity[];
 
 	// === 多租户字段 ===
 

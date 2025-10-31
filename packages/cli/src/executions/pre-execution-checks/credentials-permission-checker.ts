@@ -1,5 +1,5 @@
 import type { Project } from '@n8n/db';
-import { SharedCredentialsRepository } from '@n8n/db';
+import { CredentialsRepository } from '@n8n/db';
 import { Service } from '@n8n/di';
 import { hasGlobalScope } from '@n8n/permissions';
 import type { INode } from 'n8n-workflow';
@@ -33,7 +33,7 @@ class InaccessibleCredentialError extends UserError {
 @Service()
 export class CredentialsPermissionChecker {
 	constructor(
-		private readonly sharedCredentialsRepository: SharedCredentialsRepository,
+		private readonly credentialsRepository: CredentialsRepository,
 		private readonly ownershipService: OwnershipService,
 		private readonly projectService: ProjectService,
 	) {}
@@ -62,13 +62,18 @@ export class CredentialsPermissionChecker {
 
 		if (workflowCredIds.length === 0) return;
 
-		const accessible = await this.sharedCredentialsRepository.getFilteredAccessibleCredentials(
-			projectIds,
-			workflowCredIds,
-		);
+		// Exclusive mode: check if credentials belong to any of the workflow's projects
+		const accessibleCredentials = await this.credentialsRepository.find({
+			where: workflowCredIds.map((credId) => ({ id: credId })),
+			select: ['id', 'projectId'],
+		});
+
+		const accessibleCredIds = accessibleCredentials
+			.filter((cred) => projectIds.includes(cred.projectId))
+			.map((cred) => cred.id);
 
 		for (const credentialsId of workflowCredIds) {
-			if (!accessible.includes(credentialsId)) {
+			if (!accessibleCredIds.includes(credentialsId)) {
 				const nodeToFlag = credIdsToNodes[credentialsId][0];
 				throw new InaccessibleCredentialError(nodeToFlag, homeProject);
 			}

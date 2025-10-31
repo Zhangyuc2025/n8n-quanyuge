@@ -24,7 +24,7 @@ export class ChatHubSessionRepository extends Repository<ChatHubSession> {
 	}
 
 	async updateLastMessageAt(id: string, lastMessageAt: Date, trx?: EntityManager) {
-		return await withTransaction(this.manager, trx, async (em) => {
+		return await withTransaction<ChatHubSession>(this.manager, trx, async (em) => {
 			await em.update(ChatHubSession, { id }, { lastMessageAt });
 			return await em.findOneOrFail(ChatHubSession, {
 				where: { id },
@@ -34,7 +34,7 @@ export class ChatHubSessionRepository extends Repository<ChatHubSession> {
 	}
 
 	async updateChatTitle(id: string, title: string, trx?: EntityManager) {
-		return await withTransaction(this.manager, trx, async (em) => {
+		return await withTransaction<ChatHubSession>(this.manager, trx, async (em) => {
 			await em.update(ChatHubSession, { id }, { title });
 			return await em.findOneOrFail(ChatHubSession, {
 				where: { id },
@@ -44,7 +44,7 @@ export class ChatHubSessionRepository extends Repository<ChatHubSession> {
 	}
 
 	async updateChatSession(id: string, updates: Partial<ChatHubSession>, trx?: EntityManager) {
-		return await withTransaction(this.manager, trx, async (em) => {
+		return await withTransaction<ChatHubSession>(this.manager, trx, async (em) => {
 			await em.update(ChatHubSession, { id }, updates);
 			return await em.findOneOrFail(ChatHubSession, {
 				where: { id },

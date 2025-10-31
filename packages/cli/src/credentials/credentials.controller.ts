@@ -6,12 +6,7 @@ import {
 } from '@n8n/api-types';
 import { Logger } from '@n8n/backend-common';
 import { GlobalConfig } from '@n8n/config';
-import {
-	SharedCredentials,
-	ProjectRelationRepository,
-	SharedCredentialsRepository,
-	AuthenticatedRequest,
-} from '@n8n/db';
+import { ProjectRelationRepository, AuthenticatedRequest, ProjectRepository } from '@n8n/db';
 import {
 	Delete,
 	Get,
@@ -57,7 +52,7 @@ export class CredentialsController {
 		private readonly license: License,
 		private readonly logger: Logger,
 		private readonly userManagementMailer: UserManagementMailer,
-		private readonly sharedCredentialsRepository: SharedCredentialsRepository,
+		private readonly projectRepository: ProjectRepository,
 		private readonly projectRelationRepository: ProjectRelationRepository,
 		private readonly eventService: EventService,
 		private readonly credentialsFinderService: CredentialsFinderService,
@@ -69,19 +64,13 @@ export class CredentialsController {
 		_res: unknown,
 		@Query query: CredentialsGetManyRequestQuery,
 	) {
-		const credentials = await this.credentialsService.getMany(req.user, {
+		// [PLAN_A 独占模式] 直接返回凭据列表，无需删除 shared 字段（已不存在）
+		return await this.credentialsService.getMany(req.user, {
 			listQueryOptions: req.listQueryOptions,
 			includeScopes: query.includeScopes,
 			includeData: query.includeData,
 			onlySharedWithMe: query.onlySharedWithMe,
 		});
-		credentials.forEach((c) => {
-			// @ts-expect-error: This is to emulate the old behavior of removing the shared
-			// field as part of `addOwnedByAndSharedWith`. We need this field in `addScopes`
-			// though. So to avoid leaking the information we just delete it.
-			delete c.shared;
-		});
-		return credentials;
 	}
 
 	@Get('/for-workflow')
@@ -113,7 +102,8 @@ export class CredentialsController {
 		@Param('credentialId') credentialId: string,
 		@Query query: CredentialsGetOneRequestQuery,
 	) {
-		const { shared, ...credential } = this.license.isSharingEnabled()
+		// [PLAN_A 独占模式] credential 不再包含 shared 字段
+		const credential = this.license.isSharingEnabled()
 			? await this.enterpriseCredentialsService.getOne(
 					req.user,
 					credentialId,
@@ -182,9 +172,8 @@ export class CredentialsController {
 			req.user,
 		);
 
-		const project = await this.sharedCredentialsRepository.findCredentialOwningProject(
-			newCredential.id,
-		);
+		// [PLAN_A 独占模式] 直接从 credential.projectId 获取项目
+		const project = await this.projectRepository.findOneBy({ id: newCredential.projectId });
 
 		this.eventService.emit('credentials-created', {
 			user: req.user,
@@ -248,8 +237,8 @@ export class CredentialsController {
 			throw new NotFoundError(`Credential ID "${credentialId}" could not be found to be updated.`);
 		}
 
-		// Remove the encrypted data as it is not needed in the frontend
-		const { data, shared, ...rest } = responseData;
+		// [PLAN_A 独占模式] Remove the encrypted data as it is not needed in the frontend
+		const { data, ...rest } = responseData;
 
 		this.logger.debug('Credential updated', { credentialId });
 
@@ -296,83 +285,36 @@ export class CredentialsController {
 		return true;
 	}
 
+	/**
+	 * [PLAN_A 独占模式] 凭据共享已废弃
+	 *
+	 * 在独占模式下，凭据属于单个项目，不支持跨项目共享。
+	 * 要让其他用户访问凭据，应将用户添加为项目成员。
+	 */
 	@Licensed('feat:sharing')
 	@Put('/:credentialId/share')
 	@ProjectScope('credential:share')
 	async shareCredentials(req: CredentialRequest.Share) {
 		const { credentialId } = req.params;
-		const { shareWithIds } = req.body;
-
-		if (
-			!Array.isArray(shareWithIds) ||
-			!shareWithIds.every((userId) => typeof userId === 'string')
-		) {
-			throw new BadRequestError('Bad request');
-		}
 
 		const credential = await this.credentialsFinderService.findCredentialForUser(
 			credentialId,
 			req.user,
-			['credential:share'],
+			['credential:read'],
 		);
 
 		if (!credential) {
-			throw new ForbiddenError();
+			throw new NotFoundError('Credential not found');
 		}
 
-		let amountRemoved: number | null = null;
-		let newShareeIds: string[] = [];
+		// 获取凭据所属项目
+		const project = await this.projectRepository.findOneBy({ id: credential.projectId });
 
-		const { manager: dbManager } = this.sharedCredentialsRepository;
-		await dbManager.transaction(async (trx) => {
-			const currentProjectIds = credential.shared
-				.filter((sc) => sc.role === 'credential:user')
-				.map((sc) => sc.projectId);
-			const newProjectIds = shareWithIds;
-
-			const toShare = utils.rightDiff([currentProjectIds, (id) => id], [newProjectIds, (id) => id]);
-			const toUnshare = utils.rightDiff(
-				[newProjectIds, (id) => id],
-				[currentProjectIds, (id) => id],
-			);
-
-			const deleteResult = await trx.delete(SharedCredentials, {
-				credentialsId: credentialId,
-				projectId: In(toUnshare),
-			});
-			await this.enterpriseCredentialsService.shareWithProjects(
-				req.user,
-				credential.id,
-				toShare,
-				trx,
-			);
-
-			if (deleteResult.affected) {
-				amountRemoved = deleteResult.affected;
-			}
-
-			newShareeIds = toShare;
-		});
-
-		this.eventService.emit('credentials-shared', {
-			user: req.user,
-			credentialType: credential.type,
-			credentialId: credential.id,
-			userIdSharer: req.user.id,
-			userIdsShareesAdded: newShareeIds,
-			shareesRemoved: amountRemoved,
-		});
-
-		const projectsRelations = await this.projectRelationRepository.findBy({
-			projectId: In(newShareeIds),
-			role: { slug: PROJECT_OWNER_ROLE_SLUG },
-		});
-
-		await this.userManagementMailer.notifyCredentialsShared({
-			sharer: req.user,
-			newShareeIds: projectsRelations.map((pr) => pr.userId),
-			credentialsName: credential.name,
-		});
+		throw new BadRequestError(
+			'In exclusive mode, credentials belong to a single project. ' +
+				`This credential belongs to project "${project?.name || credential.projectId}". ` +
+				'To share access, add users as members of that project.',
+		);
 	}
 
 	@Put('/:credentialId/transfer')

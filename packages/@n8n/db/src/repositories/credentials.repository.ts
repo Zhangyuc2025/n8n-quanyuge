@@ -122,10 +122,11 @@ export class CredentialsRepository extends Repository<CredentialsEntity> {
 	async getManyByIds(ids: string[], { withSharings } = { withSharings: false }) {
 		const findManyOptions: FindManyOptions<CredentialsEntity> = { where: { id: In(ids) } };
 
+		// Exclusive mode: Load project relation if requested
 		if (withSharings) {
 			findManyOptions.relations = {
-				shared: {
-					project: true,
+				project: {
+					projectRelations: true,
 				},
 			};
 		}
@@ -137,7 +138,14 @@ export class CredentialsRepository extends Repository<CredentialsEntity> {
 	 * Find all credentials that are owned by a personal project.
 	 */
 	async findAllPersonalCredentials(): Promise<CredentialsEntity[]> {
-		return await this.findBy({ shared: { project: { type: 'personal' } } });
+		// Exclusive mode: Query by project type directly
+		return await this.find({
+			where: {
+				project: {
+					type: 'personal',
+				},
+			},
+		});
 	}
 
 	/**
@@ -148,9 +156,12 @@ export class CredentialsRepository extends Repository<CredentialsEntity> {
 	 * workflow.
 	 */
 	async findAllCredentialsForWorkflow(workflowId: string): Promise<CredentialsEntity[]> {
-		return await this.findBy({
-			shared: { project: { sharedWorkflows: { workflowId } } },
-		});
+		// Exclusive mode: Workflow belongs to one project, find credentials in the same project
+		return await this.createQueryBuilder('credentials')
+			.innerJoin('credentials.project', 'project')
+			.innerJoin('project.workflows', 'workflow')
+			.where('workflow.id = :workflowId', { workflowId })
+			.getMany();
 	}
 
 	/**
@@ -160,6 +171,7 @@ export class CredentialsRepository extends Repository<CredentialsEntity> {
 	 * are part of this project.
 	 */
 	async findAllCredentialsForProject(projectId: string): Promise<CredentialsEntity[]> {
-		return await this.findBy({ shared: { projectId } });
+		// Exclusive mode: Query by projectId directly
+		return await this.findBy({ projectId });
 	}
 }

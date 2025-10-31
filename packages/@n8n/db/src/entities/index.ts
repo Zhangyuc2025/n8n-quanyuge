@@ -18,8 +18,6 @@ import { ProjectRelation } from './project-relation';
 import { Role } from './role';
 import { Scope } from './scope';
 import { Settings } from './settings';
-import { SharedCredentials } from './shared-credentials';
-import { SharedWorkflow } from './shared-workflow';
 import { TagEntity } from './tag-entity';
 import { Team } from './team';
 import { TeamMember } from './team-member';
@@ -49,8 +47,6 @@ export {
 	ProjectRelation,
 	Role,
 	Scope,
-	SharedCredentials,
-	SharedWorkflow,
 	TagEntity,
 	Team,
 	TeamMember,
@@ -86,8 +82,6 @@ export const entities = {
 	Project,
 	ProjectRelation,
 	Scope,
-	SharedCredentials,
-	SharedWorkflow,
 	TagEntity,
 	Team,
 	TeamMember,

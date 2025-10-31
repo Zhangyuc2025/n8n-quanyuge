@@ -2,7 +2,6 @@ import type { WorkflowEntity } from '@n8n/db';
 import {
 	generateNanoId,
 	ProjectRepository,
-	SharedWorkflowRepository,
 	WorkflowRepository,
 	UserRepository,
 	GLOBAL_OWNER_ROLE,
@@ -128,7 +127,7 @@ export class ImportWorkflowsCommand extends BaseCommand<z.infer<typeof flagsSche
 
 			if (ownerProject.id !== projectId) {
 				const currentOwner =
-					ownerProject.type === 'personal'
+					ownerProject.type === 'personal' && user
 						? `the user with the ID "${user.id}"`
 						: `the project with the ID "${ownerProject.id}"`;
 				const newOwner = userId
@@ -159,24 +158,37 @@ export class ImportWorkflowsCommand extends BaseCommand<z.infer<typeof flagsSche
 		this.logger.info(`Successfully imported ${total} ${total === 1 ? 'workflow.' : 'workflows.'}`);
 	}
 
+	/**
+	 * [PLAN_A 独占模式] 通过 projectId 直接查询工作流所有者
+	 */
 	private async getWorkflowOwner(workflowId: WorkflowId) {
-		const sharing = await Container.get(SharedWorkflowRepository).findOne({
-			where: { workflowId, role: 'workflow:owner' },
+		// 查询工作流及其所属项目
+		const workflow = await Container.get(WorkflowRepository).findOne({
+			where: { id: workflowId },
 			relations: { project: true },
 		});
 
-		if (sharing && sharing.project.type === 'personal') {
-			const user = await Container.get(UserRepository).findOneByOrFail({
+		if (!workflow || !workflow.project) {
+			return {};
+		}
+
+		// 如果是个人项目，查询项目所有者
+		if (workflow.project.type === 'personal') {
+			const user = await Container.get(UserRepository).findOneBy({
 				projectRelations: {
 					role: { slug: PROJECT_OWNER_ROLE_SLUG },
-					projectId: sharing.projectId,
+					projectId: workflow.projectId,
 				},
 			});
 
-			return { user, project: sharing.project };
+			if (!user) {
+				return { project: workflow.project };
+			}
+
+			return { user, project: workflow.project };
 		}
 
-		return {};
+		return { project: workflow.project };
 	}
 
 	private async workflowExists(workflowId: WorkflowId) {

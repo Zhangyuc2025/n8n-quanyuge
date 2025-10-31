@@ -3,12 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import type { CredentialsEntity, ICredentialsDb } from '@n8n/db';
-import {
-	CredentialsRepository,
-	GLOBAL_ADMIN_ROLE,
-	GLOBAL_OWNER_ROLE,
-	SharedCredentialsRepository,
-} from '@n8n/db';
+import { CredentialsRepository, GLOBAL_ADMIN_ROLE, GLOBAL_OWNER_ROLE } from '@n8n/db';
 import { Service } from '@n8n/di';
 import { PROJECT_ADMIN_ROLE_SLUG, PROJECT_OWNER_ROLE_SLUG } from '@n8n/permissions';
 // eslint-disable-next-line n8n-local-rules/misplaced-n8n-typeorm-import
@@ -89,7 +84,6 @@ export class CredentialsHelper extends ICredentialsHelper {
 		private readonly credentialTypes: CredentialTypes,
 		private readonly credentialsOverwrites: CredentialsOverwrites,
 		private readonly credentialsRepository: CredentialsRepository,
-		private readonly sharedCredentialsRepository: SharedCredentialsRepository,
 		private readonly cacheService: CacheService,
 	) {
 		super();
@@ -512,6 +506,10 @@ export class CredentialsHelper extends ICredentialsHelper {
 		await this.credentialsRepository.update(findQuery, newCredentialsData);
 	}
 
+	/**
+	 * [PLAN_A 独占模式] 简化后的 credentialCanUseExternalSecrets
+	 * - 直接通过 credential.project 检查项目所有者权限
+	 */
 	async credentialCanUseExternalSecrets(nodeCredential: INodeCredentialsDetails): Promise<boolean> {
 		if (!nodeCredential.id) {
 			return false;
@@ -520,19 +518,17 @@ export class CredentialsHelper extends ICredentialsHelper {
 		return (
 			(await this.cacheService.get(`credential-can-use-secrets:${nodeCredential.id}`, {
 				refreshFn: async () => {
-					const credential = await this.sharedCredentialsRepository.findOne({
-						where: {
-							role: 'credential:owner',
+					// 查询凭据及其所属项目
+					const credential = await this.credentialsRepository.findOne({
+						where: { id: nodeCredential.id! },
+						relations: {
 							project: {
 								projectRelations: {
-									role: { slug: In([PROJECT_OWNER_ROLE_SLUG, PROJECT_ADMIN_ROLE_SLUG]) },
+									role: true,
 									user: {
-										role: { slug: In([GLOBAL_OWNER_ROLE.slug, GLOBAL_ADMIN_ROLE.slug]) },
+										role: true,
 									},
 								},
-							},
-							credentials: {
-								id: nodeCredential.id!,
 							},
 						},
 					});
@@ -541,7 +537,14 @@ export class CredentialsHelper extends ICredentialsHelper {
 						return false;
 					}
 
-					return true;
+					// 检查项目是否有全局 owner 或 admin 作为项目 owner/admin
+					const hasGlobalAdminOrOwner = credential.project.projectRelations.some(
+						(pr) =>
+							[PROJECT_OWNER_ROLE_SLUG, PROJECT_ADMIN_ROLE_SLUG].includes(pr.role.slug) &&
+							[GLOBAL_OWNER_ROLE.slug, GLOBAL_ADMIN_ROLE.slug].includes(pr.user.role.slug),
+					);
+
+					return hasGlobalAdminOrOwner;
 				},
 			})) ?? false
 		);

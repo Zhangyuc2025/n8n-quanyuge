@@ -1,80 +1,47 @@
 import type { CredentialsEntity, User } from '@n8n/db';
-import { Project, SharedCredentials, SharedCredentialsRepository } from '@n8n/db';
+import { CredentialsRepository } from '@n8n/db';
 import { Service } from '@n8n/di';
-import { hasGlobalScope } from '@n8n/permissions';
 // eslint-disable-next-line n8n-local-rules/misplaced-n8n-typeorm-import
-import { In, type EntityManager } from '@n8n/typeorm';
+import { type EntityManager } from '@n8n/typeorm';
 import type { ICredentialDataDecryptedObject } from 'n8n-workflow';
 
+import { BadRequestError } from '@/errors/response-errors/bad-request.error';
 import { NotFoundError } from '@/errors/response-errors/not-found.error';
 import { TransferCredentialError } from '@/errors/response-errors/transfer-credential.error';
 import { OwnershipService } from '@/services/ownership.service';
 import { ProjectService } from '@/services/project.service.ee';
-import { RoleService } from '@/services/role.service';
 
 import { CredentialsFinderService } from './credentials-finder.service';
 import { CredentialsService } from './credentials.service';
 
+/**
+ * [PLAN_A 独占模式] Enterprise Credentials Service
+ * - 移除了 SharedCredentialsRepository 依赖
+ * - shareWithProjects() 已废弃（独占模式不支持跨项目共享）
+ */
 @Service()
 export class EnterpriseCredentialsService {
 	constructor(
-		private readonly sharedCredentialsRepository: SharedCredentialsRepository,
+		private readonly credentialsRepository: CredentialsRepository,
 		private readonly ownershipService: OwnershipService,
 		private readonly credentialsService: CredentialsService,
 		private readonly projectService: ProjectService,
 		private readonly credentialsFinderService: CredentialsFinderService,
-		private readonly roleService: RoleService,
 	) {}
 
+	/**
+	 * [PLAN_A 独占模式] 已废弃 - 凭据不支持跨项目共享
+	 */
 	async shareWithProjects(
-		user: User,
-		credentialId: string,
-		shareWithIds: string[],
-		entityManager?: EntityManager,
+		_user: User,
+		_credentialId: string,
+		_shareWithIds: string[],
+		_entityManager?: EntityManager,
 	) {
-		const em = entityManager ?? this.sharedCredentialsRepository.manager;
-		const roles = await this.roleService.rolesWithScope('project', ['project:list']);
-
-		let projects = await em.find(Project, {
-			where: [
-				{
-					id: In(shareWithIds),
-					type: 'team',
-					// if user can see all projects, don't check project access
-					// if they can't, find projects they can list
-					...(hasGlobalScope(user, 'project:list')
-						? {}
-						: {
-								projectRelations: {
-									userId: user.id,
-									role: In(roles),
-								},
-							}),
-				},
-				{
-					id: In(shareWithIds),
-					type: 'personal',
-				},
-			],
-			relations: { sharedCredentials: true },
-		});
-		// filter out all projects that already own the credential
-		projects = projects.filter(
-			(p) =>
-				!p.sharedCredentials.some(
-					(psc) => psc.credentialsId === credentialId && psc.role === 'credential:owner',
-				),
+		throw new BadRequestError(
+			'Credential sharing across projects is not supported in exclusive mode. ' +
+				'To share access to a credential, add users as members of the project that owns the credential.',
 		);
-
-		const newSharedCredentials = projects.map((project) =>
-			this.sharedCredentialsRepository.create({
-				credentialsId: credentialId,
-				role: 'credential:user',
-				projectId: project.id,
-			}),
-		);
-
-		return await em.save(newSharedCredentials);
 	}
 
 	async getOne(user: User, credentialId: string, includeDecryptedData: boolean) {
@@ -127,6 +94,11 @@ export class EnterpriseCredentialsService {
 		return { ...rest };
 	}
 
+	/**
+	 * [PLAN_A 独占模式] 简化后的 transferOne
+	 * - 直接更新 credential.projectId
+	 * - 无需操作 SharedCredentials 表
+	 */
 	async transferOne(user: User, credentialId: string, destinationProjectId: string) {
 		// 1. get credential
 		const credential = await this.credentialsFinderService.findCredentialForUser(
@@ -139,17 +111,7 @@ export class EnterpriseCredentialsService {
 			`Could not find the credential with the id "${credentialId}". Make sure you have the permission to move it.`,
 		);
 
-		// 2. get owner-sharing
-		const ownerSharing = credential.shared.find((s) => s.role === 'credential:owner');
-		NotFoundError.isDefinedAndNotNull(
-			ownerSharing,
-			`Could not find owner for credential "${credential.id}"`,
-		);
-
-		// 3. get source project
-		const sourceProject = ownerSharing.project;
-
-		// 4. get destination project
+		// 2. get destination project
 		const destinationProject = await this.projectService.getProjectWithScope(
 			user,
 			destinationProjectId,
@@ -160,26 +122,16 @@ export class EnterpriseCredentialsService {
 			`Could not find project with the id "${destinationProjectId}". Make sure you have the permission to create credentials in it.`,
 		);
 
-		// 5. checks
-		if (sourceProject.id === destinationProject.id) {
+		// 3. checks
+		if (credential.projectId === destinationProject.id) {
 			throw new TransferCredentialError(
 				"You can't transfer a credential into the project that's already owning it.",
 			);
 		}
 
-		await this.sharedCredentialsRepository.manager.transaction(async (trx) => {
-			// 6. transfer the credential
-			// remove all sharings
-			await trx.remove(credential.shared);
-
-			// create new owner-sharing
-			await trx.save(
-				trx.create(SharedCredentials, {
-					credentialsId: credential.id,
-					projectId: destinationProject.id,
-					role: 'credential:owner',
-				}),
-			);
+		// 4. [PLAN_A 独占模式] 直接更新 projectId
+		await this.credentialsRepository.update(credential.id, {
+			projectId: destinationProject.id,
 		});
 	}
 }

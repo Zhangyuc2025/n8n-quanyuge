@@ -1,12 +1,6 @@
 import { ChatHubConversationModel, ChatSessionId } from '@n8n/api-types';
 import { Logger } from '@n8n/backend-common';
-import {
-	SharedWorkflow,
-	SharedWorkflowRepository,
-	withTransaction,
-	WorkflowEntity,
-	WorkflowRepository,
-} from '@n8n/db';
+import { withTransaction, WorkflowEntity, WorkflowRepository } from '@n8n/db';
 import { Service } from '@n8n/di';
 import { EntityManager } from '@n8n/typeorm';
 import {
@@ -39,7 +33,6 @@ export class ChatHubWorkflowService {
 	constructor(
 		private readonly logger: Logger,
 		private readonly workflowRepository: WorkflowRepository,
-		private readonly sharedWorkflowRepository: SharedWorkflowRepository,
 	) {}
 
 	async createChatWorkflow(
@@ -74,16 +67,10 @@ export class ChatHubWorkflowService {
 			newWorkflow.active = false;
 			newWorkflow.nodes = nodes;
 			newWorkflow.connections = connections;
+			// Exclusive mode: Set projectId directly
+			newWorkflow.projectId = projectId;
 
 			const workflow = await em.save<WorkflowEntity>(newWorkflow);
-
-			await em.save<SharedWorkflow>(
-				this.sharedWorkflowRepository.create({
-					role: 'workflow:owner',
-					projectId,
-					workflow,
-				}),
-			);
 
 			return {
 				workflowData: workflow,
@@ -120,16 +107,10 @@ export class ChatHubWorkflowService {
 			newWorkflow.active = false;
 			newWorkflow.nodes = nodes;
 			newWorkflow.connections = connections;
+			// Exclusive mode: Set projectId directly
+			newWorkflow.projectId = projectId;
 
 			const workflow = await em.save<WorkflowEntity>(newWorkflow);
-
-			await em.save<SharedWorkflow>(
-				this.sharedWorkflowRepository.create({
-					role: 'workflow:owner',
-					projectId,
-					workflow,
-				}),
-			);
 
 			return {
 				workflowData: workflow,

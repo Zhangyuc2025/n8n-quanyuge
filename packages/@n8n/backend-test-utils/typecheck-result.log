@@ -1,0 +1,11 @@
+
+> @n8n/backend-test-utils@0.21.0 typecheck /home/zhang/n8n/packages/@n8n/backend-test-utils
+> tsc --noEmit
+
+src/db/workflows.ts(9,1): error TS6133: 'DeepPartial' is declared but its value is never read.
+src/db/workflows.ts(89,46): error TS6133: 'workflow' is declared but its value is never read.
+src/db/workflows.ts(89,71): error TS6133: 'users' is declared but its value is never read.
+src/db/workflows.ts(103,2): error TS6133: 'workflow' is declared but its value is never read.
+src/db/workflows.ts(104,2): error TS6133: 'projectsWithRole' is declared but its value is never read.
+src/db/workflows.ts(120,42): error TS6133: 'workflow' is declared but its value is never read.
+ ELIFECYCLE  Command failed with exit code 2.

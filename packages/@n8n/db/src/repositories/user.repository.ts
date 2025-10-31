@@ -139,15 +139,16 @@ export class UserRepository extends Repository<User> {
 	 * Returns null if the workflow does not exist or is owned by a team project.
 	 */
 	async findPersonalOwnerForWorkflow(workflowId: string): Promise<User | null> {
-		return await this.findOne({
-			where: {
-				projectRelations: {
-					role: { slug: PROJECT_OWNER_ROLE_SLUG },
-					project: { sharedWorkflows: { workflowId, role: 'workflow:owner' } },
-				},
-			},
-			relations: ['role'],
-		});
+		// Exclusive mode: Workflow belongs to one project, find the personal project owner
+		return await this.createQueryBuilder('user')
+			.innerJoin('user.projectRelations', 'projectRelation')
+			.innerJoin('projectRelation.role', 'role')
+			.innerJoin('projectRelation.project', 'project')
+			.innerJoin('project.workflows', 'workflow')
+			.where('workflow.id = :workflowId', { workflowId })
+			.andWhere('project.type = :projectType', { projectType: 'personal' })
+			.andWhere('role.slug = :roleSlug', { roleSlug: PROJECT_OWNER_ROLE_SLUG })
+			.getOne();
 	}
 
 	/**

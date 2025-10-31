@@ -8,8 +8,8 @@ import {
 	ProjectRelation,
 	ProjectRelationRepository,
 	ProjectRepository,
-	SharedCredentialsRepository,
-	SharedWorkflowRepository,
+	WorkflowRepository,
+	CredentialsRepository,
 } from '@n8n/db';
 import { Container, Service } from '@n8n/di';
 import {
@@ -65,11 +65,11 @@ class ProjectNotFoundError extends NotFoundError {
 @Service()
 export class ProjectService {
 	constructor(
-		private readonly sharedWorkflowRepository: SharedWorkflowRepository,
+		private readonly workflowRepository: WorkflowRepository,
+		private readonly credentialsRepository: CredentialsRepository,
 		private readonly projectRepository: ProjectRepository,
 		private readonly projectRelationRepository: ProjectRelationRepository,
 		private readonly roleService: RoleService,
-		private readonly sharedCredentialsRepository: SharedCredentialsRepository,
 		private readonly cacheService: CacheService,
 		private readonly licenseState: LicenseState,
 		private readonly databaseConfig: DatabaseConfig,
@@ -139,36 +139,35 @@ export class ProjectService {
 			);
 		}
 
-		// 1. delete or migrate workflows owned by this project
-		const ownedSharedWorkflows = await this.sharedWorkflowRepository.find({
-			where: { projectId: project.id, role: 'workflow:owner' },
+		// [PLAN_A 独占模式] 1. delete or migrate workflows owned by this project
+		const ownedWorkflows = await this.workflowRepository.find({
+			where: { projectId: project.id },
+			select: ['id'],
 		});
 
 		if (targetProject) {
-			await this.sharedWorkflowRepository.makeOwner(
-				ownedSharedWorkflows.map((sw) => sw.workflowId),
-				targetProject.id,
-			);
+			// 使用 WorkflowService.transferAll() 批量迁移
+			await workflowService.transferAll(project.id, targetProject.id);
 		} else {
-			for (const sharedWorkflow of ownedSharedWorkflows) {
-				await workflowService.delete(user, sharedWorkflow.workflowId, true);
+			// 逐个删除工作流
+			for (const workflow of ownedWorkflows) {
+				await workflowService.delete(user, workflow.id, true);
 			}
 		}
 
-		// 2. delete credentials owned by this project
-		const ownedCredentials = await this.sharedCredentialsRepository.find({
-			where: { projectId: project.id, role: 'credential:owner' },
-			relations: { credentials: true },
+		// [PLAN_A 独占模式] 2. delete or migrate credentials owned by this project
+		const ownedCredentials = await this.credentialsRepository.find({
+			where: { projectId: project.id },
+			select: ['id'],
 		});
 
 		if (targetProject) {
-			await this.sharedCredentialsRepository.makeOwner(
-				ownedCredentials.map((sc) => sc.credentialsId),
-				targetProject.id,
-			);
+			// 使用 CredentialsService.transferAll() 批量迁移
+			await credentialsService.transferAll(project.id, targetProject.id);
 		} else {
-			for (const sharedCredential of ownedCredentials) {
-				await credentialsService.delete(user, sharedCredential.credentials.id);
+			// 逐个删除凭据
+			for (const credential of ownedCredentials) {
+				await credentialsService.delete(user, credential.id);
 			}
 		}
 
@@ -203,11 +202,15 @@ export class ProjectService {
 	}
 
 	/**
-	 * Find all the projects where a workflow is accessible,
-	 * along with the roles of a user in those projects.
+	 * [PLAN_A 独占模式] 查找 workflow 所属的项目
+	 * 独占模式下，workflow 只属于一个 project
 	 */
 	async findProjectsWorkflowIsIn(workflowId: string) {
-		return await this.sharedWorkflowRepository.findProjectIds(workflowId);
+		const workflow = await this.workflowRepository.findOne({
+			where: { id: workflowId },
+			select: ['projectId'],
+		});
+		return workflow ? [workflow.projectId] : [];
 	}
 
 	async getAccessibleProjects(user: User): Promise<Project[]> {
@@ -285,6 +288,59 @@ export class ProjectService {
 		return await this.projectRelationRepository.find({
 			where: { userId: user.id },
 			relations: ['project', 'role'],
+		});
+	}
+
+	/**
+	 * [PLAN_A 独占模式] 获取用户有权访问的所有项目ID
+	 * 用于简化 WorkflowService 和 CredentialsService 的查询逻辑
+	 */
+	async getUserProjectIds(user: User): Promise<string[]> {
+		const projectRelations = await this.projectRelationRepository.find({
+			where: { userId: user.id },
+			select: ['projectId'],
+		});
+		return projectRelations.map((pr) => pr.projectId);
+	}
+
+	/**
+	 * [PLAN_A 独占模式] 根据角色获取用户的项目ID列表
+	 */
+	async getProjectIdsByRoles(
+		userId: string,
+		projectRoles: string[],
+		trx?: EntityManager,
+	): Promise<string[]> {
+		const repository = trx ? trx.getRepository(ProjectRelation) : this.projectRelationRepository;
+
+		const projectRelations = await repository.find({
+			where: {
+				userId,
+				role: { slug: In(projectRoles) },
+			},
+			relations: { role: true },
+			select: ['projectId'],
+		});
+
+		return projectRelations.map((pr) => pr.projectId);
+	}
+
+	/**
+	 * [PLAN_A 独占模式] 根据角色获取用户的项目关系列表
+	 */
+	async getProjectRelationsByRoles(
+		userIds: string[],
+		projectRoles: string[],
+		trx?: EntityManager,
+	): Promise<ProjectRelation[]> {
+		const repository = trx ? trx.getRepository(ProjectRelation) : this.projectRelationRepository;
+
+		return await repository.find({
+			where: {
+				userId: In(userIds),
+				role: { slug: In(projectRoles) },
+			},
+			relations: { role: true },
 		});
 	}
 
@@ -483,17 +539,18 @@ export class ProjectService {
 		await this.projectRelationRepository.update({ projectId, userId }, { role: { slug: role } });
 	}
 
+	/**
+	 * [PLAN_A 独占模式] 清理项目下所有凭据的缓存
+	 * 直接查询 credentials 表的 projectId
+	 */
 	async clearCredentialCanUseExternalSecretsCache(projectId: string) {
-		const shares = await this.sharedCredentialsRepository.find({
-			where: {
-				projectId,
-				role: 'credential:owner',
-			},
-			select: ['credentialsId'],
+		const credentials = await this.credentialsRepository.find({
+			where: { projectId },
+			select: ['id'],
 		});
-		if (shares.length) {
+		if (credentials.length) {
 			await this.cacheService.deleteMany(
-				shares.map((share) => `credential-can-use-secrets:${share.credentialsId}`),
+				credentials.map((credential) => `credential-can-use-secrets:${credential.id}`),
 			);
 		}
 	}

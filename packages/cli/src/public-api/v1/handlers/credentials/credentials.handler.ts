@@ -70,16 +70,14 @@ export = {
 			res: express.Response,
 		): Promise<express.Response<Partial<CredentialsEntity>>> => {
 			const { id: credentialId } = req.params;
-			let credential: CredentialsEntity | undefined;
+			let credential: CredentialsEntity | null = null;
 
+			// Exclusive mode: Check project access for regular users
 			if (!['global:owner', 'global:admin'].includes(req.user.role.slug)) {
-				const shared = await getSharedCredentials(req.user.id, credentialId);
-
-				if (shared?.role === 'credential:owner') {
-					credential = shared.credentials;
-				}
+				// getSharedCredentials returns credential if user has access via project
+				credential = await getSharedCredentials(req.user.id, credentialId);
 			} else {
-				credential = (await getCredentials(credentialId)) as CredentialsEntity;
+				credential = (await getCredentials(credentialId)) as CredentialsEntity | null;
 			}
 
 			if (!credential) {

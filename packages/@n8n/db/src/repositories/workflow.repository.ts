@@ -66,7 +66,12 @@ export class WorkflowRepository extends Repository<WorkflowEntity> {
 		const result = await this.find({
 			select: { id: true },
 			where: { active: true },
-			relations: { shared: { project: { projectRelations: true } } },
+			// Exclusive mode: Load project and projectRelations for activation context
+			relations: {
+				project: {
+					projectRelations: true,
+				},
+			},
 		});
 
 		return result.map(({ id }) => id);
@@ -91,7 +96,12 @@ export class WorkflowRepository extends Repository<WorkflowEntity> {
 	async findById(workflowId: string) {
 		return await this.findOne({
 			where: { id: workflowId },
-			relations: { shared: { project: { projectRelations: true } } },
+			// Exclusive mode: Load project and projectRelations
+			relations: {
+				project: {
+					projectRelations: true,
+				},
+			},
 		});
 	}
 

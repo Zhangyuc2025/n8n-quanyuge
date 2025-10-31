@@ -40,7 +40,6 @@ import {
 	ExecutionData,
 	ExecutionEntity,
 	ExecutionMetadata,
-	SharedWorkflow,
 	WorkflowEntity,
 } from '../entities';
 import type {
@@ -1067,9 +1066,11 @@ export class ExecutionRepository extends Repository<ExecutionEntity> {
 		}
 
 		if (projectId) {
-			qb.innerJoin(WorkflowEntity, 'w', 'w.id = execution.workflowId')
-				.innerJoin(SharedWorkflow, 'sw', 'sw.workflowId = w.id')
-				.andWhere('sw.projectId = :projectId', { projectId });
+			// Exclusive mode: Filter by workflow's projectId
+			qb.innerJoin(WorkflowEntity, 'w', 'w.id = execution.workflowId').andWhere(
+				'w.projectId = :projectId',
+				{ projectId },
+			);
 		}
 
 		return qb;

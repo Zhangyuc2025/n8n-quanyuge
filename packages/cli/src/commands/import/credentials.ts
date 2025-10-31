@@ -1,11 +1,4 @@
-import {
-	CredentialsEntity,
-	Project,
-	User,
-	SharedCredentials,
-	ProjectRepository,
-	GLOBAL_OWNER_ROLE,
-} from '@n8n/db';
+import { CredentialsEntity, Project, User, ProjectRepository, GLOBAL_OWNER_ROLE } from '@n8n/db';
 import { Command } from '@n8n/decorators';
 import { Container } from '@n8n/di';
 import { PROJECT_OWNER_ROLE_SLUG } from '@n8n/permissions';
@@ -115,25 +108,15 @@ export class ImportCredentialsCommand extends BaseCommand<z.infer<typeof flagsSc
 		);
 	}
 
+	/**
+	 * [PLAN_A 独占模式] 直接设置 projectId，不再创建 SharedCredentials 记录
+	 */
 	private async storeCredential(credential: Partial<CredentialsEntity>, project: Project) {
-		const result = await this.transactionManager.upsert(CredentialsEntity, credential, ['id']);
+		// 设置凭据所属项目
+		credential.projectId = project.id;
 
-		const sharingExists = await this.transactionManager.existsBy(SharedCredentials, {
-			credentialsId: credential.id,
-			role: 'credential:owner',
-		});
-
-		if (!sharingExists) {
-			await this.transactionManager.upsert(
-				SharedCredentials,
-				{
-					credentialsId: result.identifiers[0].id as string,
-					role: 'credential:owner',
-					projectId: project.id,
-				},
-				['credentialsId', 'projectId'],
-			);
-		}
+		// 插入或更新凭据
+		await this.transactionManager.upsert(CredentialsEntity, credential, ['id']);
 	}
 
 	private async checkRelations(
@@ -166,7 +149,7 @@ export class ImportCredentialsCommand extends BaseCommand<z.infer<typeof flagsSc
 
 			if (ownerProject.id !== projectId) {
 				const currentOwner =
-					ownerProject.type === 'personal'
+					ownerProject.type === 'personal' && user
 						? `the user with the ID "${user.id}"`
 						: `the project with the ID "${ownerProject.id}"`;
 				const newOwner = userId
@@ -230,24 +213,37 @@ export class ImportCredentialsCommand extends BaseCommand<z.infer<typeof flagsSc
 		});
 	}
 
+	/**
+	 * [PLAN_A 独占模式] 通过 projectId 直接查询凭据所有者
+	 */
 	private async getCredentialOwner(credentialsId: string) {
-		const sharedCredential = await this.transactionManager.findOne(SharedCredentials, {
-			where: { credentialsId, role: 'credential:owner' },
+		// 查询凭据及其所属项目
+		const credential = await this.transactionManager.findOne(CredentialsEntity, {
+			where: { id: credentialsId },
 			relations: { project: true },
 		});
 
-		if (sharedCredential && sharedCredential.project.type === 'personal') {
-			const user = await this.transactionManager.findOneByOrFail(User, {
+		if (!credential || !credential.project) {
+			return {};
+		}
+
+		// 如果是个人项目，查询项目所有者
+		if (credential.project.type === 'personal') {
+			const user = await this.transactionManager.findOneBy(User, {
 				projectRelations: {
 					role: { slug: PROJECT_OWNER_ROLE_SLUG },
-					projectId: sharedCredential.projectId,
+					projectId: credential.projectId,
 				},
 			});
 
-			return { user, project: sharedCredential.project };
+			if (!user) {
+				return { project: credential.project };
+			}
+
+			return { user, project: credential.project };
 		}
 
-		return {};
+		return { project: credential.project };
 	}
 
 	private async credentialExists(credentialId: string) {

@@ -1,10 +1,5 @@
 import { GlobalConfig } from '@n8n/config';
-import {
-	CredentialsRepository,
-	ProjectRelationRepository,
-	SharedWorkflowRepository,
-	WorkflowRepository,
-} from '@n8n/db';
+import { CredentialsRepository, ProjectRelationRepository, WorkflowRepository } from '@n8n/db';
 import { Service } from '@n8n/di';
 import { PROJECT_OWNER_ROLE_SLUG } from '@n8n/permissions';
 import { snakeCase } from 'change-case';
@@ -37,7 +32,6 @@ export class TelemetryEventRelay extends EventRelay {
 		private readonly binaryDataConfig: BinaryDataConfig,
 		private readonly workflowRepository: WorkflowRepository,
 		private readonly nodeTypes: NodeTypes,
-		private readonly sharedWorkflowRepository: SharedWorkflowRepository,
 		private readonly projectRelationRepository: ProjectRelationRepository,
 		private readonly credentialsRepository: CredentialsRepository,
 	) {
@@ -602,24 +596,21 @@ export class TelemetryEventRelay extends EventRelay {
 			isCloudDeployment,
 		});
 
+		// Exclusive mode: determine user role by checking project ownership
 		let userRole: 'owner' | 'sharee' | 'member' | undefined = undefined;
-		const role = await this.sharedWorkflowRepository.findSharingRole(user.id, workflow.id);
-		if (role) {
-			userRole = role === 'workflow:owner' ? 'owner' : 'sharee';
-		} else {
-			const workflowOwner = await this.sharedWorkflowRepository.getWorkflowOwningProject(
-				workflow.id,
-			);
+		const workflowWithProject = await this.workflowRepository.findOne({
+			where: { id: workflow.id },
+			relations: ['project', 'project.projectRelations', 'project.projectRelations.user'],
+		});
 
-			if (workflowOwner) {
-				const projectRole = await this.projectRelationRepository.findProjectRole({
-					userId: user.id,
-					projectId: workflowOwner.id,
-				});
+		if (workflowWithProject?.project) {
+			const projectRole = await this.projectRelationRepository.findProjectRole({
+				userId: user.id,
+				projectId: workflowWithProject.project.id,
+			});
 
-				if (projectRole && projectRole?.slug !== PROJECT_OWNER_ROLE_SLUG) {
-					userRole = 'member';
-				}
+			if (projectRole) {
+				userRole = projectRole.slug === PROJECT_OWNER_ROLE_SLUG ? 'owner' : 'member';
 			}
 		}
 
@@ -728,11 +719,23 @@ export class TelemetryEventRelay extends EventRelay {
 					});
 				}
 
+				// Exclusive mode: determine user role by checking project ownership
 				let userRole: 'owner' | 'sharee' | undefined = undefined;
 				if (userId) {
-					const role = await this.sharedWorkflowRepository.findSharingRole(userId, workflow.id);
-					if (role) {
-						userRole = role === 'workflow:owner' ? 'owner' : 'sharee';
+					const workflowWithProject = await this.workflowRepository.findOne({
+						where: { id: workflow.id },
+						relations: ['project', 'project.projectRelations', 'project.projectRelations.user'],
+					});
+
+					if (workflowWithProject?.project) {
+						const projectRole = await this.projectRelationRepository.findProjectRole({
+							userId,
+							projectId: workflowWithProject.project.id,
+						});
+
+						if (projectRole) {
+							userRole = projectRole.slug === PROJECT_OWNER_ROLE_SLUG ? 'owner' : 'sharee';
+						}
 					}
 				}
 

@@ -1,5 +1,5 @@
 import type { User } from '@n8n/db';
-import { ProjectRelationRepository, SharedWorkflowRepository } from '@n8n/db';
+import { ProjectRelationRepository, WorkflowRepository } from '@n8n/db';
 import { Service } from '@n8n/di';
 import {
 	hasGlobalScope,
@@ -20,110 +20,174 @@ export type ShareWorkflowOptions =
 @Service()
 export class WorkflowSharingService {
 	constructor(
-		private readonly sharedWorkflowRepository: SharedWorkflowRepository,
+		private readonly workflowRepository: WorkflowRepository,
 		private readonly roleService: RoleService,
 		private readonly projectRelationRepository: ProjectRelationRepository,
 	) {}
 
 	/**
-	 * Get the IDs of the workflows that have been shared with the user based on
+	 * Get the IDs of the workflows that the user has access to based on
 	 * scope or roles.
-	 * If `scopes` is passed the roles are inferred. Alternatively `projectRoles`
-	 * and `workflowRoles` can be passed specifically.
 	 *
-	 * Returns all IDs if user has the 'workflow:read' global scope.
+	 * Exclusive mode: Returns workflows from projects the user is a member of.
+	 * Returns all workflow IDs if user has the 'workflow:read' global scope.
 	 */
-
 	async getSharedWorkflowIds(user: User, options: ShareWorkflowOptions): Promise<string[]> {
 		const { projectId } = options;
 
+		// If user has global workflow:read scope, return all workflows
 		if (hasGlobalScope(user, 'workflow:read')) {
-			const sharedWorkflows = await this.sharedWorkflowRepository.find({
-				select: ['workflowId'],
+			const workflows = await this.workflowRepository.find({
+				select: ['id'],
 				...(projectId && { where: { projectId } }),
 			});
-			return sharedWorkflows.map(({ workflowId }) => workflowId);
+			return workflows.map((w) => w.id);
 		}
 
+		// Get project roles that should have access
 		const projectRoles =
 			'scopes' in options
 				? await this.roleService.rolesWithScope('project', options.scopes)
 				: options.projectRoles;
-		const workflowRoles =
-			'scopes' in options
-				? await this.roleService.rolesWithScope('workflow', options.scopes)
-				: options.workflowRoles;
 
-		const sharedWorkflows = await this.sharedWorkflowRepository.find({
+		// Find user's project memberships with matching roles
+		const projectRelations = await this.projectRelationRepository.find({
 			where: {
-				role: In(workflowRoles),
-				project: {
-					projectRelations: {
-						userId: user.id,
-						role: In(projectRoles),
-					},
-				},
+				userId: user.id,
+				role: In(projectRoles),
 			},
-			select: ['workflowId'],
+			select: ['projectId'],
 		});
 
-		return sharedWorkflows.map(({ workflowId }) => workflowId);
+		if (projectRelations.length === 0) {
+			return [];
+		}
+
+		const projectIds = projectRelations.map((pr) => pr.projectId);
+
+		// Exclusive mode: Query workflows directly from user's accessible projects
+		const workflows = await this.workflowRepository.find({
+			where: {
+				projectId: In(projectIds),
+				...(projectId && { projectId }), // Optional filter by specific project
+			},
+			select: ['id'],
+		});
+
+		return workflows.map((w) => w.id);
 	}
 
+	/**
+	 * Get workflows "shared with me" - workflows in team projects where user is not the owner.
+	 *
+	 * Exclusive mode: Returns workflows from team projects where user is a member
+	 * but not the project owner.
+	 */
 	async getSharedWithMeIds(user: User) {
-		const sharedWithMeWorkflows = await this.sharedWorkflowRepository.find({
-			select: ['workflowId'],
+		// Find team projects where user is NOT the owner
+		const projectRelations = await this.projectRelationRepository.find({
 			where: {
-				role: 'workflow:editor',
-				project: {
-					projectRelations: {
-						userId: user.id,
-						role: { slug: PROJECT_OWNER_ROLE_SLUG },
-					},
-				},
+				userId: user.id,
 			},
+			relations: ['project', 'role'],
 		});
 
-		return sharedWithMeWorkflows.map(({ workflowId }) => workflowId);
+		// Filter for team projects where user is not the owner
+		const teamProjectIds = projectRelations
+			.filter((pr) => pr.project.type === 'team' && pr.role.slug !== PROJECT_OWNER_ROLE_SLUG)
+			.map((pr) => pr.projectId);
+
+		if (teamProjectIds.length === 0) {
+			return [];
+		}
+
+		// Get workflows from these team projects
+		const workflows = await this.workflowRepository.find({
+			where: {
+				projectId: In(teamProjectIds),
+			},
+			select: ['id'],
+		});
+
+		return workflows.map((w) => w.id);
 	}
 
+	/**
+	 * Get the scopes (permissions) for each workflow based on user's project memberships.
+	 *
+	 * Exclusive mode: Determines scopes based on user's role in the workflow's owning project.
+	 */
 	async getSharedWorkflowScopes(
 		workflowIds: string[],
 		user: User,
 	): Promise<Array<[string, Scope[]]>> {
 		const projectRelations = await this.projectRelationRepository.findAllByUser(user.id);
-		const sharedWorkflows =
-			await this.sharedWorkflowRepository.getRelationsByWorkflowIdsAndProjectIds(
-				workflowIds,
-				projectRelations.map((p) => p.projectId),
-			);
+		const userProjectIds = projectRelations.map((p) => p.projectId);
+
+		// Get workflows with their projects
+		const workflows = await this.workflowRepository.find({
+			where: {
+				id: In(workflowIds),
+				projectId: In(userProjectIds),
+			},
+			select: ['id', 'projectId'],
+		});
+
+		// Create a map of workflowId -> projectId for quick lookup
+		const workflowProjectMap = new Map(workflows.map((w) => [w.id, w.projectId]));
 
 		return workflowIds.map((workflowId) => {
-			return [
-				workflowId,
-				this.roleService.combineResourceScopes(
-					'workflow',
-					user,
-					sharedWorkflows.filter((s) => s.workflowId === workflowId),
-					projectRelations,
-				),
-			];
+			const projectId = workflowProjectMap.get(workflowId);
+			if (!projectId) {
+				return [workflowId, []]; // No access
+			}
+
+			// Find user's relation in this workflow's project
+			const projectRelation = projectRelations.find((pr) => pr.projectId === projectId);
+			if (!projectRelation) {
+				return [workflowId, []]; // No access
+			}
+
+			// Combine scopes from project role (in exclusive mode, workflow inherits project permissions)
+			const scopes = this.roleService.combineResourceScopes(
+				'workflow',
+				user,
+				[{ projectId, role: projectRelation.role.slug as WorkflowSharingRole }],
+				projectRelations,
+			);
+
+			return [workflowId, scopes];
 		});
 	}
 
+	/**
+	 * Get workflows owned by the user in their personal project.
+	 *
+	 * Exclusive mode: Returns workflows from user's personal project.
+	 */
 	async getOwnedWorkflowsInPersonalProject(user: User): Promise<string[]> {
-		const sharedWorkflows = await this.sharedWorkflowRepository.find({
-			select: ['workflowId'],
+		// Find user's personal project (where user is the owner)
+		const personalProjectRelation = await this.projectRelationRepository.findOne({
 			where: {
-				role: 'workflow:owner',
-				project: {
-					projectRelations: {
-						userId: user.id,
-						role: { slug: PROJECT_OWNER_ROLE_SLUG },
-					},
-				},
+				userId: user.id,
+				role: { slug: PROJECT_OWNER_ROLE_SLUG },
+				project: { type: 'personal' },
 			},
+			relations: ['project'],
 		});
-		return sharedWorkflows.map(({ workflowId }) => workflowId);
+
+		if (!personalProjectRelation) {
+			return [];
+		}
+
+		// Get workflows from the personal project
+		const workflows = await this.workflowRepository.find({
+			where: {
+				projectId: personalProjectRelation.projectId,
+			},
+			select: ['id'],
+		});
+
+		return workflows.map((w) => w.id);
 	}
 }

@@ -52,7 +52,8 @@ export = {
 			const project = await Container.get(ProjectRepository).getPersonalProjectForUserOrFail(
 				req.user.id,
 			);
-			const createdWorkflow = await createWorkflow(workflow, req.user, project, 'workflow:owner');
+			// Exclusive mode: createWorkflow no longer needs role parameter
+			const createdWorkflow = await createWorkflow(workflow, req.user, project);
 
 			await Container.get(WorkflowHistoryService).saveVersion(
 				req.user,
@@ -225,14 +226,14 @@ export = {
 				'meta',
 				'versionId',
 				'triggerCount',
-				'shared',
 			];
 
 			if (!excludePinnedData) {
 				selectFields.push('pinData');
 			}
 
-			const relations = ['shared'];
+			// Exclusive mode: Use 'project' instead of 'shared'
+			const relations = ['project'];
 			if (!Container.get(GlobalConfig).tags.disabled) {
 				relations.push('tags');
 			}

@@ -3,12 +3,10 @@ import { Logger } from '@n8n/backend-common';
 import { GlobalConfig } from '@n8n/config';
 import type { Project } from '@n8n/db';
 import {
-	SharedWorkflow,
 	WorkflowEntity,
 	ProjectRelationRepository,
 	ProjectRepository,
 	TagRepository,
-	SharedWorkflowRepository,
 	WorkflowRepository,
 	AuthenticatedRequest,
 } from '@n8n/db';
@@ -63,6 +61,9 @@ import * as WorkflowHelpers from '@/workflow-helpers';
 
 @RestController('/workflows')
 export class WorkflowsController {
+	/**
+	 * [PLAN_A 独占模式] 移除 SharedWorkflowRepository 依赖
+	 */
 	constructor(
 		private readonly logger: Logger,
 		private readonly externalHooks: ExternalHooks,
@@ -74,7 +75,6 @@ export class WorkflowsController {
 		private readonly workflowRepository: WorkflowRepository,
 		private readonly workflowService: WorkflowService,
 		private readonly workflowExecutionService: WorkflowExecutionService,
-		private readonly sharedWorkflowRepository: SharedWorkflowRepository,
 		private readonly license: License,
 		private readonly mailer: UserManagementMailer,
 		private readonly credentialsService: CredentialsService,
@@ -172,13 +172,10 @@ export class WorkflowsController {
 				} catch {}
 			}
 
-			const newSharedWorkflow = this.sharedWorkflowRepository.create({
-				role: 'workflow:owner',
-				projectId: project.id,
-				workflow,
-			});
-
-			await transactionManager.save<SharedWorkflow>(newSharedWorkflow);
+			/**
+			 * [PLAN_A 独占模式] 工作流已经通过 workflow.projectId 关联到项目
+			 * 不再需要创建 SharedWorkflow 记录
+			 */
 
 			return await this.workflowFinderService.findWorkflowForUser(
 				workflow.id,
@@ -285,12 +282,13 @@ export class WorkflowsController {
 	async getWorkflow(req: WorkflowRequest.Get) {
 		const { workflowId } = req.params;
 
+		/**
+		 * [PLAN_A 独占模式] 直接加载 project 关系而不是 shared
+		 */
 		if (this.license.isSharingEnabled()) {
 			const relations: FindOptionsRelations<WorkflowEntity> = {
-				shared: {
-					project: {
-						projectRelations: true,
-					},
+				project: {
+					projectRelations: true,
 				},
 			};
 
@@ -469,72 +467,34 @@ export class WorkflowsController {
 		);
 	}
 
+	/**
+	 * [PLAN_A 独占模式] 工作流共享已废弃
+	 *
+	 * 在独占模式下，工作流属于单个项目，不支持跨项目共享。
+	 * 要让其他用户访问工作流，应将用户添加为项目成员。
+	 */
 	@Licensed('feat:sharing')
 	@Put('/:workflowId/share')
 	@ProjectScope('workflow:share')
 	async share(req: WorkflowRequest.Share) {
 		const { workflowId } = req.params;
-		const { shareWithIds } = req.body;
 
-		if (
-			!Array.isArray(shareWithIds) ||
-			!shareWithIds.every((userId) => typeof userId === 'string')
-		) {
-			throw new BadRequestError('Bad request');
-		}
-
+		// 获取工作流所属项目
 		const workflow = await this.workflowFinderService.findWorkflowForUser(workflowId, req.user, [
-			'workflow:share',
+			'workflow:read',
 		]);
 
 		if (!workflow) {
-			throw new ForbiddenError();
+			throw new NotFoundError('Workflow not found');
 		}
 
-		let newShareeIds: string[] = [];
-		const { manager: dbManager } = this.projectRepository;
-		await dbManager.transaction(async (trx) => {
-			const currentPersonalProjectIDs = workflow.shared
-				.filter((sw) => sw.role === 'workflow:editor')
-				.map((sw) => sw.projectId);
-			const newPersonalProjectIDs = shareWithIds;
+		const project = await this.projectRepository.findOneBy({ id: workflow.projectId });
 
-			const toShare = utils.rightDiff(
-				[currentPersonalProjectIDs, (id) => id],
-				[newPersonalProjectIDs, (id) => id],
-			);
-
-			const toUnshare = utils.rightDiff(
-				[newPersonalProjectIDs, (id) => id],
-				[currentPersonalProjectIDs, (id) => id],
-			);
-
-			await trx.delete(SharedWorkflow, {
-				workflowId,
-				projectId: In(toUnshare),
-			});
-
-			await this.enterpriseWorkflowService.shareWithProjects(workflow.id, toShare, trx);
-
-			newShareeIds = toShare;
-		});
-
-		this.eventService.emit('workflow-sharing-updated', {
-			workflowId,
-			userIdSharer: req.user.id,
-			userIdList: shareWithIds,
-		});
-
-		const projectsRelations = await this.projectRelationRepository.findBy({
-			projectId: In(newShareeIds),
-			role: { slug: PROJECT_OWNER_ROLE_SLUG },
-		});
-
-		await this.mailer.notifyWorkflowShared({
-			sharer: req.user,
-			newShareeIds: projectsRelations.map((pr) => pr.userId),
-			workflow,
-		});
+		throw new BadRequestError(
+			'In exclusive mode, workflows belong to a single project. ' +
+				`This workflow belongs to project "${project?.name || workflow.projectId}". ` +
+				'To share access, add users as members of that project.',
+		);
 	}
 
 	@Put('/:workflowId/transfer')

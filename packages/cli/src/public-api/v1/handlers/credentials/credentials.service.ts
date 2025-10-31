@@ -1,11 +1,5 @@
 import type { User, ICredentialsDb } from '@n8n/db';
-import {
-	CredentialsEntity,
-	SharedCredentials,
-	CredentialsRepository,
-	ProjectRepository,
-	SharedCredentialsRepository,
-} from '@n8n/db';
+import { CredentialsEntity, CredentialsRepository, ProjectRepository } from '@n8n/db';
 import { Container } from '@n8n/di';
 import { Credentials } from 'n8n-core';
 import type {
@@ -25,16 +19,24 @@ export async function getCredentials(credentialId: string): Promise<ICredentials
 	return await Container.get(CredentialsRepository).findOneBy({ id: credentialId });
 }
 
+/**
+ * Get credential that user has access to.
+ * Exclusive mode: Returns credential if user has access via project membership.
+ */
 export async function getSharedCredentials(
 	userId: string,
 	credentialId: string,
-): Promise<SharedCredentials | null> {
-	return await Container.get(SharedCredentialsRepository).findOne({
+): Promise<CredentialsEntity | null> {
+	return await Container.get(CredentialsRepository).findOne({
 		where: {
-			project: { projectRelations: { userId } },
-			credentialsId: credentialId,
+			id: credentialId,
+			project: {
+				projectRelations: {
+					userId,
+				},
+			},
 		},
-		relations: ['credentials'],
+		relations: ['project'],
 	});
 }
 
@@ -48,6 +50,10 @@ export async function createCredential(
 	return newCredential;
 }
 
+/**
+ * Save credential in user's personal project.
+ * Exclusive mode: Credential belongs directly to the project via projectId.
+ */
 export async function saveCredential(
 	credential: CredentialsEntity,
 	user: User,
@@ -55,41 +61,32 @@ export async function saveCredential(
 ): Promise<CredentialsEntity> {
 	const projectRepository = Container.get(ProjectRepository);
 	const { manager: dbManager } = projectRepository;
+
 	const result = await dbManager.transaction(async (transactionManager) => {
-		const savedCredential = await transactionManager.save<CredentialsEntity>(credential);
-
-		savedCredential.data = credential.data;
-
-		const newSharedCredential = new SharedCredentials();
-
 		const personalProject = await projectRepository.getPersonalProjectForUserOrFail(
 			user.id,
 			transactionManager,
 		);
 
-		Object.assign(newSharedCredential, {
-			role: 'credential:owner',
-			credentials: savedCredential,
-			projectId: personalProject.id,
-		});
-
-		await transactionManager.save<SharedCredentials>(newSharedCredential);
+		// Exclusive mode: Set projectId directly
+		credential.projectId = personalProject.id;
+		const savedCredential = await transactionManager.save<CredentialsEntity>(credential);
+		savedCredential.data = credential.data;
 
 		return savedCredential;
 	});
 
 	await Container.get(ExternalHooks).run('credentials.create', [encryptedData]);
 
-	const project = await Container.get(SharedCredentialsRepository).findCredentialOwningProject(
-		credential.id,
-	);
+	// Get the personal project for event emission
+	const project = await projectRepository.getPersonalProjectForUserOrFail(user.id);
 
 	Container.get(EventService).emit('credentials-created', {
 		user,
 		credentialType: credential.type,
 		credentialId: credential.id,
-		projectId: project?.id,
-		projectType: project?.type,
+		projectId: project.id,
+		projectType: project.type,
 		publicApi: true,
 	});
 
@@ -131,7 +128,8 @@ export function sanitizeCredentials(
 	const credentialsList = argIsArray ? credentials : [credentials];
 
 	const sanitizedCredentials = credentialsList.map((credential) => {
-		const { data, shared, ...rest } = credential;
+		// Exclusive mode: Remove sensitive data field
+		const { data, ...rest } = credential;
 		return rest;
 	});
 

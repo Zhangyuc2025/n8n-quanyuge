@@ -4,7 +4,7 @@ import {
 	Project,
 	User,
 	ProjectRelationRepository,
-	SharedWorkflowRepository,
+	WorkflowRepository,
 	UserRepository,
 	Role,
 	Scope,
@@ -19,7 +19,7 @@ export class OwnershipService {
 		private cacheService: CacheService,
 		private userRepository: UserRepository,
 		private projectRelationRepository: ProjectRelationRepository,
-		private sharedWorkflowRepository: SharedWorkflowRepository,
+		private workflowRepository: WorkflowRepository,
 	) {}
 
 	// To make use of the cache service we should store POJOs, these
@@ -70,6 +70,8 @@ export class OwnershipService {
 
 	/**
 	 * Retrieve the project that owns the workflow. Note that workflow ownership is **immutable**.
+	 *
+	 * Exclusive mode: Each workflow belongs to exactly one project via direct projectId relationship.
 	 */
 	async getWorkflowProjectCached(workflowId: string): Promise<Project> {
 		const cachedValue = await this.cacheService.getHashValue<Partial<Project>>(
@@ -82,16 +84,17 @@ export class OwnershipService {
 			if (project) return project;
 		}
 
-		const sharedWorkflow = await this.sharedWorkflowRepository.findOneOrFail({
-			where: { workflowId, role: 'workflow:owner' },
+		// Exclusive mode: Query workflow's project directly
+		const workflow = await this.workflowRepository.findOneOrFail({
+			where: { id: workflowId },
 			relations: ['project'],
 		});
 
 		void this.cacheService.setHash('workflow-project', {
-			[workflowId]: this.copyProject(sharedWorkflow.project),
+			[workflowId]: this.copyProject(workflow.project),
 		});
 
-		return sharedWorkflow.project;
+		return workflow.project;
 	}
 
 	async setWorkflowProjectCacheEntry(workflowId: string, project: Project): Promise<Project> {
@@ -126,6 +129,12 @@ export class OwnershipService {
 		return owner;
 	}
 
+	/**
+	 * Convert workflow/credential entity with project relation to frontend format.
+	 *
+	 * Exclusive mode: Each resource belongs to exactly one project (homeProject).
+	 * The sharedWithProjects array is always empty in exclusive mode.
+	 */
 	addOwnedByAndSharedWith(
 		rawWorkflow: ListQueryDb.Workflow.WithSharing,
 	): ListQueryDb.Workflow.WithOwnedByAndSharedWith;
@@ -137,38 +146,27 @@ export class OwnershipService {
 	):
 		| ListQueryDb.Workflow.WithOwnedByAndSharedWith
 		| ListQueryDb.Credentials.WithOwnedByAndSharedWith {
-		const shared = rawEntity.shared;
 		const entity = rawEntity as
 			| ListQueryDb.Workflow.WithOwnedByAndSharedWith
 			| ListQueryDb.Credentials.WithOwnedByAndSharedWith;
 
+		// Initialize with defaults
 		Object.assign(entity, {
 			homeProject: null,
-			sharedWithProjects: [],
+			sharedWithProjects: [], // Always empty in exclusive mode
 		});
 
-		if (shared === undefined) {
-			return entity;
-		}
+		// Exclusive mode: Extract project information from direct project relation
+		// @ts-expect-error - project exists on entity but not in type definition
+		const project = rawEntity.project as Project | undefined;
 
-		for (const sharedEntity of shared) {
-			const { project, role } = sharedEntity;
-
-			if (role === 'credential:owner' || role === 'workflow:owner') {
-				entity.homeProject = {
-					id: project.id,
-					type: project.type,
-					name: project.name,
-					icon: project.icon,
-				};
-			} else {
-				entity.sharedWithProjects.push({
-					id: project.id,
-					type: project.type,
-					name: project.name,
-					icon: project.icon,
-				});
-			}
+		if (project) {
+			entity.homeProject = {
+				id: project.id,
+				type: project.type,
+				name: project.name,
+				icon: project.icon,
+			};
 		}
 
 		return entity;

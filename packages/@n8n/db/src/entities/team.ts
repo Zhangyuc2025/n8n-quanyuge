@@ -1,4 +1,4 @@
-import { Column, Entity, Index, ManyToOne, OneToMany } from '@n8n/typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany } from '@n8n/typeorm';
 
 import { WithTimestampsAndStringId } from './abstract-entity';
 import type { Project } from './project';
@@ -52,10 +52,11 @@ export class Team extends WithTimestampsAndStringId {
 
 	/** 团队所有者 */
 	@ManyToOne(() => User, { onDelete: 'CASCADE' })
+	@JoinColumn({ name: 'ownerId' })
 	owner: User;
 
 	/** 团队所有者 ID */
-	@Column({ type: 'varchar', length: 36 })
+	@Column()
 	ownerId: string;
 
 	/** 团队成员关系 */

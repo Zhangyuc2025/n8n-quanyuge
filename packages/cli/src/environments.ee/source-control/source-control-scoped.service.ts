@@ -131,13 +131,9 @@ export class SourceControlScopedService {
 			return {};
 		}
 
-		// We build a filter to only select workflows, that belong to a team project
-		// that the user is an admin off
+		// Exclusive mode: workflows belong directly to a project
 		return {
-			shared: {
-				role: 'workflow:owner',
-				project: this.getProjectsWithPushScopeByContextFilter(context),
-			},
+			project: this.getProjectsWithPushScopeByContextFilter(context),
 		};
 	}
 
@@ -149,13 +145,9 @@ export class SourceControlScopedService {
 			return {};
 		}
 
-		// We build a filter to only select workflows, that belong to a team project
-		// that the user is an admin off
+		// Exclusive mode: credentials belong directly to a project
 		return {
-			shared: {
-				role: 'credential:owner',
-				project: this.getProjectsWithPushScopeByContextFilter(context),
-			},
+			project: this.getProjectsWithPushScopeByContextFilter(context),
 		};
 	}
 

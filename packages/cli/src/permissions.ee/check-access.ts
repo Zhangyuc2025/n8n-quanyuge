@@ -1,7 +1,14 @@
 import type { User } from '@n8n/db';
-import { ProjectRepository, SharedCredentialsRepository, SharedWorkflowRepository } from '@n8n/db';
+import {
+	ProjectRepository,
+	CredentialsRepository,
+	WorkflowRepository,
+	ProjectRelationRepository,
+} from '@n8n/db';
 import { Container } from '@n8n/di';
 import { hasGlobalScope, type Scope } from '@n8n/permissions';
+// eslint-disable-next-line n8n-local-rules/misplaced-n8n-typeorm-import
+import { In } from '@n8n/typeorm';
 import { UnexpectedError } from 'n8n-workflow';
 
 import { NotFoundError } from '@/errors/response-errors/not-found.error';
@@ -51,34 +58,69 @@ export async function userHasScopes(
 	const roleService = Container.get(RoleService);
 
 	if (credentialId) {
-		const credentials = await Container.get(SharedCredentialsRepository).findBy({
-			credentialsId: credentialId,
+		// Exclusive mode: Check if credential exists and get its project
+		const credential = await Container.get(CredentialsRepository).findOne({
+			where: { id: credentialId },
+			select: ['id', 'projectId'],
 		});
-		if (!credentials.length) {
+
+		if (!credential) {
 			throw new NotFoundError(`Credential with ID "${credentialId}" not found.`);
 		}
 
-		const validRoles = await roleService.rolesWithScope('credential', scopes);
+		// Check if user has access to the credential's project with required scopes
+		if (!userProjectIds.includes(credential.projectId)) {
+			return false;
+		}
 
-		return credentials.some(
-			(c) => userProjectIds.includes(c.projectId) && validRoles.includes(c.role),
-		);
+		// Get user's role in the credential's project
+		const projectRelation = await Container.get(ProjectRelationRepository).findOne({
+			where: {
+				userId: user.id,
+				projectId: credential.projectId,
+			},
+			relations: ['role'],
+		});
+
+		if (!projectRelation) {
+			return false;
+		}
+
+		const validRoles = await roleService.rolesWithScope('credential', scopes);
+		return validRoles.includes(projectRelation.role.slug);
 	}
 
 	if (workflowId) {
-		const workflows = await Container.get(SharedWorkflowRepository).findBy({
-			workflowId,
+		// Exclusive mode: Check if workflow exists and get its project
+		const workflow = await Container.get(WorkflowRepository).findOne({
+			where: { id: workflowId },
+			select: ['id', 'projectId'],
 		});
 
-		if (!workflows.length) {
+		if (!workflow) {
 			throw new NotFoundError(`Workflow with ID "${workflowId}" not found.`);
 		}
 
-		const validRoles = await roleService.rolesWithScope('workflow', scopes);
+		// Check if user has access to the workflow's project with required scopes
+		if (!userProjectIds.includes(workflow.projectId)) {
+			return false;
+		}
 
-		return workflows.some(
-			(w) => userProjectIds.includes(w.projectId) && validRoles.includes(w.role),
-		);
+		// Get user's role in the workflow's project
+		const projectRelation = await Container.get(ProjectRelationRepository).findOne({
+			where: {
+				userId: user.id,
+				projectId: workflow.projectId,
+			},
+			relations: ['role'],
+		});
+
+		if (!projectRelation) {
+			return false;
+		}
+
+		const validRoles = await roleService.rolesWithScope('workflow', scopes);
+		return validRoles.includes(projectRelation.role.slug);
 	}
 
 	if (projectId) return userProjectIds.includes(projectId);

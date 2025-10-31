@@ -2,8 +2,6 @@ import { CreateRoleDto, UpdateRoleDto } from '@n8n/api-types';
 import { LicenseState } from '@n8n/backend-common';
 import {
 	CredentialsEntity,
-	SharedCredentials,
-	SharedWorkflow,
 	User,
 	ListQueryDb,
 	ScopesField,
@@ -217,6 +215,10 @@ export class RoleService {
 		user: User,
 		userProjectRelations: ProjectRelation[],
 	): ListQueryDb.Credentials.WithScopes;
+	/**
+	 * Add scopes to workflow or credential entity based on user's project role.
+	 * Exclusive mode: Uses projectId from entity instead of shared relationships.
+	 */
 	addScopes(
 		rawEntity:
 			| CredentialsEntity
@@ -230,7 +232,6 @@ export class RoleService {
 		| (CredentialsEntity & ScopesField)
 		| ListQueryDb.Workflow.WithScopes
 		| ListQueryDb.Credentials.WithScopes {
-		const shared = rawEntity.shared;
 		const entity = rawEntity as
 			| (CredentialsEntity & ScopesField)
 			| ListQueryDb.Workflow.WithScopes
@@ -238,7 +239,11 @@ export class RoleService {
 
 		entity.scopes = [];
 
-		if (shared === undefined) {
+		// Exclusive mode: Get projectId from entity
+		// @ts-expect-error - projectId exists on entity but not in all type definitions
+		const projectId = rawEntity.projectId as string | undefined;
+
+		if (!projectId) {
 			return entity;
 		}
 
@@ -246,33 +251,42 @@ export class RoleService {
 			throw new UnexpectedError('Cannot detect if entity is a workflow or credential.');
 		}
 
+		// Find user's role in the entity's project
+		const projectRelation = userProjectRelations.find((pr) => pr.projectId === projectId);
+		if (!projectRelation) {
+			return entity;
+		}
+
 		entity.scopes = this.combineResourceScopes(
 			'active' in entity ? 'workflow' : 'credential',
 			user,
-			shared,
+			[{ projectId, role: projectRelation.role.slug }],
 			userProjectRelations,
 		);
 
 		return entity;
 	}
 
+	/**
+	 * Combine resource scopes from global, project, and resource-level roles.
+	 * Exclusive mode: resourceRelations contains { projectId, role } instead of SharedWorkflow/SharedCredentials.
+	 */
 	combineResourceScopes(
 		type: 'workflow' | 'credential',
 		user: User,
-		shared: SharedCredentials[] | SharedWorkflow[],
+		resourceRelations: Array<{ projectId: string; role: string }>,
 		userProjectRelations: ProjectRelation[],
 	): Scope[] {
 		const globalScopes = getAuthPrincipalScopes(user, [type]);
 		const scopesSet: Set<Scope> = new Set(globalScopes);
-		for (const sharedEntity of shared) {
-			const pr = userProjectRelations.find(
-				(p) => p.projectId === (sharedEntity.projectId ?? sharedEntity.project.id),
-			);
+		for (const resource of resourceRelations) {
+			const pr = userProjectRelations.find((p) => p.projectId === resource.projectId);
 			let projectScopes: Scope[] = [];
 			if (pr) {
 				projectScopes = pr.role.scopes.map((s) => s.slug);
 			}
-			const resourceMask = getRoleScopes(sharedEntity.role);
+			// Type assertion: resource.role comes from projectRelation.role.slug which is a valid role
+			const resourceMask = getRoleScopes(resource.role as Parameters<typeof getRoleScopes>[0]);
 			const mergedScopes = combineScopes(
 				{
 					global: globalScopes,

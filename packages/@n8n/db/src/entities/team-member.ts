@@ -19,7 +19,7 @@ export class TeamMember extends WithTimestampsAndStringId {
 	team: Team;
 
 	/** 所属团队 ID */
-	@Column({ type: 'varchar', length: 36 })
+	@Column()
 	teamId: string;
 
 	/** 团队成员用户 */
@@ -27,7 +27,7 @@ export class TeamMember extends WithTimestampsAndStringId {
 	user: User;
 
 	/** 团队成员用户 ID */
-	@Column({ type: 'varchar', length: 36 })
+	@Column()
 	userId: string;
 
 	/** 团队角色 */

@@ -5,7 +5,7 @@ export class AddMultiTenantTables1761701813576 implements ReversibleMigration {
 		// 1. 创建团队表 (team)
 		await queryRunner.query(`
 			CREATE TABLE IF NOT EXISTS "${tablePrefix}team" (
-				"id" varchar(36) NOT NULL,
+				"id" uuid NOT NULL DEFAULT gen_random_uuid(),
 				"name" varchar(255) NOT NULL,
 				"slug" varchar(100) NULL,
 				"description" text NULL,
@@ -13,12 +13,12 @@ export class AddMultiTenantTables1761701813576 implements ReversibleMigration {
 				"status" varchar(50) NOT NULL DEFAULT 'active',
 				"billingMode" varchar(50) NOT NULL DEFAULT 'owner_pays',
 				"maxMembers" int NOT NULL DEFAULT 10,
-				"ownerId" varchar(36) NOT NULL,
+				"ownerId" uuid NOT NULL,
 				"createdAt" timestamp NOT NULL DEFAULT NOW(),
 				"updatedAt" timestamp NOT NULL DEFAULT NOW(),
 				PRIMARY KEY ("id"),
-				CONSTRAINT "CHK_${tablePrefix}team_status" CHECK ("status" IN ('active', 'suspended', 'deleted')),
-				CONSTRAINT "CHK_${tablePrefix}team_billing" CHECK ("billingMode" IN ('owner_pays', 'member_pays'))
+				CONSTRAINT "CHK_team_status" CHECK ("status" IN ('active', 'suspended', 'deleted')),
+				CONSTRAINT "CHK_team_billing" CHECK ("billingMode" IN ('owner_pays', 'member_pays'))
 			);
 		`);
 
@@ -34,15 +34,15 @@ export class AddMultiTenantTables1761701813576 implements ReversibleMigration {
 		// 2. 创建团队成员表 (team_member)
 		await queryRunner.query(`
 			CREATE TABLE IF NOT EXISTS "${tablePrefix}team_member" (
-				"id" varchar(36) NOT NULL,
-				"teamId" varchar(36) NOT NULL,
-				"userId" varchar(36) NOT NULL,
+				"id" uuid NOT NULL DEFAULT gen_random_uuid(),
+				"teamId" uuid NOT NULL,
+				"userId" uuid NOT NULL,
 				"role" varchar(50) NOT NULL DEFAULT 'team:member',
 				"joinedAt" timestamp NOT NULL DEFAULT NOW(),
 				"createdAt" timestamp NOT NULL DEFAULT NOW(),
 				"updatedAt" timestamp NOT NULL DEFAULT NOW(),
 				PRIMARY KEY ("id"),
-				CONSTRAINT "CHK_${tablePrefix}team_member_role" CHECK ("role" IN ('team:owner', 'team:admin', 'team:member', 'team:viewer'))
+				CONSTRAINT "CHK_team_member_role" CHECK ("role" IN ('team:owner', 'team:admin', 'team:member', 'team:viewer'))
 			);
 		`);
 
@@ -71,7 +71,7 @@ export class AddMultiTenantTables1761701813576 implements ReversibleMigration {
 		// 4. 扩展项目表，添加多租户字段
 		await queryRunner.query(`
 			ALTER TABLE "${tablePrefix}project"
-			ADD COLUMN "teamId" varchar(36) NULL,
+			ADD COLUMN "teamId" uuid NULL,
 			ADD COLUMN "isDefault" boolean NOT NULL DEFAULT false;
 		`);
 
@@ -92,13 +92,13 @@ export class AddMultiTenantTables1761701813576 implements ReversibleMigration {
 		// 6. 添加约束
 		await queryRunner.query(`
 			ALTER TABLE "${tablePrefix}user"
-			ADD CONSTRAINT "CHK_${tablePrefix}user_tier" CHECK ("tier" IN ('free', 'pro', 'enterprise')),
-			ADD CONSTRAINT "CHK_${tablePrefix}user_tenant_status" CHECK ("tenantStatus" IN ('active', 'suspended', 'deleted'));
+			ADD CONSTRAINT "CHK_user_tier" CHECK ("tier" IN ('free', 'pro', 'enterprise')),
+			ADD CONSTRAINT "CHK_user_tenant_status" CHECK ("tenantStatus" IN ('active', 'suspended', 'deleted'));
 		`);
 
 		await queryRunner.query(`
 			ALTER TABLE "${tablePrefix}project"
-			ADD CONSTRAINT "CHK_${tablePrefix}project_team_consistency" CHECK (
+			ADD CONSTRAINT "CHK_project_team_consistency" CHECK (
 				("type" = 'personal' AND "teamId" IS NULL) OR
 				("type" = 'team' AND "teamId" IS NOT NULL)
 			);
@@ -107,35 +107,35 @@ export class AddMultiTenantTables1761701813576 implements ReversibleMigration {
 		// 7. 添加外键约束
 		await queryRunner.query(`
 			ALTER TABLE "${tablePrefix}team_member"
-			ADD CONSTRAINT "FK_${tablePrefix}team_member_team" FOREIGN KEY ("teamId") REFERENCES "${tablePrefix}team"("id") ON DELETE CASCADE,
-			ADD CONSTRAINT "FK_${tablePrefix}team_member_user" FOREIGN KEY ("userId") REFERENCES "${tablePrefix}user"("id") ON DELETE CASCADE;
+			ADD CONSTRAINT "FK_team_member_team" FOREIGN KEY ("teamId") REFERENCES "${tablePrefix}team"("id") ON DELETE CASCADE,
+			ADD CONSTRAINT "FK_team_member_user" FOREIGN KEY ("userId") REFERENCES "${tablePrefix}user"("id") ON DELETE CASCADE;
 		`);
 
 		await queryRunner.query(`
 			ALTER TABLE "${tablePrefix}project"
-			ADD CONSTRAINT "FK_${tablePrefix}project_team" FOREIGN KEY ("teamId") REFERENCES "${tablePrefix}team"("id") ON DELETE CASCADE;
+			ADD CONSTRAINT "FK_project_team" FOREIGN KEY ("teamId") REFERENCES "${tablePrefix}team"("id") ON DELETE CASCADE;
 		`);
 
 		await queryRunner.query(`
 			ALTER TABLE "${tablePrefix}team"
-			ADD CONSTRAINT "FK_${tablePrefix}team_owner" FOREIGN KEY ("ownerId") REFERENCES "${tablePrefix}user"("id") ON DELETE CASCADE;
+			ADD CONSTRAINT "FK_team_owner" FOREIGN KEY ("ownerId") REFERENCES "${tablePrefix}user"("id") ON DELETE CASCADE;
 		`);
 	}
 
 	async down({ queryRunner, tablePrefix }: MigrationContext): Promise<void> {
 		// 删除外键约束
 		await queryRunner.query(`
-			ALTER TABLE "${tablePrefix}team_member" DROP CONSTRAINT "FK_${tablePrefix}team_member_team";
-			ALTER TABLE "${tablePrefix}team_member" DROP CONSTRAINT "FK_${tablePrefix}team_member_user";
-			ALTER TABLE "${tablePrefix}project" DROP CONSTRAINT "FK_${tablePrefix}project_team";
-			ALTER TABLE "${tablePrefix}team" DROP CONSTRAINT "FK_${tablePrefix}team_owner";
+			ALTER TABLE "${tablePrefix}team_member" DROP CONSTRAINT "FK_team_member_team";
+			ALTER TABLE "${tablePrefix}team_member" DROP CONSTRAINT "FK_team_member_user";
+			ALTER TABLE "${tablePrefix}project" DROP CONSTRAINT "FK_project_team";
+			ALTER TABLE "${tablePrefix}team" DROP CONSTRAINT "FK_team_owner";
 		`);
 
 		// 删除约束
 		await queryRunner.query(`
-			ALTER TABLE "${tablePrefix}user" DROP CONSTRAINT "CHK_${tablePrefix}user_tier";
-			ALTER TABLE "${tablePrefix}user" DROP CONSTRAINT "CHK_${tablePrefix}user_tenant_status";
-			ALTER TABLE "${tablePrefix}project" DROP CONSTRAINT "CHK_${tablePrefix}project_team_consistency";
+			ALTER TABLE "${tablePrefix}user" DROP CONSTRAINT "CHK_user_tier";
+			ALTER TABLE "${tablePrefix}user" DROP CONSTRAINT "CHK_user_tenant_status";
+			ALTER TABLE "${tablePrefix}project" DROP CONSTRAINT "CHK_project_team_consistency";
 		`);
 
 		// 删除索引

@@ -118,14 +118,18 @@ export class WorkflowStatisticsRepository extends Repository<WorkflowStatistics>
 	}
 
 	async queryNumWorkflowsUserHasWithFiveOrMoreProdExecs(userId: User['id']): Promise<number> {
+		// Exclusive mode: Query workflows owned by user's personal projects
 		return await this.count({
 			where: {
 				workflow: {
-					shared: {
-						role: 'workflow:owner',
-						project: { projectRelations: { userId, role: { slug: PROJECT_OWNER_ROLE_SLUG } } },
-					},
 					active: true,
+					project: {
+						type: 'personal',
+						projectRelations: {
+							userId,
+							role: { slug: PROJECT_OWNER_ROLE_SLUG },
+						},
+					},
 				},
 				name: StatisticsNames.productionSuccess,
 				count: MoreThanOrEqual(5),

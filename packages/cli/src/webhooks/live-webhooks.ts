@@ -94,9 +94,10 @@ export class LiveWebhooks implements IWebhookManager {
 			});
 		}
 
+		// Exclusive mode: Load workflow with project relation
 		const workflowData = await this.workflowRepository.findOne({
 			where: { id: webhook.workflowId },
-			relations: { shared: { project: { projectRelations: true } } },
+			relations: { project: { projectRelations: true } },
 		});
 
 		if (workflowData === null) {
@@ -114,8 +115,8 @@ export class LiveWebhooks implements IWebhookManager {
 			settings: workflowData.settings,
 		});
 
-		const ownerProjectId = workflowData.shared.find((share) => share.role === 'workflow:owner')
-			?.project.id;
+		// Exclusive mode: Use projectId directly from workflow
+		const ownerProjectId = workflowData.projectId;
 		const additionalData = await WorkflowExecuteAdditionalData.getBase({
 			projectId: ownerProjectId,
 		});

@@ -1,15 +1,8 @@
 import { GlobalConfig } from '@n8n/config';
 import type { Project, User } from '@n8n/db';
-import {
-	WorkflowEntity,
-	WorkflowTagMapping,
-	SharedWorkflow,
-	TagRepository,
-	SharedWorkflowRepository,
-	WorkflowRepository,
-} from '@n8n/db';
+import { WorkflowEntity, WorkflowTagMapping, TagRepository, WorkflowRepository } from '@n8n/db';
 import { Container } from '@n8n/di';
-import { PROJECT_OWNER_ROLE_SLUG, type Scope, type WorkflowSharingRole } from '@n8n/permissions';
+import { PROJECT_OWNER_ROLE_SLUG, type Scope } from '@n8n/permissions';
 import type { WorkflowId } from 'n8n-workflow';
 
 import { License } from '@/license';
@@ -38,19 +31,45 @@ export async function getSharedWorkflowIds(
 	}
 }
 
+/**
+ * Get workflow that user has access to.
+ * Exclusive mode: Returns workflow if user has access via project membership.
+ */
 export async function getSharedWorkflow(
 	user: User,
 	workflowId?: string,
-): Promise<SharedWorkflow | null> {
-	return await Container.get(SharedWorkflowRepository).findOne({
-		where: {
-			...(!['global:owner', 'global:admin'].includes(user.role.slug) && { userId: user.id }),
-			...(workflowId && { workflowId }),
-		},
-		relations: [
-			...insertIf(!Container.get(GlobalConfig).tags.disabled, ['workflow.tags']),
-			'workflow',
-		],
+): Promise<WorkflowEntity | null> {
+	const workflowRepository = Container.get(WorkflowRepository);
+
+	// Global owners/admins can access any workflow
+	if (['global:owner', 'global:admin'].includes(user.role.slug)) {
+		return await workflowRepository.findOne({
+			where: workflowId ? { id: workflowId } : {},
+			relations: insertIf(!Container.get(GlobalConfig).tags.disabled, ['tags']),
+		});
+	}
+
+	// Regular users: Check project access
+	const where = workflowId
+		? {
+				id: workflowId,
+				project: {
+					projectRelations: {
+						userId: user.id,
+					},
+				},
+			}
+		: {
+				project: {
+					projectRelations: {
+						userId: user.id,
+					},
+				},
+			};
+
+	return await workflowRepository.findOne({
+		where,
+		relations: ['project', ...insertIf(!Container.get(GlobalConfig).tags.disabled, ['tags'])],
 	});
 }
 
@@ -60,26 +79,22 @@ export async function getWorkflowById(id: string): Promise<WorkflowEntity | null
 	});
 }
 
+/**
+ * Create workflow in user's personal project.
+ * Exclusive mode: Workflow belongs directly to the project via projectId.
+ */
 export async function createWorkflow(
 	workflow: WorkflowEntity,
 	user: User,
 	personalProject: Project,
-	role: WorkflowSharingRole,
 ): Promise<WorkflowEntity> {
-	const { manager: dbManager } = Container.get(SharedWorkflowRepository);
+	const { manager: dbManager } = Container.get(WorkflowRepository);
 	return await dbManager.transaction(async (transactionManager) => {
 		const newWorkflow = new WorkflowEntity();
 		Object.assign(newWorkflow, workflow);
+		// Exclusive mode: Set projectId directly
+		newWorkflow.projectId = personalProject.id;
 		const savedWorkflow = await transactionManager.save<WorkflowEntity>(newWorkflow);
-
-		const newSharedWorkflow = new SharedWorkflow();
-		Object.assign(newSharedWorkflow, {
-			role,
-			user,
-			project: personalProject,
-			workflow: savedWorkflow,
-		});
-		await transactionManager.save<SharedWorkflow>(newSharedWorkflow);
 
 		return savedWorkflow;
 	});
@@ -130,7 +145,7 @@ export async function getWorkflowTags(workflowId: string) {
 }
 
 export async function updateTags(workflowId: string, newTags: string[]): Promise<void> {
-	const { manager: dbManager } = Container.get(SharedWorkflowRepository);
+	const { manager: dbManager } = Container.get(WorkflowRepository);
 	await dbManager.transaction(async (transactionManager) => {
 		const oldTags = await transactionManager.findBy(WorkflowTagMapping, { workflowId });
 		if (oldTags.length > 0) {
