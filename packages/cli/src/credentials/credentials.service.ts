@@ -568,6 +568,49 @@ export class CredentialsService {
 		);
 	}
 
+	/**
+	 * [PLAN_A 独占模式] 复制凭据到其他项目
+	 * - 深拷贝凭据到目标项目（包括加密数据）
+	 * - 用于跨项目共享凭据内容（通过复制而非引用）
+	 */
+	async duplicateToProject(
+		credentialId: string,
+		targetProjectId: string,
+		user: User,
+	): Promise<CredentialsEntity> {
+		// 获取源凭据（包括解密的数据）
+		const sourceCredential = await this.credentialsRepository.findOne({
+			where: { id: credentialId },
+		});
+
+		if (!sourceCredential) {
+			throw new NotFoundError(`Credential with ID "${credentialId}" not found`);
+		}
+
+		// 创建新凭据实体
+		const copiedCredential = new CredentialsEntity();
+
+		// 深拷贝凭据数据（排除 ID 和归属相关字段）
+		Object.assign(copiedCredential, {
+			name: `${sourceCredential.name} (副本)`,
+			type: sourceCredential.type,
+			data: sourceCredential.data, // 加密数据直接复制
+			projectId: targetProjectId, // ✅ 归属目标项目
+		});
+
+		// 保存新凭据
+		const savedCredential = await this.credentialsRepository.save(copiedCredential);
+
+		this.logger.info('Credential duplicated to another project', {
+			sourceCredentialId: credentialId,
+			targetProjectId,
+			newCredentialId: savedCredential.id,
+			userId: user.id,
+		});
+
+		return savedCredential;
+	}
+
 	async replaceCredentialContentsForSharee(
 		user: User,
 		credential: CredentialsEntity,

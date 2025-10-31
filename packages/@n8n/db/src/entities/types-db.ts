@@ -77,11 +77,23 @@ export interface IWorkflowDb extends IWorkflowBase {
 	triggerCount: number;
 	tags?: TagEntity[];
 	parentFolder?: Folder | null;
+	// [PLAN_A 独占模式] 新增项目归属字段
+	projectId: string;
+	project?: Project;
+	// [应用市场扩展字段]
+	isMarketplaceTemplate?: boolean;
+	sourceMarketplaceAppId?: string | null;
 }
 
 export interface ICredentialsDb extends ICredentialsBase, ICredentialsEncrypted {
 	id: string;
 	name: string;
+	// [PLAN_A 独占模式] 新增项目归属字段
+	projectId: string;
+	project?: Project;
+	// [应用市场扩展字段]
+	isMarketplaceTemplate?: boolean;
+	sourceMarketplaceAppId?: string | null;
 }
 
 export interface IExecutionResponse extends IExecutionBase {

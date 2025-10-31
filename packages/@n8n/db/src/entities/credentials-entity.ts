@@ -49,4 +49,11 @@ export class CredentialsEntity extends WithTimestampsAndStringId implements ICre
 	 */
 	@Column({ default: false })
 	isManaged: boolean;
+
+	// [应用市场扩展字段] 用于后续功能
+	@Column({ default: false })
+	isMarketplaceTemplate: boolean; // 是否为应用市场的公开模板
+
+	@Column({ type: 'varchar', length: 36, nullable: true })
+	sourceMarketplaceAppId: string | null; // 如果是从市场安装，记录来源
 }

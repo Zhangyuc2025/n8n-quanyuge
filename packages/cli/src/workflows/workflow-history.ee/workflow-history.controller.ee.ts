@@ -3,7 +3,6 @@ import { RestController, Get, Middleware, Query } from '@n8n/decorators';
 import { Request, Response, NextFunction } from 'express';
 
 import { NotFoundError } from '@/errors/response-errors/not-found.error';
-import { SharedWorkflowNotFoundError } from '@/errors/shared-workflow-not-found.error';
 import { WorkflowHistoryVersionNotFoundError } from '@/errors/workflow-history-version-not-found.error';
 import { WorkflowHistoryRequest } from '@/requests';
 
@@ -46,8 +45,8 @@ export class WorkflowHistoryController {
 				query.skip ?? 0,
 			);
 		} catch (e) {
-			if (e instanceof SharedWorkflowNotFoundError) {
-				throw new NotFoundError('Could not find workflow');
+			if (e instanceof NotFoundError) {
+				throw e;
 			}
 			throw e;
 		}
@@ -62,8 +61,8 @@ export class WorkflowHistoryController {
 				req.params.versionId,
 			);
 		} catch (e) {
-			if (e instanceof SharedWorkflowNotFoundError) {
-				throw new NotFoundError('Could not find workflow');
+			if (e instanceof NotFoundError) {
+				throw e;
 			} else if (e instanceof WorkflowHistoryVersionNotFoundError) {
 				throw new NotFoundError('Could not find version');
 			}

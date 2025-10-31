@@ -18,7 +18,11 @@ export class WorkflowStatistics {
 	@PrimaryColumn({ length: 128 })
 	name: StatisticsNames;
 
-	@ManyToOne('WorkflowEntity', 'shared')
+	/**
+	 * [PLAN_A 独占模式] 修正反向关系名称
+	 * - 从 'shared' 改为 'statistics'（WorkflowEntity 中的属性名）
+	 */
+	@ManyToOne('WorkflowEntity', 'statistics')
 	workflow: WorkflowEntity;
 
 	@PrimaryColumn()

@@ -5,7 +5,7 @@ import { Service } from '@n8n/di';
 import type { IWorkflowBase } from 'n8n-workflow';
 import { ensureError } from 'n8n-workflow';
 
-import { SharedWorkflowNotFoundError } from '@/errors/shared-workflow-not-found.error';
+import { NotFoundError } from '@/errors/response-errors/not-found.error';
 import { WorkflowHistoryVersionNotFoundError } from '@/errors/workflow-history-version-not-found.error';
 
 import { isWorkflowHistoryEnabled } from './workflow-history-helper.ee';
@@ -30,7 +30,7 @@ export class WorkflowHistoryService {
 		]);
 
 		if (!workflow) {
-			throw new SharedWorkflowNotFoundError('');
+			throw new NotFoundError('Could not find workflow');
 		}
 
 		return await this.workflowHistoryRepository.find({
@@ -50,7 +50,7 @@ export class WorkflowHistoryService {
 		]);
 
 		if (!workflow) {
-			throw new SharedWorkflowNotFoundError('');
+			throw new NotFoundError('Could not find workflow');
 		}
 
 		const hist = await this.workflowHistoryRepository.findOne({

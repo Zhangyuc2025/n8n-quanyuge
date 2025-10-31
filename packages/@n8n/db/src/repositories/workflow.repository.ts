@@ -543,12 +543,17 @@ export class WorkflowRepository extends Repository<WorkflowEntity> {
 		}
 	}
 
+	/**
+	 * [PLAN_A 独占模式] 重构后的 applyProjectFilter
+	 * - 直接使用 workflow.projectId 字段过滤
+	 * - 移除已删除的 shared 表 JOIN
+	 */
 	private applyProjectFilter(
 		qb: SelectQueryBuilder<WorkflowEntity>,
 		filter: ListQuery.Options['filter'],
 	): void {
 		if (typeof filter?.projectId === 'string' && filter.projectId !== '') {
-			qb.innerJoin('workflow.shared', 'shared').andWhere('shared.projectId = :projectId', {
+			qb.andWhere('workflow.projectId = :projectId', {
 				projectId: filter.projectId,
 			});
 		}
@@ -570,29 +575,26 @@ export class WorkflowRepository extends Repository<WorkflowEntity> {
 		qb.andWhere(whereClause, parameters);
 	}
 
+	/**
+	 * [PLAN_A 独占模式] 重构后的 applyOwnedByRelation
+	 * - 直接通过 workflow.project 关系加载项目信息
+	 * - 移除已删除的 shared 表 JOIN
+	 */
 	private applyOwnedByRelation(qb: SelectQueryBuilder<WorkflowEntity>): void {
-		// Check if 'shared' join already exists from project filter
-		if (!qb.expressionMap.aliases.find((alias) => alias.name === 'shared')) {
-			qb.leftJoin('workflow.shared', 'shared');
+		// 检查 project JOIN 是否已存在
+		if (!qb.expressionMap.aliases.find((alias) => alias.name === 'project')) {
+			qb.leftJoin('workflow.project', 'project');
 		}
 
-		// Add the necessary selects
+		// 添加 project 字段
 		qb.addSelect([
-			'shared.role',
-			'shared.createdAt',
-			'shared.updatedAt',
-			'shared.workflowId',
-			'shared.projectId',
-		])
-			.leftJoin('shared.project', 'project')
-			.addSelect([
-				'project.id',
-				'project.name',
-				'project.type',
-				'project.icon',
-				'project.createdAt',
-				'project.updatedAt',
-			]);
+			'project.id',
+			'project.name',
+			'project.type',
+			'project.icon',
+			'project.createdAt',
+			'project.updatedAt',
+		]);
 	}
 
 	private applySelect(

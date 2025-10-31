@@ -1,6 +1,7 @@
 import { Logger } from '@n8n/backend-common';
 import { GlobalConfig } from '@n8n/config';
-import type { User, WorkflowEntity, ListQueryDb, WorkflowFolderUnionFull } from '@n8n/db';
+import type { User, ListQueryDb, WorkflowFolderUnionFull } from '@n8n/db';
+import { WorkflowEntity } from '@n8n/db';
 import {
 	ExecutionRepository,
 	FolderRepository,
@@ -514,6 +515,64 @@ export class WorkflowService {
 
 		// 直接更新所有工作流的 projectId
 		await trx.update('workflow_entity', { projectId: fromProjectId }, { projectId: toProjectId });
+	}
+
+	/**
+	 * [PLAN_A 独占模式] 复制工作流到其他项目
+	 * - 深拷贝工作流到目标项目
+	 * - 用于跨项目共享工作流内容（通过复制而非引用）
+	 */
+	async duplicateToProject(
+		workflowId: string,
+		targetProjectId: string,
+		user: User,
+	): Promise<WorkflowEntity> {
+		// 获取源工作流
+		const sourceWorkflow = await this.workflowRepository.findOne({
+			where: { id: workflowId },
+			relations: ['tags'],
+		});
+
+		if (!sourceWorkflow) {
+			throw new NotFoundError(`Workflow with ID "${workflowId}" not found`);
+		}
+
+		// 创建新工作流实体
+		const copiedWorkflow = new WorkflowEntity();
+
+		// 深拷贝工作流数据（排除 ID 和归属相关字段）
+		Object.assign(copiedWorkflow, {
+			name: `${sourceWorkflow.name} (副本)`,
+			active: false, // 复制的工作流默认不激活
+			nodes: sourceWorkflow.nodes,
+			connections: sourceWorkflow.connections,
+			settings: sourceWorkflow.settings,
+			staticData: sourceWorkflow.staticData,
+			pinData: sourceWorkflow.pinData,
+			meta: sourceWorkflow.meta,
+			versionId: uuid(), // 生成新的版本 ID
+			projectId: targetProjectId, // ✅ 归属目标项目
+		});
+
+		// 复制标签（如果有）
+		if (sourceWorkflow.tags?.length) {
+			copiedWorkflow.tags = sourceWorkflow.tags;
+		}
+
+		// 保存新工作流
+		const savedWorkflow = await this.workflowRepository.save(copiedWorkflow);
+
+		// 记录工作流历史
+		await this.workflowHistoryService.saveVersion(user, savedWorkflow, savedWorkflow.id);
+
+		this.logger.info('Workflow duplicated to another project', {
+			sourceWorkflowId: workflowId,
+			targetProjectId,
+			newWorkflowId: savedWorkflow.id,
+			userId: user.id,
+		});
+
+		return savedWorkflow;
 	}
 
 	async getWorkflowsWithNodesIncluded(user: User, nodeTypes: string[], includeNodes = false) {

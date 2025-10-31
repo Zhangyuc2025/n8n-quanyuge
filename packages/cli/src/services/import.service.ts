@@ -92,7 +92,6 @@ export class ImportService {
 				const personalProject = await tx.findOneByOrFail(Project, { id: projectId });
 
 				// Exclusive mode: Ensure workflow has projectId set before upsert
-				// @ts-expect-error - IWorkflowDb doesn't include projectId but WorkflowEntity does
 				workflow.projectId = personalProject.id;
 
 				const upsertResult = await tx.upsert(WorkflowEntity, workflow, ['id']);

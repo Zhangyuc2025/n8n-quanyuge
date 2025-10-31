@@ -29,8 +29,8 @@ export const useBannersStore = defineStore(STORES.BANNERS, () => {
 
 	async function fetchDynamicBanners() {
 		if (
-			!settingsStore.settings.dynamicBanners.endpoint ||
-			!settingsStore.settings.dynamicBanners.enabled
+			!settingsStore.settings.dynamicBanners?.endpoint ||
+			!settingsStore.settings.dynamicBanners?.enabled
 		) {
 			return [];
 		}
@@ -42,7 +42,7 @@ export const useBannersStore = defineStore(STORES.BANNERS, () => {
 		try {
 			dynamicBanners.value = (
 				await getDynamicBanners(
-					settingsStore.settings.dynamicBanners.endpoint,
+					settingsStore.settings.dynamicBanners!.endpoint,
 					version,
 					deploymentType,
 				)

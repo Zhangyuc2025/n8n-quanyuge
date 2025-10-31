@@ -32,12 +32,16 @@ export class CredentialsRepository extends Repository<CredentialsEntity> {
 		return await this.find(findManyOptions);
 	}
 
+	/**
+	 * [PLAN_A 独占模式] 重构后的查询选项生成
+	 * - 使用 project 关系替代已删除的 shared 关系
+	 */
 	private toFindManyOptions(listQueryOptions?: ListQuery.Options & { includeData?: boolean }) {
 		const findManyOptions: FindManyOptions<CredentialsEntity> = {};
 
 		type Select = Array<keyof CredentialsEntity>;
 
-		const defaultRelations = ['shared', 'shared.project', 'shared.project.projectRelations'];
+		const defaultRelations = ['project', 'project.projectRelations'];
 		const defaultSelect: Select = ['id', 'name', 'type', 'isManaged', 'createdAt', 'updatedAt'];
 
 		if (!listQueryOptions) return { select: defaultSelect, relations: defaultRelations };
@@ -79,6 +83,11 @@ export class CredentialsRepository extends Repository<CredentialsEntity> {
 		return findManyOptions;
 	}
 
+	/**
+	 * [PLAN_A 独占模式] 重构后的过滤器处理
+	 * - 使用 project 关系替代 shared 关系
+	 * - 直接使用 credential.projectId 字段
+	 */
 	private handleSharedFilters(
 		listQueryOptions?: ListQuery.Options & { includeData?: boolean },
 	): void {
@@ -86,33 +95,39 @@ export class CredentialsRepository extends Repository<CredentialsEntity> {
 
 		const { filter } = listQueryOptions;
 
+		// 独占模式：直接使用 projectId 字段，不需要通过 shared 关系
 		if (typeof filter.projectId === 'string' && filter.projectId !== '') {
-			filter.shared = {
-				projectId: filter.projectId,
-			};
-			delete filter.projectId;
+			// projectId 已经在 filter 中，不需要额外处理
+			// 保留 filter.projectId，TypeORM 会直接查询 credential.projectId 字段
 		}
 
+		// 独占模式：withRole 参数已废弃（不再有 shared.role）
+		// 角色信息现在在 ProjectRelation 中
 		if (typeof filter.withRole === 'string' && filter.withRole !== '') {
-			filter.shared = {
-				...(filter?.shared ? filter.shared : {}),
-				role: filter.withRole,
+			// 保留以兼容旧代码，但实际不使用
+			filter.project = {
+				...(filter?.project ? filter.project : {}),
+				projectRelations: {
+					role: filter.withRole,
+				},
 			};
 			delete filter.withRole;
 		}
 
+		// 独占模式：通过 project.projectRelations 过滤用户
 		if (
 			filter.user &&
 			typeof filter.user === 'object' &&
 			'id' in filter.user &&
 			typeof filter.user.id === 'string'
 		) {
-			filter.shared = {
-				...(filter?.shared ? filter.shared : {}),
-				project: {
-					projectRelations: {
-						userId: filter.user.id,
-					},
+			// TypeORM 嵌套过滤
+			filter.project = {
+				...(filter?.project ? filter.project : {}),
+				projectRelations: {
+					// @ts-expect-error
+					...(filter?.project?.projectRelations ? filter.project.projectRelations : {}),
+					userId: filter.user.id,
 				},
 			};
 			delete filter.user;
