@@ -4,8 +4,6 @@ import { ref } from 'vue';
 import { createI18n } from 'vue-i18n';
 
 import englishBaseText from './locales/en.json';
-// 🌏 中文支持：导入简体中文翻译
-import chineseBaseText from './locales/zh-CN.json';
 import type { BaseTextKey, LocaleMessages, INodeTranslationHeaders } from './types';
 import {
 	deriveMiddleKey,
@@ -18,13 +16,9 @@ export type * from './types';
 
 export const i18nInstance = createI18n({
 	legacy: false,
-	// 🌏 中文支持：默认使用简体中文
-	locale: 'zh-CN',
+	locale: 'en',
 	fallbackLocale: 'en',
-	messages: {
-		en: englishBaseText,
-		'zh-CN': chineseBaseText,
-	},
+	messages: { en: englishBaseText },
 	warnHtmlMessage: false,
 });
 
@@ -400,7 +394,7 @@ export class I18nClass {
 const loadedLanguages: string[] = [];
 
 export function setLanguage(locale: string) {
-	i18nInstance.global.locale.value = locale as 'en';
+	i18nInstance.global.locale.value = locale as any;
 	document.querySelector('html')!.setAttribute('lang', locale);
 
 	// Invalidate cached baseText results on locale change

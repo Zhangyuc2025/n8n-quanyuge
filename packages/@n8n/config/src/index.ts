@@ -182,9 +182,8 @@ export class GlobalConfig {
 	sso: SsoConfig;
 
 	/** Default locale for the UI. */
-	// 🌏 中文支持：默认使用简体中文
 	@Env('N8N_DEFAULT_LOCALE')
-	defaultLocale: string = 'zh-CN';
+	defaultLocale: string = 'en';
 
 	/** Whether to hide the page that shows active workflows and executions count. */
 	@Env('N8N_HIDE_USAGE_PAGE')

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { ROLE, type Role } from '@n8n/api-types';
-import { useI18n } from '@n8n/i18n';
+import { useI18n, loadLanguage } from '@n8n/i18n';
 import { useToast } from '@/composables/useToast';
 import { useDocumentTitle } from '@/composables/useDocumentTitle';
 import type { IFormInputs, ThemeOption } from '@/Interface';
@@ -24,6 +24,7 @@ import type { BaseTextKey } from '@n8n/i18n';
 import { useSSOStore } from '@/features/settings/sso/sso.store';
 import type { ConfirmPasswordModalEvents } from '../auth.eventBus';
 import { confirmPasswordEventBus } from '../auth.eventBus';
+import { useRootStore } from '@n8n/stores/useRootStore';
 
 import {
 	N8nAvatar,
@@ -60,12 +61,17 @@ type RoleContent = {
 const i18n = useI18n();
 const { showToast, showError } = useToast();
 const documentTitle = useDocumentTitle();
+const rootStore = useRootStore();
 
 const hasAnyBasicInfoChanges = ref<boolean>(false);
 const formInputs = ref<null | IFormInputs>(null);
 const formBus = createFormEventBus();
 const readyToSubmit = ref(false);
 const currentSelectedTheme = ref(useUIStore().theme);
+const currentSelectedLanguage = ref(
+	localStorage.getItem('n8n-user-language') || rootStore.defaultLocale,
+);
+const hasAnyLanguageChanges = ref(false);
 const themeOptions = ref<Array<{ name: ThemeOption; label: BaseTextKey }>>([
 	{
 		name: 'system',
@@ -78,6 +84,16 @@ const themeOptions = ref<Array<{ name: ThemeOption; label: BaseTextKey }>>([
 	{
 		name: 'dark',
 		label: 'settings.personal.theme.dark',
+	},
+]);
+const languageOptions = ref<Array<{ name: string; label: string }>>([
+	{
+		name: 'en',
+		label: 'English',
+	},
+	{
+		name: 'zh-CN',
+		label: '中文',
 	},
 ]);
 
@@ -115,7 +131,7 @@ const isMfaFeatureEnabled = computed((): boolean => {
 });
 
 const hasAnyPersonalisationChanges = computed((): boolean => {
-	return currentSelectedTheme.value !== uiStore.theme;
+	return currentSelectedTheme.value !== uiStore.theme || hasAnyLanguageChanges.value;
 });
 
 const hasAnyChanges = computed(() => {
@@ -200,6 +216,10 @@ function onReadyToSubmit(ready: boolean) {
 	readyToSubmit.value = ready;
 }
 
+function onLanguageChange() {
+	hasAnyLanguageChanges.value = true;
+}
+
 /** Saves users basic info and personalization settings */
 async function saveUserSettings(params: UserBasicDetailsWithMfa) {
 	try {
@@ -275,6 +295,25 @@ async function updatePersonalisationSettings() {
 	}
 
 	uiStore.setTheme(currentSelectedTheme.value);
+
+	if (hasAnyLanguageChanges.value) {
+		try {
+			if (currentSelectedLanguage.value !== 'en') {
+				const messages = await import(
+					`@n8n/i18n/locales/${currentSelectedLanguage.value}.json`
+				);
+				loadLanguage(currentSelectedLanguage.value, messages.default);
+			}
+
+			rootStore.setDefaultLocale(currentSelectedLanguage.value);
+			localStorage.setItem('n8n-user-language', currentSelectedLanguage.value);
+
+			hasAnyLanguageChanges.value = false;
+		} catch (error) {
+			console.error('Failed to load language:', error);
+			showError(error, i18n.baseText('settings.personal.languageUpdateError'));
+		}
+	}
 }
 
 function onSaveClick() {
@@ -448,6 +487,26 @@ onBeforeUnmount(() => {
 					</N8nSelect>
 				</N8nInputLabel>
 			</div>
+
+			<div class="mt-m">
+				<N8nInputLabel :label="i18n.baseText('settings.personal.language')">
+					<N8nSelect
+						v-model="currentSelectedLanguage"
+						:class="$style.languageSelect"
+						data-test-id="language-select"
+						size="small"
+						filterable
+						@update:model-value="onLanguageChange"
+					>
+						<N8nOption
+							v-for="item in languageOptions"
+							:key="item.name"
+							:label="item.label"
+							:value="item.name"
+						/>
+					</N8nSelect>
+				</N8nInputLabel>
+			</div>
 		</div>
 		<div>
 			<N8nButton
@@ -524,6 +583,10 @@ onBeforeUnmount(() => {
 }
 
 .themeSelect {
+	max-width: 50%;
+}
+
+.languageSelect {
 	max-width: 50%;
 }
 </style>

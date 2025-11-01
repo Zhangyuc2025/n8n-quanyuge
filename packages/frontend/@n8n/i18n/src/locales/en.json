@@ -3515,6 +3515,8 @@
 	"settings.personal.mfa.section.title": "Two-factor authentication (2FA)",
 	"settings.personal.personalisation": "Personalisation",
 	"settings.personal.theme": "Theme",
+	"settings.personal.language": "Language",
+	"settings.personal.languageUpdateError": "Failed to update language",
 	"settings.personal.theme.systemDefault": "System default",
 	"settings.personal.theme.light": "Light theme",
 	"settings.personal.theme.dark": "Dark theme",
