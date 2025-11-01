@@ -1,8 +1,8 @@
 # {{nodePackageName}}
 
-This is an n8n community node. It lets you use GitHub Issues in your n8n workflows.
+该节点适用于公司内部的多租户版 n8n，可在工作流中调用 GitHub Issues。
 
-[n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/sustainable-use-license/) workflow automation platform.
+仓库及模板仅限内部使用，请不要对外传播相关文档或代码。
 
 [Installation](#installation)
 [Operations](#operations)
@@ -13,7 +13,7 @@ This is an n8n community node. It lets you use GitHub Issues in your n8n workflo
 
 ## Installation
 
-Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes/installation/) in the n8n community nodes documentation.
+使用内部 CLI (`pnpm n8n-node-dev build`) 完成打包后，将生成的 npm 包发布到内网注册表再安装。
 
 ## Operations
 
@@ -69,5 +69,5 @@ Compatible with n8n@1.60.0 or later
 
 ## Resources
 
-* [n8n community nodes documentation](https://docs.n8n.io/integrations/#community-nodes)
+* 内部节点发布流程（参见公司知识库）
 * [GitHub API docs](https://docs.github.com/en/rest/issues)
