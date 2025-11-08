@@ -65,6 +65,7 @@ describe('ActiveWorkflowManager', () => {
 			if (type === 'pollNode') partial.poll = jest.fn();
 			if (type === 'triggerNode') partial.trigger = jest.fn();
 			if (type === 'webhookNode') partial.webhook = jest.fn();
+			// @ts-expect-error Partial mock for testing
 			return mock(partial);
 		});
 

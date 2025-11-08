@@ -9,7 +9,7 @@ import {
 } from '@n8n/backend-test-utils';
 import { GlobalConfig } from '@n8n/config';
 import type { Project, User, ListQueryDb } from '@n8n/db';
-import { CredentialsRepository, ProjectRepository, SharedCredentialsRepository } from '@n8n/db';
+import { CredentialsRepository, ProjectRepository } from '@n8n/db';
 import { Container } from '@n8n/di';
 import type { Scope } from '@sentry/node';
 import * as a from 'assert';
@@ -50,10 +50,9 @@ let authMemberAgent: SuperAgentTest;
 let authAdminAgent: SuperAgentTest;
 
 let projectRepository: ProjectRepository;
-let sharedCredentialsRepository: SharedCredentialsRepository;
 
 beforeEach(async () => {
-	await testDb.truncate(['SharedCredentials', 'CredentialsEntity']);
+	await testDb.truncate(['CredentialsEntity']);
 
 	owner = await createOwner();
 	member = await createMember();
@@ -72,7 +71,6 @@ beforeEach(async () => {
 	authAdminAgent = testServer.authAgentFor(admin);
 
 	projectRepository = Container.get(ProjectRepository);
-	sharedCredentialsRepository = Container.get(SharedCredentialsRepository);
 });
 
 type GetAllResponse = { body: { data: ListQueryDb.Credentials.WithOwnedByAndSharedWith[] } };
@@ -813,13 +811,8 @@ describe('POST /credentials', () => {
 		expect(credential.type).toBe(payload.type);
 		expect(await decryptCredentialData(credential)).toStrictEqual(payload.data);
 
-		const sharedCredential = await Container.get(SharedCredentialsRepository).findOneOrFail({
-			relations: { project: true, credentials: true },
-			where: { credentialsId: credential.id },
-		});
-
-		expect(sharedCredential.project.id).toBe(memberPersonalProject.id);
-		expect(sharedCredential.credentials.name).toBe(payload.name);
+		// Verify credential is in member's personal project
+		expect(credential.projectId).toBe(memberPersonalProject.id);
 	});
 
 	test('should create cred with uiContext parameter', async () => {
@@ -871,10 +864,10 @@ describe('POST /credentials', () => {
 		//
 		// ASSERT
 		//
-		await sharedCredentialsRepository.findOneByOrFail({
-			projectId: ownerPersonalProject.id,
-			credentialsId: response.body.data.id,
+		const credential = await Container.get(CredentialsRepository).findOneByOrFail({
+			id: response.body.data.id,
 		});
+		expect(credential.projectId).toBe(ownerPersonalProject.id);
 	});
 
 	test('creates credential in a specific project if the projectId is passed', async () => {
@@ -893,10 +886,10 @@ describe('POST /credentials', () => {
 		//
 		// ASSERT
 		//
-		await sharedCredentialsRepository.findOneByOrFail({
-			projectId: project.id,
-			credentialsId: response.body.data.id,
+		const credential = await Container.get(CredentialsRepository).findOneByOrFail({
+			id: response.body.data.id,
 		});
+		expect(credential.projectId).toBe(project.id);
 	});
 
 	test('does not create the credential in a specific project if the user is not part of the project', async () => {
@@ -943,10 +936,6 @@ describe('DELETE /credentials/:id', () => {
 		});
 
 		expect(deletedCredential).toBeNull(); // deleted
-
-		const deletedSharedCredential = await Container.get(SharedCredentialsRepository).findOneBy({});
-
-		expect(deletedSharedCredential).toBeNull(); // deleted
 	});
 
 	test('should delete non-owned cred for owner', async () => {
@@ -965,10 +954,6 @@ describe('DELETE /credentials/:id', () => {
 		});
 
 		expect(deletedCredential).toBeNull(); // deleted
-
-		const deletedSharedCredential = await Container.get(SharedCredentialsRepository).findOneBy({});
-
-		expect(deletedSharedCredential).toBeNull(); // deleted
 	});
 
 	test('should delete owned cred for member', async () => {
@@ -987,10 +972,6 @@ describe('DELETE /credentials/:id', () => {
 		});
 
 		expect(deletedCredential).toBeNull(); // deleted
-
-		const deletedSharedCredential = await Container.get(SharedCredentialsRepository).findOneBy({});
-
-		expect(deletedSharedCredential).toBeNull(); // deleted
 	});
 
 	test('should not delete non-owned cred for member', async () => {
@@ -1008,10 +989,6 @@ describe('DELETE /credentials/:id', () => {
 		});
 
 		expect(shellCredential).toBeDefined(); // not deleted
-
-		const deletedSharedCredential = await Container.get(SharedCredentialsRepository).findOneBy({});
-
-		expect(deletedSharedCredential).toBeDefined(); // not deleted
 	});
 
 	test('should not delete non-owned but shared cred for member', async () => {
@@ -1031,10 +1008,6 @@ describe('DELETE /credentials/:id', () => {
 		});
 
 		expect(shellCredential).toBeDefined(); // not deleted
-
-		const deletedSharedCredential = await Container.get(SharedCredentialsRepository).findOneBy({});
-
-		expect(deletedSharedCredential).toBeDefined(); // not deleted
 	});
 
 	test('should fail if cred not found', async () => {
@@ -1082,13 +1055,6 @@ describe('PATCH /credentials/:id', () => {
 		expect(credential.name).toBe(patchPayload.name);
 		expect(credential.type).toBe(patchPayload.type);
 		expect(credential.data).not.toBe(patchPayload.data);
-
-		const sharedCredential = await Container.get(SharedCredentialsRepository).findOneOrFail({
-			relations: ['credentials'],
-			where: { credentialsId: credential.id },
-		});
-
-		expect(sharedCredential.credentials.name).toBe(patchPayload.name); // updated
 	});
 
 	test('should update non-owned cred for owner', async () => {
@@ -1117,13 +1083,6 @@ describe('PATCH /credentials/:id', () => {
 			credential.data,
 		);
 		expect(credentialObject.getData()).toStrictEqual(patchPayload.data);
-
-		const sharedCredential = await Container.get(SharedCredentialsRepository).findOneOrFail({
-			relations: ['credentials'],
-			where: { credentialsId: credential.id },
-		});
-
-		expect(sharedCredential.credentials.name).toBe(patchPayload.name); // updated
 	});
 
 	test('should update owned cred for member', async () => {
@@ -1151,13 +1110,6 @@ describe('PATCH /credentials/:id', () => {
 		expect(credential.name).toBe(patchPayload.name);
 		expect(credential.type).toBe(patchPayload.type);
 		expect(credential.data).not.toBe(patchPayload.data);
-
-		const sharedCredential = await Container.get(SharedCredentialsRepository).findOneOrFail({
-			relations: ['credentials'],
-			where: { credentialsId: credential.id },
-		});
-
-		expect(sharedCredential.credentials.name).toBe(patchPayload.name); // updated
 	});
 
 	test('should not update non-owned cred for member', async () => {

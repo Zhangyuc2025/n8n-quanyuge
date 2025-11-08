@@ -33,7 +33,6 @@ describe('CredentialsService', () => {
 		credentialsRepository,
 		mock(),
 		mock(),
-		mock(),
 		errorReporter,
 		mock(),
 		mock(),

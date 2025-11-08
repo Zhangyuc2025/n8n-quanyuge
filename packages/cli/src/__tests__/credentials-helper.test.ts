@@ -34,7 +34,6 @@ describe('CredentialsHelper', () => {
 		mock(),
 		credentialsRepository,
 		mock(),
-		mock(),
 	);
 
 	describe('getCredentials', () => {

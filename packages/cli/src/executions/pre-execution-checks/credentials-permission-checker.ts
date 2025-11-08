@@ -6,7 +6,6 @@ import type { INode } from 'n8n-workflow';
 import { UserError } from 'n8n-workflow';
 
 import { OwnershipService } from '@/services/ownership.service';
-import { ProjectService } from '@/services/project.service.ee';
 
 class InvalidCredentialError extends UserError {
 	override description = 'Please recreate the credential.';
@@ -35,7 +34,6 @@ export class CredentialsPermissionChecker {
 	constructor(
 		private readonly credentialsRepository: CredentialsRepository,
 		private readonly ownershipService: OwnershipService,
-		private readonly projectService: ProjectService,
 	) {}
 
 	/**

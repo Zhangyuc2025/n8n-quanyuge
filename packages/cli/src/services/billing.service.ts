@@ -6,8 +6,6 @@ import {
 } from '@n8n/db';
 import { UserError } from 'n8n-workflow';
 
-type RechargeStatus = 'pending' | 'completed' | 'failed';
-
 /**
  * 余额不足错误
  *
@@ -57,7 +55,7 @@ interface DeductBalanceMetadata {
 /**
  * 计费服务接口 - 使用统计
  */
-interface UsageStats {
+export interface UsageStats {
 	/** 总消费金额（CNY） */
 	totalAmount: number;
 	/** 总使用token数 */

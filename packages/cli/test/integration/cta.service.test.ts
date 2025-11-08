@@ -25,7 +25,7 @@ describe('CtaService', () => {
 
 	describe('getBecomeCreatorCta()', () => {
 		afterEach(async () => {
-			await testDb.truncate(['WorkflowEntity', 'SharedWorkflow']);
+			await testDb.truncate(['WorkflowEntity']);
 		});
 
 		test.each([

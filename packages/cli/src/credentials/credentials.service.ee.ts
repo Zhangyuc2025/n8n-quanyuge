@@ -1,5 +1,5 @@
 import type { CredentialsEntity, User } from '@n8n/db';
-import { Project, CredentialsRepository, ProjectRepository } from '@n8n/db';
+import { Project, CredentialsRepository } from '@n8n/db';
 import { Service } from '@n8n/di';
 import { hasGlobalScope } from '@n8n/permissions';
 // eslint-disable-next-line n8n-local-rules/misplaced-n8n-typeorm-import
@@ -19,7 +19,6 @@ import { CredentialsService } from './credentials.service';
 export class EnterpriseCredentialsService {
 	constructor(
 		private readonly credentialsRepository: CredentialsRepository,
-		private readonly projectRepository: ProjectRepository,
 		private readonly ownershipService: OwnershipService,
 		private readonly credentialsService: CredentialsService,
 		private readonly projectService: ProjectService,

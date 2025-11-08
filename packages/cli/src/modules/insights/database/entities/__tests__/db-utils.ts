@@ -1,8 +1,7 @@
 import type { WorkflowEntity } from '@n8n/db';
-import { SharedWorkflowRepository } from '@n8n/db';
+import { ProjectRepository } from '@n8n/db';
 import { Container } from '@n8n/di';
 import type { DateTime } from 'luxon';
-import type { IWorkflowBase } from 'n8n-workflow';
 
 import { InsightsByPeriodRepository } from '../../repositories/insights-by-period.repository';
 import { InsightsMetadataRepository } from '../../repositories/insights-metadata.repository';
@@ -10,13 +9,6 @@ import { InsightsRawRepository } from '../../repositories/insights-raw.repositor
 import { InsightsByPeriod } from '../insights-by-period';
 import { InsightsMetadata } from '../insights-metadata';
 import { InsightsRaw } from '../insights-raw';
-
-async function getWorkflowSharing(workflow: IWorkflowBase) {
-	return await Container.get(SharedWorkflowRepository).find({
-		where: { workflowId: workflow.id },
-		relations: { project: true },
-	});
-}
 
 export async function createMetadata(workflow: WorkflowEntity) {
 	const insightsMetadataRepository = Container.get(InsightsMetadataRepository);
@@ -30,12 +22,13 @@ export async function createMetadata(workflow: WorkflowEntity) {
 	metadata.workflowName = workflow.name;
 	metadata.workflowId = workflow.id;
 
-	const workflowSharing = (await getWorkflowSharing(workflow)).find(
-		(wfs) => wfs.role === 'workflow:owner',
-	);
-	if (workflowSharing) {
-		metadata.projectName = workflowSharing.project.name;
-		metadata.projectId = workflowSharing.project.id;
+	// Get project info from workflow's projectId
+	if (workflow.projectId) {
+		const project = await Container.get(ProjectRepository).findOneBy({ id: workflow.projectId });
+		if (project) {
+			metadata.projectName = project.name;
+			metadata.projectId = project.id;
+		}
 	}
 
 	await insightsMetadataRepository.save(metadata);

@@ -1,8 +1,8 @@
 import {
 	GLOBAL_MEMBER_ROLE,
 	ProjectRepository,
-	SharedCredentialsRepository,
-	SharedWorkflowRepository,
+	CredentialsRepository,
+	WorkflowRepository,
 	type User,
 } from '@n8n/db';
 import { Container } from '@n8n/di';
@@ -26,15 +26,15 @@ describe('userHasScopes', () => {
 		roleServiceMock = jest.fn();
 
 		Container.set(
-			SharedWorkflowRepository,
-			mock<SharedWorkflowRepository>({
+			WorkflowRepository,
+			mock<WorkflowRepository>({
 				findBy: findByWorkflowMock,
 			}),
 		);
 
 		Container.set(
-			SharedCredentialsRepository,
-			mock<SharedCredentialsRepository>({
+			CredentialsRepository,
+			mock<CredentialsRepository>({
 				findBy: findByCredentialMock,
 			}),
 		);
@@ -104,9 +104,8 @@ describe('userHasScopes', () => {
 			roleServiceMock.mockResolvedValue(mockRoles);
 			findByCredentialMock.mockResolvedValue([
 				{
-					credentialsId: credentialId,
+					id: credentialId,
 					projectId: 'projectId',
-					role: 'credential:owner',
 				},
 			]);
 
@@ -126,9 +125,8 @@ describe('userHasScopes', () => {
 			roleServiceMock.mockResolvedValue(mockRoles);
 			findByWorkflowMock.mockResolvedValue([
 				{
-					workflowId,
+					id: workflowId,
 					projectId: 'projectId',
-					role: 'workflow:owner',
 				},
 			]);
 
@@ -148,9 +146,8 @@ describe('userHasScopes', () => {
 			roleServiceMock.mockResolvedValue(customRoles);
 			findByCredentialMock.mockResolvedValue([
 				{
-					credentialsId: credentialId,
+					id: credentialId,
 					projectId: 'projectId',
-					role: 'custom:admin-role-abc123', // Custom role from database
 				},
 			]);
 
@@ -170,9 +167,8 @@ describe('userHasScopes', () => {
 			roleServiceMock.mockRejectedValue(roleServiceError);
 			findByCredentialMock.mockResolvedValue([
 				{
-					credentialsId: credentialId,
+					id: credentialId,
 					projectId: 'projectId',
-					role: 'credential:owner',
 				},
 			]);
 
@@ -230,9 +226,8 @@ describe('userHasScopes', () => {
 			roleServiceMock.mockResolvedValue([]);
 			findByCredentialMock.mockResolvedValue([
 				{
-					credentialsId: credentialId,
+					id: credentialId,
 					projectId: 'projectId',
-					role: 'workflow:owner', // Wrong namespace role
 				},
 			]);
 
@@ -251,9 +246,8 @@ describe('userHasScopes', () => {
 			roleServiceMock.mockResolvedValue(['credential:owner', 'credential:user']);
 			findByCredentialMock.mockResolvedValue([
 				{
-					credentialsId: credentialId,
+					id: credentialId,
 					projectId: 'projectId',
-					role: 'credential:user',
 				},
 			]);
 
@@ -270,9 +264,8 @@ describe('userHasScopes', () => {
 			roleServiceMock.mockResolvedValue(['credential:owner']); // Only owner role has required scopes
 			findByCredentialMock.mockResolvedValue([
 				{
-					credentialsId: credentialId,
+					id: credentialId,
 					projectId: 'projectId',
-					role: 'credential:viewer', // User has viewer role, but needs owner
 				},
 			]);
 
@@ -290,9 +283,8 @@ describe('userHasScopes', () => {
 			roleServiceMock.mockResolvedValue(['credential:owner']);
 			findByCredentialMock.mockResolvedValue([
 				{
-					credentialsId: credentialId,
+					id: credentialId,
 					projectId: 'otherProjectId',
-					role: 'credential:owner',
 				},
 			]);
 
@@ -350,14 +342,8 @@ describe('userHasScopes', () => {
 			roleServiceMock.mockResolvedValue(['workflow:editor']);
 			findByWorkflowMock.mockResolvedValue([
 				{
-					workflowId,
+					id: workflowId,
 					projectId: 'projectId',
-					role: 'workflow:viewer', // First share - insufficient
-				},
-				{
-					workflowId,
-					projectId: 'projectId',
-					role: 'workflow:editor', // Second share - sufficient
 				},
 			]);
 
@@ -389,12 +375,8 @@ describe('userHasScopes', () => {
 
 			roleServiceMock.mockResolvedValue(['credential:owner']);
 			findByCredentialMock
-				.mockResolvedValueOnce([
-					{ credentialsId: credentialId1, projectId: 'projectId', role: 'credential:owner' },
-				])
-				.mockResolvedValueOnce([
-					{ credentialsId: credentialId2, projectId: 'projectId', role: 'credential:viewer' },
-				]);
+				.mockResolvedValueOnce([{ id: credentialId1, projectId: 'projectId' }])
+				.mockResolvedValueOnce([{ id: credentialId2, projectId: 'projectId' }]);
 
 			const user = { id: 'userId', scopes: [], role: GLOBAL_MEMBER_ROLE } as unknown as User;
 			const scopes = ['credential:read'] as Scope[];

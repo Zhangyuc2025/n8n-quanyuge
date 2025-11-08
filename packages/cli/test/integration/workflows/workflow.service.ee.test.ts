@@ -1,10 +1,5 @@
 import { testDb, mockInstance } from '@n8n/backend-test-utils';
-import {
-	CredentialsEntity,
-	CredentialsRepository,
-	SharedWorkflowRepository,
-	WorkflowRepository,
-} from '@n8n/db';
+import { CredentialsEntity, CredentialsRepository, WorkflowRepository } from '@n8n/db';
 import { Container } from '@n8n/di';
 import { mock } from 'jest-mock-extended';
 
@@ -27,7 +22,6 @@ describe('EnterpriseWorkflowService', () => {
 
 		service = new EnterpriseWorkflowService(
 			mock(),
-			Container.get(SharedWorkflowRepository),
 			Container.get(WorkflowRepository),
 			Container.get(CredentialsRepository),
 			mock(),

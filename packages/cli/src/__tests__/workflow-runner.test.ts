@@ -58,7 +58,7 @@ afterAll(() => {
 });
 
 beforeEach(async () => {
-	await testDb.truncate(['WorkflowEntity', 'SharedWorkflow']);
+	await testDb.truncate(['WorkflowEntity']);
 	jest.clearAllMocks();
 });
 

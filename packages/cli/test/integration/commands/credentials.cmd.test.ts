@@ -6,14 +6,14 @@ import { ImportCredentialsCommand } from '@/commands/import/credentials';
 import { LoadNodesAndCredentials } from '@/load-nodes-and-credentials';
 import { setupTestCommand } from '@test-integration/utils/test-command';
 
-import { getAllCredentials, getAllSharedCredentials } from '../shared/db/credentials';
+import { getAllCredentials } from '../shared/db/credentials';
 import { createMember, createOwner } from '../shared/db/users';
 
 mockInstance(LoadNodesAndCredentials);
 const command = setupTestCommand(ImportCredentialsCommand);
 
 beforeEach(async () => {
-	await testDb.truncate(['CredentialsEntity', 'SharedCredentials', 'User']);
+	await testDb.truncate(['CredentialsEntity', 'User']);
 });
 
 test('import:credentials should import a credential', async () => {
@@ -31,20 +31,14 @@ test('import:credentials should import a credential', async () => {
 	//
 	// ASSERT
 	//
-	const after = {
-		credentials: await getAllCredentials(),
-		sharings: await getAllSharedCredentials(),
-	};
-	expect(after).toMatchObject({
-		credentials: [expect.objectContaining({ id: '123', name: 'cred-aws-test' })],
-		sharings: [
-			expect.objectContaining({
-				credentialsId: '123',
-				projectId: ownerProject.id,
-				role: 'credential:owner',
-			}),
-		],
-	});
+	const credentials = await getAllCredentials();
+	expect(credentials).toMatchObject([
+		expect.objectContaining({
+			id: '123',
+			name: 'cred-aws-test',
+			projectId: ownerProject.id,
+		}),
+	]);
 });
 
 test('import:credentials should import a credential from separated files', async () => {
@@ -66,26 +60,14 @@ test('import:credentials should import a credential from separated files', async
 	//
 	// ASSERT
 	//
-	const after = {
-		credentials: await getAllCredentials(),
-		sharings: await getAllSharedCredentials(),
-	};
-
-	expect(after).toMatchObject({
-		credentials: [
-			expect.objectContaining({
-				id: '123',
-				name: 'cred-aws-test',
-			}),
-		],
-		sharings: [
-			expect.objectContaining({
-				credentialsId: '123',
-				projectId: ownerProject.id,
-				role: 'credential:owner',
-			}),
-		],
-	});
+	const credentials = await getAllCredentials();
+	expect(credentials).toMatchObject([
+		expect.objectContaining({
+			id: '123',
+			name: 'cred-aws-test',
+			projectId: ownerProject.id,
+		}),
+	]);
 });
 
 test('`import:credentials --userId ...` should fail if the credential exists already and is owned by somebody else', async () => {
@@ -103,20 +85,14 @@ test('`import:credentials --userId ...` should fail if the credential exists alr
 	]);
 
 	// making sure the import worked
-	const before = {
-		credentials: await getAllCredentials(),
-		sharings: await getAllSharedCredentials(),
-	};
-	expect(before).toMatchObject({
-		credentials: [expect.objectContaining({ id: '123', name: 'cred-aws-test' })],
-		sharings: [
-			expect.objectContaining({
-				credentialsId: '123',
-				projectId: ownerProject.id,
-				role: 'credential:owner',
-			}),
-		],
-	});
+	const before = await getAllCredentials();
+	expect(before).toMatchObject([
+		expect.objectContaining({
+			id: '123',
+			name: 'cred-aws-test',
+			projectId: ownerProject.id,
+		}),
+	]);
 
 	//
 	// ACT
@@ -136,27 +112,15 @@ test('`import:credentials --userId ...` should fail if the credential exists alr
 	//
 	// ASSERT
 	//
-	const after = {
-		credentials: await getAllCredentials(),
-		sharings: await getAllSharedCredentials(),
-	};
-
-	expect(after).toMatchObject({
-		credentials: [
-			expect.objectContaining({
-				id: '123',
-				// only the name was updated
-				name: 'cred-aws-test',
-			}),
-		],
-		sharings: [
-			expect.objectContaining({
-				credentialsId: '123',
-				projectId: ownerProject.id,
-				role: 'credential:owner',
-			}),
-		],
-	});
+	const after = await getAllCredentials();
+	expect(after).toMatchObject([
+		expect.objectContaining({
+			id: '123',
+			// only the name was updated
+			name: 'cred-aws-test',
+			projectId: ownerProject.id,
+		}),
+	]);
 });
 
 test("only update credential, don't create or update owner if neither `--userId` nor `--projectId` is passed", async () => {
@@ -174,20 +138,14 @@ test("only update credential, don't create or update owner if neither `--userId`
 	]);
 
 	// making sure the import worked
-	const before = {
-		credentials: await getAllCredentials(),
-		sharings: await getAllSharedCredentials(),
-	};
-	expect(before).toMatchObject({
-		credentials: [expect.objectContaining({ id: '123', name: 'cred-aws-test' })],
-		sharings: [
-			expect.objectContaining({
-				credentialsId: '123',
-				projectId: memberProject.id,
-				role: 'credential:owner',
-			}),
-		],
-	});
+	const before = await getAllCredentials();
+	expect(before).toMatchObject([
+		expect.objectContaining({
+			id: '123',
+			name: 'cred-aws-test',
+			projectId: memberProject.id,
+		}),
+	]);
 
 	//
 	// ACT
@@ -200,27 +158,15 @@ test("only update credential, don't create or update owner if neither `--userId`
 	//
 	// ASSERT
 	//
-	const after = {
-		credentials: await getAllCredentials(),
-		sharings: await getAllSharedCredentials(),
-	};
-
-	expect(after).toMatchObject({
-		credentials: [
-			expect.objectContaining({
-				id: '123',
-				// only the name was updated
-				name: 'cred-aws-prod',
-			}),
-		],
-		sharings: [
-			expect.objectContaining({
-				credentialsId: '123',
-				projectId: memberProject.id,
-				role: 'credential:owner',
-			}),
-		],
-	});
+	const after = await getAllCredentials();
+	expect(after).toMatchObject([
+		expect.objectContaining({
+			id: '123',
+			// only the name was updated
+			name: 'cred-aws-prod',
+			projectId: memberProject.id,
+		}),
+	]);
 });
 
 test('`import:credential --projectId ...` should fail if the credential already exists and is owned by another project', async () => {
@@ -239,20 +185,14 @@ test('`import:credential --projectId ...` should fail if the credential already 
 	]);
 
 	// making sure the import worked
-	const before = {
-		credentials: await getAllCredentials(),
-		sharings: await getAllSharedCredentials(),
-	};
-	expect(before).toMatchObject({
-		credentials: [expect.objectContaining({ id: '123', name: 'cred-aws-test' })],
-		sharings: [
-			expect.objectContaining({
-				credentialsId: '123',
-				projectId: ownerProject.id,
-				role: 'credential:owner',
-			}),
-		],
-	});
+	const before = await getAllCredentials();
+	expect(before).toMatchObject([
+		expect.objectContaining({
+			id: '123',
+			name: 'cred-aws-test',
+			projectId: ownerProject.id,
+		}),
+	]);
 
 	//
 	// ACT
@@ -272,27 +212,15 @@ test('`import:credential --projectId ...` should fail if the credential already 
 	//
 	// ASSERT
 	//
-	const after = {
-		credentials: await getAllCredentials(),
-		sharings: await getAllSharedCredentials(),
-	};
-
-	expect(after).toMatchObject({
-		credentials: [
-			expect.objectContaining({
-				id: '123',
-				// only the name was updated
-				name: 'cred-aws-test',
-			}),
-		],
-		sharings: [
-			expect.objectContaining({
-				credentialsId: '123',
-				projectId: ownerProject.id,
-				role: 'credential:owner',
-			}),
-		],
-	});
+	const after = await getAllCredentials();
+	expect(after).toMatchObject([
+		expect.objectContaining({
+			id: '123',
+			// only the name was updated
+			name: 'cred-aws-test',
+			projectId: ownerProject.id,
+		}),
+	]);
 });
 
 test('`import:credential --projectId ... --userId ...` fails explaining that only one of the options can be used at a time', async () => {

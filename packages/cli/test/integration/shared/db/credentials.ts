@@ -96,7 +96,7 @@ export async function saveCredential(
  * Use project membership to control access instead.
  * This function is kept for backward compatibility in tests but does nothing.
  */
-export async function shareCredentialWithUsers(credential: CredentialsEntity, users: User[]) {
+export async function shareCredentialWithUsers(_credential: CredentialsEntity, _users: User[]) {
 	// In the new architecture, credentials belong to a single project.
 	// Users gain access through project membership, not through SharedCredentials.
 	// This function is now a no-op for backward compatibility.
@@ -109,8 +109,8 @@ export async function shareCredentialWithUsers(credential: CredentialsEntity, us
  * This function is kept for backward compatibility in tests but does nothing.
  */
 export async function shareCredentialWithProjects(
-	credential: CredentialsEntity,
-	projects: Project[],
+	_credential: CredentialsEntity,
+	_projects: Project[],
 ) {
 	// In the new architecture, credentials belong to a single project.
 	// To "share" a credential with a project, the credential must be created
@@ -146,7 +146,7 @@ export async function getAllSharedCredentials() {
  * @deprecated SharedCredentials table no longer exists.
  * Credentials belong directly to projects via projectId.
  */
-export async function getCredentialSharings(credential: CredentialsEntity) {
+export async function getCredentialSharings(_credential: CredentialsEntity) {
 	// SharedCredentials no longer exists. Return empty array for backward compatibility.
 	return [];
 }

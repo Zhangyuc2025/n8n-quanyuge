@@ -38,7 +38,7 @@ if (globalConfig.database.isLegacySqlite) {
 
 		beforeEach(async () => {
 			// Truncate in correct order to respect foreign key constraints
-			await testDb.truncate(['WorkflowDependency', 'SharedWorkflow', 'WorkflowEntity']);
+			await testDb.truncate(['WorkflowDependency', 'WorkflowEntity']);
 		});
 
 		afterAll(async () => {

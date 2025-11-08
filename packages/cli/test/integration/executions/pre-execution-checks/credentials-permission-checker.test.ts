@@ -5,12 +5,7 @@ import {
 	mockInstance,
 } from '@n8n/backend-test-utils';
 import type { Project, User } from '@n8n/db';
-import {
-	ProjectRepository,
-	SharedCredentialsRepository,
-	SharedWorkflowRepository,
-	WorkflowRepository,
-} from '@n8n/db';
+import { ProjectRepository, WorkflowRepository } from '@n8n/db';
 import { Container } from '@n8n/di';
 import type { INode, IWorkflowBase } from 'n8n-workflow';
 import { randomInt } from 'n8n-workflow';
@@ -28,6 +23,8 @@ import { mockNodeTypesData } from '@test-integration/utils/node-types-data';
 const ownershipService = mockInstance(OwnershipService);
 
 const createWorkflow = async (nodes: INode[], workflowOwner?: User): Promise<IWorkflowBase> => {
+	const project = workflowOwner ? await getPersonalProject(workflowOwner) : undefined;
+
 	const workflowDetails = {
 		id: randomInt(1, 10).toString(),
 		name: 'test',
@@ -35,19 +32,10 @@ const createWorkflow = async (nodes: INode[], workflowOwner?: User): Promise<IWo
 		connections: {},
 		nodeTypes: mockNodeTypes,
 		nodes,
+		projectId: project?.id,
 	};
 
 	const workflowEntity = await Container.get(WorkflowRepository).save(workflowDetails);
-	if (workflowOwner) {
-		const project = await getPersonalProject(workflowOwner);
-
-		await Container.get(SharedWorkflowRepository).save({
-			workflow: workflowEntity,
-			user: workflowOwner,
-			project,
-			role: 'workflow:owner',
-		});
-	}
 
 	return workflowEntity;
 };
@@ -110,16 +98,10 @@ describe('check()', () => {
 	});
 
 	test('should allow if workflow creds are valid subset', async () => {
-		const ownerCred = await saveCredential(randomCred(), { user: owner });
+		// In new architecture, credential sharing is done via project membership
+		// Save both credentials to member's project so member has access to both
+		const ownerCred = await saveCredential(randomCred(), { project: memberPersonalProject });
 		const memberCred = await saveCredential(randomCred(), { user: member });
-
-		await Container.get(SharedCredentialsRepository).save(
-			Container.get(SharedCredentialsRepository).create({
-				projectId: (await getPersonalProject(member)).id,
-				credentialsId: ownerCred.id,
-				role: 'credential:user',
-			}),
-		);
 
 		const nodes: INode[] = [
 			{

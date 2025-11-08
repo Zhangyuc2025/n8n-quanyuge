@@ -1,20 +1,17 @@
 import { inDevelopment, inProduction } from '@n8n/backend-common';
-import { DatabaseConfig, SecurityConfig, WorkflowsConfig } from '@n8n/config';
 import { Time } from '@n8n/constants';
+import { DatabaseConfig, WorkflowsConfig } from '@n8n/config';
 import type { APIRequest, AuthenticatedRequest } from '@n8n/db';
 import { Container, Service } from '@n8n/di';
 import cookieParser from 'cookie-parser';
 import express from 'express';
 import { access as fsAccess } from 'fs/promises';
-import helmet from 'helmet';
-import isEmpty from 'lodash/isEmpty';
 import { InstanceSettings, installGlobalProxyAgent } from 'n8n-core';
-import { jsonParse } from 'n8n-workflow';
 import { resolve } from 'path';
 
 import { AbstractServer } from '@/abstract-server';
 import { AuthService } from '@/auth/auth.service';
-import { CLI_DIR, EDITOR_UI_DIST_DIR, inE2ETests } from '@/constants';
+import { CLI_DIR, inE2ETests } from '@/constants';
 import { ControllerRegistry } from '@/controller.registry';
 import { CredentialsOverwrites } from '@/credentials-overwrites';
 import { MessageEventBus } from '@/eventbus/message-event-bus/message-event-bus';
@@ -372,85 +369,6 @@ export class Server extends AbstractServer {
 				res.sendStatus(404);
 			};
 			this.app.use('/schemas/:node/:version{/:resource}{/:operation}.json', serveSchemas);
-
-			const isTLSEnabled =
-				this.globalConfig.protocol === 'https' && !!(this.sslKey && this.sslCert);
-			const isPreviewMode = process.env.N8N_PREVIEW_MODE === 'true';
-			const cspDirectives = jsonParse<{ [key: string]: Iterable<string> }>(
-				Container.get(SecurityConfig).contentSecurityPolicy,
-				{
-					errorMessage: 'The contentSecurityPolicy is not valid JSON.',
-				},
-			);
-			const cspReportOnly = Container.get(SecurityConfig).contentSecurityPolicyReportOnly;
-			const securityHeadersMiddleware = helmet({
-				contentSecurityPolicy: isEmpty(cspDirectives)
-					? false
-					: {
-							useDefaults: false,
-							reportOnly: cspReportOnly,
-							directives: {
-								...cspDirectives,
-							},
-						},
-				xFrameOptions:
-					isPreviewMode || inE2ETests || inDevelopment ? false : { action: 'sameorigin' },
-				dnsPrefetchControl: false,
-				// This is only relevant for Internet-explorer, which we do not support
-				ieNoOpen: false,
-				// This is already disabled in AbstractServer
-				xPoweredBy: false,
-				// Enable HSTS headers only when n8n handles TLS.
-				// if n8n is behind a reverse-proxy, then these headers needs to be configured there
-				strictTransportSecurity: isTLSEnabled
-					? {
-							maxAge: 180 * Time.days.toSeconds,
-							includeSubDomains: false,
-							preload: false,
-						}
-					: false,
-			});
-
-			// Route all UI urls to index.html to support history-api
-			const nonUIRoutes: readonly string[] = [
-				'favicon.ico',
-				'assets',
-				'static',
-				'types',
-				'healthz',
-				'metrics',
-				'e2e',
-				this.restEndpoint,
-				this.endpointPresetCredentials,
-				isApiEnabled() ? '' : publicApiEndpoint,
-				...this.globalConfig.endpoints.additionalNonUIRoutes.split(':'),
-			].filter((u) => !!u);
-			const nonUIRoutesRegex = new RegExp(`^/(${nonUIRoutes.join('|')})/?.*$`);
-			const historyApiHandler: express.RequestHandler = (req, res, next) => {
-				const {
-					method,
-					headers: { accept },
-				} = req;
-				if (
-					method === 'GET' &&
-					accept &&
-					(accept.includes('text/html') || accept.includes('*/*')) &&
-					!req.path.endsWith('.wasm') &&
-					!nonUIRoutesRegex.test(req.path)
-				) {
-					res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate, proxy-revalidate');
-					securityHeadersMiddleware(req, res, () => {
-						res.sendFile('index.html', { root: staticCacheDir, maxAge: 0, lastModified: false });
-					});
-				} else {
-					next();
-				}
-			};
-			const setCustomCacheHeader = (res: express.Response) => {
-				if (/^\/types\/(nodes|credentials).json$/.test(res.req.url)) {
-					res.setHeader('Cache-Control', 'no-cache, must-revalidate');
-				}
-			};
 
 			// SaaS 平台化架构：后端不提供前端静态资源（前端部署在 CDN）
 			this.app.get('{/*path}', (req, res, next) => {

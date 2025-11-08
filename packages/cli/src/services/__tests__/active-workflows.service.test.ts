@@ -1,5 +1,5 @@
 import { GLOBAL_ADMIN_ROLE, GLOBAL_MEMBER_ROLE, WorkflowEntity } from '@n8n/db';
-import type { User, SharedWorkflowRepository, WorkflowRepository } from '@n8n/db';
+import type { User, WorkflowRepository } from '@n8n/db';
 import { mock } from 'jest-mock-extended';
 
 import type { ActivationErrorsService } from '@/activation-errors.service';
@@ -10,13 +10,12 @@ import type { WorkflowFinderService } from '@/workflows/workflow-finder.service'
 describe('ActiveWorkflowsService', () => {
 	const user = mock<User>();
 	const workflowRepository = mock<WorkflowRepository>();
-	const sharedWorkflowRepository = mock<SharedWorkflowRepository>();
 	const workflowFinderService = mock<WorkflowFinderService>();
 	const activationErrorsService = mock<ActivationErrorsService>();
 	const service = new ActiveWorkflowsService(
 		mock(),
 		workflowRepository,
-		sharedWorkflowRepository,
+		mock(),
 		activationErrorsService,
 		workflowFinderService,
 	);
@@ -45,16 +44,18 @@ describe('ActiveWorkflowsService', () => {
 			const ids = await service.getAllActiveIdsFor(user);
 
 			expect(ids).toEqual(['2', '3', '4']);
-			expect(sharedWorkflowRepository.getSharedWorkflowIds).not.toHaveBeenCalled();
 		});
 
 		it('should filter out workflow ids that the user does not have access to', async () => {
 			user.role = GLOBAL_MEMBER_ROLE;
-			sharedWorkflowRepository.getSharedWorkflowIds.mockResolvedValue(['3']);
+			// Mock the actual implementation logic: user has access to workflow with id '3'
+			const mockWorkflow = new WorkflowEntity();
+			mockWorkflow.id = '3';
+			workflowRepository.find.mockResolvedValue([mockWorkflow]);
+
 			const ids = await service.getAllActiveIdsFor(user);
 
 			expect(ids).toEqual(['3']);
-			expect(sharedWorkflowRepository.getSharedWorkflowIds).toHaveBeenCalledWith(activeIds);
 		});
 	});
 

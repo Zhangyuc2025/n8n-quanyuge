@@ -7,7 +7,6 @@ import {
 import { Logger } from '@n8n/backend-common';
 import { GlobalConfig } from '@n8n/config';
 import { ProjectRelationRepository, CredentialsRepository, AuthenticatedRequest } from '@n8n/db';
-import { Container } from '@n8n/di';
 import {
 	Delete,
 	Get,
@@ -27,6 +26,7 @@ import { deepCopy } from 'n8n-workflow';
 import type { ICredentialDataDecryptedObject } from 'n8n-workflow';
 import { z } from 'zod';
 
+import { listQueryMiddleware } from '@/middlewares';
 import { CredentialsFinderService } from './credentials-finder.service';
 import { CredentialsService } from './credentials.service';
 import { EnterpriseCredentialsService } from './credentials.service.ee';
@@ -35,7 +35,6 @@ import { BadRequestError } from '@/errors/response-errors/bad-request.error';
 import { ForbiddenError } from '@/errors/response-errors/forbidden.error';
 import { NotFoundError } from '@/errors/response-errors/not-found.error';
 import { EventService } from '@/events/event.service';
-import { listQueryMiddleware } from '@/middlewares';
 import { CredentialRequest } from '@/requests';
 import { NamingService } from '@/services/naming.service';
 import { UserManagementMailer } from '@/user-management/email';
@@ -315,18 +314,21 @@ export class CredentialsController {
 
 		await dbManager.transaction(async (trx) => {
 			// Query current shared projects
-			const currentSharing = (await trx.query(
+			const currentSharing = await trx.query(
 				'SELECT projectId FROM credentials_shared_with_projects WHERE credentialsId = ?',
 				[credentialId],
-			)) as Array<{ projectId: string }>;
+			);
 
-			const currentProjectIds = currentSharing.map((row) => row.projectId);
+			const currentProjectIds = currentSharing.map((row: { projectId: string }) => row.projectId);
 			const newProjectIds = shareWithIds;
 
-			const toShare = utils.rightDiff([currentProjectIds, (id) => id], [newProjectIds, (id) => id]);
+			const toShare = utils.rightDiff(
+				[currentProjectIds, (id: string) => id],
+				[newProjectIds, (id: string) => id],
+			);
 			const toUnshare = utils.rightDiff(
-				[newProjectIds, (id) => id],
-				[currentProjectIds, (id) => id],
+				[newProjectIds, (id: string) => id],
+				[currentProjectIds, (id: string) => id],
 			);
 
 			// Delete unshared records

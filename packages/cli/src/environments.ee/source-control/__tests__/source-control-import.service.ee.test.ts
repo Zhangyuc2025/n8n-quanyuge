@@ -8,7 +8,6 @@ import {
 	GLOBAL_MEMBER_ROLE,
 	Project,
 	type ProjectRepository,
-	type SharedWorkflowRepository,
 	User,
 	WorkflowEntity,
 	type WorkflowRepository,
@@ -45,7 +44,6 @@ describe('SourceControlImportService', () => {
 	const workflowRepository = mock<WorkflowRepository>();
 	const folderRepository = mock<FolderRepository>();
 	const projectRepository = mock<ProjectRepository>();
-	const sharedWorkflowRepository = mock<SharedWorkflowRepository>();
 	const mockLogger = mock<Logger>();
 	const sourceControlScopedService = mock<SourceControlScopedService>();
 	const variableService = mock<VariablesService>();
@@ -57,8 +55,6 @@ describe('SourceControlImportService', () => {
 		mock(),
 		mock(),
 		projectRepository,
-		mock(),
-		sharedWorkflowRepository,
 		mock(),
 		mock(),
 		variablesRepository,
@@ -181,7 +177,6 @@ describe('SourceControlImportService', () => {
 
 			workflowRepository.findByIds.mockResolvedValue([]);
 			folderRepository.find.mockResolvedValue([]);
-			sharedWorkflowRepository.findWithFields.mockResolvedValue([]);
 			workflowRepository.upsert.mockResolvedValue({
 				identifiers: [{ id: '1' }],
 				generatedMaps: [],
@@ -243,7 +238,6 @@ describe('SourceControlImportService', () => {
 			);
 			workflowRepository.findByIds.mockResolvedValue([]);
 			folderRepository.find.mockResolvedValue([]);
-			sharedWorkflowRepository.findWithFields.mockResolvedValue([]);
 
 			// Mock invalid JSON that will cause parsing to fail
 			fsReadFile.mockResolvedValue('{ invalid json');

@@ -4,7 +4,7 @@ import type {
 	ITelemetrySettings,
 	N8nEnvFeatFlags,
 } from '@n8n/api-types';
-import { Logger, ModuleRegistry } from '@n8n/backend-common';
+import { ModuleRegistry } from '@n8n/backend-common';
 import { GlobalConfig, SecurityConfig } from '@n8n/config';
 import { Container, Service } from '@n8n/di';
 import { createWriteStream } from 'fs';
@@ -60,7 +60,6 @@ export class FrontendService {
 
 	constructor(
 		private readonly globalConfig: GlobalConfig,
-		private readonly logger: Logger,
 		private readonly loadNodesAndCredentials: LoadNodesAndCredentials,
 		private readonly credentialTypes: CredentialTypes,
 		private readonly credentialsOverwrites: CredentialsOverwrites,

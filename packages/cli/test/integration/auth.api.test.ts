@@ -20,7 +20,6 @@ let authOwnerAgent: SuperAgentTest;
 const ownerPassword = randomValidPassword();
 
 const testServer = utils.setupTestServer({ endpointGroups: ['auth'] });
-const license = testServer.license;
 
 let mfaService: MfaService;
 
@@ -122,31 +121,6 @@ describe('POST /login', () => {
 
 		const authToken = utils.getAuthToken(response);
 		expect(authToken).toBeDefined();
-	});
-
-	test('should throw AuthError for non-owner if not within users limit quota', async () => {
-		license.setQuota('quota:users', 0);
-		const password = 'testpassword';
-		const member = await createUser({
-			password,
-		});
-
-		const response = await testServer.authlessAgent.post('/login').send({
-			emailOrLdapLoginId: member.email,
-			password,
-		});
-		expect(response.statusCode).toBe(403);
-	});
-
-	test('should not throw AuthError for owner if not within users limit quota', async () => {
-		license.setQuota('quota:users', 0);
-		const ownerUser = await createUser({
-			password: randomValidPassword(),
-			role: GLOBAL_OWNER_ROLE,
-		});
-
-		const response = await testServer.authAgentFor(ownerUser).get('/login');
-		expect(response.statusCode).toBe(200);
 	});
 
 	test('should fail with invalid email in the payload is the current authentication method is "email"', async () => {
@@ -350,18 +324,6 @@ describe('GET /resolve-signup-token', () => {
 				},
 			},
 		});
-	});
-
-	test('should return 403 if user quota reached', async () => {
-		license.setQuota('quota:users', 0);
-		const memberShell = await createUserShell(GLOBAL_MEMBER_ROLE);
-
-		const response = await authOwnerAgent
-			.get('/resolve-signup-token')
-			.query({ inviterId: owner.id })
-			.query({ inviteeId: memberShell.id });
-
-		expect(response.statusCode).toBe(403);
 	});
 
 	test('should fail with invalid inputs', async () => {

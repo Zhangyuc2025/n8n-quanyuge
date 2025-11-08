@@ -1,4 +1,3 @@
-import type { LicenseState } from '@n8n/backend-common';
 import { mock } from 'jest-mock-extended';
 
 import { ProvisioningController } from '../provisioning.controller.ee';
@@ -8,9 +7,8 @@ import { type AuthenticatedRequest } from '@n8n/db';
 import { type ProvisioningConfigDto } from '@n8n/api-types';
 
 const provisioningService = mock<ProvisioningService>();
-const licenseState = mock<LicenseState>();
 
-const controller = new ProvisioningController(provisioningService, licenseState);
+const controller = new ProvisioningController(provisioningService);
 
 describe('ProvisioningController', () => {
 	beforeEach(() => {
@@ -24,13 +22,6 @@ describe('ProvisioningController', () => {
 			status: jest.fn().mockReturnThis(),
 		});
 
-		it('should return 403 if provisioning is not licensed', async () => {
-			licenseState.isProvisioningLicensed.mockReturnValue(false);
-			await controller.getConfig(req, res);
-
-			expect(res.status).toHaveBeenCalledWith(403);
-		});
-
 		it('should return the provisioning config', async () => {
 			const configResponse: ProvisioningConfigDto = {
 				scopesProvisionInstanceRole: true,
@@ -40,7 +31,6 @@ describe('ProvisioningController', () => {
 				scopesProjectsRolesClaimName: 'n8n_test_projects_roles',
 			};
 
-			licenseState.isProvisioningLicensed.mockReturnValue(true);
 			provisioningService.getConfig.mockResolvedValue(configResponse);
 
 			const config = await controller.getConfig(req, res);
@@ -56,13 +46,6 @@ describe('ProvisioningController', () => {
 			status: jest.fn().mockReturnThis(),
 		});
 
-		it('should return 403 if provisioning is not licensed', async () => {
-			licenseState.isProvisioningLicensed.mockReturnValue(false);
-			await controller.patchConfig(req, res);
-
-			expect(res.status).toHaveBeenCalledWith(403);
-		});
-
 		it('should patch the provisioning config', async () => {
 			const configResponse: ProvisioningConfigDto = {
 				scopesProvisionInstanceRole: false,
@@ -72,7 +55,6 @@ describe('ProvisioningController', () => {
 				scopesProjectsRolesClaimName: 'n8n_test_projects_roles',
 			};
 
-			licenseState.isProvisioningLicensed.mockReturnValue(true);
 			provisioningService.patchConfig.mockResolvedValue(configResponse);
 
 			const config = await controller.patchConfig(req, res);

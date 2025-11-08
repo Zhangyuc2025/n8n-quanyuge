@@ -9,9 +9,8 @@ import {
 	CredentialsEntity,
 	SettingsRepository,
 	CredentialsRepository,
-	SharedCredentialsRepository,
-	SharedWorkflowRepository,
 	UserRepository,
+	WorkflowRepository,
 	GLOBAL_OWNER_ROLE,
 } from '@n8n/db';
 import { Container } from '@n8n/di';
@@ -88,18 +87,18 @@ test('user-management:reset should reset DB to default user state', async () => 
 
 	// all workflows are owned by the owner:
 	await expect(
-		Container.get(SharedWorkflowRepository).findBy({ workflowId: workflow.id }),
-	).resolves.toMatchObject([{ projectId: ownerProject.id, role: 'workflow:owner' }]);
+		Container.get(WorkflowRepository).findOneBy({ id: workflow.id }),
+	).resolves.toMatchObject({ projectId: ownerProject.id });
 
 	// all credentials are owned by the owner
 	await expect(
-		Container.get(SharedCredentialsRepository).findBy({ credentialsId: credential.id }),
-	).resolves.toMatchObject([{ projectId: ownerProject.id, role: 'credential:owner' }]);
+		Container.get(CredentialsRepository).findOneBy({ id: credential.id }),
+	).resolves.toMatchObject({ projectId: ownerProject.id });
 
 	// all dangling credentials are owned by the owner
 	await expect(
-		Container.get(SharedCredentialsRepository).findBy({ credentialsId: danglingCredential.id }),
-	).resolves.toMatchObject([{ projectId: ownerProject.id, role: 'credential:owner' }]);
+		Container.get(CredentialsRepository).findOneBy({ id: danglingCredential.id }),
+	).resolves.toMatchObject({ projectId: ownerProject.id });
 
 	// the instance is marked as not set up:
 	await expect(

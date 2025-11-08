@@ -20,12 +20,7 @@ import {
 	WorkflowRepository,
 	WorkflowTagMappingRepository,
 } from '@n8n/db';
-import {
-	FolderRepository,
-	ProjectRepository,
-	SharedCredentialsRepository,
-	UserRepository,
-} from '@n8n/db';
+import { FolderRepository, ProjectRepository, UserRepository } from '@n8n/db';
 import { Container } from '@n8n/di';
 import * as fastGlob from 'fast-glob';
 import { mock } from 'jest-mock-extended';
@@ -51,7 +46,6 @@ jest.mock('fast-glob');
 describe('SourceControlImportService', () => {
 	let credentialsRepository: CredentialsRepository;
 	let projectRepository: ProjectRepository;
-	let sharedCredentialsRepository: SharedCredentialsRepository;
 	let userRepository: UserRepository;
 	let folderRepository: FolderRepository;
 	let service: SourceControlImportService;
@@ -67,7 +61,6 @@ describe('SourceControlImportService', () => {
 
 		credentialsRepository = Container.get(CredentialsRepository);
 		projectRepository = Container.get(ProjectRepository);
-		sharedCredentialsRepository = Container.get(SharedCredentialsRepository);
 		userRepository = Container.get(UserRepository);
 		folderRepository = Container.get(FolderRepository);
 		workflowRepository = Container.get(WorkflowRepository);
@@ -82,8 +75,6 @@ describe('SourceControlImportService', () => {
 			credentialsRepository,
 			projectRepository,
 			tagRepository,
-			mock(),
-			sharedCredentialsRepository,
 			userRepository,
 			mock(),
 			workflowRepository,
@@ -98,7 +89,7 @@ describe('SourceControlImportService', () => {
 	});
 
 	afterEach(async () => {
-		await testDb.truncate(['CredentialsEntity', 'SharedCredentials']);
+		await testDb.truncate(['CredentialsEntity']);
 
 		jest.restoreAllMocks();
 	});
@@ -1103,13 +1094,12 @@ describe('SourceControlImportService', () => {
 
 				const personalProject = await getPersonalProject(member);
 
-				const sharing = await sharedCredentialsRepository.findOneBy({
-					credentialsId: CREDENTIAL_ID,
-					projectId: personalProject.id,
-					role: 'credential:owner',
+				const credential = await credentialsRepository.findOneBy({
+					id: CREDENTIAL_ID,
 				});
 
-				expect(sharing).toBeTruthy(); // same user at target instance owns credential
+				expect(credential).toBeTruthy();
+				expect(credential?.projectId).toBe(personalProject.id); // same user at target instance owns credential
 			});
 		});
 
@@ -1140,13 +1130,12 @@ describe('SourceControlImportService', () => {
 
 				const personalProject = await getPersonalProject(importingUser);
 
-				const sharing = await sharedCredentialsRepository.findOneBy({
-					credentialsId: CREDENTIAL_ID,
-					projectId: personalProject.id,
-					role: 'credential:owner',
+				const credential = await credentialsRepository.findOneBy({
+					id: CREDENTIAL_ID,
 				});
 
-				expect(sharing).toBeTruthy(); // original user has no email, so importing user owns credential
+				expect(credential).toBeTruthy();
+				expect(credential?.projectId).toBe(personalProject.id); // original user has no email, so importing user owns credential
 			});
 		});
 
@@ -1177,13 +1166,12 @@ describe('SourceControlImportService', () => {
 
 				const personalProject = await getPersonalProject(importingUser);
 
-				const sharing = await sharedCredentialsRepository.findOneBy({
-					credentialsId: CREDENTIAL_ID,
-					projectId: personalProject.id,
-					role: 'credential:owner',
+				const credential = await credentialsRepository.findOneBy({
+					id: CREDENTIAL_ID,
 				});
 
-				expect(sharing).toBeTruthy(); // original user missing, so importing user owns credential
+				expect(credential).toBeTruthy();
+				expect(credential?.projectId).toBe(personalProject.id); // original user missing, so importing user owns credential
 			});
 		});
 	});
@@ -1218,13 +1206,12 @@ describe('SourceControlImportService', () => {
 
 			const personalProject = await getPersonalProject(importingUser);
 
-			const sharing = await sharedCredentialsRepository.findOneBy({
-				credentialsId: CREDENTIAL_ID,
-				projectId: personalProject.id,
-				role: 'credential:owner',
+			const credential = await credentialsRepository.findOneBy({
+				id: CREDENTIAL_ID,
 			});
 
-			expect(sharing).toBeTruthy(); // original user missing, so importing user owns credential
+			expect(credential).toBeTruthy();
+			expect(credential?.projectId).toBe(personalProject.id); // original user missing, so importing user owns credential
 		});
 
 		it('should create a new team project if the credential was owned by a team project in the source instance', async () => {
@@ -1269,19 +1256,16 @@ describe('SourceControlImportService', () => {
 				importingUser.id,
 			);
 
-			const sharing = await sharedCredentialsRepository.findOne({
-				where: {
-					credentialsId: CREDENTIAL_ID,
-					role: 'credential:owner',
-				},
+			const credential = await credentialsRepository.findOne({
+				where: { id: CREDENTIAL_ID },
 				relations: { project: true },
 			});
 
-			expect(sharing?.project.id).toBe('1234-asdf');
-			expect(sharing?.project.name).toBe('Marketing');
-			expect(sharing?.project.type).toBe('team');
+			expect(credential?.project.id).toBe('1234-asdf');
+			expect(credential?.project.name).toBe('Marketing');
+			expect(credential?.project.type).toBe('team');
 
-			expect(sharing).toBeTruthy(); // original user missing, so importing user owns credential
+			expect(credential).toBeTruthy(); // original user missing, so importing user owns credential
 		});
 	});
 
@@ -1316,13 +1300,12 @@ describe('SourceControlImportService', () => {
 				importingUser.id,
 			);
 
-			const sharing = await sharedCredentialsRepository.findOneBy({
-				credentialsId: CREDENTIAL_ID,
-				projectId: project.id,
-				role: 'credential:owner',
+			const credential = await credentialsRepository.findOneBy({
+				id: CREDENTIAL_ID,
 			});
 
-			expect(sharing).toBeTruthy();
+			expect(credential).toBeTruthy();
+			expect(credential?.projectId).toBe(project.id);
 		});
 
 		it('should change the owner to match source control when credential is owned by somebody else on the target instance', async () => {
@@ -1369,16 +1352,6 @@ describe('SourceControlImportService', () => {
 
 			// Verify ownership changed to match source control
 			await expect(
-				sharedCredentialsRepository.findBy({
-					credentialsId: credential.id,
-				}),
-			).resolves.toMatchObject([
-				{
-					projectId: sourceProjectId,
-					role: 'credential:owner',
-				},
-			]);
-			await expect(
 				credentialsRepository.findBy({
 					id: credential.id,
 				}),
@@ -1387,6 +1360,7 @@ describe('SourceControlImportService', () => {
 					name: stub.name,
 					type: stub.type,
 					data: 'some-encrypted-data',
+					projectId: sourceProjectId,
 				},
 			]);
 		});

@@ -4,13 +4,18 @@ import type { InstanceSettings } from 'n8n-core';
 import { NotFoundError } from '@/errors/response-errors/not-found.error';
 import type { TestRunnerService } from '@/evaluation.ee/test-runner/test-runner.service.ee';
 import { TestRunsController } from '@/evaluation.ee/test-runs.controller.ee';
-import { getSharedWorkflowIds } from '@/public-api/v1/handlers/workflows/workflows.service';
 import type { Telemetry } from '@/telemetry';
 import type { WorkflowFinderService } from '@/workflows/workflow-finder.service';
 
 // Mock dependencies
-jest.mock('@/public-api/v1/handlers/workflows/workflows.service');
 jest.mock('@/evaluation.ee/test-runner/test-runner.service.ee');
+jest.mock('@/public-api/v1/handlers/workflows/workflows.service');
+
+import { getSharedWorkflowIds } from '@/public-api/v1/handlers/workflows/workflows.service';
+
+const mockGetSharedWorkflowIds = getSharedWorkflowIds as jest.MockedFunction<
+	typeof getSharedWorkflowIds
+>;
 
 describe('TestRunsController', () => {
 	let testRunsController: TestRunsController;
@@ -20,7 +25,6 @@ describe('TestRunsController', () => {
 	let mockTestRunnerService: jest.Mocked<TestRunnerService>;
 	let mockInstanceSettings: jest.Mocked<InstanceSettings>;
 	let mockTelemetry: jest.Mocked<Telemetry>;
-	let mockGetSharedWorkflowIds: jest.MockedFunction<typeof getSharedWorkflowIds>;
 	let mockUser: User;
 	let mockWorkflowId: string;
 	let mockTestRunId: string;
@@ -36,6 +40,7 @@ describe('TestRunsController', () => {
 
 		mockWorkflowFinderService = {
 			findWorkflowForUser: jest.fn(),
+			findAllWorkflowsForUser: jest.fn(),
 		} as unknown as jest.Mocked<WorkflowFinderService>;
 
 		mockTestCaseExecutionRepository = {
@@ -56,10 +61,6 @@ describe('TestRunsController', () => {
 		mockTelemetry = {
 			track: jest.fn(),
 		} as unknown as jest.Mocked<Telemetry>;
-
-		mockGetSharedWorkflowIds = getSharedWorkflowIds as jest.MockedFunction<
-			typeof getSharedWorkflowIds
-		>;
 
 		// Create test instance
 		testRunsController = new TestRunsController(

@@ -1,0 +1,91 @@
+
+> n8n@1.119.0 typecheck /home/zhang/n8n-quanyuge/packages/cli
+> tsc --noEmit
+
+src/__tests__/active-workflow-manager.test.ts(68,16): error TS2345: Argument of type 'Partial<INodeType>' is not assignable to parameter of type '{ description?: { version?: number | (number | undefined)[] | undefined; defaults?: { color?: string | undefined; name?: string | undefined; } | undefined; eventTriggerDescription?: string | undefined; ... 38 more ...; usableAsTool?: true | ... 1 more ... | undefined; } | undefined; ... 8 more ...; customOperations?...'.
+  Types of property 'description' are incompatible.
+    Type 'INodeTypeDescription | undefined' is not assignable to type '{ version?: number | (number | undefined)[] | undefined; defaults?: { color?: string | undefined; name?: string | undefined; } | undefined; eventTriggerDescription?: string | undefined; ... 38 more ...; usableAsTool?: true | ... 1 more ... | undefined; } | undefined'.
+      Type 'INodeTypeDescription' is not assignable to type '{ version?: number | (number | undefined)[] | undefined; defaults?: { color?: string | undefined; name?: string | undefined; } | undefined; eventTriggerDescription?: string | undefined; ... 38 more ...; usableAsTool?: true | ... 1 more ... | undefined; }'.
+        Types of property 'properties' are incompatible.
+          Type 'INodeProperties[]' is not assignable to type '({ displayName?: string | undefined; name?: string | undefined; type?: NodePropertyTypes | undefined; typeOptions?: { [x: string]: any; buttonConfig?: { action?: string | ... 1 more ... | undefined; label?: string | undefined; hasInputField?: boolean | undefined; inputFieldMaxLength?: number | undefined; } | undefin...'.
+            Type 'INodeProperties' is not assignable to type '{ displayName?: string | undefined; name?: string | undefined; type?: NodePropertyTypes | undefined; typeOptions?: { [x: string]: any; buttonConfig?: { action?: string | { ...; } | undefined; label?: string | undefined; hasInputField?: boolean | undefined; inputFieldMaxLength?: number | undefined; } | undefined; ......'.
+              Types of property 'typeOptions' are incompatible.
+                Type 'INodePropertyTypeOptions | undefined' is not assignable to type '{ [x: string]: any; buttonConfig?: { action?: string | { type?: "askAiCodeGeneration" | undefined; handler?: string | undefined; target?: string | undefined; } | undefined; label?: string | undefined; hasInputField?: boolean | undefined; inputFieldMaxLength?: number | undefined; } | undefined; ... 25 more ...; binar...'.
+                  Type 'INodePropertyTypeOptions' is not assignable to type '{ [x: string]: any; buttonConfig?: { action?: string | { type?: "askAiCodeGeneration" | undefined; handler?: string | undefined; target?: string | undefined; } | undefined; label?: string | undefined; hasInputField?: boolean | undefined; inputFieldMaxLength?: number | undefined; } | undefined; ... 25 more ...; binar...'.
+                    Types of property 'filter' are incompatible.
+                      Type 'FilterTypeOptions | undefined' is not assignable to type '{ version?: 1 | 2 | {} | undefined; caseSensitive?: string | boolean | undefined; leftValue?: string | undefined; allowedCombinators?: [(FilterTypeCombinator | undefined)?, ...undefined[]] | undefined; maxConditions?: number | undefined; typeValidation?: "strict" | ... 2 more ... | undefined; } | undefined'.
+                        Type 'FilterTypeOptions' is not assignable to type '{ version?: 1 | 2 | {} | undefined; caseSensitive?: string | boolean | undefined; leftValue?: string | undefined; allowedCombinators?: [(FilterTypeCombinator | undefined)?, ...undefined[]] | undefined; maxConditions?: number | undefined; typeValidation?: "strict" | ... 2 more ... | undefined; }'.
+                          Types of property 'allowedCombinators' are incompatible.
+                            Type 'NonEmptyArray<FilterTypeCombinator> | undefined' is not assignable to type '[(FilterTypeCombinator | undefined)?, ...undefined[]] | undefined'.
+                              Type 'NonEmptyArray<FilterTypeCombinator>' is not assignable to type '[(FilterTypeCombinator | undefined)?, ...undefined[]]'.
+                                Type at position 1 in source is not compatible with type at position 1 in target.
+                                  Type 'FilterTypeCombinator' is not assignable to type 'undefined'.
+                                    Type '"and"' is not assignable to type 'undefined'.
+src/__tests__/credential-types.test.ts(51,5): error TS2345: Argument of type '{ [K in keyof T]: T[K] extends (...args: infer A) => infer B ? CalledWithMock<B, A> : T[K]; } & T' is not assignable to parameter of type 'LoadNodesAndCredentials'.
+  Type '{ [K in keyof T]: T[K] extends (...args: infer A) => infer B ? CalledWithMock<B, A> : T[K]; }' is missing the following properties from type 'LoadNodesAndCredentials': known, loaded, types, loaders, and 35 more.
+src/__tests__/credential-types.test.ts(52,27): error TS2322: Type 'LoadedClass<ICredentialType>' is not assignable to type '{ sourcePath?: string | undefined; type?: { name?: string | undefined; displayName?: string | undefined; icon?: `fa:${string}` | `node:${string}.${string}` | `file:${string}.png` | `file:${string}.svg` | `={{${string}}}` | { light?: IconFile | undefined; dark?: IconFile | undefined; } | undefined; ... 12 more ...; s...'.
+  The types of 'type.properties' are incompatible between these types.
+    Type 'INodeProperties[]' is not assignable to type '({ displayName?: string | undefined; name?: string | undefined; type?: NodePropertyTypes | undefined; typeOptions?: { [x: string]: any; buttonConfig?: { action?: string | ... 1 more ... | undefined; label?: string | undefined; hasInputField?: boolean | undefined; inputFieldMaxLength?: number | undefined; } | undefin...'.
+      Type 'INodeProperties' is not assignable to type '{ displayName?: string | undefined; name?: string | undefined; type?: NodePropertyTypes | undefined; typeOptions?: { [x: string]: any; buttonConfig?: { action?: string | { ...; } | undefined; label?: string | undefined; hasInputField?: boolean | undefined; inputFieldMaxLength?: number | undefined; } | undefined; ......'.
+        Types of property 'typeOptions' are incompatible.
+          Type 'INodePropertyTypeOptions | undefined' is not assignable to type '{ [x: string]: any; buttonConfig?: { action?: string | { type?: "askAiCodeGeneration" | undefined; handler?: string | undefined; target?: string | undefined; } | undefined; label?: string | undefined; hasInputField?: boolean | undefined; inputFieldMaxLength?: number | undefined; } | undefined; ... 25 more ...; binar...'.
+            Type 'INodePropertyTypeOptions' is not assignable to type '{ [x: string]: any; buttonConfig?: { action?: string | { type?: "askAiCodeGeneration" | undefined; handler?: string | undefined; target?: string | undefined; } | undefined; label?: string | undefined; hasInputField?: boolean | undefined; inputFieldMaxLength?: number | undefined; } | undefined; ... 25 more ...; binar...'.
+              Types of property 'filter' are incompatible.
+                Type 'FilterTypeOptions | undefined' is not assignable to type '{ version?: 2 | 1 | {} | undefined; caseSensitive?: string | boolean | undefined; leftValue?: string | undefined; allowedCombinators?: [(FilterTypeCombinator | undefined)?, ...undefined[]] | undefined; maxConditions?: number | undefined; typeValidation?: "strict" | ... 2 more ... | undefined; } | undefined'.
+                  Type 'FilterTypeOptions' is not assignable to type '{ version?: 2 | 1 | {} | undefined; caseSensitive?: string | boolean | undefined; leftValue?: string | undefined; allowedCombinators?: [(FilterTypeCombinator | undefined)?, ...undefined[]] | undefined; maxConditions?: number | undefined; typeValidation?: "strict" | ... 2 more ... | undefined; }'.
+                    Types of property 'allowedCombinators' are incompatible.
+                      Type 'NonEmptyArray<FilterTypeCombinator> | undefined' is not assignable to type '[(FilterTypeCombinator | undefined)?, ...undefined[]] | undefined'.
+                        Type 'NonEmptyArray<FilterTypeCombinator>' is not assignable to type '[(FilterTypeCombinator | undefined)?, ...undefined[]]'.
+                          Type at position 1 in source is not compatible with type at position 1 in target.
+                            Type 'FilterTypeCombinator' is not assignable to type 'undefined'.
+                              Type '"and"' is not assignable to type 'undefined'.
+src/credentials/credentials.service.ee.ts(22,20): error TS6138: Property 'projectRepository' is declared but its value is never read.
+src/evaluation.ee/__tests__/test-runs.controller.ee.test.ts(74,29): error TS2339: Property 'getAccessibleWorkflows' does not exist on type 'Mocked<WorkflowFinderService>'.
+src/evaluation.ee/__tests__/test-runs.controller.ee.test.ts(92,30): error TS2339: Property 'getAccessibleWorkflows' does not exist on type 'Mocked<WorkflowFinderService>'.
+src/evaluation.ee/__tests__/test-runs.controller.ee.test.ts(103,37): error TS2339: Property 'getAccessibleWorkflows' does not exist on type 'Mocked<WorkflowFinderService>'.
+src/evaluation.ee/__tests__/test-runs.controller.ee.test.ts(112,30): error TS2339: Property 'getAccessibleWorkflows' does not exist on type 'Mocked<WorkflowFinderService>'.
+src/evaluation.ee/__tests__/test-runs.controller.ee.test.ts(118,37): error TS2339: Property 'getAccessibleWorkflows' does not exist on type 'Mocked<WorkflowFinderService>'.
+src/evaluation.ee/__tests__/test-runs.controller.ee.test.ts(124,30): error TS2339: Property 'getAccessibleWorkflows' does not exist on type 'Mocked<WorkflowFinderService>'.
+src/evaluation.ee/__tests__/test-runs.controller.ee.test.ts(130,37): error TS2339: Property 'getAccessibleWorkflows' does not exist on type 'Mocked<WorkflowFinderService>'.
+src/evaluation.ee/__tests__/test-runs.controller.ee.test.ts(136,30): error TS2339: Property 'getAccessibleWorkflows' does not exist on type 'Mocked<WorkflowFinderService>'.
+src/evaluation.ee/__tests__/test-runs.controller.ee.test.ts(143,37): error TS2339: Property 'getAccessibleWorkflows' does not exist on type 'Mocked<WorkflowFinderService>'.
+src/events/__tests__/log-streaming-event-relay.test.ts(266,7): error TS2578: Unused '@ts-expect-error' directive.
+src/events/__tests__/log-streaming-event-relay.test.ts(271,7): error TS2353: Object literal may only specify known properties, and 'errorMessage' does not exist in type '{ error?: { httpCode?: string | null | undefined; readonly node?: { id?: string | undefined; name?: string | undefined; typeVersion?: number | undefined; type?: string | undefined; position?: [...?] | undefined; ... 15 more ...; forceCustomOperation?: { ...; } | undefined; } | undefined; ... 15 more ...; stack?: str...'.
+src/events/__tests__/log-streaming-event-relay.test.ts(311,7): error TS2578: Unused '@ts-expect-error' directive.
+src/events/__tests__/log-streaming-event-relay.test.ts(316,7): error TS2353: Object literal may only specify known properties, and 'errorMessage' does not exist in type '{ error?: { httpCode?: string | null | undefined; readonly node?: { id?: string | undefined; name?: string | undefined; typeVersion?: number | undefined; type?: string | undefined; position?: [...?] | undefined; ... 15 more ...; forceCustomOperation?: { ...; } | undefined; } | undefined; ... 15 more ...; stack?: str...'.
+src/executions/pre-execution-checks/credentials-permission-checker.ts(38,20): error TS6138: Property 'projectService' is declared but its value is never read.
+src/middlewares/rate-limit.middleware.ts(1,15): error TS6196: 'RequestHandler' is declared but never used.
+src/modules/insights/__tests__/insights.service.integration.test.ts(15,10): error TS6133: 'UserError' is declared but its value is never read.
+src/modules/insights/database/entities/__tests__/db-utils.ts(2,10): error TS6133: 'WorkflowRepository' is declared but its value is never read.
+src/modules/mcp/__tests__/mcp-server-middleware.service.test.ts(151,10): error TS2589: Type instantiation is excessively deep and possibly infinite.
+src/modules/provisioning.ee/__tests__/provisioning.controller.ee.test.ts(1,15): error TS2305: Module '"@n8n/backend-common"' has no exported member 'LicenseState'.
+src/modules/provisioning.ee/__tests__/provisioning.controller.ee.test.ts(13,68): error TS2554: Expected 1 arguments, but got 2.
+src/public-api/v1/handlers/workflows/workflows.service.ts(50,2): error TS6133: 'user' is declared but its value is never read.
+src/public-api/v1/handlers/workflows/workflows.service.ts(52,2): error TS6133: 'role' is declared but its value is never read.
+src/server.ts(429,10): error TS6133: 'historyApiHandler' is declared but its value is never read.
+src/server.ts(449,10): error TS6133: 'setCustomCacheHeader' is declared but its value is never read.
+src/services/__tests__/active-workflows.service.test.ts(51,26): error TS2339: Property 'findAccessibleWorkflows' does not exist on type '{ findWorkflowForUser: CalledWithMock<Promise<WorkflowEntity | null>, [workflowId: string, user: User, scopes: Scope[], options?: { includeTags?: boolean | undefined; includeParentFolder?: boolean | undefined; em?: EntityManager | undefined; } | undefined]>; findAllWorkflowsForUser: CalledWithMock<...>; } & Workflow...'.
+src/services/__tests__/active-workflows.service.test.ts(55,33): error TS2339: Property 'findAccessibleWorkflows' does not exist on type '{ findWorkflowForUser: CalledWithMock<Promise<WorkflowEntity | null>, [workflowId: string, user: User, scopes: Scope[], options?: { includeTags?: boolean | undefined; includeParentFolder?: boolean | undefined; em?: EntityManager | undefined; } | undefined]>; findAllWorkflowsForUser: CalledWithMock<...>; } & Workflow...'.
+src/services/billing.service.ts(9,6): error TS6196: 'RechargeStatus' is declared but never used.
+src/services/frontend.service.ts(63,20): error TS6138: Property 'logger' is declared but its value is never read.
+src/services/import.service.ts(95,11): error TS6133: 'exists' is declared but its value is never read.
+test/integration/auth.api.test.ts(23,28): error TS2339: Property 'license' does not exist on type 'TestServer'.
+test/integration/commands/credentials.cmd.test.ts(2,1): error TS6133: 'CredentialsRepository' is declared but its value is never read.
+test/integration/commands/credentials.cmd.test.ts(3,1): error TS6133: 'Container' is declared but its value is never read.
+test/integration/public-api/users.test.ts(3,41): error TS2307: Cannot find module '@/errors/feature-not-licensed.error' or its corresponding type declarations.
+test/integration/public-api/users.test.ts(157,15): error TS2339: Property 'license' does not exist on type 'TestServer'.
+test/integration/public-api/users.test.ts(177,15): error TS2339: Property 'license' does not exist on type 'TestServer'.
+test/integration/public-api/users.test.ts(197,15): error TS2339: Property 'license' does not exist on type 'TestServer'.
+test/integration/public-api/users.test.ts(233,15): error TS2339: Property 'license' does not exist on type 'TestServer'.
+test/integration/public-api/users.test.ts(273,15): error TS2339: Property 'license' does not exist on type 'TestServer'.
+test/integration/public-api/users.test.ts(295,15): error TS2339: Property 'license' does not exist on type 'TestServer'.
+test/integration/public-api/users.test.ts(362,15): error TS2339: Property 'license' does not exist on type 'TestServer'.
+test/integration/public-api/users.test.ts(386,15): error TS2339: Property 'license' does not exist on type 'TestServer'.
+test/integration/public-api/users.test.ts(409,15): error TS2339: Property 'license' does not exist on type 'TestServer'.
+test/integration/public-api/users.test.ts(434,15): error TS2339: Property 'license' does not exist on type 'TestServer'.
+test/integration/shared/db/credentials.ts(99,48): error TS6133: 'credential' is declared but its value is never read.
+test/integration/shared/db/credentials.ts(99,79): error TS6133: 'users' is declared but its value is never read.
+test/integration/shared/db/credentials.ts(112,2): error TS6133: 'credential' is declared but its value is never read.
+test/integration/shared/db/credentials.ts(113,2): error TS6133: 'projects' is declared but its value is never read.
+test/integration/shared/db/credentials.ts(149,45): error TS6133: 'credential' is declared but its value is never read.
+ ELIFECYCLE  Command failed with exit code 1.

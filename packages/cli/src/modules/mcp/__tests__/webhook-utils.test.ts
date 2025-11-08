@@ -1,6 +1,5 @@
 import { mockInstance } from '@n8n/backend-test-utils';
 import { User } from '@n8n/db';
-import type { SharedCredentials } from '@n8n/db';
 import type {
 	INode,
 	INodeCredentials,
@@ -22,9 +21,10 @@ const mockCredentialsService = (
 			return {
 				name: 'MockCredentialsService',
 				type: 'mock',
-				shared: [] as SharedCredentials[],
 				isManaged: false,
 				id,
+				project: { id: 'project1', name: 'Project 1', type: 'personal' } as any,
+				projectId: 'project1',
 				// Methods present on entities via WithTimestampsAndStringId mixin
 				generateId() {},
 				createdAt: new Date(),

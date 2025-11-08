@@ -24,7 +24,7 @@ import {
 } from '@n8n/decorators';
 import { PROJECT_OWNER_ROLE_SLUG } from '@n8n/permissions';
 // eslint-disable-next-line n8n-local-rules/misplaced-n8n-typeorm-import
-import { In, type FindOptionsRelations } from '@n8n/typeorm';
+import { In } from '@n8n/typeorm';
 import axios from 'axios';
 import express from 'express';
 import { UnexpectedError } from 'n8n-workflow';
@@ -47,7 +47,6 @@ import { ExecutionService } from '@/executions/execution.service';
 import { ExternalHooks } from '@/external-hooks';
 import { validateEntity } from '@/generic-helpers';
 import type { IWorkflowResponse } from '@/interfaces';
-import { listQueryMiddleware } from '@/middlewares';
 import * as ResponseHelper from '@/response-helper';
 import { FolderService } from '@/services/folder.service';
 import { NamingService } from '@/services/naming.service';
@@ -56,6 +55,7 @@ import { TagService } from '@/services/tag.service';
 import { UserManagementMailer } from '@/user-management/email';
 import * as utils from '@/utils';
 import * as WorkflowHelpers from '@/workflow-helpers';
+import { listQueryMiddleware } from '@/middlewares';
 
 @RestController('/workflows')
 export class WorkflowsController {

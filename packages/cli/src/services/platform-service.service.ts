@@ -114,4 +114,143 @@ export class PlatformServiceService {
 		// 计算费用: (使用的 token 数 / 1000) * 千 token 单价
 		return (tokensUsed / 1000) * pricePerThousandTokens;
 	}
+
+	// ===========================
+	// 插件管理相关方法
+	// Plugin Management Methods
+	// ===========================
+
+	/**
+	 * 获取工作空间可用的插件列表
+	 *
+	 * 包括：
+	 * 1. 全局可见的插件（platform_managed 和 user_managed）
+	 * 2. 当前工作空间的自定义插件
+	 *
+	 * @param workspaceId - 工作空间 ID
+	 * @param enabledOnly - 是否只返回已启用的插件（默认 true）
+	 * @returns 可用插件列表
+	 */
+	async getAvailablePlugins(
+		workspaceId: string,
+		enabledOnly: boolean = true,
+	): Promise<PlatformService[]> {
+		const where = enabledOnly ? { enabled: true } : {};
+
+		// 1. 获取全局插件
+		const globalPlugins = await this.platformServiceRepository.find({
+			where: { serviceType: 'plugin', visibility: 'global', ...where },
+		});
+
+		// 2. 获取当前工作空间的自定义插件
+		const workspacePlugins = await this.platformServiceRepository.find({
+			where: {
+				serviceType: 'plugin',
+				visibility: 'workspace',
+				ownerWorkspaceId: workspaceId,
+				...where,
+			},
+		});
+
+		return [...globalPlugins, ...workspacePlugins];
+	}
+
+	/**
+	 * 获取工作空间的自定义插件
+	 *
+	 * @param workspaceId - 工作空间 ID
+	 * @returns 自定义插件列表
+	 */
+	async getCustomPluginsByWorkspace(workspaceId: string): Promise<PlatformService[]> {
+		return await this.platformServiceRepository.find({
+			where: { visibility: 'workspace', ownerWorkspaceId: workspaceId },
+			order: { createdAt: 'DESC' },
+		});
+	}
+
+	/**
+	 * 获取所有插件（管理员使用）
+	 *
+	 * @param filters - 过滤条件
+	 * @returns 插件列表
+	 */
+	async getAllPlugins(filters?: {
+		visibility?: 'global' | 'workspace';
+		serviceMode?: 'platform_managed' | 'user_managed';
+		submissionStatus?: 'pending' | 'approved' | 'rejected';
+	}): Promise<PlatformService[]> {
+		const where: Record<string, unknown> = { serviceType: 'plugin' };
+
+		if (filters?.visibility) where.visibility = filters.visibility;
+		if (filters?.serviceMode) where.serviceMode = filters.serviceMode;
+		if (filters?.submissionStatus) where.submissionStatus = filters.submissionStatus;
+
+		return await this.platformServiceRepository.find({
+			where,
+			relations: ['ownerWorkspace'],
+			order: { createdAt: 'DESC' },
+		});
+	}
+
+	/**
+	 * 获取待审核的插件提交列表
+	 *
+	 * @param status - 提交状态过滤
+	 * @returns 待审核的插件列表
+	 */
+	async getPluginSubmissions(
+		status?: 'pending' | 'approved' | 'rejected',
+	): Promise<PlatformService[]> {
+		const where: Record<string, unknown> = {
+			visibility: 'workspace',
+		};
+
+		if (status) {
+			where.submissionStatus = status;
+		}
+
+		return await this.platformServiceRepository.find({
+			where,
+			relations: ['ownerWorkspace'],
+			order: { submittedAt: 'DESC' },
+		});
+	}
+
+	/**
+	 * 检查插件是否存在
+	 *
+	 * @param serviceKey - 插件标识
+	 * @param visibility - 可见性过滤（可选）
+	 * @returns 是否存在
+	 */
+	async pluginExists(serviceKey: string, visibility?: 'global' | 'workspace'): Promise<boolean> {
+		const where: Record<string, unknown> = { serviceKey, serviceType: 'plugin' };
+
+		if (visibility) {
+			where.visibility = visibility;
+		}
+
+		const count = await this.platformServiceRepository.count({ where });
+		return count > 0;
+	}
+
+	/**
+	 * 启用/禁用插件
+	 *
+	 * @param serviceKey - 插件标识
+	 * @param enabled - 是否启用
+	 * @throws {ServiceNotFoundError} 当插件不存在时
+	 */
+	async togglePlugin(serviceKey: string, enabled: boolean): Promise<void> {
+		const plugin = await this.platformServiceRepository.findOne({
+			where: { serviceKey, serviceType: 'plugin' },
+		});
+
+		if (!plugin) {
+			throw new ServiceNotFoundError(serviceKey);
+		}
+
+		plugin.enabled = enabled;
+		await this.platformServiceRepository.save(plugin);
+	}
 }

@@ -1,10 +1,4 @@
-import {
-	mockInstance,
-	testDb,
-	getPersonalProject,
-	getAllSharedWorkflows,
-	getAllWorkflows,
-} from '@n8n/backend-test-utils';
+import { mockInstance, testDb, getPersonalProject, getAllWorkflows } from '@n8n/backend-test-utils';
 import { nanoid } from 'nanoid';
 
 import '@/zod-alias-support';
@@ -21,7 +15,7 @@ mockInstance(ActiveWorkflowManager);
 const command = setupTestCommand(ImportWorkflowsCommand);
 
 beforeEach(async () => {
-	await testDb.truncate(['WorkflowEntity', 'SharedWorkflow', 'User']);
+	await testDb.truncate(['WorkflowEntity', 'User']);
 });
 
 test('import:workflow should import active workflow and deactivate it', async () => {
@@ -42,28 +36,24 @@ test('import:workflow should import active workflow and deactivate it', async ()
 	//
 	// ASSERT
 	//
-	const after = {
-		workflows: await getAllWorkflows(),
-		sharings: await getAllSharedWorkflows(),
-	};
-	expect(after).toMatchObject({
-		workflows: [
-			expect.objectContaining({ name: 'active-workflow', active: false }),
-			expect.objectContaining({ name: 'inactive-workflow', active: false }),
-		],
-		sharings: [
+	const workflows = await getAllWorkflows();
+	expect(workflows).toHaveLength(2);
+	expect(workflows).toEqual(
+		expect.arrayContaining([
 			expect.objectContaining({
-				workflowId: '998',
+				id: '998',
+				name: 'active-workflow',
+				active: false,
 				projectId: ownerProject.id,
-				role: 'workflow:owner',
 			}),
 			expect.objectContaining({
-				workflowId: '999',
+				id: '999',
+				name: 'inactive-workflow',
+				active: false,
 				projectId: ownerProject.id,
-				role: 'workflow:owner',
 			}),
-		],
-	});
+		]),
+	);
 });
 
 test('import:workflow should import active workflow from combined file and deactivate it', async () => {
@@ -83,28 +73,24 @@ test('import:workflow should import active workflow from combined file and deact
 	//
 	// ASSERT
 	//
-	const after = {
-		workflows: await getAllWorkflows(),
-		sharings: await getAllSharedWorkflows(),
-	};
-	expect(after).toMatchObject({
-		workflows: [
-			expect.objectContaining({ name: 'active-workflow', active: false }),
-			expect.objectContaining({ name: 'inactive-workflow', active: false }),
-		],
-		sharings: [
+	const workflows = await getAllWorkflows();
+	expect(workflows).toHaveLength(2);
+	expect(workflows).toEqual(
+		expect.arrayContaining([
 			expect.objectContaining({
-				workflowId: '998',
+				id: '998',
+				name: 'active-workflow',
+				active: false,
 				projectId: ownerProject.id,
-				role: 'workflow:owner',
 			}),
 			expect.objectContaining({
-				workflowId: '999',
+				id: '999',
+				name: 'inactive-workflow',
+				active: false,
 				projectId: ownerProject.id,
-				role: 'workflow:owner',
 			}),
-		],
-	});
+		]),
+	);
 });
 
 test('import:workflow can import a single workflow object', async () => {
@@ -122,20 +108,16 @@ test('import:workflow can import a single workflow object', async () => {
 	//
 	// ASSERT
 	//
-	const after = {
-		workflows: await getAllWorkflows(),
-		sharings: await getAllSharedWorkflows(),
-	};
-	expect(after).toMatchObject({
-		workflows: [expect.objectContaining({ name: 'active-workflow', active: false })],
-		sharings: [
-			expect.objectContaining({
-				workflowId: '998',
-				projectId: ownerProject.id,
-				role: 'workflow:owner',
-			}),
-		],
-	});
+	const workflows = await getAllWorkflows();
+	expect(workflows).toHaveLength(1);
+	expect(workflows).toEqual([
+		expect.objectContaining({
+			id: '998',
+			name: 'active-workflow',
+			active: false,
+			projectId: ownerProject.id,
+		}),
+	]);
 });
 
 test('`import:workflow --userId ...` should fail if the workflow exists already and is owned by somebody else', async () => {
@@ -152,21 +134,16 @@ test('`import:workflow --userId ...` should fail if the workflow exists already 
 		`--userId=${owner.id}`,
 	]);
 
-	const before = {
-		workflows: await getAllWorkflows(),
-		sharings: await getAllSharedWorkflows(),
-	};
-	// Make sure the workflow and sharing have been created.
-	expect(before).toMatchObject({
-		workflows: [expect.objectContaining({ id: '998', name: 'active-workflow' })],
-		sharings: [
-			expect.objectContaining({
-				workflowId: '998',
-				projectId: ownerProject.id,
-				role: 'workflow:owner',
-			}),
-		],
-	});
+	const before = await getAllWorkflows();
+	// Make sure the workflow has been created.
+	expect(before).toHaveLength(1);
+	expect(before).toEqual([
+		expect.objectContaining({
+			id: '998',
+			name: 'active-workflow',
+			projectId: ownerProject.id,
+		}),
+	]);
 
 	//
 	// ACT
@@ -185,21 +162,16 @@ test('`import:workflow --userId ...` should fail if the workflow exists already 
 	//
 	// ASSERT
 	//
-	const after = {
-		workflows: await getAllWorkflows(),
-		sharings: await getAllSharedWorkflows(),
-	};
-	// Make sure there is no new sharing and that the name DID NOT change.
-	expect(after).toMatchObject({
-		workflows: [expect.objectContaining({ id: '998', name: 'active-workflow' })],
-		sharings: [
-			expect.objectContaining({
-				workflowId: '998',
-				projectId: ownerProject.id,
-				role: 'workflow:owner',
-			}),
-		],
-	});
+	const after = await getAllWorkflows();
+	// Make sure there is no new workflow and that the name DID NOT change.
+	expect(after).toHaveLength(1);
+	expect(after).toEqual([
+		expect.objectContaining({
+			id: '998',
+			name: 'active-workflow',
+			projectId: ownerProject.id,
+		}),
+	]);
 });
 
 test("only update the workflow, don't create or update the owner if `--userId` is not passed", async () => {
@@ -216,21 +188,16 @@ test("only update the workflow, don't create or update the owner if `--userId` i
 		`--userId=${member.id}`,
 	]);
 
-	const before = {
-		workflows: await getAllWorkflows(),
-		sharings: await getAllSharedWorkflows(),
-	};
-	// Make sure the workflow and sharing have been created.
-	expect(before).toMatchObject({
-		workflows: [expect.objectContaining({ id: '998', name: 'active-workflow' })],
-		sharings: [
-			expect.objectContaining({
-				workflowId: '998',
-				projectId: memberProject.id,
-				role: 'workflow:owner',
-			}),
-		],
-	});
+	const before = await getAllWorkflows();
+	// Make sure the workflow has been created.
+	expect(before).toHaveLength(1);
+	expect(before).toEqual([
+		expect.objectContaining({
+			id: '998',
+			name: 'active-workflow',
+			projectId: memberProject.id,
+		}),
+	]);
 
 	//
 	// ACT
@@ -243,21 +210,16 @@ test("only update the workflow, don't create or update the owner if `--userId` i
 	//
 	// ASSERT
 	//
-	const after = {
-		workflows: await getAllWorkflows(),
-		sharings: await getAllSharedWorkflows(),
-	};
-	// Make sure there is no new sharing and that the name changed.
-	expect(after).toMatchObject({
-		workflows: [expect.objectContaining({ id: '998', name: 'active-workflow updated' })],
-		sharings: [
-			expect.objectContaining({
-				workflowId: '998',
-				projectId: memberProject.id,
-				role: 'workflow:owner',
-			}),
-		],
-	});
+	const after = await getAllWorkflows();
+	// Make sure the workflow is still owned by the same project and the name changed.
+	expect(after).toHaveLength(1);
+	expect(after).toEqual([
+		expect.objectContaining({
+			id: '998',
+			name: 'active-workflow updated',
+			projectId: memberProject.id,
+		}),
+	]);
 });
 
 test('`import:workflow --projectId ...` should fail if the credential already exists and is owned by another project', async () => {
@@ -275,21 +237,16 @@ test('`import:workflow --projectId ...` should fail if the credential already ex
 		`--userId=${owner.id}`,
 	]);
 
-	const before = {
-		workflows: await getAllWorkflows(),
-		sharings: await getAllSharedWorkflows(),
-	};
-	// Make sure the workflow and sharing have been created.
-	expect(before).toMatchObject({
-		workflows: [expect.objectContaining({ id: '998', name: 'active-workflow' })],
-		sharings: [
-			expect.objectContaining({
-				workflowId: '998',
-				projectId: ownerProject.id,
-				role: 'workflow:owner',
-			}),
-		],
-	});
+	const before = await getAllWorkflows();
+	// Make sure the workflow has been created.
+	expect(before).toHaveLength(1);
+	expect(before).toEqual([
+		expect.objectContaining({
+			id: '998',
+			name: 'active-workflow',
+			projectId: ownerProject.id,
+		}),
+	]);
 
 	//
 	// ACT
@@ -308,21 +265,16 @@ test('`import:workflow --projectId ...` should fail if the credential already ex
 	//
 	// ASSERT
 	//
-	const after = {
-		workflows: await getAllWorkflows(),
-		sharings: await getAllSharedWorkflows(),
-	};
-	// Make sure there is no new sharing and that the name DID NOT change.
-	expect(after).toMatchObject({
-		workflows: [expect.objectContaining({ id: '998', name: 'active-workflow' })],
-		sharings: [
-			expect.objectContaining({
-				workflowId: '998',
-				projectId: ownerProject.id,
-				role: 'workflow:owner',
-			}),
-		],
-	});
+	const after = await getAllWorkflows();
+	// Make sure the workflow is still owned by the same project and the name DID NOT change.
+	expect(after).toHaveLength(1);
+	expect(after).toEqual([
+		expect.objectContaining({
+			id: '998',
+			name: 'active-workflow',
+			projectId: ownerProject.id,
+		}),
+	]);
 });
 
 test('`import:workflow --projectId ... --userId ...` fails explaining that only one of the options can be used at a time', async () => {

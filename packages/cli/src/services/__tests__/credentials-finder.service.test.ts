@@ -1,11 +1,10 @@
 import {
 	GLOBAL_MEMBER_ROLE,
 	GLOBAL_OWNER_ROLE,
-	type SharedCredentials,
 	CredentialsRepository,
-	SharedCredentialsRepository,
+	CredentialsEntity,
 } from '@n8n/db';
-import type { CredentialsEntity, User } from '@n8n/db';
+import type { User } from '@n8n/db';
 import { Container } from '@n8n/di';
 import {
 	PROJECT_ADMIN_ROLE_SLUG,
@@ -23,13 +22,16 @@ import { RoleService } from '../role.service';
 describe('CredentialsFinderService', () => {
 	const roleService = mockInstance(RoleService);
 	const credentialsRepository = mockInstance(CredentialsRepository);
-	const sharedCredentialsRepository = mockInstance(SharedCredentialsRepository);
 	const credentialsFinderService = Container.get(CredentialsFinderService);
 
 	beforeAll(() => {
-		Container.set(RoleService, roleService);
-		Container.set(CredentialsRepository, credentialsRepository);
-		Container.set(SharedCredentialsRepository, sharedCredentialsRepository);
+		mockInstance(RoleService, roleService);
+		mockInstance(CredentialsRepository, credentialsRepository);
+		// Add target property for repository
+		Object.defineProperty(credentialsRepository, 'target', {
+			value: CredentialsEntity,
+			configurable: true,
+		});
 	});
 
 	beforeEach(() => {
@@ -53,8 +55,7 @@ describe('CredentialsFinderService', () => {
 
 	describe('findCredentialForUser', () => {
 		const credentialsId = 'cred_123';
-		const sharedCredential = mock<SharedCredentials>();
-		sharedCredential.credentials = mock<CredentialsEntity>({ id: credentialsId });
+		const credential = mock<CredentialsEntity>({ id: credentialsId, projectId: 'project1' });
 		const owner = mock<User>({
 			role: GLOBAL_OWNER_ROLE,
 		});
@@ -64,40 +65,30 @@ describe('CredentialsFinderService', () => {
 		});
 
 		test('should allow instance owner access to all credentials', async () => {
-			sharedCredentialsRepository.findOne.mockResolvedValueOnce(sharedCredential);
-			const credential = await credentialsFinderService.findCredentialForUser(
-				credentialsId,
-				owner,
-				['credential:read' as const],
-			);
-			expect(sharedCredentialsRepository.findOne).toHaveBeenCalledWith({
-				where: { credentialsId },
-				relations: {
-					credentials: {
-						shared: { project: { projectRelations: { user: true } } },
-					},
-				},
+			credentialsRepository.findOne.mockResolvedValueOnce(credential);
+			const result = await credentialsFinderService.findCredentialForUser(credentialsId, owner, [
+				'credential:read' as const,
+			]);
+			expect(credentialsRepository.findOne).toHaveBeenCalledWith({
+				where: { id: credentialsId },
+				relations: ['project', 'project.projectRelations', 'project.projectRelations.user'],
 			});
 			expect(roleService.rolesWithScope).not.toHaveBeenCalled();
-			expect(credential).toEqual(sharedCredential.credentials);
+			expect(result).toEqual(credential);
 		});
 
 		test('should allow members and call RoleService correctly', async () => {
-			sharedCredentialsRepository.findOne.mockResolvedValueOnce(sharedCredential);
-			const credential = await credentialsFinderService.findCredentialForUser(
-				credentialsId,
-				member,
-				['credential:read' as const],
-			);
+			credentialsRepository.findOne.mockResolvedValueOnce(credential);
+			const result = await credentialsFinderService.findCredentialForUser(credentialsId, member, [
+				'credential:read' as const,
+			]);
 
-			expect(roleService.rolesWithScope).toHaveBeenCalledTimes(2);
+			expect(roleService.rolesWithScope).toHaveBeenCalledTimes(1);
 			expect(roleService.rolesWithScope).toHaveBeenCalledWith('project', ['credential:read']);
-			expect(roleService.rolesWithScope).toHaveBeenCalledWith('credential', ['credential:read']);
 
-			expect(sharedCredentialsRepository.findOne).toHaveBeenCalledWith({
+			expect(credentialsRepository.findOne).toHaveBeenCalledWith({
 				where: {
-					credentialsId,
-					role: In(['credential:owner', 'credential:user']),
+					id: credentialsId,
 					project: {
 						projectRelations: {
 							role: In([
@@ -110,26 +101,19 @@ describe('CredentialsFinderService', () => {
 						},
 					},
 				},
-				relations: {
-					credentials: {
-						shared: { project: { projectRelations: { user: true } } },
-					},
-				},
+				relations: ['project', 'project.projectRelations', 'project.projectRelations.user'],
 			});
-			expect(credential).toEqual(sharedCredential.credentials);
+			expect(result).toEqual(credential);
 		});
 
-		test('should return null when no shared credential is found', async () => {
-			sharedCredentialsRepository.findOne.mockResolvedValueOnce(null);
-			const credential = await credentialsFinderService.findCredentialForUser(
-				credentialsId,
-				member,
-				['credential:read' as const],
-			);
-			expect(sharedCredentialsRepository.findOne).toHaveBeenCalledWith({
+		test('should return null when no credential is found', async () => {
+			credentialsRepository.findOne.mockResolvedValueOnce(null);
+			const result = await credentialsFinderService.findCredentialForUser(credentialsId, member, [
+				'credential:read' as const,
+			]);
+			expect(credentialsRepository.findOne).toHaveBeenCalledWith({
 				where: {
-					credentialsId,
-					role: In(['credential:owner', 'credential:user']),
+					id: credentialsId,
 					project: {
 						projectRelations: {
 							role: In([
@@ -142,36 +126,27 @@ describe('CredentialsFinderService', () => {
 						},
 					},
 				},
-				relations: {
-					credentials: {
-						shared: { project: { projectRelations: { user: true } } },
-					},
-				},
+				relations: ['project', 'project.projectRelations', 'project.projectRelations.user'],
 			});
-			expect(credential).toEqual(null);
+			expect(result).toEqual(null);
 		});
 
 		test('should handle custom roles from RoleService', async () => {
 			roleService.rolesWithScope.mockImplementation(async (namespace) => {
 				if (namespace === 'project') {
 					return ['custom:project-admin-abc123', PROJECT_VIEWER_ROLE_SLUG];
-				} else if (namespace === 'credential') {
-					return ['custom:cred-manager-xyz789', 'credential:user'];
 				}
 				return [];
 			});
 
-			sharedCredentialsRepository.findOne.mockResolvedValueOnce(sharedCredential);
-			const credential = await credentialsFinderService.findCredentialForUser(
-				credentialsId,
-				member,
-				['credential:update' as const],
-			);
+			credentialsRepository.findOne.mockResolvedValueOnce(credential);
+			const result = await credentialsFinderService.findCredentialForUser(credentialsId, member, [
+				'credential:update' as const,
+			]);
 
-			expect(sharedCredentialsRepository.findOne).toHaveBeenCalledWith({
+			expect(credentialsRepository.findOne).toHaveBeenCalledWith({
 				where: {
-					credentialsId,
-					role: In(['custom:cred-manager-xyz789', 'credential:user']),
+					id: credentialsId,
 					project: {
 						projectRelations: {
 							role: In(['custom:project-admin-abc123', PROJECT_VIEWER_ROLE_SLUG]),
@@ -179,13 +154,9 @@ describe('CredentialsFinderService', () => {
 						},
 					},
 				},
-				relations: {
-					credentials: {
-						shared: { project: { projectRelations: { user: true } } },
-					},
-				},
+				relations: ['project', 'project.projectRelations', 'project.projectRelations.user'],
 			});
-			expect(credential).toEqual(sharedCredential.credentials);
+			expect(result).toEqual(credential);
 		});
 
 		test('should handle RoleService failure gracefully', async () => {
@@ -197,14 +168,14 @@ describe('CredentialsFinderService', () => {
 				]),
 			).rejects.toThrow('Role cache unavailable');
 
-			expect(sharedCredentialsRepository.findOne).not.toHaveBeenCalled();
+			expect(credentialsRepository.findOne).not.toHaveBeenCalled();
 		});
 	});
 
 	describe('findCredentialsForUser', () => {
 		const credentials = [
-			mock<CredentialsEntity>({ id: 'cred1', shared: [] }),
-			mock<CredentialsEntity>({ id: 'cred2', shared: [] }),
+			mock<CredentialsEntity>({ id: 'cred1', projectId: 'project1' }),
+			mock<CredentialsEntity>({ id: 'cred2', projectId: 'project2' }),
 		];
 		const owner = mock<User>({ role: GLOBAL_OWNER_ROLE });
 		const member = mock<User>({ role: GLOBAL_MEMBER_ROLE, id: 'user123' });
@@ -222,7 +193,7 @@ describe('CredentialsFinderService', () => {
 
 			expect(credentialsRepository.find).toHaveBeenCalledWith({
 				where: {},
-				relations: { shared: true },
+				relations: ['project', 'project.projectRelations', 'project.projectRelations.user'],
 			});
 			expect(roleService.rolesWithScope).not.toHaveBeenCalled();
 			expect(result).toEqual(credentials);
@@ -236,25 +207,21 @@ describe('CredentialsFinderService', () => {
 			]);
 
 			expect(roleService.rolesWithScope).toHaveBeenCalledWith('project', ['credential:update']);
-			expect(roleService.rolesWithScope).toHaveBeenCalledWith('credential', ['credential:update']);
 			expect(credentialsRepository.find).toHaveBeenCalledWith({
 				where: {
-					shared: {
-						role: In(['credential:owner', 'credential:user']),
-						project: {
-							projectRelations: {
-								role: In([
-									PROJECT_ADMIN_ROLE_SLUG,
-									PROJECT_OWNER_ROLE_SLUG,
-									PROJECT_EDITOR_ROLE_SLUG,
-									PROJECT_VIEWER_ROLE_SLUG,
-								]),
-								userId: member.id,
-							},
+					project: {
+						projectRelations: {
+							role: In([
+								PROJECT_ADMIN_ROLE_SLUG,
+								PROJECT_OWNER_ROLE_SLUG,
+								PROJECT_EDITOR_ROLE_SLUG,
+								PROJECT_VIEWER_ROLE_SLUG,
+							]),
+							userId: member.id,
 						},
 					},
 				},
-				relations: { shared: true },
+				relations: ['project', 'project.projectRelations', 'project.projectRelations.user'],
 			});
 			expect(result).toEqual(credentials);
 		});
@@ -262,7 +229,6 @@ describe('CredentialsFinderService', () => {
 		test('should handle custom roles in filtering', async () => {
 			roleService.rolesWithScope.mockImplementation(async (namespace) => {
 				if (namespace === 'project') return ['custom:project-lead-456'];
-				if (namespace === 'credential') return ['custom:cred-admin-789'];
 				return [];
 			});
 
@@ -275,36 +241,23 @@ describe('CredentialsFinderService', () => {
 
 			expect(credentialsRepository.find).toHaveBeenCalledWith({
 				where: {
-					shared: {
-						role: In(['custom:cred-admin-789']),
-						project: {
-							projectRelations: {
-								role: In(['custom:project-lead-456']),
-								userId: member.id,
-							},
+					project: {
+						projectRelations: {
+							role: In(['custom:project-lead-456']),
+							userId: member.id,
 						},
 					},
 				},
-				relations: { shared: true },
+				relations: ['project', 'project.projectRelations', 'project.projectRelations.user'],
 			});
 			expect(result).toEqual(singleCredResult);
 		});
 	});
 
 	describe('findAllCredentialsForUser', () => {
-		const sharedCredentials = [
-			mock<SharedCredentials>({
-				credentials: mock<CredentialsEntity>({ id: 'cred1' }),
-				projectId: 'proj1',
-				credentialsId: 'cred1',
-				role: 'credential:owner',
-			}),
-			mock<SharedCredentials>({
-				credentials: mock<CredentialsEntity>({ id: 'cred2' }),
-				projectId: 'proj2',
-				credentialsId: 'cred2',
-				role: 'credential:user',
-			}),
+		const credentials = [
+			mock<CredentialsEntity>({ id: 'cred1', projectId: 'proj1' }),
+			mock<CredentialsEntity>({ id: 'cred2', projectId: 'proj2' }),
 		];
 		const owner = mock<User>({ role: GLOBAL_OWNER_ROLE });
 		const member = mock<User>({ role: GLOBAL_MEMBER_ROLE, id: 'user123' });
@@ -321,47 +274,51 @@ describe('CredentialsFinderService', () => {
 						PROJECT_EDITOR_ROLE_SLUG,
 						PROJECT_VIEWER_ROLE_SLUG,
 					];
-				} else if (namespace === 'credential') {
-					return ['credential:owner', 'credential:user'];
 				}
 				return [];
 			});
 		});
 
 		test('should allow global owner access without filtering', async () => {
-			sharedCredentialsRepository.findCredentialsWithOptions.mockResolvedValueOnce(
-				sharedCredentials,
-			);
+			const mockManager = {
+				find: jest.fn().mockResolvedValueOnce(credentials),
+			};
+			Object.defineProperty(credentialsRepository, 'manager', {
+				get: jest.fn(() => mockManager),
+				configurable: true,
+			});
 
 			const result = await credentialsFinderService.findAllCredentialsForUser(owner, [
 				'credential:read' as const,
 			]);
 
-			expect(sharedCredentialsRepository.findCredentialsWithOptions).toHaveBeenCalledWith(
-				{},
-				undefined,
-			);
+			expect(mockManager.find).toHaveBeenCalledWith(credentialsRepository.target, {
+				where: {},
+				relations: ['project'],
+			});
 			expect(roleService.rolesWithScope).not.toHaveBeenCalled();
 			expect(result).toEqual([
-				{ ...sharedCredentials[0].credentials, projectId: 'proj1' },
-				{ ...sharedCredentials[1].credentials, projectId: 'proj2' },
+				{ ...credentials[0], projectId: 'proj1' },
+				{ ...credentials[1], projectId: 'proj2' },
 			]);
 		});
 
 		test('should filter by roles for regular members', async () => {
-			sharedCredentialsRepository.findCredentialsWithOptions.mockResolvedValueOnce([
-				sharedCredentials[0],
-			]);
+			const mockManager = {
+				find: jest.fn().mockResolvedValueOnce([credentials[0]]),
+			};
+			Object.defineProperty(credentialsRepository, 'manager', {
+				get: jest.fn(() => mockManager),
+				configurable: true,
+			});
 
 			const result = await credentialsFinderService.findAllCredentialsForUser(member, [
 				'credential:read' as const,
 			]);
 
 			expect(roleService.rolesWithScope).toHaveBeenCalledWith('project', ['credential:read']);
-			expect(roleService.rolesWithScope).toHaveBeenCalledWith('credential', ['credential:read']);
-			expect(sharedCredentialsRepository.findCredentialsWithOptions).toHaveBeenCalledWith(
-				{
-					role: In(['credential:owner', 'credential:user']),
+			expect(mockManager.find).toHaveBeenCalledWith(credentialsRepository.target, {
+				where: {
 					project: {
 						projectRelations: {
 							role: In([
@@ -374,33 +331,37 @@ describe('CredentialsFinderService', () => {
 						},
 					},
 				},
-				undefined,
-			);
-			expect(result).toEqual([{ ...sharedCredentials[0].credentials, projectId: 'proj1' }]);
+				relations: ['project'],
+			});
+			expect(result).toEqual([{ ...credentials[0], projectId: 'proj1' }]);
 		});
 
 		test('should support transaction manager', async () => {
-			const mockTrx = mock<any>();
-			sharedCredentialsRepository.findCredentialsWithOptions.mockResolvedValueOnce([]);
+			const mockTrx = {
+				find: jest.fn().mockResolvedValueOnce([]),
+			};
 
 			await credentialsFinderService.findAllCredentialsForUser(
 				member,
 				['credential:read' as const],
-				mockTrx,
+				mockTrx as any,
 			);
 
-			expect(sharedCredentialsRepository.findCredentialsWithOptions).toHaveBeenCalledWith(
-				expect.any(Object),
-				mockTrx,
+			expect(mockTrx.find).toHaveBeenCalledWith(
+				credentialsRepository.target,
+				expect.objectContaining({
+					where: expect.any(Object),
+					relations: ['project'],
+				}),
 			);
 		});
 	});
 
 	describe('getCredentialIdsByUserAndRole', () => {
 		const userIds = ['user1', 'user2'];
-		const mockSharings = [
-			mock<SharedCredentials>({ credentialsId: 'cred1' }),
-			mock<SharedCredentials>({ credentialsId: 'cred2' }),
+		const mockCredentials = [
+			mock<CredentialsEntity>({ id: 'cred1', projectId: 'proj1' }),
+			mock<CredentialsEntity>({ id: 'cred2', projectId: 'proj2' }),
 		];
 
 		beforeEach(() => {
@@ -415,15 +376,19 @@ describe('CredentialsFinderService', () => {
 						PROJECT_EDITOR_ROLE_SLUG,
 						PROJECT_VIEWER_ROLE_SLUG,
 					];
-				} else if (namespace === 'credential') {
-					return ['credential:owner', 'credential:user'];
 				}
 				return [];
 			});
 		});
 
 		test('should use RoleService when scopes are provided', async () => {
-			sharedCredentialsRepository.findCredentialsByRoles.mockResolvedValueOnce(mockSharings);
+			const mockManager = {
+				find: jest.fn().mockResolvedValueOnce(mockCredentials),
+			};
+			Object.defineProperty(credentialsRepository, 'manager', {
+				get: jest.fn(() => mockManager),
+				configurable: true,
+			});
 
 			const result = await credentialsFinderService.getCredentialIdsByUserAndRole(userIds, {
 				scopes: ['credential:read' as const, 'credential:update' as const],
@@ -433,28 +398,35 @@ describe('CredentialsFinderService', () => {
 				'credential:read',
 				'credential:update',
 			]);
-			expect(roleService.rolesWithScope).toHaveBeenCalledWith('credential', [
-				'credential:read',
-				'credential:update',
-			]);
-			expect(sharedCredentialsRepository.findCredentialsByRoles).toHaveBeenCalledWith(
-				userIds,
-				[
-					PROJECT_ADMIN_ROLE_SLUG,
-					PROJECT_OWNER_ROLE_SLUG,
-					PROJECT_EDITOR_ROLE_SLUG,
-					PROJECT_VIEWER_ROLE_SLUG,
-				],
-				['credential:owner', 'credential:user'],
-				undefined,
-			);
-			expect(result).toEqual([mockSharings[0].credentialsId, mockSharings[1].credentialsId]);
+			expect(mockManager.find).toHaveBeenCalledWith(credentialsRepository.target, {
+				where: {
+					project: {
+						projectRelations: {
+							userId: In(userIds),
+							role: In([
+								PROJECT_ADMIN_ROLE_SLUG,
+								PROJECT_OWNER_ROLE_SLUG,
+								PROJECT_EDITOR_ROLE_SLUG,
+								PROJECT_VIEWER_ROLE_SLUG,
+							]),
+						},
+					},
+				},
+				select: ['id'],
+			});
+			expect(result).toEqual(['cred1', 'cred2']);
 		});
 
 		test('should use direct roles when provided', async () => {
 			const projectRoles = ['custom:project-admin'] as any;
 			const credentialRoles = ['custom:cred-viewer'] as any;
-			sharedCredentialsRepository.findCredentialsByRoles.mockResolvedValueOnce([mockSharings[0]]);
+			const mockManager = {
+				find: jest.fn().mockResolvedValueOnce([mockCredentials[0]]),
+			};
+			Object.defineProperty(credentialsRepository, 'manager', {
+				get: jest.fn(() => mockManager),
+				configurable: true,
+			});
 
 			const result = await credentialsFinderService.getCredentialIdsByUserAndRole(userIds, {
 				projectRoles,
@@ -462,35 +434,48 @@ describe('CredentialsFinderService', () => {
 			});
 
 			expect(roleService.rolesWithScope).not.toHaveBeenCalled();
-			expect(sharedCredentialsRepository.findCredentialsByRoles).toHaveBeenCalledWith(
-				userIds,
-				projectRoles,
-				credentialRoles,
-				undefined,
-			);
-			expect(result).toEqual([mockSharings[0].credentialsId]);
+			expect(mockManager.find).toHaveBeenCalledWith(credentialsRepository.target, {
+				where: {
+					project: {
+						projectRelations: {
+							userId: In(userIds),
+							role: In(projectRoles),
+						},
+					},
+				},
+				select: ['id'],
+			});
+			expect(result).toEqual(['cred1']);
 		});
 
 		test('should support transaction manager', async () => {
-			const mockTrx = mock<any>();
-			sharedCredentialsRepository.findCredentialsByRoles.mockResolvedValueOnce([]);
+			const mockTrx = {
+				find: jest.fn().mockResolvedValueOnce([]),
+			};
 
 			await credentialsFinderService.getCredentialIdsByUserAndRole(
 				userIds,
 				{ scopes: ['credential:read' as const] },
-				mockTrx,
+				mockTrx as any,
 			);
 
-			expect(sharedCredentialsRepository.findCredentialsByRoles).toHaveBeenCalledWith(
-				expect.any(Array),
-				expect.any(Array),
-				expect.any(Array),
-				mockTrx,
+			expect(mockTrx.find).toHaveBeenCalledWith(
+				credentialsRepository.target,
+				expect.objectContaining({
+					where: expect.any(Object),
+					select: ['id'],
+				}),
 			);
 		});
 
 		test('should handle empty results', async () => {
-			sharedCredentialsRepository.findCredentialsByRoles.mockResolvedValueOnce([]);
+			const mockManager = {
+				find: jest.fn().mockResolvedValueOnce([]),
+			};
+			Object.defineProperty(credentialsRepository, 'manager', {
+				get: jest.fn(() => mockManager),
+				configurable: true,
+			});
 
 			const result = await credentialsFinderService.getCredentialIdsByUserAndRole(userIds, {
 				scopes: ['credential:read' as const],
@@ -556,7 +541,6 @@ describe('CredentialsFinderService', () => {
 		test('should maintain namespace isolation', async () => {
 			roleService.rolesWithScope.mockImplementation(async (namespace) => {
 				if (namespace === 'project') return ['workflow:owner']; // Wrong namespace
-				if (namespace === 'credential') return ['project:admin']; // Wrong namespace
 				return [];
 			});
 
@@ -569,17 +553,14 @@ describe('CredentialsFinderService', () => {
 
 			expect(credentialsRepository.find).toHaveBeenCalledWith({
 				where: {
-					shared: {
-						role: In(['project:admin']), // Uses what RoleService returned for credential namespace
-						project: {
-							projectRelations: {
-								role: In(['workflow:owner']), // Uses what RoleService returned for project namespace
-								userId: member.id,
-							},
+					project: {
+						projectRelations: {
+							role: In(['workflow:owner']), // Uses what RoleService returned for project namespace
+							userId: member.id,
 						},
 					},
 				},
-				relations: { shared: true },
+				relations: ['project', 'project.projectRelations', 'project.projectRelations.user'],
 			});
 			expect(result).toEqual(isolationResult);
 		});

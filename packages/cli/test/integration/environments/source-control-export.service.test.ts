@@ -6,7 +6,6 @@ import {
 	GLOBAL_ADMIN_ROLE,
 	type Project,
 	ProjectRepository,
-	SharedCredentialsRepository,
 	type User,
 } from '@n8n/db';
 import { Container } from '@n8n/di';
@@ -37,7 +36,6 @@ describe('SourceControlExportService Integration', () => {
 
 	// Repositories
 	let credentialsRepository: CredentialsRepository;
-	let sharedCredentialsRepository: SharedCredentialsRepository;
 	let projectRepository: ProjectRepository;
 
 	// Mocked functions
@@ -48,7 +46,6 @@ describe('SourceControlExportService Integration', () => {
 
 		// Get repositories
 		credentialsRepository = Container.get(CredentialsRepository);
-		sharedCredentialsRepository = Container.get(SharedCredentialsRepository);
 		projectRepository = Container.get(ProjectRepository);
 
 		// Create test user
@@ -82,7 +79,7 @@ describe('SourceControlExportService Integration', () => {
 
 	afterEach(async () => {
 		// Clear test data between tests
-		await testDb.truncate(['SharedCredentials', 'CredentialsEntity']);
+		await testDb.truncate(['CredentialsEntity']);
 		// Reset mocks
 		jest.clearAllMocks();
 	});
@@ -287,16 +284,9 @@ describe('SourceControlExportService Integration', () => {
 				data: Container.get(Cipher).encrypt({ testField: 'test-value' }),
 			});
 
+			// Set project directly on credential
+			credential.projectId = personalProject.id;
 			const savedCredential = await credentialsRepository.save(credential);
-
-			// Create the shared credential relationship
-			await sharedCredentialsRepository.save(
-				sharedCredentialsRepository.create({
-					credentials: savedCredential,
-					project: personalProject,
-					role: 'credential:owner',
-				}),
-			);
 
 			const candidates = [{ id: savedCredential.id }] as SourceControlledFile[];
 

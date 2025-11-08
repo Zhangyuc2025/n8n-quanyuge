@@ -1,7 +1,7 @@
 import type { CredentialPayload } from '@n8n/backend-test-utils';
 import { createTeamProject, randomName, testDb } from '@n8n/backend-test-utils';
 import type { User } from '@n8n/db';
-import { CredentialsRepository, SharedCredentialsRepository } from '@n8n/db';
+import { CredentialsRepository } from '@n8n/db';
 import { Container } from '@n8n/di';
 import { randomString } from 'n8n-workflow';
 
@@ -36,7 +36,7 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
-	await testDb.truncate(['SharedCredentials', 'CredentialsEntity']);
+	await testDb.truncate(['CredentialsEntity']);
 });
 
 describe('POST /credentials', () => {
@@ -59,27 +59,16 @@ describe('POST /credentials', () => {
 		expect(name).toBe(payload.name);
 		expect(type).toBe(payload.type);
 
-		const credential = await Container.get(CredentialsRepository).findOneByOrFail({ id });
+		const credential = await Container.get(CredentialsRepository).findOneOrFail({
+			where: { id },
+			relations: { project: { projectRelations: true } },
+		});
 
 		expect(credential.name).toBe(payload.name);
 		expect(credential.type).toBe(payload.type);
 		expect(credential.data).not.toBe(payload.data);
-
-		const sharedCredential = await Container.get(SharedCredentialsRepository).findOneOrFail({
-			relations: { credentials: true },
-			where: {
-				credentialsId: credential.id,
-				project: {
-					type: 'personal',
-					projectRelations: {
-						userId: owner.id,
-					},
-				},
-			},
-		});
-
-		expect(sharedCredential.role).toEqual('credential:owner');
-		expect(sharedCredential.credentials.name).toBe(payload.name);
+		expect(credential.project.type).toBe('personal');
+		expect(credential.project.projectRelations[0].userId).toBe(owner.id);
 	});
 
 	test('should fail with invalid inputs', async () => {
@@ -108,10 +97,6 @@ describe('DELETE /credentials/:id', () => {
 		});
 
 		expect(deletedCredential).toBeNull(); // deleted
-
-		const deletedSharedCredential = await Container.get(SharedCredentialsRepository).findOneBy({});
-
-		expect(deletedSharedCredential).toBeNull(); // deleted
 	});
 
 	test('should delete non-owned cred for owner', async () => {
@@ -126,10 +111,6 @@ describe('DELETE /credentials/:id', () => {
 		});
 
 		expect(deletedCredential).toBeNull(); // deleted
-
-		const deletedSharedCredential = await Container.get(SharedCredentialsRepository).findOneBy({});
-
-		expect(deletedSharedCredential).toBeNull(); // deleted
 	});
 
 	test('should delete owned cred for member', async () => {
@@ -149,10 +130,6 @@ describe('DELETE /credentials/:id', () => {
 		});
 
 		expect(deletedCredential).toBeNull(); // deleted
-
-		const deletedSharedCredential = await Container.get(SharedCredentialsRepository).findOneBy({});
-
-		expect(deletedSharedCredential).toBeNull(); // deleted
 	});
 
 	test('should delete owned cred for member but leave others untouched', async () => {
@@ -179,14 +156,6 @@ describe('DELETE /credentials/:id', () => {
 
 		expect(deletedCredential).toBeNull(); // deleted
 
-		const deletedSharedCredential = await Container.get(SharedCredentialsRepository).findOne({
-			where: {
-				credentialsId: savedCredential.id,
-			},
-		});
-
-		expect(deletedSharedCredential).toBeNull(); // deleted
-
 		await Promise.all(
 			[notToBeChangedCredential, notToBeChangedCredential2].map(async (credential) => {
 				const untouchedCredential = await Container.get(CredentialsRepository).findOneBy({
@@ -194,14 +163,6 @@ describe('DELETE /credentials/:id', () => {
 				});
 
 				expect(untouchedCredential).toEqual(credential); // not deleted
-
-				const untouchedSharedCredential = await Container.get(SharedCredentialsRepository).findOne({
-					where: {
-						credentialsId: credential.id,
-					},
-				});
-
-				expect(untouchedSharedCredential).toBeDefined(); // not deleted
 			}),
 		);
 	});
@@ -218,10 +179,6 @@ describe('DELETE /credentials/:id', () => {
 		});
 
 		expect(shellCredential).toBeDefined(); // not deleted
-
-		const deletedSharedCredential = await Container.get(SharedCredentialsRepository).findOneBy({});
-
-		expect(deletedSharedCredential).toBeDefined(); // not deleted
 	});
 
 	test('should fail if cred not found', async () => {

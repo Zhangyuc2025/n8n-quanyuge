@@ -1,4 +1,3 @@
-import type { LicenseState } from '@n8n/backend-common';
 import { mockLogger } from '@n8n/backend-test-utils';
 import type { MockProxy } from 'jest-mock-extended';
 import { mock } from 'jest-mock-extended';
@@ -18,7 +17,6 @@ describe('InsightsService', () => {
 	let mockCompactionService: MockProxy<InsightsCompactionService>;
 	let mockCollectionService: MockProxy<InsightsCollectionService>;
 	let mockPruningService: MockProxy<InsightsPruningService>;
-	let mockLicenseState: MockProxy<LicenseState>;
 	let mockInstanceSettings: MockProxy<InstanceSettings>;
 
 	beforeEach(() => {
@@ -28,7 +26,6 @@ describe('InsightsService', () => {
 		mockCompactionService = mock<InsightsCompactionService>();
 		mockCollectionService = mock<InsightsCollectionService>();
 		mockPruningService = mock<InsightsPruningService>();
-		mockLicenseState = mock<LicenseState>();
 		mockInstanceSettings = mock<InstanceSettings>();
 
 		insightsService = new InsightsService(
@@ -36,7 +33,6 @@ describe('InsightsService', () => {
 			mockCompactionService,
 			mockCollectionService,
 			mockPruningService,
-			mockLicenseState,
 			mockInstanceSettings,
 			mockLogger(),
 		);

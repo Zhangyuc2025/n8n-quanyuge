@@ -6,12 +6,7 @@ import {
 	createWorkflow,
 	randomCredentialPayload,
 } from '@n8n/backend-test-utils';
-import {
-	CredentialsRepository,
-	SharedCredentialsRepository,
-	SharedWorkflowRepository,
-	WorkflowRepository,
-} from '@n8n/db';
+import { CredentialsRepository, WorkflowRepository } from '@n8n/db';
 import { Container } from '@n8n/di';
 import { EntityNotFoundError } from '@n8n/typeorm';
 import { v4 as uuid } from 'uuid';
@@ -206,18 +201,17 @@ describe('--userId', () => {
 		await expect(findProject(memberProject.id)).rejects.toThrowError(EntityNotFoundError);
 
 		// Their workflow and credential have been migrated to the normal user.
-		await expect(
-			Container.get(SharedWorkflowRepository).findOneBy({
-				workflowId: workflow.id,
-				projectId: normalMemberProject.id,
-			}),
-		).resolves.not.toBeNull();
-		await expect(
-			Container.get(SharedCredentialsRepository).findOneBy({
-				credentialsId: credential.id,
-				projectId: normalMemberProject.id,
-			}),
-		).resolves.not.toBeNull();
+		const migratedWorkflow = await Container.get(WorkflowRepository).findOne({
+			where: { id: workflow.id },
+		});
+		expect(migratedWorkflow).not.toBeNull();
+		expect(migratedWorkflow?.projectId).toBe(normalMemberProject.id);
+
+		const migratedCredential = await Container.get(CredentialsRepository).findOne({
+			where: { id: credential.id },
+		});
+		expect(migratedCredential).not.toBeNull();
+		expect(migratedCredential?.projectId).toBe(normalMemberProject.id);
 
 		// Non LDAP user is not deleted
 		await expect(getUserById(normalMember.id)).resolves.not.toThrowError();
@@ -283,18 +277,17 @@ describe('--projectId', () => {
 		await expect(findProject(memberProject.id)).rejects.toThrowError(EntityNotFoundError);
 
 		// Their workflow and credential have been migrated to the normal user.
-		await expect(
-			Container.get(SharedWorkflowRepository).findOneBy({
-				workflowId: workflow.id,
-				projectId: normalMemberProject.id,
-			}),
-		).resolves.not.toBeNull();
-		await expect(
-			Container.get(SharedCredentialsRepository).findOneBy({
-				credentialsId: credential.id,
-				projectId: normalMemberProject.id,
-			}),
-		).resolves.not.toBeNull();
+		const migratedWorkflow2 = await Container.get(WorkflowRepository).findOne({
+			where: { id: workflow.id },
+		});
+		expect(migratedWorkflow2).not.toBeNull();
+		expect(migratedWorkflow2?.projectId).toBe(normalMemberProject.id);
+
+		const migratedCredential2 = await Container.get(CredentialsRepository).findOne({
+			where: { id: credential.id },
+		});
+		expect(migratedCredential2).not.toBeNull();
+		expect(migratedCredential2?.projectId).toBe(normalMemberProject.id);
 
 		// Non LDAP user is not deleted
 		await expect(getUserById(normalMember.id)).resolves.not.toThrowError();
@@ -340,18 +333,17 @@ describe('--projectId', () => {
 		await expect(findProject(memberProject.id)).rejects.toThrowError(EntityNotFoundError);
 
 		// Their workflow and credential have been migrated to the team project.
-		await expect(
-			Container.get(SharedWorkflowRepository).findOneBy({
-				workflowId: workflow.id,
-				projectId: teamProject.id,
-			}),
-		).resolves.not.toBeNull();
-		await expect(
-			Container.get(SharedCredentialsRepository).findOneBy({
-				credentialsId: credential.id,
-				projectId: teamProject.id,
-			}),
-		).resolves.not.toBeNull();
+		const migratedWorkflow3 = await Container.get(WorkflowRepository).findOne({
+			where: { id: workflow.id },
+		});
+		expect(migratedWorkflow3).not.toBeNull();
+		expect(migratedWorkflow3?.projectId).toBe(teamProject.id);
+
+		const migratedCredential3 = await Container.get(CredentialsRepository).findOne({
+			where: { id: credential.id },
+		});
+		expect(migratedCredential3).not.toBeNull();
+		expect(migratedCredential3?.projectId).toBe(teamProject.id);
 
 		// Non LDAP user is not deleted
 		await expect(getUserById(normalMember.id)).resolves.not.toThrowError();

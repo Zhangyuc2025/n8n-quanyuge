@@ -92,7 +92,7 @@ export class ImportService {
 					this.logger.info(`Deactivating workflow "${workflow.name}". Remember to activate later.`);
 				}
 
-				const exists = workflow.id ? await tx.existsBy(WorkflowEntity, { id: workflow.id }) : false;
+				await tx.existsBy(WorkflowEntity, { id: workflow.id });
 
 				// Set project ownership for the workflow
 				const workflowWithProject = { ...workflow, projectId };

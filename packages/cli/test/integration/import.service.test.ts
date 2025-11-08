@@ -1,20 +1,13 @@
 import {
 	getPersonalProject,
 	createWorkflow,
-	getAllSharedWorkflows,
 	getWorkflowById,
 	newWorkflow,
 	testDb,
 } from '@n8n/backend-test-utils';
 import { DatabaseConfig } from '@n8n/config';
 import type { Project, User } from '@n8n/db';
-import {
-	TagEntity,
-	CredentialsRepository,
-	TagRepository,
-	SharedWorkflowRepository,
-	WorkflowRepository,
-} from '@n8n/db';
+import { TagEntity, CredentialsRepository, TagRepository, WorkflowRepository } from '@n8n/db';
 import { Container } from '@n8n/di';
 import { mock } from 'jest-mock-extended';
 import type { INode } from 'n8n-workflow';
@@ -61,7 +54,7 @@ describe('ImportService', () => {
 	});
 
 	afterEach(async () => {
-		await testDb.truncate(['WorkflowEntity', 'SharedWorkflow', 'TagEntity', 'WorkflowTagMapping']);
+		await testDb.truncate(['WorkflowEntity', 'TagEntity', 'WorkflowTagMapping']);
 	});
 
 	afterAll(async () => {
@@ -90,15 +83,11 @@ describe('ImportService', () => {
 
 		await importService.importWorkflows([workflowToImport], ownerPersonalProject.id);
 
-		const dbSharing = await Container.get(SharedWorkflowRepository).findOneOrFail({
-			where: {
-				workflowId: workflowToImport.id,
-				projectId: ownerPersonalProject.id,
-				role: 'workflow:owner',
-			},
+		const dbWorkflow = await Container.get(WorkflowRepository).findOneOrFail({
+			where: { id: workflowToImport.id },
 		});
 
-		expect(dbSharing.projectId).toBe(ownerPersonalProject.id);
+		expect(dbWorkflow.projectId).toBe(ownerPersonalProject.id);
 	});
 
 	test('should not change the owner if it already exists', async () => {
@@ -108,15 +97,11 @@ describe('ImportService', () => {
 
 		await importService.importWorkflows([workflowToImport], memberPersonalProject.id);
 
-		const sharings = await getAllSharedWorkflows();
+		const dbWorkflow = await Container.get(WorkflowRepository).findOneOrFail({
+			where: { id: workflowToImport.id },
+		});
 
-		expect(sharings).toMatchObject([
-			expect.objectContaining({
-				workflowId: workflowToImport.id,
-				projectId: ownerPersonalProject.id,
-				role: 'workflow:owner',
-			}),
-		]);
+		expect(dbWorkflow.projectId).toBe(ownerPersonalProject.id);
 	});
 
 	test('should deactivate imported workflow if active', async () => {

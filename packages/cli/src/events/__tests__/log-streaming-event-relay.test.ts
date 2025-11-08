@@ -263,12 +263,10 @@ describe('LogStreamingEventRelay', () => {
 				data: {
 					resultData: {
 						lastNodeExecuted: 'some-node',
-						// @ts-expect-error Partial mock
 						error: {
 							node: mock<INode>({ type: 'some-type' }),
 							message: 'some-message',
 						},
-						errorMessage: 'some-message',
 					},
 				},
 			}) as unknown as IRun;
@@ -308,12 +306,10 @@ describe('LogStreamingEventRelay', () => {
 				data: {
 					resultData: {
 						lastNodeExecuted: 'some-node',
-						// @ts-expect-error Partial mock
 						error: {
 							node: mock<INode>({ type: 'some-type' }),
 							message: 'some-message',
 						},
-						errorMessage: 'some-message',
 					},
 				},
 			}) as unknown as IRun;

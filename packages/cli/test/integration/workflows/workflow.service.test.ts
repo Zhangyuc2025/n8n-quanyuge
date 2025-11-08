@@ -1,5 +1,5 @@
 import { createWorkflow, testDb, mockInstance } from '@n8n/backend-test-utils';
-import { SharedWorkflowRepository, WorkflowRepository } from '@n8n/db';
+import { WorkflowRepository } from '@n8n/db';
 import { Container } from '@n8n/di';
 import { mock } from 'jest-mock-extended';
 
@@ -21,7 +21,6 @@ beforeAll(async () => {
 
 	workflowService = new WorkflowService(
 		mock(),
-		Container.get(SharedWorkflowRepository),
 		Container.get(WorkflowRepository),
 		mock(),
 		mock(),

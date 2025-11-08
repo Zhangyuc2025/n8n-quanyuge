@@ -5,7 +5,7 @@ import {
 	testDb,
 	testModules,
 } from '@n8n/backend-test-utils';
-import type { Project, WorkflowEntity, IWorkflowDb, SharedWorkflowRepository } from '@n8n/db';
+import type { Project, WorkflowEntity, IWorkflowDb, WorkflowRepository } from '@n8n/db';
 import type { WorkflowExecuteAfterContext } from '@n8n/decorators';
 import { Container } from '@n8n/di';
 import { In } from '@n8n/typeorm';
@@ -260,7 +260,7 @@ describe('workflowExecuteAfterHandler - cacheMetadata', () => {
 		upsert: jest.fn(),
 		insert: jest.fn(),
 	};
-	const sharedWorkflowRepositoryMock = mock<SharedWorkflowRepository>(repositoryMocks);
+	const workflowRepositoryMock = mock<WorkflowRepository>(repositoryMocks);
 	const metadataRepositoryMock = mock<InsightsMetadataRepository>(repositoryMocks);
 	const insightsRawRepositoryMock = mock<InsightsRawRepository>(repositoryMocks);
 
@@ -275,7 +275,7 @@ describe('workflowExecuteAfterHandler - cacheMetadata', () => {
 
 	beforeAll(async () => {
 		insightsCollectionService = new InsightsCollectionService(
-			sharedWorkflowRepositoryMock,
+			workflowRepositoryMock,
 			insightsRawRepositoryMock,
 			metadataRepositoryMock,
 			Container.get(InsightsConfig),
@@ -292,8 +292,8 @@ describe('workflowExecuteAfterHandler - cacheMetadata', () => {
 
 		repositoryMocks.find = jest.fn().mockResolvedValue([
 			{
-				workflow,
-				workflowId: workflow.id,
+				...workflow,
+				id: workflow.id,
 				projectId: 'project-id',
 				project: { name: 'project-name' },
 			},
@@ -322,7 +322,7 @@ describe('workflowExecuteAfterHandler - cacheMetadata', () => {
 
 		// ASSERT
 		expect(repositoryMocks.find).toHaveBeenCalledWith({
-			where: { workflowId: In([workflow.id]), role: 'workflow:owner' },
+			where: { id: In([workflow.id]) },
 			relations: { project: true },
 		});
 		expect(repositoryMocks.upsert).toHaveBeenCalledWith(
@@ -369,7 +369,7 @@ describe('workflowExecuteAfterHandler - cacheMetadata', () => {
 
 		// ASSERT AGAIN
 		expect(repositoryMocks.find).toHaveBeenCalledWith({
-			where: { workflowId: In([workflow.id]), role: 'workflow:owner' },
+			where: { id: In([workflow.id]) },
 			relations: { project: true },
 		});
 		expect(repositoryMocks.upsert).toHaveBeenCalledWith(
@@ -392,13 +392,13 @@ describe('workflowExecuteAfterHandler - flushEvents', () => {
 	let insightsCollectionService: InsightsCollectionService;
 
 	const repoMocks = {
-		findSharedWorkflowRepositoryMock: jest.fn(),
+		findWorkflowRepositoryMock: jest.fn(),
 		findByMetadata: jest.fn(),
 		upsertMetadata: jest.fn(),
 		insertInsightsRaw: jest.fn(),
 	};
-	const sharedWorkflowRepositoryMock = mock<SharedWorkflowRepository>({
-		find: repoMocks.findSharedWorkflowRepositoryMock,
+	const workflowRepositoryMock = mock<WorkflowRepository>({
+		find: repoMocks.findWorkflowRepositoryMock,
 	});
 	const metadataRepositoryMock = mock<InsightsMetadataRepository>({
 		findBy: repoMocks.findByMetadata,
@@ -418,7 +418,7 @@ describe('workflowExecuteAfterHandler - flushEvents', () => {
 
 	beforeAll(async () => {
 		insightsCollectionService = new InsightsCollectionService(
-			sharedWorkflowRepositoryMock,
+			workflowRepositoryMock,
 			insightsRawRepositoryMock,
 			metadataRepositoryMock,
 			Container.get(InsightsConfig),
@@ -429,10 +429,10 @@ describe('workflowExecuteAfterHandler - flushEvents', () => {
 	beforeEach(async () => {
 		project = await createTeamProject();
 		workflow = await createWorkflow({ settings: { timeSavedPerExecution: 1 } }, project);
-		repoMocks.findSharedWorkflowRepositoryMock.mockResolvedValue([
+		repoMocks.findWorkflowRepositoryMock.mockResolvedValue([
 			{
-				workflow,
-				workflowId: workflow.id,
+				...workflow,
+				id: workflow.id,
 				projectId: 'project-id',
 				project: { name: 'project-name' },
 			},

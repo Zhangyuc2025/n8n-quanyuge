@@ -1,13 +1,10 @@
 import type { SourceControlledFile } from '@n8n/api-types';
 import type {
+	CredentialsRepository,
 	Folder,
 	FolderRepository,
 	Project,
 	ProjectRepository,
-	SharedCredentials,
-	SharedCredentialsRepository,
-	SharedWorkflow,
-	SharedWorkflowRepository,
 	TagEntity,
 	TagRepository,
 	WorkflowRepository,
@@ -15,7 +12,7 @@ import type {
 	WorkflowTagMappingRepository,
 	Variables,
 } from '@n8n/db';
-import { GLOBAL_ADMIN_ROLE, In, PROJECT_OWNER_ROLE, User } from '@n8n/db';
+import { GLOBAL_ADMIN_ROLE, In, User } from '@n8n/db';
 import { Container } from '@n8n/di';
 import { captor, mock } from 'jest-mock-extended';
 import { Cipher, type InstanceSettings } from 'n8n-core';
@@ -34,8 +31,7 @@ describe('SourceControlExportService', () => {
 	);
 
 	const cipher = Container.get(Cipher);
-	const sharedCredentialsRepository = mock<SharedCredentialsRepository>();
-	const sharedWorkflowRepository = mock<SharedWorkflowRepository>();
+	const credentialsRepository = mock<CredentialsRepository>();
 	const workflowRepository = mock<WorkflowRepository>();
 	const tagRepository = mock<TagRepository>();
 	const projectRepository = mock<ProjectRepository>();
@@ -49,8 +45,7 @@ describe('SourceControlExportService', () => {
 		variablesService,
 		tagRepository,
 		projectRepository,
-		sharedCredentialsRepository,
-		sharedWorkflowRepository,
+		credentialsRepository,
 		workflowRepository,
 		workflowTagMappingRepository,
 		folderRepository,
@@ -85,19 +80,19 @@ describe('SourceControlExportService', () => {
 		});
 
 		it('should export credentials to work folder', async () => {
-			sharedCredentialsRepository.findByCredentialIds.mockResolvedValue([
-				mock<SharedCredentials>({
-					credentials: mockCredentials,
-					project: mock({
+			credentialsRepository.find.mockResolvedValue([
+				{
+					...mockCredentials,
+					project: {
 						type: 'personal',
 						projectRelations: [
 							{
-								role: PROJECT_OWNER_ROLE,
-								user: mock({ email: 'user@example.com' }),
+								role: { slug: 'project:owner' },
+								user: { email: 'user@example.com' },
 							},
 						],
-					}),
-				}),
+					},
+				} as any,
 			]);
 
 			// Act
@@ -130,15 +125,15 @@ describe('SourceControlExportService', () => {
 		});
 
 		it('should handle team project credentials', async () => {
-			sharedCredentialsRepository.findByCredentialIds.mockResolvedValue([
-				mock<SharedCredentials>({
-					credentials: mockCredentials,
-					project: mock({
+			credentialsRepository.find.mockResolvedValue([
+				{
+					...mockCredentials,
+					project: {
 						type: 'team',
 						id: 'team1',
 						name: 'Test Team',
-					}),
-				}),
+					},
+				} as any,
 			]);
 
 			// Act
@@ -174,7 +169,7 @@ describe('SourceControlExportService', () => {
 
 		it('should handle missing credentials', async () => {
 			// Arrange
-			sharedCredentialsRepository.findByCredentialIds.mockResolvedValue([]);
+			credentialsRepository.find.mockResolvedValue([]);
 
 			// Act
 			const result = await service.exportCredentialsToWorkFolder([
@@ -364,15 +359,20 @@ describe('SourceControlExportService', () => {
 	describe('exportWorkflowsToWorkFolder', () => {
 		it('should export workflows to work folder', async () => {
 			// Arrange
-			workflowRepository.findByIds.mockResolvedValue([mock()]);
-			sharedWorkflowRepository.findByWorkflowIds.mockResolvedValue([
-				mock<SharedWorkflow>({
-					project: mock({
+			workflowRepository.find.mockResolvedValue([
+				{
+					id: 'workflow1',
+					name: 'Test Workflow',
+					project: {
 						type: 'personal',
-						projectRelations: [{ role: PROJECT_OWNER_ROLE, user: mock() }],
-					}),
-					workflow: mock(),
-				}),
+						projectRelations: [
+							{
+								role: { slug: 'project:owner' },
+								user: { email: 'user@example.com' },
+							},
+						],
+					},
+				} as any,
 			]);
 
 			// Act
@@ -385,17 +385,15 @@ describe('SourceControlExportService', () => {
 
 		it('should throw an error if workflow has no owner', async () => {
 			// Arrange
-			sharedWorkflowRepository.findByWorkflowIds.mockResolvedValue([
-				mock<SharedWorkflow>({
-					project: mock({
+			workflowRepository.find.mockResolvedValue([
+				{
+					id: 'test-workflow-id',
+					name: 'TestWorkflow',
+					project: {
 						type: 'personal',
 						projectRelations: [],
-					}),
-					workflow: mock({
-						id: 'test-workflow-id',
-						name: 'TestWorkflow',
-					}),
-				}),
+					},
+				} as any,
 			]);
 
 			// Act & Assert

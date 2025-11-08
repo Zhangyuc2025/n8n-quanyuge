@@ -1,11 +1,6 @@
 import { testDb } from '@n8n/backend-test-utils';
 import type { Project, User } from '@n8n/db';
-import {
-	CredentialsRepository,
-	ProjectRepository,
-	SharedCredentialsRepository,
-	UserRepository,
-} from '@n8n/db';
+import { CredentialsRepository, ProjectRepository, UserRepository } from '@n8n/db';
 import { Container } from '@n8n/di';
 import { randomUUID } from 'crypto';
 import { mock } from 'jest-mock-extended';
@@ -38,7 +33,7 @@ let ownerPersonalProject: Project;
 let authOwnerAgent: SuperAgentTest;
 
 beforeEach(async () => {
-	await testDb.truncate(['SharedCredentials', 'CredentialsEntity']);
+	await testDb.truncate(['CredentialsEntity']);
 
 	owner = await createOwner();
 
@@ -84,15 +79,7 @@ describe('POST /ai/free-credits', () => {
 		expect(credential.type).toBe(OPEN_AI_API_CREDENTIAL_TYPE);
 		expect(credential.data).not.toBe(createAiCreditsResponse);
 		expect(credential.isManaged).toBe(true);
-
-		const sharedCredential = await Container.get(SharedCredentialsRepository).findOneOrFail({
-			relations: { project: true, credentials: true },
-			where: { credentialsId: credential.id },
-		});
-
-		expect(sharedCredential.project.id).toBe(ownerPersonalProject.id);
-		expect(sharedCredential.credentials.name).toBe(FREE_AI_CREDITS_CREDENTIAL_NAME);
-		expect(sharedCredential.credentials.isManaged).toBe(true);
+		expect(credential.projectId).toBe(ownerPersonalProject.id);
 
 		const user = await Container.get(UserRepository).findOneOrFail({ where: { id: owner.id } });
 

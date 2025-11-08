@@ -1,7 +1,6 @@
 import type { ModuleInterface } from '@n8n/decorators';
 import { BackendModule } from '@n8n/decorators';
-import { TelemetryEvent } from '@n8n/db';
-import { TelemetrySession } from '@n8n/db';
+import { TelemetryEvent, TelemetrySession } from '@n8n/db';
 
 @BackendModule({ name: 'telemetry-management' })
 export class TelemetryManagementModule implements ModuleInterface {

@@ -17,7 +17,7 @@ import type {
 	AssignableProjectRole,
 	RoleNamespace,
 } from '@n8n/permissions';
-import { combineScopes, getAuthPrincipalScopes, getRoleScopes } from '@n8n/permissions';
+import { combineScopes, getAuthPrincipalScopes } from '@n8n/permissions';
 import { UnexpectedError, UserError } from 'n8n-workflow';
 
 import { BadRequestError } from '@/errors/response-errors/bad-request.error';

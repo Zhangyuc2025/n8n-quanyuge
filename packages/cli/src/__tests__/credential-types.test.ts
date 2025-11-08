@@ -48,7 +48,9 @@ describe('CredentialTypes', () => {
 
 		test('Should recognize credential type that exists in loadedCredentials', () => {
 			const credentialTypes = new CredentialTypes(
+				// @ts-expect-error Partial mock for testing
 				mock<LoadNodesAndCredentials>({
+					// @ts-expect-error Type mismatch with LoadedClass
 					loadedCredentials: { testCredential },
 					knownCredentials: {},
 				}),
