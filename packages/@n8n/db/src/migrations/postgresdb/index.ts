@@ -114,6 +114,8 @@ import { MultitenantTransformation1762511301780 } from '../common/1762511301780-
 import { CreateBillingTables1762511302000 } from '../common/1762511302000-CreateBillingTables';
 import { CreatePlatformServiceTables1762511302220 } from '../common/1762511302220-CreatePlatformServiceTables';
 import { CreatePlatformFeatureTables1762511302440 } from '../common/1762511302440-CreatePlatformFeatureTables';
+import { ExtendPlatformServiceForPlugins1762511302660 } from '../common/1762511302660-ExtendPlatformServiceForPlugins';
+import { CreateWorkspacePluginCredentialsTable1762511302880 } from '../common/1762511302880-CreateWorkspacePluginCredentialsTable';
 import type { Migration } from '../migration-types';
 
 export const postgresMigrations: Migration[] = [
@@ -233,4 +235,6 @@ export const postgresMigrations: Migration[] = [
 	CreateBillingTables1762511302000,
 	CreatePlatformServiceTables1762511302220,
 	CreatePlatformFeatureTables1762511302440,
+	ExtendPlatformServiceForPlugins1762511302660,
+	CreateWorkspacePluginCredentialsTable1762511302880,
 ];

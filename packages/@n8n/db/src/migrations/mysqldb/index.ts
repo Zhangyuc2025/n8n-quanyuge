@@ -113,6 +113,8 @@ import { MultitenantTransformation1762511301780 } from '../common/1762511301780-
 import { CreateBillingTables1762511302000 } from '../common/1762511302000-CreateBillingTables';
 import { CreatePlatformServiceTables1762511302220 } from '../common/1762511302220-CreatePlatformServiceTables';
 import { CreatePlatformFeatureTables1762511302440 } from '../common/1762511302440-CreatePlatformFeatureTables';
+import { ExtendPlatformServiceForPlugins1762511302660 } from '../common/1762511302660-ExtendPlatformServiceForPlugins';
+import { CreateWorkspacePluginCredentialsTable1762511302880 } from '../common/1762511302880-CreateWorkspacePluginCredentialsTable';
 import type { Migration } from '../migration-types';
 import { UpdateParentFolderIdColumn1740445074052 } from '../mysqldb/1740445074052-UpdateParentFolderIdColumn';
 import { LinkRoleToProjectRelationTable1753953244168 } from './../common/1753953244168-LinkRoleToProjectRelationTable';
@@ -235,4 +237,6 @@ export const mysqlMigrations: Migration[] = [
 	CreateBillingTables1762511302000,
 	CreatePlatformServiceTables1762511302220,
 	CreatePlatformFeatureTables1762511302440,
+	ExtendPlatformServiceForPlugins1762511302660,
+	CreateWorkspacePluginCredentialsTable1762511302880,
 ];

@@ -33,6 +33,7 @@ export {
 } from './workflow-dependency.repository';
 export { WebhookRepository } from './webhook.repository';
 export { WorkspaceBalanceRepository } from './workspace-balance.repository';
+export { WorkspacePluginCredentialsRepository } from './workspace-plugin-credentials.repository';
 export { UserRepository } from './user.repository';
 export { UsageRecordRepository } from './usage-record.repository';
 export { RechargeRecordRepository } from './recharge-record.repository';

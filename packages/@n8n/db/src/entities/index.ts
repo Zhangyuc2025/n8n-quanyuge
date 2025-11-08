@@ -37,6 +37,7 @@ import { WorkflowHistory } from './workflow-history';
 import { WorkflowStatistics } from './workflow-statistics';
 import { WorkflowTagMapping } from './workflow-tag-mapping';
 import { WorkspaceBalance } from './workspace-balance.entity';
+import { WorkspacePluginCredentials } from './workspace-plugin-credentials.entity';
 
 export {
 	EventDestinations,
@@ -78,6 +79,7 @@ export {
 	WorkspaceBalance,
 	UsageRecord,
 	RechargeRecord,
+	WorkspacePluginCredentials,
 };
 
 export const entities = {
@@ -120,4 +122,5 @@ export const entities = {
 	WorkspaceBalance,
 	UsageRecord,
 	RechargeRecord,
+	WorkspacePluginCredentials,
 };
