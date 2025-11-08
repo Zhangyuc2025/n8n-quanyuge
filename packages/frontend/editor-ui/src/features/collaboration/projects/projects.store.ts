@@ -58,6 +58,8 @@ export const useProjectsStore = defineStore(STORES.PROJECTS, () => {
 			(route.query?.projectId as string | undefined) ??
 			currentProject.value?.id,
 	);
+	// Alias for multi-tenant architecture: workspaceId === projectId
+	const currentWorkspaceId = computed(() => currentProjectId.value);
 	const isProjectHome = computed(() => route.path.includes('home'));
 	const personalProjects = computed(() =>
 		projects.value.filter((p) => p.type === ProjectTypes.Personal),
@@ -304,6 +306,7 @@ export const useProjectsStore = defineStore(STORES.PROJECTS, () => {
 		personalProject,
 		currentProject,
 		currentProjectId,
+		currentWorkspaceId, // Alias for multi-tenant architecture
 		isProjectHome,
 		personalProjects,
 		teamProjects,

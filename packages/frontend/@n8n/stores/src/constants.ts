@@ -43,4 +43,6 @@ export const STORES = {
 	TEMPLATES_DATA_QUALITY: 'templatesDataQuality',
 	BANNERS: 'banners',
 	CONSENT: 'consent',
+	BILLING: 'billing',
+	PLUGINS: 'plugins',
 } as const;

@@ -63,6 +63,8 @@ export const enum VIEWS {
 	ENTITY_UNAUTHORIZED = 'EntityUnAuthorized',
 	PRE_BUILT_AGENT_TEMPLATES = 'PreBuiltAgentTemplates',
 	OAUTH_CONSENT = 'OAuthConsent',
+	BILLING = 'BillingView',
+	PLUGIN_MARKETPLACE = 'PluginMarketplace',
 }
 
 export const EDITABLE_CANVAS_VIEWS = [VIEWS.WORKFLOW, VIEWS.NEW_WORKFLOW, VIEWS.EXECUTION_DEBUG];
