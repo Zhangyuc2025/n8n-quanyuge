@@ -88,7 +88,7 @@ export class CreateBillingTables1762511302000 implements ReversibleMigration {
 				// Currency code (ISO 4217)
 				column('currency')
 					.varchar(3)
-					.notNull.default('CNY'),
+					.notNull.default("'CNY'"),
 			)
 			.withForeignKey('workspace_id', {
 				tableName: table.project,
@@ -165,7 +165,7 @@ export class CreateBillingTables1762511302000 implements ReversibleMigration {
 				// Transaction status: 'pending', 'completed', 'failed', 'cancelled'
 				column('status')
 					.varchar(20)
-					.notNull.default('pending'),
+					.notNull.default("'pending'"),
 				// Timestamp when the recharge was completed (NULL for pending/failed)
 				column('completed_at').timestampTimezone(3),
 			)

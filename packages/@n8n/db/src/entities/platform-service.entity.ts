@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from '@n8n/typeorm';
 
-import { WithTimestamps } from './abstract-entity';
+import { datetimeColumnType, WithTimestamps } from './abstract-entity';
 import type { Project } from './project';
 import type { User } from './user';
 
@@ -146,14 +146,14 @@ export class PlatformService extends WithTimestamps {
 	 * 提交审核时间
 	 * Submission timestamp
 	 */
-	@Column({ type: 'timestamp', nullable: true, name: 'submitted_at' })
+	@Column({ type: datetimeColumnType, nullable: true, name: 'submitted_at' })
 	submittedAt: Date | null;
 
 	/**
 	 * 审核完成时间
 	 * Review completed timestamp
 	 */
-	@Column({ type: 'timestamp', nullable: true, name: 'reviewed_at' })
+	@Column({ type: datetimeColumnType, nullable: true, name: 'reviewed_at' })
 	reviewedAt: Date | null;
 
 	/**

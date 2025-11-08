@@ -77,7 +77,7 @@ export class ExtendPlatformServiceForPlugins1762511302660 implements ReversibleM
 			// 默认 'global' 用于现有 AI 模型和 RAG 服务
 			column('visibility')
 				.varchar(50)
-				.notNull.default('global'),
+				.notNull.default("'global'"),
 
 			// owner_workspace_id: 自定义插件的所属工作空间
 			// 仅当 visibility = 'workspace' 时有值
@@ -104,10 +104,10 @@ export class ExtendPlatformServiceForPlugins1762511302660 implements ReversibleM
 			column('submission_status').varchar(50),
 
 			// submitted_at: 提交审核时间
-			column('submitted_at').timestamp(),
+			column('submitted_at').timestampNoTimezone(),
 
 			// reviewed_at: 审核完成时间
-			column('reviewed_at').timestamp(),
+			column('reviewed_at').timestampNoTimezone(),
 
 			// reviewed_by: 审核人 ID
 			column('reviewed_by').uuid,

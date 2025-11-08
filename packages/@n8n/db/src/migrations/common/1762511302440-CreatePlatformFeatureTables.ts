@@ -206,7 +206,7 @@ export class CreatePlatformFeatureTables1762511302440 implements ReversibleMigra
 				// Last update timestamp (auto-managed)
 				column('updatedAt')
 					.timestampTimezone()
-					.notNull.default('CURRENT_TIMESTAMP'),
+					.notNull.default('NOW()'),
 			)
 			.withIndexOn('feature_key', true) // Unique index on business key
 			.withIndexOn('enabled'); // Index for filtering active features

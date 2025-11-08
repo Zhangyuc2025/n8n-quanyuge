@@ -42,7 +42,7 @@ export class CreateWorkspacePluginCredentialsTable1762511302880 implements Rever
 		createTable(table.workspacePluginCredentials)
 			.withColumns(
 				// 主键
-				column('id').uuid.primary.default('uuid_generate_v4()'),
+				column('id').uuid.primary,
 
 				// workspace_id: 工作空间 ID (引用 project.id)
 				column('workspace_id').uuid.notNull,
