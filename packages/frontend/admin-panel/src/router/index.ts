@@ -62,6 +62,26 @@ const routes: RouteRecordRaw[] = [
 					module: 'telemetry',
 				},
 			},
+			// AI Providers 模块
+			{
+				path: 'ai-providers',
+				name: 'AIProviders',
+				component: () => import('@/modules/ai-providers/views/AIProvidersView.vue'),
+				meta: {
+					title: 'AI 服务提供商',
+					module: 'ai-providers',
+				},
+			},
+			// Platform Nodes 模块
+			{
+				path: 'platform-nodes',
+				name: 'PlatformNodes',
+				component: () => import('@/modules/platform-nodes/views/PlatformNodesView.vue'),
+				meta: {
+					title: '平台节点管理',
+					module: 'platform-nodes',
+				},
+			},
 		],
 	},
 	// 错误页面（无布局）

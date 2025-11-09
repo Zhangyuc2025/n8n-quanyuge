@@ -2,26 +2,30 @@
 import { computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useProjectsStore } from '@/features/collaboration/projects/projects.store';
-import { useBillingStore } from '@/features/billing/billing.store';
+import { VIEWS } from '@/app/constants';
 import {
 	N8nPopoverReka,
 	N8nMenuItem,
 	N8nIcon,
 	N8nText,
-	N8nBadge,
 	type IMenuItem,
 } from '@n8n/design-system';
 import { useI18n } from '@n8n/i18n';
 
 const router = useRouter();
 const projectsStore = useProjectsStore();
-const billingStore = useBillingStore();
 const i18n = useI18n();
 
-// Load balance on mount
+// Initialize workspace on mount
 onMounted(async () => {
-	if (projectsStore.currentWorkspaceId) {
-		await billingStore.fetchBalance(projectsStore.currentWorkspaceId);
+	console.log('[WorkspaceSwitcher] Mounted!');
+	console.log('[WorkspaceSwitcher] personalProject:', projectsStore.personalProject);
+	console.log('[WorkspaceSwitcher] currentProject:', projectsStore.currentProject);
+	console.log('[WorkspaceSwitcher] currentWorkspaceId:', projectsStore.currentWorkspaceId);
+
+	// If no current workspace is set, default to personal workspace
+	if (!projectsStore.currentProject && projectsStore.personalProject) {
+		projectsStore.setCurrentProject(projectsStore.personalProject);
 	}
 });
 
@@ -31,63 +35,56 @@ const currentWorkspace = computed(() => {
 });
 
 const currentWorkspaceName = computed(() => {
+	// If it's personal project, always show "Personal Space" translation
+	if (currentWorkspace.value?.id === projectsStore.personalProject?.id) {
+		return i18n.baseText('workspace.personal');
+	}
+	// For team workspaces, show the actual workspace name
 	return currentWorkspace.value?.name || i18n.baseText('workspace.personal');
 });
 
 const currentWorkspaceIcon = computed(() => {
-	return currentWorkspace.value?.icon || '🏠';
-});
-
-// Balance display
-const balanceDisplay = computed(() => {
-	if (billingStore.loading) return '...';
-	return billingStore.formattedBalance;
-});
-
-const balanceClass = computed(() => {
-	const classes = ['balance'];
-	if (billingStore.hasLowBalance) {
-		classes.push('balance-low');
+	// Personal workspace always uses home icon
+	if (currentWorkspace.value?.id === projectsStore.personalProject?.id) {
+		return { type: 'emoji', value: '🏠' };
 	}
-	return classes.join(' ');
+	// Team workspaces can have custom icons
+	const icon = currentWorkspace.value?.icon;
+	if (icon) {
+		return icon;
+	}
+	return { type: 'emoji', value: '👥' };
 });
 
 // Menu items for workspace switching
 const workspaceMenuItems = computed<IMenuItem[]>(() => {
 	const items: IMenuItem[] = [];
+	// Use currentWorkspace.value?.id for consistency with display logic
+	const currentId = currentWorkspace.value?.id;
 
-	// Personal workspace
-	if (projectsStore.personalProject) {
+	// Personal workspace - only show if not current
+	if (projectsStore.personalProject && projectsStore.personalProject.id !== currentId) {
 		items.push({
 			id: projectsStore.personalProject.id,
-			label: `🏠 ${projectsStore.personalProject.name}`,
-			disabled: projectsStore.currentProject?.id === projectsStore.personalProject.id,
+			label: i18n.baseText('workspace.personal'),
 		});
 	}
 
-	// Team workspaces
+	// Team workspaces - only show workspaces that are not current
 	projectsStore.teamProjects.forEach((project) => {
-		items.push({
-			id: project.id,
-			label: `👥 ${project.name}`,
-			disabled: projectsStore.currentProject?.id === project.id,
-		});
+		if (project.id !== currentId) {
+			items.push({
+				id: project.id,
+				label: project.name || 'Team Workspace',
+			});
+		}
 	});
 
-	// Create new workspace
-	if (projectsStore.canCreateProjects && projectsStore.hasPermissionToCreateProjects) {
-		items.push({
-			id: 'create-workspace',
-			label: i18n.baseText('workspace.createNew'),
-			icon: 'plus',
-		});
-	}
-
-	// Manage workspaces
+	// Create/Join team workspace
 	items.push({
-		id: 'manage-workspaces',
-		label: i18n.baseText('workspace.manage'),
-		icon: 'cog',
+		id: 'create-join-team',
+		label: i18n.baseText('workspace.createOrJoinTeam'),
+		icon: 'users',
 	});
 
 	return items;
@@ -95,31 +92,30 @@ const workspaceMenuItems = computed<IMenuItem[]>(() => {
 
 // Handle workspace selection
 const onWorkspaceSelect = async (workspaceId: string) => {
-	if (workspaceId === 'create-workspace') {
-		// Navigate to create workspace page
-		await router.push({ name: 'ProjectsSettings', params: { tab: 'create' } });
+	if (workspaceId === 'create-join-team') {
+		// Navigate to team management page (create/join)
+		await router.push({ name: VIEWS.PROJECT_SETTINGS });
 		return;
 	}
 
-	if (workspaceId === 'manage-workspaces') {
-		// Navigate to manage workspaces page
-		await router.push({ name: 'ProjectsSettings' });
-		return;
+	// Check if it's personal workspace or team workspace
+	const isPersonalWorkspace = workspaceId === projectsStore.personalProject?.id;
+
+	// Switch workspace context without navigation
+	if (isPersonalWorkspace) {
+		// Switch to personal workspace
+		projectsStore.setCurrentProject(projectsStore.personalProject);
+	} else {
+		// Switch to team workspace - fetch and set the project
+		const project = await projectsStore.fetchProject(workspaceId);
+		projectsStore.setCurrentProject(project);
 	}
 
-	// Switch workspace by navigating with projectId
-	await router.push({
-		name: 'WorkflowsHome',
-		params: { projectId: workspaceId },
-	});
-
-	// Fetch balance for new workspace
-	await billingStore.fetchBalance(workspaceId);
-};
-
-// Handle recharge click
-const onRechargeClick = () => {
-	void router.push({ name: 'BillingPage' });
+	// Emit event to notify other components about workspace change
+	// This allows components to refresh their data for the new workspace (including BalanceCard)
+	window.dispatchEvent(new CustomEvent('workspace-changed', {
+		detail: { workspaceId }
+	}));
 };
 </script>
 
@@ -139,29 +135,19 @@ const onRechargeClick = () => {
 			</template>
 			<template #trigger>
 				<div class="trigger">
-					<div class="workspace-info">
-						<span class="icon">{{ currentWorkspaceIcon }}</span>
-						<N8nText size="medium" class="name">
-							{{ currentWorkspaceName }}
-						</N8nText>
-						<N8nIcon icon="chevron-down" size="small" class="chevron" />
-					</div>
-					<div :class="balanceClass" @click.stop="onRechargeClick">
-						<N8nText size="small" color="text-base">
-							{{ i18n.baseText('billing.balance') }}:
-						</N8nText>
-						<N8nText size="small" bold class="balance-amount">
-							{{ balanceDisplay }}
-						</N8nText>
-						<N8nBadge
-							v-if="billingStore.hasLowBalance"
-							theme="danger"
-							size="small"
-							class="low-balance-badge"
-						>
-							{{ i18n.baseText('billing.lowBalance') }}
-						</N8nBadge>
-					</div>
+					<span v-if="currentWorkspaceIcon.type === 'emoji'" class="icon">
+						{{ currentWorkspaceIcon.value }}
+					</span>
+					<N8nIcon
+						v-else
+						:icon="(currentWorkspaceIcon.value as any)"
+						size="medium"
+						class="icon-component"
+					/>
+					<N8nText size="medium" bold class="name">
+						{{ currentWorkspaceName }}
+					</N8nText>
+					<N8nIcon icon="chevron-down" size="small" class="chevron" />
 				</div>
 			</template>
 		</N8nPopoverReka>
@@ -172,36 +158,31 @@ const onRechargeClick = () => {
 .workspace-switcher {
 	display: flex;
 	align-items: center;
-	padding: var(--spacing--xs);
-	border-bottom: var(--border-width) var(--border-style) var(--color--foreground);
+	width: 100%;
 }
 
 .trigger {
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
+	gap: var(--spacing--2xs);
 	width: 100%;
+	height: 32px;
 	cursor: pointer;
-	padding: var(--spacing--2xs);
-	border-radius: var(--radius);
-	transition: background-color 0.2s;
+	padding: var(--spacing--2xs) var(--spacing--xs);
+	border: var(--border-width) var(--border-style) var(--color--foreground);
+	border-radius: var(--radius--lg);
+	transition: all 0.15s ease-in-out;
 
 	&:hover {
 		background-color: var(--color--foreground--tint-2);
 	}
 }
 
-.workspace-info {
-	display: flex;
-	align-items: center;
-	gap: var(--spacing--3xs);
-	flex: 1;
-	min-width: 0;
-}
-
-.icon {
-	font-size: var(--font-size--lg);
+.icon,
+.icon-component {
 	flex-shrink: 0;
+	font-size: 16px;
+	line-height: 1;
 }
 
 .name {
@@ -214,41 +195,6 @@ const onRechargeClick = () => {
 .chevron {
 	flex-shrink: 0;
 	color: var(--color--text--tint-1);
-}
-
-.balance {
-	display: flex;
-	align-items: center;
-	gap: var(--spacing--3xs);
-	padding: var(--spacing--3xs) var(--spacing--2xs);
-	border-radius: var(--radius);
-	background-color: var(--color--foreground--tint-2);
-	cursor: pointer;
-	transition: background-color 0.2s;
-
-	&:hover {
-		background-color: var(--color--foreground--tint-1);
-	}
-
-	&.balance-low {
-		background-color: var(--color--danger--tint-4);
-
-		&:hover {
-			background-color: var(--color--danger--tint-3);
-		}
-	}
-}
-
-.balance-amount {
-	color: var(--color--primary);
-}
-
-.balance-low .balance-amount {
-	color: var(--color--danger);
-}
-
-.low-balance-badge {
-	margin-left: var(--spacing--3xs);
 }
 
 .popover {

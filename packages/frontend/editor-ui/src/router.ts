@@ -23,7 +23,6 @@ import { initializeAuthenticatedFeatures, initializeCore } from '@/init';
 import { tryToParseNumber } from '@/app/utils/typesUtils';
 import { projectsRoutes } from '@/features/collaboration/projects/projects.routes';
 import { billingRoutes } from '@/features/billing/billing.routes';
-import { pluginsRoutes } from '@/features/plugins/plugins.routes';
 import { MfaRequiredError } from '@n8n/rest-api-client';
 import { useCalloutHelpers } from '@/app/composables/useCalloutHelpers';
 import { useRecentResources } from '@/features/shared/commandBar/composables/useRecentResources';
@@ -843,7 +842,6 @@ export const routes: RouteRecordRaw[] = [
 	},
 	...projectsRoutes,
 	...billingRoutes,
-	...pluginsRoutes,
 	{
 		path: '/entity-not-found/:entityType(credential|workflow)',
 		props: true,

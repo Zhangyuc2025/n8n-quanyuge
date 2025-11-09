@@ -69,6 +69,11 @@ const workflowId = computed(() =>
 const onWorkflowPage = computed(() => !!(route.meta.nodeView || route.meta.keepWorkflowAlive));
 const readOnly = computed(() => false);
 
+// Show header only when on workflow page or when workflow details exist
+const shouldShowHeader = computed(() => {
+	return onWorkflowPage.value || (!hideMenuBar.value && workflow.value?.name);
+});
+
 const parentFolderForBreadcrumbs = computed<FolderShortInfo | undefined>(() => {
 	if (!workflow.value.parentFolder) {
 		return undefined;
@@ -241,7 +246,7 @@ async function onWorkflowDeactivated() {
 </script>
 
 <template>
-	<div :class="$style.container">
+	<div v-if="shouldShowHeader" :class="$style.container">
 		<div
 			:class="{ [$style['main-header']]: true, [$style.expanded]: !uiStore.sidebarMenuCollapsed }"
 		>

@@ -50,6 +50,7 @@ import { useHistoryStore } from '@/app/stores/history.store';
 import { useNDVStore } from '@/features/ndv/shared/ndv.store';
 import { useNodeCreatorStore } from '@/features/shared/nodeCreator/nodeCreator.store';
 import { useNodeTypesStore } from '@/app/stores/nodeTypes.store';
+import { useDynamicAINodes } from '@/features/shared/nodeCreator/composables/useDynamicAINodes';
 import { useRootStore } from '@n8n/stores/useRootStore';
 import { useSettingsStore } from '@/app/stores/settings.store';
 import { useTagsStore } from '@/features/shared/tags/tags.store';
@@ -802,11 +803,51 @@ export function useCanvasOperations() {
 		nodeTypeDescription: INodeTypeDescription,
 		options: AddNodeOptions = {},
 	): INodeUi {
-		checkMaxNodesOfTypeReached(nodeTypeDescription);
+		// ✅ 处理动态 AI 节点：检测并转换为实际的节点类型
+		const { isDynamicAIChatModel, getProviderKeyFromNodeName } = useDynamicAINodes();
+		let actualNodeType = node.type;
+		let actualNodeTypeDescription = nodeTypeDescription;
+		let providerParameters = {};
 
-		const nodeData = resolveNodeData(node, nodeTypeDescription, {
-			viewport: options.viewport,
-		});
+		if (isDynamicAIChatModel(node.type)) {
+			// 从节点类型描述中获取实际节点类型和预设参数
+			// @ts-expect-error - __actualNodeType is a custom property
+			const actualTypeName = nodeTypeDescription.__actualNodeType as string | undefined;
+
+			if (actualTypeName) {
+				actualNodeType = actualTypeName;
+				// 获取实际节点类型的描述
+				const realNodeTypeDescription = nodeTypesStore.getNodeType(actualTypeName);
+				if (realNodeTypeDescription) {
+					actualNodeTypeDescription = realNodeTypeDescription;
+				}
+			}
+
+			// 从节点类型描述的 defaults.parameters 中获取提供商参数
+			// @ts-expect-error - defaults.parameters is a custom property for dynamic nodes
+			if (nodeTypeDescription.defaults?.parameters) {
+				// @ts-expect-error - defaults.parameters is a custom property for dynamic nodes
+				providerParameters = nodeTypeDescription.defaults.parameters;
+			}
+		}
+
+		checkMaxNodesOfTypeReached(actualNodeTypeDescription);
+
+		const nodeData = resolveNodeData(
+			{
+				...node,
+				type: actualNodeType,
+				// ✅ 合并提供商参数到节点参数
+				parameters: {
+					...providerParameters,
+					...node.parameters,
+				},
+			},
+			actualNodeTypeDescription,
+			{
+				viewport: options.viewport,
+			},
+		);
 		if (!nodeData) {
 			throw new Error(i18n.baseText('nodeViewV2.showError.failedToCreateNode'));
 		}

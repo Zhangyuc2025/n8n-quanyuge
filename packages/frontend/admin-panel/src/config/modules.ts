@@ -56,6 +56,22 @@ export const modules: AdminModule[] = [
 		],
 	},
 	{
+		id: 'ai-providers',
+		name: 'AI 服务提供商',
+		icon: 'brain',
+		path: '/ai-providers',
+		enabled: true,
+		description: '配置和管理平台AI服务提供商和模型',
+	},
+	{
+		id: 'platform-nodes',
+		name: '平台节点管理',
+		icon: 'cube',
+		path: '/platform-nodes',
+		enabled: true,
+		description: '管理平台节点、自定义节点和审核第三方节点',
+	},
+	{
 		id: 'workspaces',
 		name: '工作空间管理',
 		icon: 'layers',

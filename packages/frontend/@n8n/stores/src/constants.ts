@@ -45,4 +45,8 @@ export const STORES = {
 	CONSENT: 'consent',
 	BILLING: 'billing',
 	PLUGINS: 'plugins',
+	AI_PROVIDERS: 'aiProviders',
+	PLATFORM_NODES: 'platformNodes',
+	CUSTOM_NODES: 'customNodes',
+	USER_NODE_CONFIG: 'userNodeConfig',
 } as const;

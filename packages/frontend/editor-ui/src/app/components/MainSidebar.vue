@@ -1,13 +1,10 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, nextTick, type Ref, useTemplateRef } from 'vue';
-import { onClickOutside, type VueInstance } from '@vueuse/core';
+import { computed, onBeforeUnmount, onMounted, ref, nextTick, useTemplateRef } from 'vue';
 
 import { useI18n } from '@n8n/i18n';
 import {
-	N8nNavigationDropdown,
 	N8nTooltip,
 	N8nLink,
-	N8nIconButton,
 	N8nMenuItem,
 	isCustomMenuItem,
 	N8nLogo,
@@ -15,14 +12,12 @@ import {
 	N8nScrollArea,
 	N8nText,
 	N8nIcon,
-	N8nButton,
 } from '@n8n/design-system';
 import type { IMenuItem } from '@n8n/design-system';
 import {
 	ABOUT_MODAL_KEY,
 	EXPERIMENT_TEMPLATE_RECO_V2_KEY,
 	EXPERIMENT_TEMPLATE_RECO_V3_KEY,
-	RELEASE_NOTES_URL,
 	VIEWS,
 	EXPERIMENT_TEMPLATES_DATA_QUALITY_KEY,
 } from '@/app/constants';
@@ -33,16 +28,12 @@ import { useRootStore } from '@n8n/stores/useRootStore';
 import { useSettingsStore } from '@/app/stores/settings.store';
 import { useTemplatesStore } from '@/features/workflows/templates/templates.store';
 import { useUIStore } from '@/app/stores/ui.store';
-import { useUsersStore } from '@/features/settings/users/users.store';
 import { useWorkflowsStore } from '@/app/stores/workflows.store';
 import { useDebounce } from '@/app/composables/useDebounce';
 import { useExternalHooks } from '@/app/composables/useExternalHooks';
 import { useTelemetry } from '@/app/composables/useTelemetry';
 import { useBugReporting } from '@/app/composables/useBugReporting';
 import { usePageRedirectionHelper } from '@/app/composables/usePageRedirectionHelper';
-import { useGlobalEntityCreation } from '@/app/composables/useGlobalEntityCreation';
-import { useBecomeTemplateCreatorStore } from '@/app/components/BecomeTemplateCreatorCta/becomeTemplateCreatorStore';
-import BecomeTemplateCreatorCta from '@/app/components/BecomeTemplateCreatorCta/BecomeTemplateCreatorCta.vue';
 import { TemplateClickSource, trackTemplatesClick } from '@/experiments/utils';
 import { I18nT } from 'vue-i18n';
 import { usePersonalizedTemplatesV2Store } from '@/experiments/templateRecoV2/stores/templateRecoV2.store';
@@ -51,15 +42,14 @@ import { useTemplatesDataQualityStore } from '@/experiments/templatesDataQuality
 import TemplateTooltip from '@/experiments/personalizedTemplatesV3/components/TemplateTooltip.vue';
 import { useKeybindings } from '@/app/composables/useKeybindings';
 import { useCalloutHelpers } from '@/app/composables/useCalloutHelpers';
-import ProjectNavigation from '@/features/collaboration/projects/components/ProjectNavigation.vue';
 import MainSidebarUserArea from '@/app/components/MainSidebarUserArea.vue';
+import WorkspaceSwitcher from '@/app/components/WorkspaceSwitcher.vue';
+import BalanceCard from '@/app/components/BalanceCard.vue';
 
-const becomeTemplateCreatorStore = useBecomeTemplateCreatorStore();
 const rootStore = useRootStore();
 const settingsStore = useSettingsStore();
 const templatesStore = useTemplatesStore();
 const uiStore = useUIStore();
-const usersStore = useUsersStore();
 const workflowsStore = useWorkflowsStore();
 const personalizedTemplatesV2Store = usePersonalizedTemplatesV2Store();
 const personalizedTemplatesV3Store = usePersonalizedTemplatesV3Store();
@@ -170,6 +160,14 @@ const mainMenuItems = computed<IMenuItem[]>(() => [
 			hasPermission(['rbac'], { rbac: { scope: 'insights:list' } }),
 	},
 	{
+		id: 'billing',
+		icon: 'folder',
+		label: i18n.baseText('mainSidebar.billing'),
+		position: 'bottom',
+		route: { to: { name: VIEWS.BILLING } },
+		available: hasPermission(['authenticated']),
+	},
+	{
 		id: 'help',
 		icon: 'circle-help',
 		label: i18n.baseText('mainSidebar.help'),
@@ -234,8 +232,6 @@ const visibleMenuItems = computed(() =>
 	mainMenuItems.value.filter((item) => item.available !== false),
 );
 
-const createBtn = ref<InstanceType<typeof N8nNavigationDropdown>>();
-
 const isCollapsed = computed(() => uiStore.sidebarMenuCollapsed);
 
 const showUserArea = computed(() => hasPermission(['authenticated']));
@@ -249,13 +245,10 @@ onMounted(async () => {
 		});
 	}
 
-	becomeTemplateCreatorStore.startMonitoringCta();
-
 	await nextTick(onResizeEnd);
 });
 
 onBeforeUnmount(() => {
-	becomeTemplateCreatorStore.stopMonitoringCta();
 	window.removeEventListener('resize', onResize);
 });
 
@@ -341,19 +334,6 @@ async function onResizeEnd() {
 	});
 }
 
-const {
-	menu,
-	handleSelect: handleMenuSelect,
-	createProjectAppendSlotName,
-	createWorkflowsAppendSlotName,
-	createCredentialsAppendSlotName,
-	projectsLimitReachedMessage,
-	upgradeLabel,
-	hasPermissionToCreateProjects,
-} = useGlobalEntityCreation();
-onClickOutside(createBtn as Ref<VueInstance>, () => {
-	createBtn.value?.close();
-});
 </script>
 
 <template>
@@ -400,69 +380,11 @@ onClickOutside(createBtn as Ref<VueInstance>, () => {
 					/>
 				</N8nTooltip>
 			</N8nLogo>
-			<N8nNavigationDropdown
-				ref="createBtn"
-				data-test-id="universal-add"
-				:menu="menu"
-				@select="handleMenuSelect"
-			>
-				<N8nIconButton icon="plus" type="secondary" outline />
-				<template #[createWorkflowsAppendSlotName]>
-					<N8nTooltip
-						v-if="false"
-						placement="right"
-						:content="i18n.baseText('readOnlyEnv.cantAdd.workflow')"
-					>
-						<N8nIcon style="margin-left: auto; margin-right: 5px" icon="lock" size="xsmall" />
-					</N8nTooltip>
-				</template>
-				<template #[createCredentialsAppendSlotName]>
-					<N8nTooltip
-						v-if="false"
-						placement="right"
-						:content="i18n.baseText('readOnlyEnv.cantAdd.credential')"
-					>
-						<N8nIcon style="margin-left: auto; margin-right: 5px" icon="lock" size="xsmall" />
-					</N8nTooltip>
-				</template>
-				<template #[createProjectAppendSlotName]="{ item }">
-					<N8nTooltip
-						v-if="false"
-						placement="right"
-						:content="i18n.baseText('readOnlyEnv.cantAdd.project')"
-					>
-						<N8nIcon style="margin-left: auto; margin-right: 5px" icon="lock" size="xsmall" />
-					</N8nTooltip>
-					<N8nTooltip
-						v-else-if="item.disabled"
-						placement="right"
-						:content="projectsLimitReachedMessage"
-					>
-						<N8nIcon
-							v-if="!hasPermissionToCreateProjects"
-							style="margin-left: auto; margin-right: 5px"
-							icon="lock"
-							size="xsmall"
-						/>
-						<N8nButton
-							v-else
-							:size="'mini'"
-							style="margin-left: auto"
-							type="tertiary"
-							@click="handleMenuSelect(item.id)"
-						>
-							{{ upgradeLabel }}
-						</N8nButton>
-					</N8nTooltip>
-				</template>
-			</N8nNavigationDropdown>
 		</div>
+		<WorkspaceSwitcher v-if="!isCollapsed" :class="$style.workspaceSwitcher" />
 		<N8nScrollArea as-child>
 			<div :class="$style.scrollArea">
-				<ProjectNavigation :collapsed="isCollapsed" />
-
 				<div :class="$style.bottomMenu">
-					<BecomeTemplateCreatorCta v-if="fullyExpanded" />
 					<div :class="$style.bottomMenuItems">
 						<template v-for="item in visibleMenuItems" :key="item.id">
 							<N8nPopoverReka
@@ -506,6 +428,8 @@ onClickOutside(createBtn as Ref<VueInstance>, () => {
 				</div>
 			</div>
 		</N8nScrollArea>
+
+		<BalanceCard v-if="showUserArea && !isCollapsed" :class="$style.balanceCard" />
 
 		<MainSidebarUserArea
 			v-if="showUserArea"
@@ -556,6 +480,11 @@ onClickOutside(createBtn as Ref<VueInstance>, () => {
 	height: 100%;
 	display: flex;
 	flex-direction: column;
+}
+
+.workspaceSwitcher {
+	padding: var(--spacing--xs) var(--spacing--xs);
+	margin-bottom: var(--spacing--xs);
 }
 
 .sideMenuCollapseButton {
@@ -612,5 +541,9 @@ onClickOutside(createBtn as Ref<VueInstance>, () => {
 	padding: 2px;
 	border-radius: var(--radius--sm);
 	margin: 7px 12px 0 5px;
+}
+
+.balanceCard {
+	margin: var(--spacing--xs) var(--spacing--xs) 0;
 }
 </style>

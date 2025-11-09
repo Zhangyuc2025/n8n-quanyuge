@@ -115,6 +115,7 @@ import { CreatePlatformServiceTables1762511302220 } from '../common/176251130222
 import { CreatePlatformFeatureTables1762511302440 } from '../common/1762511302440-CreatePlatformFeatureTables';
 import { ExtendPlatformServiceForPlugins1762511302660 } from '../common/1762511302660-ExtendPlatformServiceForPlugins';
 import { CreateWorkspacePluginCredentialsTable1762511302880 } from '../common/1762511302880-CreateWorkspacePluginCredentialsTable';
+import { RedesignPlatformArchitecture1762511303000 } from '../common/1762511303000-RedesignPlatformArchitecture';
 import type { Migration } from '../migration-types';
 import { UpdateParentFolderIdColumn1740445074052 } from '../mysqldb/1740445074052-UpdateParentFolderIdColumn';
 import { LinkRoleToProjectRelationTable1753953244168 } from './../common/1753953244168-LinkRoleToProjectRelationTable';
@@ -239,4 +240,5 @@ export const mysqlMigrations: Migration[] = [
 	CreatePlatformFeatureTables1762511302440,
 	ExtendPlatformServiceForPlugins1762511302660,
 	CreateWorkspacePluginCredentialsTable1762511302880,
+	RedesignPlatformArchitecture1762511303000,
 ];

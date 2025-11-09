@@ -4,6 +4,7 @@ import { useProjectsStore } from './projects.store';
 import { getResourcePermissions } from '@n8n/permissions';
 
 const MainSidebar = async () => await import('@/app/components/MainSidebar.vue');
+const MainHeader = async () => await import('@/app/components/MainHeader/MainHeader.vue');
 const WorkflowsView = async () => await import('@/app/views/WorkflowsView.vue');
 const CredentialsView = async () =>
 	await import('@/features/credentials/views/CredentialsView.vue');
@@ -25,6 +26,7 @@ const commonChildRoutes: RouteRecordRaw[] = [
 		path: 'workflows',
 		components: {
 			default: WorkflowsView,
+			header: MainHeader,
 			sidebar: MainSidebar,
 		},
 		meta: {
@@ -39,6 +41,7 @@ const commonChildRoutes: RouteRecordRaw[] = [
 		props: true,
 		components: {
 			default: CredentialsView,
+			header: MainHeader,
 			sidebar: MainSidebar,
 		},
 		meta: {
@@ -52,6 +55,7 @@ const commonChildRoutes: RouteRecordRaw[] = [
 		path: 'executions',
 		components: {
 			default: ExecutionsView,
+			header: MainHeader,
 			sidebar: MainSidebar,
 		},
 		meta: {
@@ -65,6 +69,7 @@ const commonChildRoutes: RouteRecordRaw[] = [
 		path: 'folders/:folderId?/workflows',
 		components: {
 			default: WorkflowsView,
+			header: MainHeader,
 			sidebar: MainSidebar,
 		},
 		meta: {
@@ -78,6 +83,7 @@ const commonChildRoutes: RouteRecordRaw[] = [
 		path: 'variables',
 		components: {
 			default: ProjectVariables,
+			header: MainHeader,
 			sidebar: MainSidebar,
 		},
 		meta: {
@@ -153,6 +159,7 @@ export const projectsRoutes: RouteRecordRaw[] = [
 							name: VIEWS.PROJECT_SETTINGS,
 							components: {
 								default: ProjectSettings,
+								header: MainHeader,
 								sidebar: MainSidebar,
 							},
 							meta: {
@@ -196,6 +203,7 @@ export const projectsRoutes: RouteRecordRaw[] = [
 				name: VIEWS.SHARED_WORKFLOWS,
 				components: {
 					default: WorkflowsView,
+					header: MainHeader,
 					sidebar: MainSidebar,
 				},
 				meta: {
@@ -211,6 +219,7 @@ export const projectsRoutes: RouteRecordRaw[] = [
 				name: VIEWS.SHARED_CREDENTIALS,
 				components: {
 					default: CredentialsView,
+					header: MainHeader,
 					sidebar: MainSidebar,
 				},
 				meta: {

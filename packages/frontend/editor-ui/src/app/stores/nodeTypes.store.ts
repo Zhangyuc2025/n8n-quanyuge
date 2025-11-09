@@ -34,6 +34,7 @@ import { computed, ref } from 'vue';
 import { useActionsGenerator } from '@/features/shared/nodeCreator/composables/useActionsGeneration';
 import { removePreviewToken } from '@/features/shared/nodeCreator/nodeCreator.utils';
 import { useSettingsStore } from '@/app/stores/settings.store';
+import { useDynamicAINodes } from '@/features/shared/nodeCreator/composables/useDynamicAINodes';
 
 export type NodeTypesStore = ReturnType<typeof useNodeTypesStore>;
 
@@ -341,6 +342,20 @@ export const useNodeTypesStore = defineStore(STORES.NODE_TYPES, () => {
 
 		if (nodeTypes.length) {
 			setNodeTypes(nodeTypes);
+		}
+
+		// ✅ 加载动态 AI Chat Model 节点
+		try {
+			const { loadDynamicAIChatModels } = useDynamicAINodes();
+			const dynamicAINodes = await loadDynamicAIChatModels();
+
+			if (dynamicAINodes.length) {
+				// 将动态节点转换为 INodeTypeDescription 格式并添加到 store
+				setNodeTypes(dynamicAINodes as INodeTypeDescription[]);
+			}
+		} catch (error) {
+			console.warn('Failed to load dynamic AI nodes:', error);
+			// 不中断主流程，只记录警告
 		}
 	};
 
