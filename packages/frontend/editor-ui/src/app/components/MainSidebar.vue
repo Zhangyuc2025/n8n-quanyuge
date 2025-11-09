@@ -333,7 +333,6 @@ async function onResizeEnd() {
 		fullyExpanded.value = !isCollapsed.value;
 	});
 }
-
 </script>
 
 <template>

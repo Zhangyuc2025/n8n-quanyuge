@@ -1,8 +1,19 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue';
-import { N8nButton, N8nInput, N8nInputLabel, N8nCard, N8nHeading, N8nIcon } from '@n8n/design-system';
+import {
+	N8nButton,
+	N8nInput,
+	N8nInputLabel,
+	N8nCard,
+	N8nHeading,
+	N8nIcon,
+} from '@n8n/design-system';
 import { ElMessage } from 'element-plus';
-import type { AdminAIProvider, CreateAIProviderRequest, UpdateAIProviderRequest } from '../stores/ai-providers.store';
+import type {
+	AdminAIProvider,
+	CreateAIProviderRequest,
+	UpdateAIProviderRequest,
+} from '../stores/ai-providers.store';
 import { useAIProvidersStore } from '../stores/ai-providers.store';
 import ModelConfigEditor from './ModelConfigEditor.vue';
 
@@ -67,10 +78,7 @@ const isFormValid = computed(() => {
 			formData.value.modelsConfig.models.length > 0
 		);
 	} else {
-		return (
-			formData.value.providerName.trim() !== '' &&
-			formData.value.apiEndpoint.trim() !== ''
-		);
+		return formData.value.providerName.trim() !== '' && formData.value.apiEndpoint.trim() !== '';
 	}
 });
 
@@ -209,15 +217,14 @@ watch(
 
 					<!-- API Key -->
 					<div :class="$style.formGroup">
-						<N8nInputLabel :label="`API 密钥${mode === 'edit' ? '（留空保持不变）' : ''}`" :required="mode === 'create'">
+						<N8nInputLabel
+							:label="`API 密钥${mode === 'edit' ? '（留空保持不变）' : ''}`"
+							:required="mode === 'create'"
+						>
 							<N8nInput
 								v-model="formData.apiKey"
 								:type="showPassword ? 'text' : 'password'"
-								:placeholder="
-									mode === 'create'
-										? '请输入 API 密钥'
-										: '留空以保持当前密钥不变'
-								"
+								:placeholder="mode === 'create' ? '请输入 API 密钥' : '留空以保持当前密钥不变'"
 								:disabled="saving"
 							>
 								<template #suffix>
@@ -277,9 +284,7 @@ watch(
 
 				<!-- Footer -->
 				<div :class="$style.dialogFooter">
-					<N8nButton type="secondary" :disabled="saving" @click="onClose">
-						取消
-					</N8nButton>
+					<N8nButton type="secondary" :disabled="saving" @click="onClose"> 取消 </N8nButton>
 					<N8nButton type="primary" :loading="saving" :disabled="!isFormValid" @click="onSave">
 						保存
 					</N8nButton>

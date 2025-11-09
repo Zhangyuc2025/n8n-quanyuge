@@ -40,8 +40,7 @@ const filteredProviders = computed(() => {
 		const query = searchQuery.value.toLowerCase();
 		result = result.filter(
 			(p) =>
-				p.providerName.toLowerCase().includes(query) ||
-				p.providerKey.toLowerCase().includes(query),
+				p.providerName.toLowerCase().includes(query) || p.providerKey.toLowerCase().includes(query),
 		);
 	}
 
@@ -169,9 +168,7 @@ onMounted(() => {
 				>
 					刷新
 				</N8nButton>
-				<N8nButton icon="plus" type="primary" @click="onCreateProvider">
-					创建提供商
-				</N8nButton>
+				<N8nButton icon="plus" type="primary" @click="onCreateProvider"> 创建提供商 </N8nButton>
 			</div>
 		</div>
 

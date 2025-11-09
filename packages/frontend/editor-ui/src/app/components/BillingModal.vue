@@ -106,11 +106,7 @@ const switchTab = (tabId: TabId) => {
 										{{ balanceDisplay }}
 									</N8nText>
 									<div class="balance-actions">
-										<N8nButton
-											type="primary"
-											size="large"
-											@click="switchTab('recharge')"
-										>
+										<N8nButton type="primary" size="large" @click="switchTab('recharge')">
 											{{ i18n.baseText('workspace.recharge') }}
 										</N8nButton>
 									</div>

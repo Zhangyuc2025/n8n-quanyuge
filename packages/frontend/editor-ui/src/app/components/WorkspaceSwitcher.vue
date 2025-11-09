@@ -3,13 +3,7 @@ import { computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useProjectsStore } from '@/features/collaboration/projects/projects.store';
 import { VIEWS } from '@/app/constants';
-import {
-	N8nPopoverReka,
-	N8nMenuItem,
-	N8nIcon,
-	N8nText,
-	type IMenuItem,
-} from '@n8n/design-system';
+import { N8nPopoverReka, N8nMenuItem, N8nIcon, N8nText, type IMenuItem } from '@n8n/design-system';
 import { useI18n } from '@n8n/i18n';
 
 const router = useRouter();
@@ -113,9 +107,11 @@ const onWorkspaceSelect = async (workspaceId: string) => {
 
 	// Emit event to notify other components about workspace change
 	// This allows components to refresh their data for the new workspace (including BalanceCard)
-	window.dispatchEvent(new CustomEvent('workspace-changed', {
-		detail: { workspaceId }
-	}));
+	window.dispatchEvent(
+		new CustomEvent('workspace-changed', {
+			detail: { workspaceId },
+		}),
+	);
 };
 </script>
 
@@ -140,7 +136,7 @@ const onWorkspaceSelect = async (workspaceId: string) => {
 					</span>
 					<N8nIcon
 						v-else
-						:icon="(currentWorkspaceIcon.value as any)"
+						:icon="currentWorkspaceIcon.value as any"
 						size="medium"
 						class="icon-component"
 					/>

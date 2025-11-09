@@ -1,13 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import {
-	N8nButton,
-	N8nInput,
-	N8nInputLabel,
-	N8nCard,
-	N8nText,
-	N8nIcon,
-} from '@n8n/design-system';
+import { N8nButton, N8nInput, N8nInputLabel, N8nCard, N8nText, N8nIcon } from '@n8n/design-system';
 import { ElCheckbox, ElSelect, ElOption } from 'element-plus';
 
 interface ModelConfig {
@@ -84,11 +77,7 @@ watch(
 	<div :class="$style.modelConfigEditor">
 		<!-- Models List -->
 		<div v-if="localModels.length > 0" :class="$style.modelsList">
-			<N8nCard
-				v-for="(model, index) in localModels"
-				:key="index"
-				:class="$style.modelCard"
-			>
+			<N8nCard v-for="(model, index) in localModels" :key="index" :class="$style.modelCard">
 				<div :class="$style.modelHeader">
 					<N8nText bold>模型 {{ index + 1 }}</N8nText>
 					<N8nButton
@@ -222,9 +211,7 @@ watch(
 		<!-- Empty State -->
 		<div v-else :class="$style.emptyState">
 			<N8nIcon icon="info-circle" size="large" />
-			<N8nText color="text-light">
-				暂无模型配置，点击下方按钮添加
-			</N8nText>
+			<N8nText color="text-light"> 暂无模型配置，点击下方按钮添加 </N8nText>
 		</div>
 
 		<!-- Add Model Button -->

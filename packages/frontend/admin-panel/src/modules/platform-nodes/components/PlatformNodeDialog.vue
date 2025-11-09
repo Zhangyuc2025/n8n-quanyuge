@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue';
-import { N8nButton, N8nInput, N8nInputLabel, N8nCard, N8nHeading, N8nIcon } from '@n8n/design-system';
+import {
+	N8nButton,
+	N8nInput,
+	N8nInputLabel,
+	N8nCard,
+	N8nHeading,
+	N8nIcon,
+} from '@n8n/design-system';
 import { ElMessage, ElSelect, ElOption, ElSwitch } from 'element-plus';
 import type {
 	AdminPlatformNode,
@@ -279,11 +286,7 @@ watch(
 					<!-- Version -->
 					<div :class="$style.formGroup">
 						<N8nInputLabel label="版本">
-							<N8nInput
-								v-model="formData.version"
-								placeholder="1.0.0"
-								:disabled="saving"
-							/>
+							<N8nInput v-model="formData.version" placeholder="1.0.0" :disabled="saving" />
 						</N8nInputLabel>
 					</div>
 
@@ -360,9 +363,7 @@ watch(
 
 				<!-- Footer -->
 				<div :class="$style.dialogFooter">
-					<N8nButton type="secondary" :disabled="saving" @click="onClose">
-						取消
-					</N8nButton>
+					<N8nButton type="secondary" :disabled="saving" @click="onClose"> 取消 </N8nButton>
 					<N8nButton type="primary" :loading="saving" :disabled="!isFormValid" @click="onSave">
 						保存
 					</N8nButton>

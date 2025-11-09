@@ -118,15 +118,11 @@ async function onToggleNode(node: AdminPlatformNode, enabled: boolean) {
 
 async function onApproveNode(node: AdminPlatformNode) {
 	try {
-		const { value: reviewNotes } = await ElMessageBox.prompt(
-			'请输入审核备注（可选）',
-			'审核通过',
-			{
-				confirmButtonText: '通过',
-				cancelButtonText: '取消',
-				inputPlaceholder: '审核备注...',
-			},
-		);
+		const { value: reviewNotes } = await ElMessageBox.prompt('请输入审核备注（可选）', '审核通过', {
+			confirmButtonText: '通过',
+			cancelButtonText: '取消',
+			inputPlaceholder: '审核备注...',
+		});
 
 		await platformNodesStore.approvePlatformNode(node.nodeKey, reviewNotes || undefined);
 		ElMessage.success('审核通过');
@@ -141,21 +137,17 @@ async function onApproveNode(node: AdminPlatformNode) {
 
 async function onRejectNode(node: AdminPlatformNode) {
 	try {
-		const { value: reviewNotes } = await ElMessageBox.prompt(
-			'请输入拒绝原因',
-			'拒绝节点',
-			{
-				confirmButtonText: '拒绝',
-				cancelButtonText: '取消',
-				inputPlaceholder: '拒绝原因...',
-				inputValidator: (value) => {
-					if (!value || !value.trim()) {
-						return '请输入拒绝原因';
-					}
-					return true;
-				},
+		const { value: reviewNotes } = await ElMessageBox.prompt('请输入拒绝原因', '拒绝节点', {
+			confirmButtonText: '拒绝',
+			cancelButtonText: '取消',
+			inputPlaceholder: '拒绝原因...',
+			inputValidator: (value) => {
+				if (!value || !value.trim()) {
+					return '请输入拒绝原因';
+				}
+				return true;
 			},
-		);
+		});
 
 		await platformNodesStore.rejectPlatformNode(node.nodeKey, reviewNotes);
 		ElMessage.success('已拒绝');
@@ -349,7 +341,10 @@ onMounted(() => {
 					</template>
 
 					<!-- Loading State -->
-					<div v-if="platformNodesStore.loading && pendingNodes.length === 0" :class="$style.loading">
+					<div
+						v-if="platformNodesStore.loading && pendingNodes.length === 0"
+						:class="$style.loading"
+					>
 						<N8nIcon icon="spinner" size="xlarge" spin />
 						<p>加载中...</p>
 					</div>
@@ -357,9 +352,7 @@ onMounted(() => {
 					<!-- Empty State -->
 					<div v-else-if="pendingNodes.length === 0" :class="$style.emptyState">
 						<N8nIcon icon="check-circle" size="xlarge" />
-						<N8nText color="text-light" size="large" align="center">
-							暂无待审核节点
-						</N8nText>
+						<N8nText color="text-light" size="large" align="center"> 暂无待审核节点 </N8nText>
 					</div>
 
 					<!-- Pending Nodes List -->
