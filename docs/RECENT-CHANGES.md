@@ -2,6 +2,96 @@
 
 本文档仅记录最近几个月的重要变更。完整历史请查看 [archive/FULL-CHANGELOG.md](./archive/FULL-CHANGELOG.md)。
 
+## 2025-11-09
+
+### 彻底移除许可证系统和所有付费墙 ✅
+
+完全清理 n8n 中的许可证系统和所有付费墙组件，使所有功能对用户完全开放。
+
+**移除内容**:
+- ✅ **4 个付费墙组件**: EvaluationsPaywall、InsightsPaywall、DebugPaywallModal、CommunityPlusEnrollmentModal
+- ✅ **2 个常量文件**: executions.constants.ts、usage.constants.ts
+- ✅ **70+ 个翻译键**: 清理所有付费墙相关的多语言文本
+- ✅ **600+ 行代码**: 删除不再需要的许可证检查逻辑
+
+**核心修复**:
+```typescript
+// usage.store.ts - 修复默认值问题
+workflowsHavingEvaluations: {
+  value: 0,
+  limit: -1,  // 改为 -1 表示无限制（原值 0 导致付费墙显示）
+}
+
+// 移除所有许可证相关计算属性
+// planName, planId, workflowsWithEvaluationsLimit 等全部删除
+```
+
+**修改文件清单**（14 个）:
+
+1. **EvaluationsRootView.vue** - 移除 useUsageStore 和付费墙条件渲染
+2. **SetupWizard.vue** - 移除配额检查、警告提示和升级按钮
+3. **InsightsDashboard.vue** - 移除付费墙组件
+4. **InsightsTableWorkflows.vue** - 移除表格模糊遮罩
+5. **useExecutionDebugging.ts** - 简化 debug 链接点击处理
+6. **Modals.vue** - 移除付费墙模态框注册
+7. **ui.store.ts** - 从模态框列表移除付费墙
+8. **usage.store.ts** - 清理许可证相关代码（保留基础统计功能）
+9. **EvaluationsRootView.test.ts** - 移除配额相关测试
+10. **usage.schema.ts** - 添加向后兼容性注释
+11-14. **i18n 文件** - en.json、zh.json 及 backup 文件
+
+**功能影响**:
+
+开放的功能（无任何限制）:
+- ✅ Evaluations（评估） - 无配额限制
+- ✅ Insights（洞察） - 无付费墙
+- ✅ Debug（调试） - 所有用户可用
+- ✅ 移除强制社区版注册
+
+保留的功能:
+- ✅ 工作流触发器使用统计
+- ✅ 基础 usage store 功能
+- ✅ 后端功能开关（配置控制）
+
+**代码质量**:
+- ✅ 所有 lint 错误已修复（由清理导致的）
+- ✅ TypeScript 类型检查通过
+- ✅ 向后兼容性保持
+- ⚠️ 12 个项目原有 lint 问题（与清理无关）
+
+**技术细节**:
+```typescript
+// 修改前：条件渲染付费墙
+<SetupWizard v-if="evaluationsLicensed" @run-test="runTest" />
+<EvaluationsPaywall v-else />
+
+// 修改后：直接显示功能
+<SetupWizard @run-test="runTest" />
+```
+
+**清理统计**:
+- 📝 修改文件：14 个
+- 🗑️ 删除文件：6 个
+- 🧩 删除组件：4 个
+- 🌐 删除翻译键：~70 个
+- 📉 删除代码行：~600+ 行
+- 🧹 清理模块：4 个（Evaluations, Insights, Debug, CommunityPlus）
+
+**执行方式**:
+- 🤖 主代理 + 3 个并行子代理
+- ⏱️ 执行时间：~30 分钟
+- 🎯 影响范围：前端 Vue 组件、Store、i18n 翻译
+
+**最终效果**:
+- ✅ 所有功能完全开放，无任何付费墙限制
+- ✅ 代码结构更简洁，删除 600+ 行不必要代码
+- ✅ 用户体验提升，无注册/升级提示
+- ✅ 向后兼容性完整保持
+
+详细报告: `/tmp/paywall-cleanup-summary.md`
+
+---
+
 ## 2025-11-07
 
 ### 移除 GitHub Star 按钮和 Source Control 功能 ✅

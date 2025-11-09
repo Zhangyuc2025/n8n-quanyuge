@@ -1,19 +1,16 @@
-import { h, computed } from 'vue';
+import { h } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from '@n8n/i18n';
 import { useMessage } from '@/app/composables/useMessage';
 import { useToast } from '@/app/composables/useToast';
 import { injectWorkflowState } from '@/app/composables/useWorkflowState';
-import { DEBUG_PAYWALL_MODAL_KEY } from '../executions.constants';
 import { MODAL_CONFIRM, VIEWS } from '@/app/constants';
 import type { INodeUi } from '@/Interface';
 import { useWorkflowsStore } from '@/app/stores/workflows.store';
-import { useUIStore } from '@/app/stores/ui.store';
 import { useTelemetry } from '@/app/composables/useTelemetry';
 import { useRootStore } from '@n8n/stores/useRootStore';
 import { isFullExecutionResponse } from '@/app/utils/typeGuards';
 import { sanitizeHtml } from '@/app/utils/htmlUtils';
-import { usePageRedirectionHelper } from '@/app/composables/usePageRedirectionHelper';
 
 export const useExecutionDebugging = () => {
 	const telemetry = useTelemetry();
@@ -24,11 +21,6 @@ export const useExecutionDebugging = () => {
 	const toast = useToast();
 	const workflowsStore = useWorkflowsStore();
 	const workflowState = injectWorkflowState();
-	const uiStore = useUIStore();
-
-	const pageRedirectionHelper = usePageRedirectionHelper();
-
-	const isDebugEnabled = computed(() => true);
 
 	const applyExecutionData = async (executionId: string): Promise<void> => {
 		const execution = await workflowsStore.getExecution(executionId);
@@ -142,22 +134,7 @@ export const useExecutionDebugging = () => {
 		});
 	};
 
-	const handleDebugLinkClick = (event: Event): void => {
-		if (!isDebugEnabled.value) {
-			uiStore.openModalWithData({
-				name: DEBUG_PAYWALL_MODAL_KEY,
-				data: {
-					title: i18n.baseText('executionsList.debug.paywall.title'),
-					footerButtonAction: () => {
-						uiStore.closeModal(DEBUG_PAYWALL_MODAL_KEY);
-						void pageRedirectionHelper.goToUpgrade('debug', 'upgrade-debug');
-					},
-				},
-			});
-			event.preventDefault();
-			event.stopPropagation();
-			return;
-		}
+	const handleDebugLinkClick = (): void => {
 		workflowsStore.isInDebugMode = false;
 	};
 

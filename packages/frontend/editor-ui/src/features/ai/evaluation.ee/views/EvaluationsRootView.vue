@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useWorkflowsStore } from '@/app/stores/workflows.store';
-import { useUsageStore } from '@/features/settings/usage/usage.store';
 import { useAsyncState } from '@vueuse/core';
 import { PLACEHOLDER_EMPTY_WORKFLOW_ID, EVALUATIONS_DOCS_URL } from '@/app/constants';
 import { useCanvasOperations } from '@/app/composables/useCanvasOperations';
@@ -12,7 +11,6 @@ import { useNodeTypesStore } from '@/app/stores/nodeTypes.store';
 import { useSourceControlStore } from '@/features/integrations/sourceControl.ee/sourceControl.store';
 
 import { computed, watch } from 'vue';
-import EvaluationsPaywall from '../components/Paywall/EvaluationsPaywall.vue';
 import SetupWizard from '../components/SetupWizard/SetupWizard.vue';
 
 import { N8nCallout, N8nLink, N8nText } from '@n8n/design-system';
@@ -21,7 +19,6 @@ const props = defineProps<{
 }>();
 
 const workflowsStore = useWorkflowsStore();
-const usageStore = useUsageStore();
 const evaluationStore = useEvaluationStore();
 const nodeTypesStore = useNodeTypesStore();
 const telemetry = useTelemetry();
@@ -30,10 +27,6 @@ const locale = useI18n();
 const sourceControlStore = useSourceControlStore();
 
 const { initializeWorkspace } = useCanvasOperations();
-
-const evaluationsLicensed = computed(() => {
-	return usageStore.workflowsWithEvaluationsLimit !== 0;
-});
 
 const isProtectedEnvironment = computed(() => {
 	return sourceControlStore.preferences.branchReadOnly;
@@ -65,14 +58,6 @@ async function runTest() {
 		toast.showError(error, locale.baseText('evaluation.listRuns.error.cantFetchTestRuns'));
 	}
 }
-
-const evaluationsQuotaExceeded = computed(() => {
-	return (
-		usageStore.workflowsWithEvaluationsLimit !== -1 &&
-		usageStore.workflowsWithEvaluationsCount >= usageStore.workflowsWithEvaluationsLimit &&
-		!hasRuns.value
-	);
-});
 
 const { isReady } = useAsyncState(async () => {
 	try {
@@ -115,7 +100,6 @@ watch(
 					trigger_set_up: evaluationStore.evaluationTriggerExists,
 					output_set_up: evaluationStore.evaluationSetOutputsNodeExist,
 					metrics_set_up: evaluationStore.evaluationSetMetricsNodeExist,
-					quota_reached: evaluationsQuotaExceeded.value,
 				});
 			} else {
 				telemetry.track('User viewed tests tab', {
@@ -162,8 +146,7 @@ watch(
 						referrerpolicy="strict-origin-when-cross-origin"
 						allowfullscreen
 					></iframe>
-					<SetupWizard v-if="evaluationsLicensed" @run-test="runTest" />
-					<EvaluationsPaywall v-else />
+					<SetupWizard @run-test="runTest" />
 				</div>
 			</div>
 		</template>

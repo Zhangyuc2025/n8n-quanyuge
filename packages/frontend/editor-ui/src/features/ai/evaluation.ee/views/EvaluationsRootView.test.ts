@@ -6,7 +6,6 @@ import EvaluationRootView from './EvaluationsRootView.vue';
 
 import { useWorkflowsStore } from '@/app/stores/workflows.store';
 import { useEvaluationStore } from '../evaluation.store';
-import { useUsageStore } from '@/features/settings/usage/usage.store';
 import { useSourceControlStore } from '@/features/integrations/sourceControl.ee/sourceControl.store';
 import { mockedStore } from '@/__tests__/utils';
 import type { IWorkflowDb } from '@/Interface';
@@ -157,12 +156,9 @@ describe('EvaluationsRootView', () => {
 		it('should send telemetry event on mount with setup view when no test runs exist', async () => {
 			const workflowsStore = mockedStore(useWorkflowsStore);
 			const evaluationStore = mockedStore(useEvaluationStore);
-			const usageStore = mockedStore(useUsageStore);
 
 			workflowsStore.workflow = mockWorkflow;
 			evaluationStore.testRunsById = {};
-			usageStore.workflowsWithEvaluationsLimit = 10;
-			usageStore.workflowsWithEvaluationsCount = 0;
 
 			// Mock no evaluation nodes in workflow
 			getNodeType.mockReturnValue(null);
@@ -177,7 +173,6 @@ describe('EvaluationsRootView', () => {
 					trigger_set_up: false,
 					output_set_up: false,
 					metrics_set_up: false,
-					quota_reached: false,
 				});
 			});
 		});
@@ -185,15 +180,12 @@ describe('EvaluationsRootView', () => {
 		it('should send telemetry event on mount with overview view when test runs exist', async () => {
 			const workflowsStore = mockedStore(useWorkflowsStore);
 			const evaluationStore = mockedStore(useEvaluationStore);
-			const usageStore = mockedStore(useUsageStore);
 
 			workflowsStore.workflow = mockWorkflow;
 			evaluationStore.testRunsById = {
 				run1: mock<TestRunRecord>({ workflowId: mockWorkflow.id }),
 				run2: mock<TestRunRecord>({ workflowId: mockWorkflow.id }),
 			};
-			usageStore.workflowsWithEvaluationsLimit = 10;
-			usageStore.workflowsWithEvaluationsCount = 1;
 
 			renderComponent({ props: { name: mockWorkflow.id } });
 
@@ -210,7 +202,6 @@ describe('EvaluationsRootView', () => {
 		it('should send telemetry event with trigger_set_up true when dataset trigger node exists', async () => {
 			const workflowsStore = mockedStore(useWorkflowsStore);
 			const evaluationStore = mockedStore(useEvaluationStore);
-			const usageStore = mockedStore(useUsageStore);
 
 			const workflowWithTrigger = mock<IWorkflowDb>({
 				...mockWorkflow,
@@ -228,8 +219,6 @@ describe('EvaluationsRootView', () => {
 
 			workflowsStore.workflow = workflowWithTrigger;
 			evaluationStore.testRunsById = {};
-			usageStore.workflowsWithEvaluationsLimit = 10;
-			usageStore.workflowsWithEvaluationsCount = 0;
 
 			// Mock dataset trigger node type exists
 			getNodeType.mockImplementation((nodeType) =>
@@ -248,7 +237,6 @@ describe('EvaluationsRootView', () => {
 					trigger_set_up: true,
 					output_set_up: false,
 					metrics_set_up: false,
-					quota_reached: false,
 				});
 			});
 		});
@@ -256,7 +244,6 @@ describe('EvaluationsRootView', () => {
 		it('should send telemetry event with output_set_up true when evaluation set output node exists', async () => {
 			const workflowsStore = mockedStore(useWorkflowsStore);
 			const evaluationStore = mockedStore(useEvaluationStore);
-			const usageStore = mockedStore(useUsageStore);
 
 			const workflowWithOutputNode = mock<IWorkflowDb>({
 				...mockWorkflow,
@@ -280,8 +267,6 @@ describe('EvaluationsRootView', () => {
 
 			workflowsStore.workflow = workflowWithOutputNode;
 			evaluationStore.testRunsById = {};
-			usageStore.workflowsWithEvaluationsLimit = 10;
-			usageStore.workflowsWithEvaluationsCount = 0;
 
 			// Mock evaluation node type exists
 			getNodeType.mockImplementation((nodeType) =>
@@ -300,7 +285,6 @@ describe('EvaluationsRootView', () => {
 					trigger_set_up: false,
 					output_set_up: true,
 					metrics_set_up: false,
-					quota_reached: false,
 				});
 			});
 		});
@@ -308,7 +292,6 @@ describe('EvaluationsRootView', () => {
 		it('should send telemetry event with metrics_set_up true when evaluation metrics node exists', async () => {
 			const workflowsStore = mockedStore(useWorkflowsStore);
 			const evaluationStore = mockedStore(useEvaluationStore);
-			const usageStore = mockedStore(useUsageStore);
 
 			const workflowWithMetricsNode = mock<IWorkflowDb>({
 				...mockWorkflow,
@@ -332,8 +315,6 @@ describe('EvaluationsRootView', () => {
 
 			workflowsStore.workflow = workflowWithMetricsNode;
 			evaluationStore.testRunsById = {};
-			usageStore.workflowsWithEvaluationsLimit = 10;
-			usageStore.workflowsWithEvaluationsCount = 0;
 
 			// Mock evaluation node type exists
 			getNodeType.mockImplementation((nodeType) =>
@@ -352,35 +333,6 @@ describe('EvaluationsRootView', () => {
 					trigger_set_up: false,
 					output_set_up: false,
 					metrics_set_up: true,
-					quota_reached: false,
-				});
-			});
-		});
-
-		it('should send telemetry event with quota_reached true when evaluations quota is exceeded', async () => {
-			const workflowsStore = mockedStore(useWorkflowsStore);
-			const evaluationStore = mockedStore(useEvaluationStore);
-			const usageStore = mockedStore(useUsageStore);
-
-			workflowsStore.workflow = mockWorkflow;
-			evaluationStore.testRunsById = {};
-			usageStore.workflowsWithEvaluationsLimit = 5;
-			usageStore.workflowsWithEvaluationsCount = 5; // At limit
-
-			// Mock no evaluation nodes in workflow
-			getNodeType.mockReturnValue(null);
-
-			renderComponent({ props: { name: mockWorkflow.id } });
-
-			await waitFor(() => {
-				expect(useTelemetry().track).toHaveBeenCalledWith('User viewed tests tab', {
-					workflow_id: mockWorkflow.id,
-					test_type: 'evaluation',
-					view: 'setup',
-					trigger_set_up: false,
-					output_set_up: false,
-					metrics_set_up: false,
-					quota_reached: true,
 				});
 			});
 		});

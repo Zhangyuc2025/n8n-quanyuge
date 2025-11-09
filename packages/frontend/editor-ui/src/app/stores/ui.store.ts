@@ -34,8 +34,6 @@ import {
 	ANNOTATION_TAGS_MANAGER_MODAL_KEY,
 	TAGS_MANAGER_MODAL_KEY,
 } from '@/features/shared/tags/tags.constants';
-import { DEBUG_PAYWALL_MODAL_KEY } from '@/features/execution/executions/executions.constants';
-import { COMMUNITY_PLUS_ENROLLMENT_MODAL } from '@/features/settings/usage/usage.constants';
 import { VARIABLE_MODAL_KEY } from '@/features/settings/environments.ee/environments.constants';
 import {
 	CREDENTIAL_EDIT_MODAL_KEY,
@@ -135,7 +133,6 @@ export const useUIStore = defineStore(STORES.UI, () => {
 				SOURCE_CONTROL_PUSH_MODAL_KEY,
 				SOURCE_CONTROL_PULL_MODAL_KEY,
 				EXTERNAL_SECRETS_PROVIDER_MODAL_KEY,
-				DEBUG_PAYWALL_MODAL_KEY,
 				WORKFLOW_HISTORY_VERSION_RESTORE,
 				SETUP_CREDENTIALS_MODAL_KEY,
 				PROJECT_MOVE_RESOURCE_MODAL,
@@ -195,12 +192,6 @@ export const useUIStore = defineStore(STORES.UI, () => {
 			activeId: null,
 			data: {
 				workflowListEventBus: undefined,
-			},
-		},
-		[COMMUNITY_PLUS_ENROLLMENT_MODAL]: {
-			open: false,
-			data: {
-				customHeading: undefined,
 			},
 		},
 		[WORKFLOW_ACTIVATION_CONFLICTING_WEBHOOK_MODAL_KEY]: {

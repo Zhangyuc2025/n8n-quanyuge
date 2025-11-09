@@ -24,9 +24,6 @@ import { getTimeRangeLabels, timeRangeMappings } from '../insights.utils';
 import InsightsDataRangePicker from './InsightsDataRangePicker.vue';
 
 import { N8nHeading, N8nSpinner } from '@n8n/design-system';
-const InsightsPaywall = defineAsyncComponent(
-	async () => await import('@/features/execution/insights/components/InsightsPaywall.vue'),
-);
 const InsightsChartTotal = defineAsyncComponent(
 	async () =>
 		await import('@/features/execution/insights/components/charts/InsightsChartTotal.vue'),
@@ -248,10 +245,7 @@ const projects = computed(() =>
 				:class="$style.insightsBanner"
 			/>
 			<div :class="$style.insightsContent">
-				<div
-					v-if="insightsStore.isDashboardEnabled || isTimeSavedRoute"
-					:class="$style.insightsContentWrapper"
-				>
+				<div :class="$style.insightsContentWrapper">
 					<div
 						:class="[
 							$style.dataLoader,
@@ -285,7 +279,6 @@ const projects = computed(() =>
 						/>
 					</div>
 				</div>
-				<InsightsPaywall v-else />
 			</div>
 		</div>
 	</div>

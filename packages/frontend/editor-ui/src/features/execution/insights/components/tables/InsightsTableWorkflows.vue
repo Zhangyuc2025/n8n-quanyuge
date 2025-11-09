@@ -11,13 +11,10 @@ import type { TableHeader } from '@n8n/design-system/components/N8nDataTableServ
 import { smartDecimal } from '@n8n/utils/number/smartDecimal';
 import { useTelemetry } from '@/app/composables/useTelemetry';
 import { VIEWS } from '@/app/constants';
-import { computed, defineAsyncComponent, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { type RouteLocationRaw, type LocationQueryRaw, RouterLink } from 'vue-router';
 
 import { N8nDataTableServer, N8nHeading, N8nTooltip } from '@n8n/design-system';
-const InsightsPaywall = defineAsyncComponent(
-	async () => await import('@/features/execution/insights/components/InsightsPaywall.vue'),
-);
 
 const props = defineProps<{
 	data: InsightsByWorkflow;
@@ -207,11 +204,6 @@ watch(sortBy, (newValue) => {
 				</N8nTooltip>
 				<template v-else> - </template>
 			</template>
-			<template v-if="!isDashboardEnabled" #cover>
-				<div :class="$style.blurryCover">
-					<InsightsPaywall />
-				</div>
-			</template>
 		</N8nDataTableServer>
 	</div>
 </template>
@@ -235,31 +227,6 @@ watch(sortBy, (newValue) => {
 	max-width: 100%;
 	&:hover {
 		color: var(--color--text--shade-1);
-	}
-}
-
-.blurryCover {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	z-index: 1;
-	backdrop-filter: blur(10px);
-
-	&::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		background: var(--color--foreground--tint-2);
-		opacity: 0.5;
-		z-index: -1;
 	}
 }
 </style>

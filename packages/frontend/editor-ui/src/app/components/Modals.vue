@@ -32,7 +32,6 @@ import {
 	ANNOTATION_TAGS_MANAGER_MODAL_KEY,
 	TAGS_MANAGER_MODAL_KEY,
 } from '@/features/shared/tags/tags.constants';
-import { DEBUG_PAYWALL_MODAL_KEY } from '@/features/execution/executions/executions.constants';
 import { VARIABLE_MODAL_KEY } from '@/features/settings/environments.ee/environments.constants';
 import {
 	CREDENTIAL_EDIT_MODAL_KEY,
@@ -41,9 +40,7 @@ import {
 import {
 	DELETE_USER_MODAL_KEY,
 	INVITE_USER_MODAL_KEY,
-	PERSONALIZATION_MODAL_KEY,
 } from '@/features/settings/users/users.constants';
-import { COMMUNITY_PLUS_ENROLLMENT_MODAL } from '@/features/settings/usage/usage.constants';
 import {
 	DELETE_FOLDER_MODAL_KEY,
 	MOVE_FOLDER_MODAL_KEY,
@@ -63,11 +60,9 @@ import ConfirmPasswordModal from '@/features/core/auth/components/ConfirmPasswor
 import ChatEmbedModal from '@/app/components/ChatEmbedModal.vue';
 import CommunityPackageInstallModal from '@/features/settings/communityNodes/components/CommunityPackageInstallModal.vue';
 import CommunityPackageManageConfirmModal from '@/features/settings/communityNodes/components/CommunityPackageManageConfirmModal.vue';
-import CommunityPlusEnrollmentModal from '@/features/settings/usage/components/CommunityPlusEnrollmentModal.vue';
 import ContactPromptModal from '@/app/components/ContactPromptModal.vue';
 import CredentialEdit from '@/features/credentials/components/CredentialEdit/CredentialEdit.vue';
 import CredentialsSelectModal from '@/features/credentials/components/CredentialsSelectModal.vue';
-import DebugPaywallModal from '@/features/execution/executions/components/DebugPaywallModal.vue';
 import DeleteFolderModal from '@/features/core/folders/components/DeleteFolderModal.vue';
 import MoveToFolderModal from '@/features/core/folders/components/MoveToFolderModal.vue';
 import DeleteUserModal from '@/features/settings/users/components/DeleteUserModal.vue';
@@ -265,16 +260,6 @@ import VariableModal from '@/features/settings/environments.ee/components/Variab
 			</template>
 		</ModalRoot>
 
-		<ModalRoot :name="DEBUG_PAYWALL_MODAL_KEY">
-			<template #default="{ modalName, data }">
-				<DebugPaywallModal
-					data-test-id="debug-paywall-modal"
-					:modal-name="modalName"
-					:data="data"
-				/>
-			</template>
-		</ModalRoot>
-
 		<ModalRoot :name="WORKFLOW_HISTORY_VERSION_RESTORE">
 			<template #default="{ modalName, data }">
 				<WorkflowHistoryVersionRestoreModal
@@ -306,12 +291,6 @@ import VariableModal from '@/features/settings/environments.ee/components/Variab
 		<ModalRoot :name="NEW_ASSISTANT_SESSION_MODAL">
 			<template #default="{ modalName, data }">
 				<NewAssistantSessionModal :name="modalName" :data="data" />
-			</template>
-		</ModalRoot>
-
-		<ModalRoot :name="COMMUNITY_PLUS_ENROLLMENT_MODAL">
-			<template #default="{ modalName, data }">
-				<CommunityPlusEnrollmentModal :modal-name="modalName" :data="data" />
 			</template>
 		</ModalRoot>
 
