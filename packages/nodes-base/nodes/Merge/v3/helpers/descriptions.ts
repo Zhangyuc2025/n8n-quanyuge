@@ -1,15 +1,14 @@
 import type { INodeProperties } from 'n8n-workflow';
 
 export const fuzzyCompareProperty: INodeProperties = {
-	displayName: 'Fuzzy Compare',
+	displayName: '模糊比较',
 	name: 'fuzzyCompare',
 	type: 'boolean',
 	default: false,
-	description:
-		"Whether to tolerate small type differences when comparing fields. E.g. the number 3 and the string '3' are treated as the same.",
+	description: "比较字段时是否容忍小的类型差异。例如，数字 3 和字符串 '3' 会被视为相同。",
 };
 export const numberInputsProperty: INodeProperties = {
-	displayName: 'Number of Inputs',
+	displayName: '输入数量',
 	name: 'numberInputs',
 	type: 'options',
 	noDataExpression: true,
@@ -53,12 +52,11 @@ export const numberInputsProperty: INodeProperties = {
 		},
 	],
 	validateType: 'number',
-	description:
-		'The number of data inputs you want to merge. The node waits for all connected inputs to be executed.',
+	description: '要合并的数据输入数量。节点会等待所有连接的输入都执行完毕。',
 };
 
 export const clashHandlingProperties: INodeProperties = {
-	displayName: 'Clash Handling',
+	displayName: '冲突处理',
 	name: 'clashHandling',
 	type: 'fixedCollection',
 	default: {
@@ -66,12 +64,12 @@ export const clashHandlingProperties: INodeProperties = {
 	},
 	options: [
 		{
-			displayName: 'Values',
+			displayName: '值',
 			name: 'values',
 			values: [
 				{
 					// eslint-disable-next-line n8n-nodes-base/node-param-display-name-wrong-for-dynamic-options
-					displayName: 'When Field Values Clash',
+					displayName: '当字段值冲突时',
 					name: 'resolveClash',
 					// eslint-disable-next-line n8n-nodes-base/node-param-description-missing-from-dynamic-options
 					type: 'options',
@@ -82,24 +80,23 @@ export const clashHandlingProperties: INodeProperties = {
 					},
 				},
 				{
-					displayName: 'Merging Nested Fields',
+					displayName: '合并嵌套字段',
 					name: 'mergeMode',
 					type: 'options',
 					default: 'deepMerge',
 					options: [
 						{
-							name: 'Deep Merge',
+							name: '深度合并',
 							value: 'deepMerge',
-							description: 'Merge at every level of nesting',
+							description: '在每个嵌套层级进行合并',
 						},
 						{
-							name: 'Shallow Merge',
+							name: '浅层合并',
 							value: 'shallowMerge',
-							description:
-								'Merge at the top level only (all nested fields will come from the same input)',
+							description: '仅在顶层进行合并（所有嵌套字段都将来自同一输入）',
 						},
 					],
-					hint: 'How to merge when there are sub-fields below the top-level ones',
+					hint: '当顶层字段下有子字段时如何合并',
 					displayOptions: {
 						show: {
 							resolveClash: [{ _cnd: { not: 'addSuffix' } }],
@@ -107,12 +104,12 @@ export const clashHandlingProperties: INodeProperties = {
 					},
 				},
 				{
-					displayName: 'Minimize Empty Fields',
+					displayName: '最小化空字段',
 					name: 'overrideEmpty',
 					type: 'boolean',
 					default: false,
 					description:
-						"Whether to override the preferred input version for a field if it is empty and the other version isn't. Here 'empty' means undefined, null or an empty string.",
+						'如果首选输入版本的字段为空而另一个版本不为空，是否覆盖首选输入版本。这里的「空」指 undefined、null 或空字符串。',
 					displayOptions: {
 						show: {
 							resolveClash: [{ _cnd: { not: 'addSuffix' } }],

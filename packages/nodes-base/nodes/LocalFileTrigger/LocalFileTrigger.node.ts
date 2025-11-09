@@ -128,35 +128,35 @@ export class LocalFileTrigger implements INodeType {
 				default: {},
 				options: [
 					{
-						displayName: 'Await Write Finish',
+						displayName: '等待写入完成',
 						name: 'awaitWriteFinish',
 						type: 'boolean',
 						default: false,
-						description: 'Whether to wait until files finished writing to avoid partially read',
+						description: '是否等待文件完全写入完成，以避免部分读取',
 					},
 					{
-						displayName: 'Include Linked Files/Folders',
+						displayName: '包含链接的文件/文件夹',
 						name: 'followSymlinks',
 						type: 'boolean',
 						default: true,
 						description:
-							'Whether linked files/folders will also be watched (this includes symlinks, aliases on MacOS and shortcuts on Windows). Otherwise only the links themselves will be monitored).',
+							'是否同时监视链接的文件/文件夹（包括符号链接、macOS 上的别名和 Windows 上的快捷方式）。否则仅监视链接本身。',
 					},
 					{
-						displayName: 'Ignore',
+						displayName: '忽略',
 						name: 'ignored',
 						type: 'string',
 						default: '',
-						placeholder: '**/*.txt or ignore-me/subfolder',
+						placeholder: '**/*.txt 或 ignore-me/subfolder',
 						description:
-							"Files or paths to ignore. The whole path is tested, not just the filename. Supports <a href=\"https://github.com/micromatch/anymatch\">Anymatch</a>- syntax. Regex patterns may not work on macOS. To ignore files based on substring matching, use the 'Ignore Mode' option with 'Contain'.",
+							'要忽略的文件或路径。测试整个路径，而不仅仅是文件名。支持 <a href="https://github.com/micromatch/anymatch">Anymatch</a> 语法。正则表达式模式可能在 macOS 上不起作用。要基于子字符串匹配忽略文件，请在"忽略模式"选项中使用"包含"。',
 					},
 					{
-						displayName: 'Ignore Existing Files/Folders',
+						displayName: '忽略现有文件/文件夹',
 						name: 'ignoreInitial',
 						type: 'boolean',
 						default: true,
-						description: 'Whether to ignore existing files/folders to not trigger an event',
+						description: '是否忽略现有文件/文件夹以避免触发事件',
 					},
 					{
 						displayName: '最大文件夹深度',

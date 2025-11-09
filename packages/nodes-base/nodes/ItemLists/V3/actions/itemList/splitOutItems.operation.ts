@@ -23,7 +23,7 @@ const properties: INodeProperties[] = [
 		required: true,
 		placeholder: 'Drag fields from the left or type their names',
 		description:
-			'The name of the input fields to break out into separate items. Separate multiple field names by commas. For binary data, use $binary.',
+			'要拆分为单独项目的输入字段名称。用逗号分隔多个字段名称。对于二进制数据，使用 $binary。',
 		requiresDataPath: 'multiple',
 	},
 	{
@@ -45,7 +45,7 @@ const properties: INodeProperties[] = [
 			},
 		],
 		default: 'noOtherFields',
-		description: 'Whether to copy any other fields into the new items',
+		description: '是否将其他字段复制到新项目中',
 	},
 	{
 		displayName: 'Fields To Include',
@@ -65,7 +65,7 @@ const properties: INodeProperties[] = [
 		displayName: 'Options',
 		name: 'options',
 		type: 'collection',
-		placeholder: 'Add Field',
+		placeholder: '添加字段',
 		default: {},
 		options: [
 			disableDotNotationBoolean,
@@ -82,7 +82,7 @@ const properties: INodeProperties[] = [
 				name: 'includeBinary',
 				type: 'boolean',
 				default: false,
-				description: 'Whether to include the binary data in the new items',
+				description: '是否在新项目中包含二进制数据s',
 			},
 		],
 	},

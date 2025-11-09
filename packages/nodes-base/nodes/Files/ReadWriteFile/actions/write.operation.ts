@@ -13,38 +13,37 @@ import { errorMapper } from '../helpers/utils';
 
 export const properties: INodeProperties[] = [
 	{
-		displayName: 'File Path and Name',
+		displayName: '文件路径和名称',
 		name: 'fileName',
 		type: 'string',
 		default: '',
 		required: true,
 		placeholder: 'e.g. /data/example.jpg',
-		description:
-			'Path and name of the file that should be written. Also include the file extension.',
+		description: '应写入的文件路径和名称。还需包含文件扩展名。',
 	},
 	{
-		displayName: 'Input Binary Field',
+		displayName: '输入二进制字段',
 		name: 'dataPropertyName',
 		type: 'string',
 		default: 'data',
 		placeholder: 'e.g. data',
 		required: true,
-		hint: 'The name of the input binary field containing the file to be written',
+		hint: '包含要写入的文件的输入二进制字段名称',
 	},
 	{
-		displayName: 'Options',
+		displayName: '选项',
 		name: 'options',
 		type: 'collection',
-		placeholder: 'Add option',
+		placeholder: '添加选项',
 		default: {},
 		options: [
 			{
-				displayName: 'Append',
+				displayName: '追加',
 				name: 'append',
 				type: 'boolean',
 				default: false,
 				description:
-					"Whether to append to an existing file. While it's commonly used with text files, it's not limited to them, however, it wouldn't be applicable for file types that have a specific structure like most binary formats.",
+					'是否追加到现有文件。虽然通常用于文本文件，但不限于文本文件，但不适用于具有特定结构的文件类型（如大多数二进制格式）。',
 			},
 		],
 	},

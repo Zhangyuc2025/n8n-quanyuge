@@ -5,6 +5,5 @@ export const disableDotNotationBoolean: INodeProperties = {
 	name: 'disableDotNotation',
 	type: 'boolean',
 	default: false,
-	description:
-		'Whether to disallow referencing child fields using `parent.child` in the field name',
+	description: '是否禁止在字段名称中使用 `parent.child` 引用子字段',
 };

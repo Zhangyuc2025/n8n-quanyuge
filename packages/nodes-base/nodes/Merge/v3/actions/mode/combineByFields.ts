@@ -51,15 +51,15 @@ export const properties: INodeProperties[] = [
 		description: 'Whether name(s) of field to match are different in input 1 and input 2',
 	},
 	{
-		displayName: 'Fields to Match',
+		displayName: '要匹配的字段',
 		name: 'fieldsToMatchString',
 		type: 'string',
 		// eslint-disable-next-line n8n-nodes-base/node-param-placeholder-miscased-id
-		placeholder: 'e.g. id, name',
+		placeholder: '例如 id, name',
 		default: '',
 		requiresDataPath: 'multiple',
-		description: 'Specify the fields to use for matching input items',
-		hint: 'Drag or type the input field name',
+		description: '指定用于匹配输入项目的字段',
+		hint: '拖拽或输入字段名称',
 		displayOptions: {
 			show: {
 				advanced: [false],
@@ -67,15 +67,15 @@ export const properties: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Fields to Match',
+		displayName: '要匹配的字段',
 		name: 'mergeByFields',
 		type: 'fixedCollection',
-		placeholder: 'Add Fields to Match',
+		placeholder: '添加要匹配的字段',
 		default: { values: [{ field1: '', field2: '' }] },
 		typeOptions: {
 			multipleValues: true,
 		},
-		description: 'Specify the fields to use for matching input items',
+		description: '指定用于匹配输入项目的字段',
 		displayOptions: {
 			show: {
 				advanced: [true],
@@ -199,7 +199,7 @@ export const properties: INodeProperties[] = [
 		displayName: 'Options',
 		name: 'options',
 		type: 'collection',
-		placeholder: 'Add option',
+		placeholder: '添加选项',
 		default: {},
 		options: [
 			{
@@ -224,8 +224,7 @@ export const properties: INodeProperties[] = [
 				name: 'disableDotNotation',
 				type: 'boolean',
 				default: false,
-				description:
-					'Whether to disallow referencing child fields using `parent.child` in the field name',
+				description: '是否禁止在字段名称中使用 `parent.child` 引用子字段',
 			},
 			fuzzyCompareProperty,
 			{

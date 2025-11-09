@@ -27,12 +27,11 @@ import { formDescription, formFields, formTitle } from '../Form/common.descripti
 
 const waitTimeProperties: INodeProperties[] = [
 	{
-		displayName: 'Limit Wait Time',
+		displayName: '限制等待时间',
 		name: 'limitWaitTime',
 		type: 'boolean',
 		default: false,
-		description:
-			'Whether to limit the time this node should wait for a user response before execution resumes',
+		description: '是否限制此节点在执行恢复之前等待用户响应的时间',
 	},
 	...updateDisplayOptions(
 		{
@@ -46,24 +45,24 @@ const waitTimeProperties: INodeProperties[] = [
 
 export const formFieldsProperties: INodeProperties[] = [
 	{
-		displayName: 'Define Form',
+		displayName: '定义表单',
 		name: 'defineForm',
 		type: 'options',
 		noDataExpression: true,
 		options: [
 			{
-				name: 'Using Fields Below',
+				name: '使用下方字段',
 				value: 'fields',
 			},
 			{
-				name: 'Using JSON',
+				name: '使用 JSON',
 				value: 'json',
 			},
 		],
 		default: 'fields',
 	},
 	{
-		displayName: 'Form Fields',
+		displayName: '表单字段',
 		name: 'jsonOutput',
 		type: 'json',
 		typeOptions: {
@@ -73,7 +72,7 @@ export const formFieldsProperties: INodeProperties[] = [
 			'[\n  {\n    "fieldLabel": "Name",\n    "placeholder": "enter your name",\n    "requiredField": true\n  },\n  {\n    "fieldLabel": "Age",\n    "fieldType": "number",\n    "placeholder": "enter your age"\n  },\n  {\n    "fieldLabel": "Email",\n    "fieldType": "email",\n    "requiredField": true\n  },\n  {\n    "fieldLabel": "Textarea",\n    "fieldType": "textarea"\n  },\n  {\n    "fieldLabel": "Dropdown Options",\n    "fieldType": "dropdown",\n    "fieldOptions": {\n      "values": [\n        {\n          "option": "option 1"\n        },\n        {\n          "option": "option 2"\n        }\n      ]\n    },\n    "requiredField": true\n  },\n  {\n    "fieldLabel": "Checkboxes",\n    "fieldType": "checkbox",\n    "fieldOptions": {\n      "values": [\n        {\n          "option": "option 1"\n        },\n        {\n          "option": "option 2"\n        }\n      ]\n    }\n  },\n  {\n    "fieldLabel": "Radio",\n    "fieldType": "radio",\n    "fieldOptions": {\n      "values": [\n        {\n          "option": "option 1"\n        },\n        {\n          "option": "option 2"\n        }\n      ]\n    }\n  },\n  {\n    "fieldLabel": "Email",\n    "fieldType": "email",\n    "placeholder": "me@mail.con"\n  },\n  {\n    "fieldLabel": "File",\n    "fieldType": "file",\n    "multipleFiles": true,\n    "acceptFileTypes": ".jpg, .png"\n  },\n  {\n    "fieldLabel": "Number",\n    "fieldType": "number"\n  },\n  {\n    "fieldLabel": "Password",\n    "fieldType": "password"\n  }\n]\n',
 		validateType: 'form-fields',
 		ignoreValidationDuringExecution: true,
-		hint: '<a href="https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.form/" target="_blank">See docs</a> for field syntax',
+		hint: '<a href="https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.form/" target="_blank">查看文档</a> 了解字段语法',
 		displayOptions: {
 			show: {
 				defineForm: ['json'],
@@ -93,22 +92,22 @@ const pageProperties = updateDisplayOptions(
 		...formFieldsProperties,
 		...waitTimeProperties,
 		{
-			displayName: 'Options',
+			displayName: '选项',
 			name: 'options',
 			type: 'collection',
-			placeholder: 'Add option',
+			placeholder: '添加选项',
 			default: {},
 			options: [
 				{ ...formTitle, required: false },
 				formDescription,
 				{
-					displayName: 'Button Label',
+					displayName: '按钮标签',
 					name: 'buttonLabel',
 					type: 'string',
 					default: 'Submit',
 				},
 				{
-					displayName: 'Custom Form Styling',
+					displayName: '自定义表单样式',
 					name: 'customCss',
 					type: 'string',
 					typeOptions: {
@@ -116,7 +115,7 @@ const pageProperties = updateDisplayOptions(
 						editor: 'cssEditor',
 					},
 					default: cssVariables.trim(),
-					description: 'Override default styling of the public form interface with CSS',
+					description: '使用 CSS 覆盖公共表单界面的默认样式',
 				},
 			],
 		},
@@ -132,35 +131,35 @@ const completionProperties = updateDisplayOptions(
 	[
 		{
 			// eslint-disable-next-line n8n-nodes-base/node-param-display-name-miscased
-			displayName: 'On n8n Form Submission',
+			displayName: '提交 n8n 表单时',
 			name: 'respondWith',
 			type: 'options',
 			default: 'text',
 			options: [
 				{
-					name: 'Show Completion Screen',
+					name: '显示完成屏幕',
 					value: 'text',
-					description: 'Show a response text to the user',
+					description: '向用户显示响应文本',
 				},
 				{
-					name: 'Redirect to URL',
+					name: '重定向到 URL',
 					value: 'redirect',
-					description: 'Redirect the user to a URL',
+					description: '将用户重定向到 URL',
 				},
 				{
-					name: 'Show Text',
+					name: '显示文本',
 					value: 'showText',
-					description: 'Display simple text or HTML',
+					description: '显示简单文本或 HTML',
 				},
 				{
-					name: 'Return Binary File',
+					name: '返回二进制文件',
 					value: 'returnBinary',
-					description: 'Return incoming binary file',
+					description: '返回传入的二进制文件',
 				},
 			],
 		},
 		{
-			displayName: 'URL',
+			displayName: 'URL 地址',
 			name: 'redirectUrl',
 			validateType: 'url',
 			type: 'string',
@@ -173,7 +172,7 @@ const completionProperties = updateDisplayOptions(
 			},
 		},
 		{
-			displayName: 'Completion Title',
+			displayName: '完成标题',
 			name: 'completionTitle',
 			type: 'string',
 			default: '',
@@ -185,7 +184,7 @@ const completionProperties = updateDisplayOptions(
 			},
 		},
 		{
-			displayName: 'Completion Message',
+			displayName: '完成消息',
 			name: 'completionMessage',
 			type: 'string',
 			default: '',
@@ -199,7 +198,7 @@ const completionProperties = updateDisplayOptions(
 			},
 		},
 		{
-			displayName: 'Text',
+			displayName: '文本',
 			name: 'responseText',
 			type: 'string',
 			displayOptions: {
@@ -211,11 +210,11 @@ const completionProperties = updateDisplayOptions(
 				rows: 2,
 			},
 			default: '',
-			placeholder: 'e.g. Thanks for filling the form',
-			description: 'The text to display on the page. Use HTML to show a customized web page.',
+			placeholder: '例如：感谢您填写此表单',
+			description: '要在页面上显示的文本。使用 HTML 可以显示自定义网页。',
 		},
 		{
-			displayName: 'Input Data Field Name',
+			displayName: '输入数据字段名称',
 			name: 'inputDataFieldName',
 			type: 'string',
 			displayOptions: {
@@ -224,22 +223,21 @@ const completionProperties = updateDisplayOptions(
 				},
 			},
 			default: 'data',
-			placeholder: 'e.g. data',
-			description:
-				'Find the name of input field containing the binary data to return in the Input panel on the left, in the Binary tab',
-			hint: 'The name of the input field containing the binary file data to be returned',
+			placeholder: '例如：data',
+			description: '在左侧输入面板的二进制选项卡中查找包含要返回的二进制数据的输入字段名称',
+			hint: '包含要返回的二进制文件数据的输入字段名称',
 		},
 		...waitTimeProperties,
 		{
-			displayName: 'Options',
+			displayName: '选项',
 			name: 'options',
 			type: 'collection',
-			placeholder: 'Add option',
+			placeholder: '添加选项',
 			default: {},
 			options: [
-				{ ...formTitle, required: false, displayName: 'Completion Page Title' },
+				{ ...formTitle, required: false, displayName: '完成页面标题' },
 				{
-					displayName: 'Custom Form Styling',
+					displayName: '自定义表单样式',
 					name: 'customCss',
 					type: 'string',
 					typeOptions: {
@@ -247,7 +245,7 @@ const completionProperties = updateDisplayOptions(
 						editor: 'cssEditor',
 					},
 					default: cssVariables.trim(),
-					description: 'Override default styling of the public form interface with CSS',
+					description: '使用 CSS 覆盖公共表单界面的默认样式',
 				},
 			],
 			displayOptions: {

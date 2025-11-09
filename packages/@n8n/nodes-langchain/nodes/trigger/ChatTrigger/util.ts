@@ -33,10 +33,10 @@ export function configureWaitTillDate(context: IExecuteFunctions) {
 			}
 
 			if (isNaN(waitTill.getTime())) {
-				throw new UserError('Invalid date format');
+				throw new UserError('无效的日期格式');
 			}
 		} catch (error) {
-			throw new NodeOperationError(context.getNode(), 'Could not configure Limit Wait Time', {
+			throw new NodeOperationError(context.getNode(), '无法配置限制等待时间', {
 				description: error.message,
 			});
 		}
@@ -49,7 +49,7 @@ export const configureInputs = (parameters: { options?: { memoryConnection?: boo
 	const inputs = [
 		{
 			type: 'main',
-			displayName: 'User Response',
+			displayName: '用户响应',
 		},
 	];
 	if (parameters.options?.memoryConnection) {
@@ -57,7 +57,7 @@ export const configureInputs = (parameters: { options?: { memoryConnection?: boo
 			...inputs,
 			{
 				type: 'ai_memory',
-				displayName: 'Memory',
+				displayName: '记忆',
 				maxConnections: 1,
 			},
 		];

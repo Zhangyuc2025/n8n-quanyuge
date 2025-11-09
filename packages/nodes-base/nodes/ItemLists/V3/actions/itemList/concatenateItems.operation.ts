@@ -39,7 +39,7 @@ const properties: INodeProperties[] = [
 		typeOptions: {
 			multipleValues: true,
 		},
-		placeholder: 'Add Field To Aggregate',
+		placeholder: '添加要聚合的字段',
 		default: { fieldToAggregate: [{ fieldToAggregate: '', renameField: false }] },
 		displayOptions: {
 			show: {
@@ -56,10 +56,10 @@ const properties: INodeProperties[] = [
 						name: 'fieldToAggregate',
 						type: 'string',
 						default: '',
-						description: 'The name of a field in the input items to aggregate together',
+						description: '输入项目中要聚合的字段名称',
 						// eslint-disable-next-line n8n-nodes-base/node-param-placeholder-miscased-id
 						placeholder: 'e.g. id',
-						hint: ' Enter the field name as text',
+						hint: ' 以文本形式输入字段名称',
 						requiresDataPath: 'single',
 					},
 					{
@@ -67,7 +67,7 @@ const properties: INodeProperties[] = [
 						name: 'renameField',
 						type: 'boolean',
 						default: false,
-						description: 'Whether to give the field a different name in the output',
+						description: '是否在输出中为字段使用不同的名称',
 					},
 					{
 						displayName: 'Output Field Name',
@@ -79,8 +79,7 @@ const properties: INodeProperties[] = [
 						},
 						type: 'string',
 						default: '',
-						description:
-							'The name of the field to put the aggregated data in. Leave blank to use the input field name.',
+						description: '放置聚合数据的字段名称。留空则使用输入字段名称。',
 						requiresDataPath: 'single',
 					},
 				],
@@ -97,7 +96,7 @@ const properties: INodeProperties[] = [
 			},
 		},
 		default: 'data',
-		description: 'The name of the output field to put the data in',
+		description: '放置数据的输出字段名称',
 	},
 	{
 		displayName: 'Include',
@@ -156,7 +155,7 @@ const properties: INodeProperties[] = [
 		displayName: 'Options',
 		name: 'options',
 		type: 'collection',
-		placeholder: 'Add Field',
+		placeholder: '添加字段',
 		default: {},
 		options: [
 			{
@@ -172,8 +171,7 @@ const properties: INodeProperties[] = [
 				name: 'mergeLists',
 				type: 'boolean',
 				default: false,
-				description:
-					'Whether to merge the output into a single flat list (rather than a list of lists), if the field to aggregate is a list',
+				description: '如果要聚合的字段是列表，是否将输出合并为单个扁平列表（而不是列表的列表）',
 				displayOptions: {
 					hide: {
 						'/aggregate': ['aggregateAllItemData'],
@@ -185,7 +183,7 @@ const properties: INodeProperties[] = [
 				name: 'includeBinaries',
 				type: 'boolean',
 				default: false,
-				description: 'Whether to include the binary data in the new item',
+				description: '是否在新项目中包含二进制数据',
 			},
 			{
 				displayName: 'Keep Only Unique Binaries',
@@ -193,7 +191,7 @@ const properties: INodeProperties[] = [
 				type: 'boolean',
 				default: false,
 				description:
-					'Whether to keep only unique binaries by comparing mime types, file types, file sizes and file extensions',
+					'是否通过比较 MIME 类型、文件类型、文件大小和文件扩展名来仅保留唯一的二进制数据',
 				displayOptions: {
 					show: {
 						includeBinaries: [true],
@@ -205,8 +203,7 @@ const properties: INodeProperties[] = [
 				name: 'keepMissing',
 				type: 'boolean',
 				default: false,
-				description:
-					'Whether to add a null entry to the aggregated list when there is a missing or null value',
+				description: '当存在缺失或空值时，是否向聚合列表添加 null 条目',
 				displayOptions: {
 					hide: {
 						'/aggregate': ['aggregateAllItemData'],

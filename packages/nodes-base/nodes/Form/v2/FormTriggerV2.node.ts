@@ -24,11 +24,11 @@ import { FORM_TRIGGER_AUTHENTICATION_PROPERTY } from '../interfaces';
 import { formWebhook } from '../utils/utils';
 
 const useWorkflowTimezone: INodeProperties = {
-	displayName: 'Use Workflow Timezone',
+	displayName: '使用工作流时区',
 	name: 'useWorkflowTimezone',
 	type: 'boolean',
 	default: false,
-	description: "Whether to use the workflow timezone set in node's settings rather than UTC",
+	description: '是否使用节点设置中设置的工作流时区而不是 UTC',
 };
 
 const descriptionV2: INodeTypeDescription = {
@@ -67,8 +67,8 @@ const descriptionV2: INodeTypeDescription = {
 			nodeType: 'form',
 		},
 	],
-	eventTriggerDescription: 'Waiting for you to submit the form',
-	activationMessage: 'You can now make calls to your production Form URL.',
+	eventTriggerDescription: '等待您提交表单',
+	activationMessage: '现在您可以调用生产环境的表单 URL。',
 	triggerPanel: formTriggerPanel,
 	credentials: [
 		{
@@ -113,7 +113,7 @@ const descriptionV2: INodeTypeDescription = {
 		},
 		{
 			displayName:
-				"In the 'Respond to Webhook' node, select 'Respond With JSON' and set the <strong>formSubmittedText</strong> key to display a custom response in the form, or the <strong>redirectURL</strong> key to redirect users to a URL",
+				'在「响应 Webhook」节点中，选择「使用 JSON 响应」并设置 <strong>formSubmittedText</strong> 键以在表单中显示自定义响应，或设置 <strong>redirectURL</strong> 键以将用户重定向到 URL',
 			name: 'formNotice',
 			type: 'notice',
 			displayOptions: {
@@ -123,22 +123,22 @@ const descriptionV2: INodeTypeDescription = {
 		},
 		// notice would be shown if no Form node was connected to trigger
 		{
-			displayName: 'Build multi-step forms by adding a form page later in your workflow',
+			displayName: '通过在工作流后续步骤中添加表单页面来构建多步骤表单',
 			name: ADD_FORM_NOTICE,
 			type: 'notice',
 			default: '',
 		},
 		{
-			displayName: 'Options',
+			displayName: '选项',
 			name: 'options',
 			type: 'collection',
-			placeholder: 'Add option',
+			placeholder: '添加选项',
 			default: {},
 			options: [
 				appendAttributionToForm,
 				{
-					displayName: 'Button Label',
-					description: 'The label of the submit button in the form',
+					displayName: '按钮标签',
+					description: '表单中提交按钮的标签',
 					name: 'buttonLabel',
 					type: 'string',
 					default: 'Submit',
@@ -157,16 +157,16 @@ const descriptionV2: INodeTypeDescription = {
 					},
 				},
 				{
-					displayName: 'Ignore Bots',
+					displayName: '忽略机器人',
 					name: 'ignoreBots',
 					type: 'boolean',
 					default: false,
-					description: 'Whether to ignore requests from bots like link previewers and web crawlers',
+					description: '是否忽略来自机器人（如链接预览器和网络爬虫）的请求',
 				},
 				{
 					...useWorkflowTimezone,
 					default: false,
-					description: "Whether to use the workflow timezone in 'submittedAt' field or UTC",
+					description: "是否在 'submittedAt' 字段中使用工作流时区或 UTC",
 					displayOptions: {
 						show: {
 							'@version': [2],
@@ -176,7 +176,7 @@ const descriptionV2: INodeTypeDescription = {
 				{
 					...useWorkflowTimezone,
 					default: true,
-					description: "Whether to use the workflow timezone in 'submittedAt' field or UTC",
+					description: "是否在 'submittedAt' 字段中使用工作流时区或 UTC",
 					displayOptions: {
 						show: {
 							'@version': [{ _cnd: { gt: 2 } }],
@@ -184,7 +184,7 @@ const descriptionV2: INodeTypeDescription = {
 					},
 				},
 				{
-					displayName: 'Custom Form Styling',
+					displayName: '自定义表单样式',
 					name: 'customCss',
 					type: 'string',
 					typeOptions: {
@@ -197,7 +197,7 @@ const descriptionV2: INodeTypeDescription = {
 						},
 					},
 					default: cssVariables.trim(),
-					description: 'Override default styling of the public form interface with CSS',
+					description: '使用 CSS 覆盖公共表单界面的默认样式',
 				},
 			],
 		},

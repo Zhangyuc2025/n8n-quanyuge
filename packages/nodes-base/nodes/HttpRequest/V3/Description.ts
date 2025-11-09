@@ -472,7 +472,7 @@ export const mainProperties: INodeProperties[] = [
 		typeOptions: {
 			multipleValues: true,
 		},
-		placeholder: 'Add Parameter',
+		placeholder: '添加参数',
 		default: {
 			parameters: [
 				{
@@ -484,7 +484,7 @@ export const mainProperties: INodeProperties[] = [
 		options: [
 			{
 				name: 'parameters',
-				displayName: 'Parameter',
+				displayName: '参数',
 				values: [
 					{
 						displayName: '参数类型',
@@ -493,26 +493,26 @@ export const mainProperties: INodeProperties[] = [
 						options: [
 							{
 								// eslint-disable-next-line n8n-nodes-base/node-param-display-name-miscased
-								name: 'n8n Binary File',
+								name: 'n8n 二进制文件',
 								value: 'formBinaryData',
 							},
 							{
-								name: 'Form Data',
+								name: '表单数据',
 								value: 'formData',
 							},
 						],
 						default: 'formData',
 					},
 					{
-						displayName: 'Name',
+						displayName: '名称',
 						name: 'name',
 						type: 'string',
 						default: '',
 						description:
-							'ID of the field to set. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+							'要设置的字段 ID。从列表中选择，或使用<a href="https://docs.n8n.io/code/expressions/">表达式</a>指定 ID。',
 					},
 					{
-						displayName: 'Value',
+						displayName: '值',
 						name: 'value',
 						type: 'string',
 						displayOptions: {
@@ -521,7 +521,7 @@ export const mainProperties: INodeProperties[] = [
 							},
 						},
 						default: '',
-						description: 'Value of the field to set',
+						description: '要设置的字段值',
 					},
 					{
 						displayName: '输入数据字段名',
@@ -533,15 +533,14 @@ export const mainProperties: INodeProperties[] = [
 							},
 						},
 						default: '',
-						description:
-							'The name of the incoming field containing the binary file data to be processed',
+						description: '包含待处理二进制文件数据的传入字段名称',
 					},
 				],
 			},
 		],
 	},
 	{
-		displayName: 'Specify Body',
+		displayName: '指定请求体方式',
 		name: 'specifyBody',
 		type: 'options',
 		displayOptions: {
@@ -552,11 +551,11 @@ export const mainProperties: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Using Fields Below',
+				name: '使用下面的字段',
 				value: 'keypair',
 			},
 			{
-				name: 'Using Single Field',
+				name: '使用单个字段',
 				value: 'string',
 			},
 		],
@@ -576,7 +575,7 @@ export const mainProperties: INodeProperties[] = [
 		typeOptions: {
 			multipleValues: true,
 		},
-		placeholder: 'Add Parameter',
+		placeholder: '添加参数',
 		default: {
 			parameters: [
 				{
@@ -588,22 +587,22 @@ export const mainProperties: INodeProperties[] = [
 		options: [
 			{
 				name: 'parameters',
-				displayName: 'Parameter',
+				displayName: '参数',
 				values: [
 					{
-						displayName: 'Name',
+						displayName: '名称',
 						name: 'name',
 						type: 'string',
 						default: '',
 						description:
-							'ID of the field to set. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+							'要设置的字段 ID。从列表中选择，或使用<a href="https://docs.n8n.io/code/expressions/">表达式</a>指定 ID。',
 					},
 					{
-						displayName: 'Value',
+						displayName: '值',
 						name: 'value',
 						type: 'string',
 						default: '',
-						description: 'Value of the field to set',
+						description: '要设置的字段值',
 					},
 				],
 			},
@@ -633,7 +632,7 @@ export const mainProperties: INodeProperties[] = [
 			},
 		},
 		default: '',
-		description: 'The name of the incoming field containing the binary file data to be processed',
+		description: '包含待处理二进制文件数据的传入字段名称',
 	},
 	{
 		displayName: '内容类型',
@@ -692,20 +691,18 @@ export const mainProperties: INodeProperties[] = [
 									minValue: -1,
 								},
 								default: 50,
-								description:
-									'Input will be split in batches to throttle requests. -1 for disabled. 0 will be treated as 1.',
+								description: '输入将被分批处理以限制请求。-1 表示禁用。0 将被视为 1。',
 							},
 							{
 								// eslint-disable-next-line n8n-nodes-base/node-param-display-name-miscased
-								displayName: 'Batch Interval (ms)',
+								displayName: '批次间隔（毫秒）',
 								name: 'batchInterval',
 								type: 'number',
 								typeOptions: {
 									minValue: 0,
 								},
 								default: 1000,
-								description:
-									'Time (in milliseconds) between each batch of requests. 0 for disabled.',
+								description: '每批请求之间的时间间隔（毫秒）。0 表示禁用。',
 							},
 						],
 					},
@@ -718,8 +715,7 @@ export const mainProperties: INodeProperties[] = [
 				noDataExpression: true,
 				default: false,
 				// eslint-disable-next-line n8n-nodes-base/node-param-description-wrong-for-ignore-ssl-issues
-				description:
-					'Whether to download the response even if SSL certificate validation is not possible',
+				description: '是否在 SSL 证书验证不可用时仍下载响应',
 			},
 			{
 				displayName: '查询参数中的数组格式',
@@ -732,22 +728,22 @@ export const mainProperties: INodeProperties[] = [
 				},
 				options: [
 					{
-						name: 'No Brackets',
+						name: '无括号',
 						value: 'repeat',
 						// eslint-disable-next-line n8n-nodes-base/node-param-description-lowercase-first-char
-						description: 'e.g. foo=bar&foo=qux',
+						description: '例如 foo=bar&foo=qux',
 					},
 					{
-						name: 'Brackets Only',
+						name: '仅括号',
 						value: 'brackets',
 						// eslint-disable-next-line n8n-nodes-base/node-param-description-lowercase-first-char
-						description: 'e.g. foo[]=bar&foo[]=qux',
+						description: '例如 foo[]=bar&foo[]=qux',
 					},
 					{
-						name: 'Brackets with Indices',
+						name: '带索引的括号',
 						value: 'indices',
 						// eslint-disable-next-line n8n-nodes-base/node-param-description-lowercase-first-char
-						description: 'e.g. foo[0]=bar&foo[1]=qux',
+						description: '例如 foo[0]=bar&foo[1]=qux',
 					},
 				],
 				default: 'brackets',
@@ -757,12 +753,12 @@ export const mainProperties: INodeProperties[] = [
 				name: 'lowercaseHeaders',
 				type: 'boolean',
 				default: true,
-				description: 'Whether to lowercase header names',
+				description: '是否将请求头名称转换为小写',
 			},
 			{
 				displayName: '重定向',
 				name: 'redirect',
-				placeholder: 'Add Redirect',
+				placeholder: '添加重定向',
 				type: 'fixedCollection',
 				typeOptions: {
 					multipleValues: false,
@@ -770,7 +766,7 @@ export const mainProperties: INodeProperties[] = [
 				default: { redirect: {} },
 				options: [
 					{
-						displayName: 'Redirect',
+						displayName: '重定向',
 						name: 'redirect',
 						values: [
 							{
@@ -779,7 +775,7 @@ export const mainProperties: INodeProperties[] = [
 								type: 'boolean',
 								default: false,
 								noDataExpression: true,
-								description: 'Whether to follow all redirects',
+								description: '是否跟随所有重定向',
 							},
 							{
 								displayName: '最大重定向次数',
@@ -791,7 +787,7 @@ export const mainProperties: INodeProperties[] = [
 									},
 								},
 								default: 21,
-								description: 'Max number of redirects to follow',
+								description: '最大跟随重定向次数',
 							},
 						],
 					},
@@ -805,7 +801,7 @@ export const mainProperties: INodeProperties[] = [
 			{
 				displayName: '重定向',
 				name: 'redirect',
-				placeholder: 'Add Redirect',
+				placeholder: '添加重定向',
 				type: 'fixedCollection',
 				typeOptions: {
 					multipleValues: false,
@@ -815,7 +811,7 @@ export const mainProperties: INodeProperties[] = [
 				},
 				options: [
 					{
-						displayName: 'Redirect',
+						displayName: '重定向',
 						name: 'redirect',
 						values: [
 							{
@@ -824,7 +820,7 @@ export const mainProperties: INodeProperties[] = [
 								type: 'boolean',
 								default: true,
 								noDataExpression: true,
-								description: 'Whether to follow all redirects',
+								description: '是否跟随所有重定向',
 							},
 							{
 								displayName: '最大重定向次数',
@@ -836,7 +832,7 @@ export const mainProperties: INodeProperties[] = [
 									},
 								},
 								default: 21,
-								description: 'Max number of redirects to follow',
+								description: '最大跟随重定向次数',
 							},
 						],
 					},
@@ -850,7 +846,7 @@ export const mainProperties: INodeProperties[] = [
 			{
 				displayName: '响应',
 				name: 'response',
-				placeholder: 'Add response',
+				placeholder: '添加响应',
 				type: 'fixedCollection',
 				typeOptions: {
 					multipleValues: false,
@@ -868,15 +864,14 @@ export const mainProperties: INodeProperties[] = [
 								name: 'fullResponse',
 								type: 'boolean',
 								default: false,
-								description:
-									'Whether to return the full response (headers and response status code) data instead of only the body',
+								description: '是否返回完整响应（请求头和响应状态码）数据，而不仅仅是响应体',
 							},
 							{
 								displayName: '永不报错',
 								name: 'neverError',
 								type: 'boolean',
 								default: false,
-								description: 'Whether to succeeds also when status code is not 2xx',
+								description: '是否在状态码不是 2xx 时仍然成功',
 							},
 							{
 								displayName: '响应格式',
@@ -885,11 +880,11 @@ export const mainProperties: INodeProperties[] = [
 								noDataExpression: true,
 								options: [
 									{
-										name: 'Autodetect',
+										name: '自动检测',
 										value: 'autodetect',
 									},
 									{
-										name: 'File',
+										name: '文件',
 										value: 'file',
 									},
 									{
@@ -897,12 +892,12 @@ export const mainProperties: INodeProperties[] = [
 										value: 'json',
 									},
 									{
-										name: 'Text',
+										name: '文本',
 										value: 'text',
 									},
 								],
 								default: 'autodetect',
-								description: 'The format in which the data gets returned from the URL',
+								description: '从 URL 返回数据的格式',
 							},
 							{
 								displayName: '输出到字段',
@@ -915,8 +910,7 @@ export const mainProperties: INodeProperties[] = [
 										responseFormat: ['file', 'text'],
 									},
 								},
-								description:
-									'Name of the binary property to which to write the data of the read file',
+								description: '用于写入读取文件数据的二进制属性名称',
 							},
 						],
 					},
@@ -925,7 +919,7 @@ export const mainProperties: INodeProperties[] = [
 			{
 				displayName: '分页',
 				name: 'pagination',
-				placeholder: 'Add pagination',
+				placeholder: '添加分页',
 				type: 'fixedCollection',
 				typeOptions: {
 					multipleValues: false,
@@ -947,24 +941,24 @@ export const mainProperties: INodeProperties[] = [
 								},
 								options: [
 									{
-										name: 'Off',
+										name: '关闭',
 										value: 'off',
 									},
 									{
-										name: 'Update a Parameter in Each Request',
+										name: '在每个请求中更新参数',
 										value: 'updateAParameterInEachRequest',
 									},
 									{
-										name: 'Response Contains Next URL',
+										name: '响应包含下一页 URL',
 										value: 'responseContainsNextURL',
 									},
 								],
 								default: 'updateAParameterInEachRequest',
-								description: 'If pagination should be used',
+								description: '是否使用分页',
 							},
 							{
 								displayName:
-									'Use the $response variables to access the data of the previous response. Refer to the <a href="https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/#pagination/?utm_source=n8n_app&utm_medium=node_settings_modal-credential_link&utm_campaign=n8n-nodes-base.httprequest" target="_blank">docs</a> for more info about pagination/',
+									'使用 $response 变量访问上一个响应的数据。有关分页的更多信息，请参阅<a href="https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/#pagination/?utm_source=n8n_app&utm_medium=node_settings_modal-credential_link&utm_campaign=n8n-nodes-base.httprequest" target="_blank">文档</a>',
 								name: 'webhookNotice',
 								displayOptions: {
 									hide: {
@@ -985,7 +979,7 @@ export const mainProperties: INodeProperties[] = [
 								},
 								default: '',
 								description:
-									'Should evaluate to the URL of the next page. <a href="https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/#pagination" target="_blank">More info</a>.',
+									'应该求值为下一页的 URL。<a href="https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/#pagination" target="_blank">更多信息</a>。',
 							},
 							{
 								displayName: '参数',
@@ -1000,7 +994,7 @@ export const mainProperties: INodeProperties[] = [
 									multipleValues: true,
 									noExpression: true,
 								},
-								placeholder: 'Add Parameter',
+								placeholder: '添加参数',
 								default: {
 									parameters: [
 										{
@@ -1013,7 +1007,7 @@ export const mainProperties: INodeProperties[] = [
 								options: [
 									{
 										name: 'parameters',
-										displayName: 'Parameter',
+										displayName: '参数',
 										values: [
 											{
 												displayName: '类型',
@@ -1021,34 +1015,34 @@ export const mainProperties: INodeProperties[] = [
 												type: 'options',
 												options: [
 													{
-														name: 'Body',
+														name: '请求体',
 														value: 'body',
 													},
 													{
-														name: 'Header',
+														name: '请求头',
 														value: 'headers',
 													},
 													{
-														name: 'Query',
+														name: '查询参数',
 														value: 'qs',
 													},
 												],
 												default: 'qs',
-												description: 'Where the parameter should be set',
+												description: '参数应该设置在哪里',
 											},
 											{
-												displayName: 'Name',
+												displayName: '名称',
 												name: 'name',
 												type: 'string',
 												default: '',
-												placeholder: 'e.g page',
+												placeholder: '例如 page',
 											},
 											{
-												displayName: 'Value',
+												displayName: '值',
 												name: 'value',
 												type: 'string',
 												default: '',
-												hint: 'Use expression mode and $response to access response data',
+												hint: '使用表达式模式和 $response 访问响应数据',
 											},
 										],
 									},
@@ -1068,23 +1062,23 @@ export const mainProperties: INodeProperties[] = [
 								},
 								options: [
 									{
-										name: 'Response Is Empty',
+										name: '响应为空',
 										value: 'responseIsEmpty',
 									},
 									{
-										name: 'Receive Specific Status Code(s)',
+										name: '接收特定状态码',
 										value: 'receiveSpecificStatusCodes',
 									},
 									{
-										name: 'Other',
+										name: '其他',
 										value: 'other',
 									},
 								],
 								default: 'responseIsEmpty',
-								description: 'When should no further requests be made?',
+								description: '何时不再发起请求？',
 							},
 							{
-								displayName: 'Status Code(s) when Complete',
+								displayName: '完成时的状态码',
 								name: 'statusCodesWhenComplete',
 								type: 'string',
 								typeOptions: {
@@ -1096,10 +1090,10 @@ export const mainProperties: INodeProperties[] = [
 									},
 								},
 								default: '',
-								description: 'Accepts comma-separated values',
+								description: '接受逗号分隔的值',
 							},
 							{
-								displayName: 'Complete Expression',
+								displayName: '完成表达式',
 								name: 'completeExpression',
 								type: 'string',
 								displayOptions: {
@@ -1109,7 +1103,7 @@ export const mainProperties: INodeProperties[] = [
 								},
 								default: '',
 								description:
-									'Should evaluate to true when pagination is complete. <a href="https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/#pagination" target="_blank">More info</a>.',
+									'当分页完成时应该求值为 true。<a href="https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/#pagination" target="_blank">更多信息</a>。',
 							},
 							{
 								displayName: '限制获取页数',
@@ -1125,7 +1119,7 @@ export const mainProperties: INodeProperties[] = [
 								},
 								default: false,
 								noDataExpression: true,
-								description: 'Whether the number of requests should be limited',
+								description: '是否限制请求数量',
 							},
 							{
 								displayName: '最大页数',
@@ -1140,11 +1134,11 @@ export const mainProperties: INodeProperties[] = [
 									},
 								},
 								default: 100,
-								description: 'Maximum amount of request to be make',
+								description: '要发起的最大请求数量',
 							},
 							{
 								// eslint-disable-next-line n8n-nodes-base/node-param-display-name-miscased
-								displayName: 'Interval Between Requests (ms)',
+								displayName: '请求间隔（毫秒）',
 								name: 'requestInterval',
 								type: 'number',
 								displayOptions: {
@@ -1153,8 +1147,8 @@ export const mainProperties: INodeProperties[] = [
 									},
 								},
 								default: 0,
-								description: 'Time in milliseconds to wait between requests',
-								hint: 'At 0 no delay will be added',
+								description: '请求之间等待的时间（毫秒）',
+								hint: '设为 0 时不会添加延迟',
 								typeOptions: {
 									minValue: 0,
 								},
@@ -1168,8 +1162,8 @@ export const mainProperties: INodeProperties[] = [
 				name: 'proxy',
 				type: 'string',
 				default: '',
-				placeholder: 'e.g. http://myproxy:3128',
-				description: 'HTTP proxy to use',
+				placeholder: '例如 http://myproxy:3128',
+				description: '要使用的 HTTP 代理',
 			},
 			{
 				displayName: '超时时间',
@@ -1179,8 +1173,7 @@ export const mainProperties: INodeProperties[] = [
 					minValue: 1,
 				},
 				default: 10000,
-				description:
-					'Time in ms to wait for the server to send response headers (and start the response body) before aborting the request',
+				description: '在中止请求之前，等待服务器发送响应头（并开始响应体）的时间（毫秒）',
 			},
 		],
 	},
@@ -1192,8 +1185,7 @@ export const mainProperties: INodeProperties[] = [
 		},
 	})),
 	{
-		displayName:
-			"You can view the raw requests this node makes in your browser's developer console",
+		displayName: '您可以在浏览器的开发者控制台中查看此节点发出的原始请求',
 		name: 'infoMessage',
 		type: 'notice',
 		default: '',

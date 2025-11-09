@@ -296,7 +296,7 @@ export const optimizeResponseProperties: INodeProperties[] = [
 		type: 'string',
 		default: '',
 		placeholder: 'e.g. records',
-		description: 'Specify the name of the field in the response containing the data',
+		description: '指定响应中包含数据的字段名称',
 		hint: 'leave blank to use whole response',
 		requiresDataPath: 'single',
 		displayOptions: {
@@ -375,8 +375,7 @@ export const optimizeResponseProperties: INodeProperties[] = [
 		name: 'onlyContent',
 		type: 'boolean',
 		default: false,
-		description:
-			'Whether to return only content of html elements, stripping html tags and attributes',
+		description: '是否仅返回 HTML 元素的内容，去除 HTML 标签和属性',
 		hint: 'Uses less tokens and may be easier for model to understand',
 		displayOptions: {
 			show: {

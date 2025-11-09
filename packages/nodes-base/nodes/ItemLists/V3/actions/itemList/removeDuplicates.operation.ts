@@ -64,7 +64,7 @@ const properties: INodeProperties[] = [
 		displayName: 'Options',
 		name: 'options',
 		type: 'collection',
-		placeholder: 'Add Field',
+		placeholder: '添加字段',
 		default: {},
 		displayOptions: {
 			show: {
@@ -78,8 +78,7 @@ const properties: INodeProperties[] = [
 				name: 'removeOtherFields',
 				type: 'boolean',
 				default: false,
-				description:
-					'Whether to remove any fields that are not being compared. If disabled, will keep the values from the first of the duplicates.',
+				description: '是否删除未进行比较的字段。如果禁用，将保留重复项中第一个的值。',
 			},
 		],
 	},

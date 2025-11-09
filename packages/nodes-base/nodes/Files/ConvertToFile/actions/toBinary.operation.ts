@@ -8,7 +8,7 @@ import { updateDisplayOptions } from '@utils/utilities';
 
 export const properties: INodeProperties[] = [
 	{
-		displayName: 'Base64 Input Field',
+		displayName: 'Base64 输入字段',
 		name: 'sourceProperty',
 		type: 'string',
 		default: '',
@@ -16,28 +16,27 @@ export const properties: INodeProperties[] = [
 		placeholder: 'e.g data',
 		requiresDataPath: 'single',
 		description:
-			"The name of the input field that contains the base64 string to convert to a file. Use dot-notation for deep fields (e.g. 'level1.level2.currentKey').",
+			"包含要转换为文件的 base64 字符串的输入字段名称。使用点表示法表示深层字段（例如 'level1.level2.currentKey'）。",
 	},
 	{
-		displayName: 'Put Output File in Field',
+		displayName: '将输出文件放入字段',
 		name: 'binaryPropertyName',
 		type: 'string',
 		default: 'data',
 		required: true,
 		placeholder: 'e.g data',
-		hint: 'The name of the output binary field to put the file in',
+		hint: '用于存放输出文件的二进制字段名称',
 	},
 	{
-		displayName: 'Options',
+		displayName: '选项',
 		name: 'options',
 		type: 'collection',
-		placeholder: 'Add option',
+		placeholder: '添加选项',
 		default: {},
 		options: [
 			{
-				displayName: 'Add Byte Order Mark (BOM)',
-				description:
-					'Whether to add special marker at the start of your text file. This marker helps some programs understand how to read the file correctly.',
+				displayName: '添加字节顺序标记 (BOM)',
+				description: '是否在文本文件开头添加特殊标记。此标记帮助某些程序正确读取文件。',
 				name: 'addBOM',
 				displayOptions: {
 					show: {
@@ -48,11 +47,11 @@ export const properties: INodeProperties[] = [
 				default: false,
 			},
 			{
-				displayName: 'Data Is Base64',
+				displayName: '数据是 Base64',
 				name: 'dataIsBase64',
 				type: 'boolean',
 				default: true,
-				description: 'Whether the data is already base64 encoded',
+				description: '数据是否已经是 base64 编码',
 				displayOptions: {
 					show: {
 						'@version': [1],
@@ -60,12 +59,12 @@ export const properties: INodeProperties[] = [
 				},
 			},
 			{
-				displayName: 'Encoding',
+				displayName: '编码',
 				name: 'encoding',
 				type: 'options',
 				options: encodeDecodeOptions,
 				default: 'utf8',
-				description: 'Choose the character set to use to encode the data',
+				description: '选择用于编码数据的字符集',
 				displayOptions: {
 					hide: {
 						dataIsBase64: [true],
@@ -74,21 +73,21 @@ export const properties: INodeProperties[] = [
 				},
 			},
 			{
-				displayName: 'File Name',
+				displayName: '文件名',
 				name: 'fileName',
 				type: 'string',
 				default: '',
 				placeholder: 'e.g. myFile',
-				description: 'Name of the output file',
+				description: '输出文件的名称',
 			},
 			{
-				displayName: 'MIME Type',
+				displayName: 'MIME 类型',
 				name: 'mimeType',
 				type: 'string',
 				default: '',
 				placeholder: 'e.g text/plain',
 				description:
-					'The MIME type of the output file. <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types" target="_blank">Common MIME types</a>.',
+					'输出文件的 MIME 类型。<a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types" target="_blank">常见 MIME 类型</a>。',
 			},
 		],
 	},

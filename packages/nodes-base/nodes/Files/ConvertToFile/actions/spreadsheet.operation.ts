@@ -13,23 +13,23 @@ export const operations = ['csv', 'html', 'rtf', 'ods', 'xls', 'xlsx'];
 
 export const properties: INodeProperties[] = [
 	{
-		displayName: 'Put Output File in Field',
+		displayName: '将输出文件放入字段',
 		name: 'binaryPropertyName',
 		type: 'string',
 		default: 'data',
 		required: true,
 		placeholder: 'e.g data',
-		hint: 'The name of the output binary field to put the file in',
+		hint: '用于存放输出文件的二进制字段名称',
 	},
 	{
-		displayName: 'Options',
+		displayName: '选项',
 		name: 'options',
 		type: 'collection',
-		placeholder: 'Add option',
+		placeholder: '添加选项',
 		default: {},
 		options: [
 			{
-				displayName: 'Compression',
+				displayName: '压缩',
 				name: 'compression',
 				type: 'boolean',
 				displayOptions: {
@@ -38,10 +38,10 @@ export const properties: INodeProperties[] = [
 					},
 				},
 				default: false,
-				description: 'Whether to reduce the output file size',
+				description: '是否减小输出文件大小',
 			},
 			{
-				displayName: 'Delimiter',
+				displayName: '分隔符',
 				name: 'delimiter',
 				type: 'string',
 				displayOptions: {
@@ -50,24 +50,24 @@ export const properties: INodeProperties[] = [
 					},
 				},
 				default: ',',
-				description: 'The character to use to separate fields',
+				description: '用于分隔字段的字符',
 			},
 			{
-				displayName: 'File Name',
+				displayName: '文件名',
 				name: 'fileName',
 				type: 'string',
 				default: '',
-				description: 'Name of the output file',
+				description: '输出文件的名称',
 			},
 			{
-				displayName: 'Header Row',
+				displayName: '标题行',
 				name: 'headerRow',
 				type: 'boolean',
 				default: true,
-				description: 'Whether the first row of the file contains the header names',
+				description: '文件的第一行是否包含标题名称',
 			},
 			{
-				displayName: 'Sheet Name',
+				displayName: '工作表名称',
 				name: 'sheetName',
 				type: 'string',
 				displayOptions: {
@@ -76,7 +76,7 @@ export const properties: INodeProperties[] = [
 					},
 				},
 				default: 'Sheet',
-				description: 'Name of the sheet to create in the spreadsheet',
+				description: '在电子表格中创建的工作表名称',
 				placeholder: 'e.g. mySheet',
 			},
 		],

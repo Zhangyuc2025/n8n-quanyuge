@@ -1,8 +1,7 @@
 import type { INodeProperties, INodePropertyOptions } from 'n8n-workflow';
 
 export const oldVersionNotice: INodeProperties = {
-	displayName:
-		'<strong>New node version available:</strong> get the latest version with added features from the nodes panel.',
+	displayName: '<strong>新节点版本可用：</strong>从节点面板获取具有新增功能的最新版本。',
 	name: 'oldVersionNotice',
 	type: 'notice',
 	default: '',
@@ -10,14 +9,14 @@ export const oldVersionNotice: INodeProperties = {
 
 export const returnAllOrLimit: INodeProperties[] = [
 	{
-		displayName: 'Return All',
+		displayName: '返回全部',
 		name: 'returnAll',
 		type: 'boolean',
 		default: false,
-		description: 'Whether to return all results or only up to a given limit',
+		description: '是否返回所有结果或仅返回到给定限制',
 	},
 	{
-		displayName: 'Limit',
+		displayName: '限制',
 		name: 'limit',
 		type: 'number',
 		displayOptions: {
@@ -29,21 +28,21 @@ export const returnAllOrLimit: INodeProperties[] = [
 			minValue: 1,
 		},
 		default: 100,
-		description: 'Max number of results to return',
+		description: '返回结果的最大数量',
 	},
 ];
 
 export const looseTypeValidationProperty: INodeProperties = {
-	displayName: 'Convert types where required',
+	displayName: '在需要时转换类型',
 	description:
-		'If the type of an expression doesn\'t match the type of the comparison, n8n will try to cast the expression to the required type. E.g. for booleans <code>"false"</code> or <code>0</code> will be cast to <code>false</code>',
+		'如果表达式的类型与比较的类型不匹配，n8n 将尝试将表达式转换为所需的类型。例如，对于布尔值，<code>"false"</code> 或 <code>0</code> 将被转换为 <code>false</code>',
 	name: 'looseTypeValidation',
 	type: 'boolean',
 	default: true,
 };
 
 export const appendAttributionOption: INodeProperties = {
-	displayName: 'Append n8n Attribution',
+	displayName: '附加 n8n 归属',
 	name: 'appendAttribution',
 	type: 'boolean',
 	default: true,

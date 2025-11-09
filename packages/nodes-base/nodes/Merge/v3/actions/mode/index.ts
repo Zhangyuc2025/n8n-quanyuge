@@ -11,59 +11,59 @@ export { append, chooseBranch, combineAll, combineByFields, combineBySql, combin
 
 export const description: INodeProperties[] = [
 	{
-		displayName: 'Mode',
+		displayName: '模式',
 		name: 'mode',
 		type: 'options',
 		noDataExpression: true,
 		options: [
 			{
-				name: 'Append',
+				name: '追加',
 				value: 'append',
-				description: 'Output items of each input, one after the other',
+				description: '将每个输入的项目依次输出',
 			},
 			{
-				name: 'Combine',
+				name: '组合',
 				value: 'combine',
-				description: 'Merge matching items together',
+				description: '将匹配的项目合并在一起',
 			},
 			{
-				name: 'SQL Query',
+				name: 'SQL 查询',
 				value: 'combineBySql',
-				description: 'Write a query to do the merge',
+				description: '编写查询语句进行合并',
 			},
 			{
-				name: 'Choose Branch',
+				name: '选择分支',
 				value: 'chooseBranch',
-				description: 'Output data from a specific branch, without modifying it',
+				description: '输出特定分支的数据，不进行修改',
 			},
 		],
 		default: 'append',
-		description: 'How input data should be merged',
+		description: '如何合并输入数据',
 	},
 	{
-		displayName: 'Combine By',
+		displayName: '组合方式',
 		name: 'combineBy',
 		type: 'options',
 		noDataExpression: true,
 		options: [
 			{
-				name: 'Matching Fields',
+				name: '匹配字段',
 				value: 'combineByFields',
-				description: 'Combine items with the same field values',
+				description: '组合具有相同字段值的项目',
 			},
 			{
-				name: 'Position',
+				name: '位置',
 				value: 'combineByPosition',
-				description: 'Combine items based on their order',
+				description: '根据项目的顺序进行组合',
 			},
 			{
-				name: 'All Possible Combinations',
+				name: '所有可能的组合',
 				value: 'combineAll',
-				description: 'Every pairing of every two items (cross join)',
+				description: '每两个项目的所有配对（交叉连接）',
 			},
 		],
 		default: 'combineByFields',
-		description: 'How input data should be merged',
+		description: '如何合并输入数据',
 		displayOptions: {
 			show: { mode: ['combine'] },
 		},

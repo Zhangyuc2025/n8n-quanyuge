@@ -13,7 +13,7 @@ export const properties: INodeProperties[] = [
 		type: 'options',
 		options: [
 			{
-				name: 'Wait for All Inputs to Arrive',
+				name: '等待所有输入到达',
 				value: 'waitForAll',
 			},
 		],
@@ -25,11 +25,11 @@ export const properties: INodeProperties[] = [
 		type: 'options',
 		options: [
 			{
-				name: 'Data of Specified Input',
+				name: '指定输入的数据',
 				value: 'specifiedInput',
 			},
 			{
-				name: 'A Single, Empty Item',
+				name: '单个空项目',
 				value: 'empty',
 			},
 		],

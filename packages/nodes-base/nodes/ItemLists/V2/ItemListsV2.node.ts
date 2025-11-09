@@ -127,7 +127,7 @@ export class ItemListsV2 implements INodeType {
 						},
 					],
 					default: 'noOtherFields',
-					description: 'Whether to copy any other fields into the new items',
+					description: '是否将其他字段复制到新项目中',
 					displayOptions: {
 						show: {
 							resource: ['itemList'],
@@ -221,7 +221,7 @@ export class ItemListsV2 implements INodeType {
 									name: 'fieldToAggregate',
 									type: 'string',
 									default: '',
-									description: 'The name of a field in the input items to aggregate together',
+									description: '输入项目中要聚合的字段名称',
 									// eslint-disable-next-line n8n-nodes-base/node-param-placeholder-miscased-id
 									placeholder: '例如：id',
 									hint: ' 以文本形式输入字段名称',
@@ -232,7 +232,7 @@ export class ItemListsV2 implements INodeType {
 									name: 'renameField',
 									type: 'boolean',
 									default: false,
-									description: 'Whether to give the field a different name in the output',
+									description: '是否在输出中为字段使用不同的名称',
 								},
 								{
 									displayName: '输出字段名称',
@@ -244,8 +244,7 @@ export class ItemListsV2 implements INodeType {
 									},
 									type: 'string',
 									default: '',
-									description:
-										'The name of the field to put the aggregated data in. Leave blank to use the input field name.',
+									description: '放置聚合数据的字段名称。留空则使用输入字段名称。',
 									requiresDataPath: 'single',
 								},
 							],
@@ -265,7 +264,7 @@ export class ItemListsV2 implements INodeType {
 						},
 					},
 					default: 'data',
-					description: 'The name of the output field to put the data in',
+					description: '放置数据的输出字段名称',
 				},
 				{
 					displayName: '包含',
@@ -643,16 +642,14 @@ return 0;`,
 							name: 'removeOtherFields',
 							type: 'boolean',
 							default: false,
-							description:
-								'Whether to remove any fields that are not being compared. If disabled, will keep the values from the first of the duplicates.',
+							description: '是否删除未进行比较的字段。如果禁用，将保留重复项中第一个的值。',
 						},
 						{
 							displayName: '禁用点表示法',
 							name: 'disableDotNotation',
 							type: 'boolean',
 							default: false,
-							description:
-								'Whether to disallow referencing child fields using `parent.child` in the field name',
+							description: '是否禁止在字段名称中使用 `parent.child` 引用子字段',
 						},
 					],
 				},
@@ -675,8 +672,7 @@ return 0;`,
 							name: 'disableDotNotation',
 							type: 'boolean',
 							default: false,
-							description:
-								'Whether to disallow referencing child fields using `parent.child` in the field name',
+							description: '是否禁止在字段名称中使用 `parent.child` 引用子字段',
 						},
 					],
 				},
@@ -706,8 +702,7 @@ return 0;`,
 								},
 							},
 							default: false,
-							description:
-								'Whether to disallow referencing child fields using `parent.child` in the field name',
+							description: '是否禁止在字段名称中使用 `parent.child` 引用子字段',
 						},
 						{
 							displayName: '目标字段名称',
@@ -733,7 +728,7 @@ return 0;`,
 							},
 							default: false,
 							description:
-								'Whether to merge the output into a single flat list (rather than a list of lists), if the field to aggregate is a list',
+								'如果要聚合的字段是列表，是否将输出合并为单个扁平列表（而不是列表的列表）',
 						},
 						{
 							displayName: '保留缺失和空值',
@@ -745,8 +740,7 @@ return 0;`,
 								},
 							},
 							default: false,
-							description:
-								'Whether to add a null entry to the aggregated list when there is a missing or null value',
+							description: '当存在缺失或空值时，是否向聚合列表添加 null 条目',
 						},
 					],
 				},

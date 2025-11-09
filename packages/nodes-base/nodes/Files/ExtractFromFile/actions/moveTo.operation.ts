@@ -16,40 +16,40 @@ import { updateDisplayOptions } from '@utils/utilities';
 
 export const properties: INodeProperties[] = [
 	{
-		displayName: 'Input Binary Field',
+		displayName: '输入二进制字段',
 		name: 'binaryPropertyName',
 		type: 'string',
 		default: 'data',
 		required: true,
-		placeholder: 'e.g data',
-		hint: 'The name of the input field containing the file data to be processed',
+		placeholder: '例如 data',
+		hint: '包含待处理文件数据的输入字段名称',
 	},
 	{
-		displayName: 'Destination Output Field',
+		displayName: '目标输出字段',
 		name: 'destinationKey',
 		type: 'string',
 		default: 'data',
 		required: true,
-		placeholder: 'e.g data',
-		description: 'The name of the output field that will contain the extracted data',
+		placeholder: '例如 data',
+		description: '将包含提取数据的输出字段名称',
 	},
 	{
-		displayName: 'Options',
+		displayName: '选项',
 		name: 'options',
 		type: 'collection',
-		placeholder: 'Add option',
+		placeholder: '添加选项',
 		default: {},
 		options: [
 			{
-				displayName: 'File Encoding',
+				displayName: '文件编码',
 				name: 'encoding',
 				type: 'options',
 				options: encodeDecodeOptions,
 				default: 'utf8',
-				description: 'Specify the encoding of the file, defaults to UTF-8',
+				description: '指定文件的编码，默认为 UTF-8',
 			},
 			{
-				displayName: 'Strip BOM',
+				displayName: '移除 BOM',
 				name: 'stripBOM',
 				displayOptions: {
 					show: {
@@ -59,10 +59,10 @@ export const properties: INodeProperties[] = [
 				type: 'boolean',
 				default: true,
 				description:
-					'Whether to strip the BOM (Byte Order Mark) from the file, this could help in an environment where the presence of the BOM is causing issues or inconsistencies',
+					'是否从文件中移除 BOM（字节顺序标记），这在 BOM 的存在导致问题或不一致的环境中很有帮助',
 			},
 			{
-				displayName: 'Keep Source',
+				displayName: '保留源数据',
 				name: 'keepSource',
 				type: 'options',
 				default: 'json',
@@ -70,17 +70,17 @@ export const properties: INodeProperties[] = [
 					{
 						name: 'JSON',
 						value: 'json',
-						description: 'Include JSON data of the input item',
+						description: '包含输入项的 JSON 数据',
 					},
 					{
-						name: 'Binary',
+						name: '二进制',
 						value: 'binary',
-						description: 'Include binary data of the input item',
+						description: '包含输入项的二进制数据',
 					},
 					{
-						name: 'Both',
+						name: '两者都保留',
 						value: 'both',
-						description: 'Include both JSON and binary data of the input item',
+						description: '同时包含输入项的 JSON 和二进制数据',
 					},
 				],
 			},

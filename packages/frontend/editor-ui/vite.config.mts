@@ -269,6 +269,16 @@ export default mergeConfig(
 					target: process.env.VITE_API_BASE_URL || 'http://localhost:5678',
 					changeOrigin: true,
 				},
+				// Node icons (SVG and PNG files)
+				'/icons': {
+					target: process.env.VITE_API_BASE_URL || 'http://localhost:5678',
+					changeOrigin: true,
+				},
+				// Node schemas (JSON files)
+				'/schemas': {
+					target: process.env.VITE_API_BASE_URL || 'http://localhost:5678',
+					changeOrigin: true,
+				},
 				// Health check and metrics (for development)
 				'/healthz': {
 					target: process.env.VITE_API_BASE_URL || 'http://localhost:5678',

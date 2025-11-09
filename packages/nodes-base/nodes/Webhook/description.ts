@@ -235,7 +235,7 @@ export const optionsProperty: INodeProperties = {
 	default: {},
 	options: [
 		{
-			displayName: 'Binary File',
+			displayName: '二进制文件',
 			name: 'binaryData',
 			type: 'boolean',
 			displayOptions: {
@@ -245,10 +245,10 @@ export const optionsProperty: INodeProperties = {
 				},
 			},
 			default: false,
-			description: 'Whether the webhook will receive binary data',
+			description: 'webhook 是否将接收二进制数据',
 		},
 		{
-			displayName: 'Put Output File in Field',
+			displayName: '将输出文件放入字段',
 			name: 'binaryPropertyName',
 			type: 'string',
 			default: 'data',
@@ -258,12 +258,11 @@ export const optionsProperty: INodeProperties = {
 					'@version': [1],
 				},
 			},
-			hint: 'The name of the output binary field to put the file in',
-			description:
-				'If the data gets received via "Form-Data Multipart" it will be the prefix and a number starting with 0 will be attached to it',
+			hint: '放置文件的输出二进制字段名称',
+			description: '如果通过"表单数据多部分"接收数据，它将是前缀，并且将附加从 0 开始的数字',
 		},
 		{
-			displayName: 'Field Name for Binary Data',
+			displayName: '二进制数据的字段名称',
 			name: 'binaryPropertyName',
 			type: 'string',
 			default: 'data',
@@ -272,30 +271,29 @@ export const optionsProperty: INodeProperties = {
 					'@version': [1],
 				},
 			},
-			description:
-				'The name of the output field to put any binary file data in. Only relevant if binary data is received.',
+			description: '用于放置任何二进制文件数据的输出字段名称。仅在接收二进制数据时相关。',
 		},
 		{
-			displayName: 'Ignore Bots',
+			displayName: '忽略机器人',
 			name: 'ignoreBots',
 			type: 'boolean',
 			default: false,
-			description: 'Whether to ignore requests from bots like link previewers and web crawlers',
+			description: '是否忽略来自链接预览器和网络爬虫等机器人的请求',
 		},
 		{
-			displayName: 'IP(s) Whitelist',
+			displayName: 'IP 白名单',
 			name: 'ipWhitelist',
 			type: 'string',
 			placeholder: 'e.g. 127.0.0.1',
 			default: '',
-			description: 'Comma-separated list of allowed IP addresses. Leave empty to allow all IPs.',
+			description: '允许的 IP 地址逗号分隔列表。留空则允许所有 IP。',
 		},
 		{
-			displayName: 'No Response Body',
+			displayName: '无响应正文',
 			name: 'noResponseBody',
 			type: 'boolean',
 			default: false,
-			description: 'Whether to send any body in the response',
+			description: '是否在响应中发送任何正文',
 			displayOptions: {
 				hide: {
 					rawBody: [true],
@@ -306,7 +304,7 @@ export const optionsProperty: INodeProperties = {
 			},
 		},
 		{
-			displayName: 'Raw Body',
+			displayName: '原始正文',
 			name: 'rawBody',
 			type: 'boolean',
 			displayOptions: {
@@ -320,10 +318,10 @@ export const optionsProperty: INodeProperties = {
 			},
 			default: false,
 			// eslint-disable-next-line n8n-nodes-base/node-param-description-boolean-without-whether
-			description: 'Raw body (binary)',
+			description: '原始正文（二进制）',
 		},
 		{
-			displayName: 'Raw Body',
+			displayName: '原始正文',
 			name: 'rawBody',
 			type: 'boolean',
 			displayOptions: {
@@ -333,10 +331,10 @@ export const optionsProperty: INodeProperties = {
 				},
 			},
 			default: false,
-			description: 'Whether to return the raw body',
+			description: '是否返回原始正文',
 		},
 		{
-			displayName: 'Response Data',
+			displayName: '响应数据',
 			name: 'responseData',
 			type: 'string',
 			displayOptions: {
@@ -349,10 +347,10 @@ export const optionsProperty: INodeProperties = {
 			},
 			default: '',
 			placeholder: 'success',
-			description: 'Custom response data to send',
+			description: '要发送的自定义响应数据',
 		},
 		{
-			displayName: 'Response Content-Type',
+			displayName: '响应内容类型',
 			name: 'responseContentType',
 			type: 'string',
 			displayOptions: {
@@ -364,14 +362,13 @@ export const optionsProperty: INodeProperties = {
 			default: '',
 			placeholder: 'application/xml',
 			// eslint-disable-next-line n8n-nodes-base/node-param-description-miscased-json
-			description:
-				'Set a custom content-type to return if another one as the "application/json" should be returned',
+			description: '如果应返回除"application/json"之外的内容类型，则设置要返回的自定义内容类型',
 		},
 		{
-			displayName: 'Response Headers',
+			displayName: '响应头',
 			name: 'responseHeaders',
-			placeholder: 'Add Response Header',
-			description: 'Add headers to the webhook response',
+			placeholder: '添加响应头',
+			description: '向 webhook 响应添加头部',
 			type: 'fixedCollection',
 			typeOptions: {
 				multipleValues: true,
@@ -380,28 +377,28 @@ export const optionsProperty: INodeProperties = {
 			options: [
 				{
 					name: 'entries',
-					displayName: 'Entries',
+					displayName: '条目',
 					values: [
 						{
-							displayName: 'Name',
+							displayName: '名称',
 							name: 'name',
 							type: 'string',
 							default: '',
-							description: 'Name of the header',
+							description: '头部名称',
 						},
 						{
-							displayName: 'Value',
+							displayName: '值',
 							name: 'value',
 							type: 'string',
 							default: '',
-							description: 'Value of the header',
+							description: '头部值',
 						},
 					],
 				},
 			],
 		},
 		{
-			displayName: 'Property Name',
+			displayName: '属性名称',
 			name: 'responsePropertyName',
 			type: 'string',
 			displayOptions: {
@@ -411,48 +408,48 @@ export const optionsProperty: INodeProperties = {
 				},
 			},
 			default: 'data',
-			description: 'Name of the property to return the data of instead of the whole JSON',
+			description: '要返回其数据的属性名称，而不是整个 JSON',
 		},
 	],
 };
 
 export const responseCodeSelector: INodeProperties = {
-	displayName: 'Response Code',
+	displayName: '响应代码',
 	name: 'responseCode',
 	type: 'options',
 	options: [
-		{ name: '200', value: 200, description: 'OK - Request has succeeded' },
-		{ name: '201', value: 201, description: 'Created - Request has been fulfilled' },
-		{ name: '204', value: 204, description: 'No Content - Request processed, no content returned' },
+		{ name: '200', value: 200, description: 'OK - 请求已成功' },
+		{ name: '201', value: 201, description: 'Created - 请求已完成' },
+		{ name: '204', value: 204, description: 'No Content - 请求已处理，未返回内容' },
 		{
 			name: '301',
 			value: 301,
-			description: 'Moved Permanently - Requested resource moved permanently',
+			description: 'Moved Permanently - 请求的资源已永久移动',
 		},
-		{ name: '302', value: 302, description: 'Found - Requested resource moved temporarily' },
-		{ name: '304', value: 304, description: 'Not Modified - Resource has not been modified' },
-		{ name: '400', value: 400, description: 'Bad Request - Request could not be understood' },
-		{ name: '401', value: 401, description: 'Unauthorized - Request requires user authentication' },
+		{ name: '302', value: 302, description: 'Found - 请求的资源已临时移动' },
+		{ name: '304', value: 304, description: 'Not Modified - 资源未修改' },
+		{ name: '400', value: 400, description: 'Bad Request - 请求无法理解' },
+		{ name: '401', value: 401, description: 'Unauthorized - 请求需要用户身份验证' },
 		{
 			name: '403',
 			value: 403,
-			description: 'Forbidden - Server understood, but refuses to fulfill',
+			description: 'Forbidden - 服务器理解但拒绝执行',
 		},
-		{ name: '404', value: 404, description: 'Not Found - Server has not found a match' },
+		{ name: '404', value: 404, description: 'Not Found - 服务器未找到匹配项' },
 		{
-			name: 'Custom Code',
+			name: '自定义代码',
 			value: 'customCode',
-			description: 'Write any HTTP code',
+			description: '编写任何 HTTP 代码',
 		},
 	],
 	default: 200,
-	description: 'The HTTP response code to return',
+	description: '要返回的 HTTP 响应代码',
 };
 
 export const responseCodeOption: INodeProperties = {
-	displayName: 'Response Code',
+	displayName: '响应代码',
 	name: 'responseCode',
-	placeholder: 'Add Response Code',
+	placeholder: '添加响应代码',
 	type: 'fixedCollection',
 	default: {
 		values: {
@@ -462,11 +459,11 @@ export const responseCodeOption: INodeProperties = {
 	options: [
 		{
 			name: 'values',
-			displayName: 'Values',
+			displayName: '值',
 			values: [
 				responseCodeSelector,
 				{
-					displayName: 'Code',
+					displayName: '代码',
 					name: 'customCode',
 					type: 'number',
 					default: 200,

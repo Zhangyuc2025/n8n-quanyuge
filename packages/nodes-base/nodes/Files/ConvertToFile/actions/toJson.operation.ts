@@ -7,45 +7,44 @@ import { generatePairedItemData, updateDisplayOptions } from '@utils/utilities';
 
 export const properties: INodeProperties[] = [
 	{
-		displayName: 'Mode',
+		displayName: '模式',
 		name: 'mode',
 		type: 'options',
 		noDataExpression: true,
 		options: [
 			{
-				name: 'All Items to One File',
+				name: '所有项目到一个文件',
 				value: 'once',
 			},
 			{
-				name: 'Each Item to Separate File',
+				name: '每个项目到单独文件',
 				value: 'each',
 			},
 		],
 		default: 'once',
 	},
 	{
-		displayName: 'Put Output File in Field',
+		displayName: '将输出文件放入字段',
 		name: 'binaryPropertyName',
 		type: 'string',
 		default: 'data',
 		required: true,
 		placeholder: 'e.g data',
-		hint: 'The name of the output binary field to put the file in',
+		hint: '用于存放输出文件的二进制字段名称',
 	},
 	{
-		displayName: 'Options',
+		displayName: '选项',
 		name: 'options',
 		type: 'collection',
-		placeholder: 'Add option',
+		placeholder: '添加选项',
 		default: {},
 		options: [
 			{
-				displayName: 'Add Byte Order Mark (BOM)',
+				displayName: '添加字节顺序标记 (BOM)',
 				name: 'addBOM',
 				type: 'boolean',
 				default: false,
-				description:
-					'Whether to add special marker at the start of your text file. This marker helps some programs understand how to read the file correctly.',
+				description: '是否在文本文件开头添加特殊标记。此标记帮助某些程序正确读取文件。',
 				displayOptions: {
 					show: {
 						encoding: ['utf8', 'cesu8', 'ucs2'],
@@ -53,27 +52,27 @@ export const properties: INodeProperties[] = [
 				},
 			},
 			{
-				displayName: 'Format',
+				displayName: '格式化',
 				name: 'format',
 				type: 'boolean',
 				default: false,
-				description: 'Whether to format the JSON data for easier reading',
+				description: '是否格式化 JSON 数据以便于阅读',
 			},
 			{
-				displayName: 'Encoding',
+				displayName: '编码',
 				name: 'encoding',
 				type: 'options',
 				options: encodeDecodeOptions,
 				default: 'utf8',
-				description: 'Choose the character set to use to encode the data',
+				description: '选择用于编码数据的字符集',
 			},
 			{
-				displayName: 'File Name',
+				displayName: '文件名',
 				name: 'fileName',
 				type: 'string',
 				default: '',
 				placeholder: 'e.g. myFile.json',
-				description: 'Name of the output file',
+				description: '输出文件的名称',
 			},
 		],
 	},

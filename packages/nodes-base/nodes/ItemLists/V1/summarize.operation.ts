@@ -57,7 +57,7 @@ export const description: INodeProperties[] = [
 		displayName: 'Fields to Summarize',
 		name: 'fieldsToSummarize',
 		type: 'fixedCollection',
-		placeholder: 'Add Field',
+		placeholder: '添加字段',
 		default: { values: [{ aggregation: 'count', field: '' }] },
 		typeOptions: {
 			multipleValues: true,
@@ -114,9 +114,9 @@ export const description: INodeProperties[] = [
 						name: 'field',
 						type: 'string',
 						default: '',
-						description: 'The name of an input field that you want to summarize',
+						description: '要汇总的输入字段名称',
 						placeholder: 'e.g. cost',
-						hint: ' Enter the field name as text',
+						hint: ' 以文本形式输入字段名称',
 						displayOptions: {
 							hide: {
 								aggregation: [...NUMERICAL_AGGREGATIONS, 'countUnique', 'count'],
@@ -130,9 +130,9 @@ export const description: INodeProperties[] = [
 						type: 'string',
 						default: '',
 						description:
-							'The name of an input field that you want to summarize. The field should contain numerical values; null, undefined, empty strings would be ignored.',
+							'要汇总的输入字段名称。该字段应包含数值；null、undefined、空字符串将被忽略。',
 						placeholder: 'e.g. cost',
-						hint: ' Enter the field name as text',
+						hint: ' 以文本形式输入字段名称',
 						displayOptions: {
 							show: {
 								aggregation: NUMERICAL_AGGREGATIONS,
@@ -145,10 +145,9 @@ export const description: INodeProperties[] = [
 						name: 'field',
 						type: 'string',
 						default: '',
-						description:
-							'The name of an input field that you want to summarize; null, undefined, empty strings would be ignored',
+						description: '要汇总的输入字段名称；null、undefined、空字符串将被忽略',
 						placeholder: 'e.g. cost',
-						hint: ' Enter the field name as text',
+						hint: ' 以文本形式输入字段名称',
 						displayOptions: {
 							show: {
 								aggregation: ['countUnique', 'count'],
@@ -236,8 +235,8 @@ export const description: INodeProperties[] = [
 		type: 'string',
 		placeholder: 'e.g. country, city',
 		default: '',
-		description: 'The name of the input fields that you want to split the summary by',
-		hint: 'Enter the name of the fields as text (separated by commas)',
+		description: '要按其拆分汇总的输入字段名称',
+		hint: '以文本形式输入字段名称（用逗号分隔）',
 		displayOptions: {
 			show: {
 				resource: ['itemList'],
@@ -255,8 +254,8 @@ export const description: INodeProperties[] = [
 		type: 'string',
 		placeholder: 'e.g. country, city',
 		default: '',
-		description: 'The name of the input fields that you want to split the summary by',
-		hint: 'Enter the name of the fields as text (separated by commas)',
+		description: '要按其拆分汇总的输入字段名称',
+		hint: '以文本形式输入字段名称（用逗号分隔）',
 		displayOptions: {
 			show: {
 				resource: ['itemList'],
@@ -271,7 +270,7 @@ export const description: INodeProperties[] = [
 		displayName: 'Options',
 		name: 'options',
 		type: 'collection',
-		placeholder: 'Add option',
+		placeholder: '添加选项',
 		default: {},
 		displayOptions: {
 			show: {
@@ -285,8 +284,7 @@ export const description: INodeProperties[] = [
 				name: 'disableDotNotation',
 				type: 'boolean',
 				default: false,
-				description:
-					'Whether to disallow referencing child fields using `parent.child` in the field name',
+				description: '是否禁止在字段名称中使用 `parent.child` 引用子字段',
 			},
 			{
 				displayName: 'Output Format',

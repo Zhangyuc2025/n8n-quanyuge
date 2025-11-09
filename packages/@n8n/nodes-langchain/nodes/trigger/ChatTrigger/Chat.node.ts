@@ -18,27 +18,26 @@ import { configureInputs, configureWaitTillDate } from './util';
 
 const limitWaitTimeProperties: INodeProperties[] = [
 	{
-		displayName: 'Limit Type',
+		displayName: '限制类型',
 		name: 'limitType',
 		type: 'options',
 		default: 'afterTimeInterval',
-		description:
-			'Sets the condition for the execution to resume. Can be a specified date or after some time.',
+		description: '设置执行恢复的条件。可以是指定日期或一段时间后',
 		options: [
 			{
-				name: 'After Time Interval',
-				description: 'Waits for a certain amount of time',
+				name: '时间间隔后',
+				description: '等待一定的时间',
 				value: 'afterTimeInterval',
 			},
 			{
-				name: 'At Specified Time',
-				description: 'Waits until the set date and time to continue',
+				name: '在指定时间',
+				description: '等待到设定的日期和时间后继续',
 				value: 'atSpecifiedTime',
 			},
 		],
 	},
 	{
-		displayName: 'Amount',
+		displayName: '数量',
 		name: 'resumeAmount',
 		type: 'number',
 		displayOptions: {
@@ -51,10 +50,10 @@ const limitWaitTimeProperties: INodeProperties[] = [
 			numberPrecision: 2,
 		},
 		default: 1,
-		description: 'The time to wait',
+		description: '等待的时间',
 	},
 	{
-		displayName: 'Unit',
+		displayName: '单位',
 		name: 'resumeUnit',
 		type: 'options',
 		displayOptions: {
@@ -64,23 +63,23 @@ const limitWaitTimeProperties: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Minutes',
+				name: '分钟',
 				value: 'minutes',
 			},
 			{
-				name: 'Hours',
+				name: '小时',
 				value: 'hours',
 			},
 			{
-				name: 'Days',
+				name: '天',
 				value: 'days',
 			},
 		],
 		default: 'hours',
-		description: 'Unit of the interval value',
+		description: '时间间隔的单位',
 	},
 	{
-		displayName: 'Max Date and Time',
+		displayName: '最大日期和时间',
 		name: 'maxDateAndTime',
 		type: 'dateTime',
 		displayOptions: {
@@ -89,20 +88,19 @@ const limitWaitTimeProperties: INodeProperties[] = [
 			},
 		},
 		default: '',
-		description: 'Continue execution after the specified date and time',
+		description: '在指定的日期和时间后继续执行',
 	},
 ];
 
 const limitWaitTimeOption: INodeProperties = {
-	displayName: 'Limit Wait Time',
+	displayName: '限制等待时间',
 	name: 'limitWaitTime',
 	type: 'fixedCollection',
-	description:
-		'Whether to limit the time this node should wait for a user response before execution resumes',
+	description: '是否限制此节点在执行恢复前等待用户响应的时间',
 	default: { values: { limitType: 'afterTimeInterval', resumeAmount: 45, resumeUnit: 'minutes' } },
 	options: [
 		{
-			displayName: 'Values',
+			displayName: '值',
 			name: 'values',
 			values: limitWaitTimeProperties,
 		},
@@ -116,15 +114,15 @@ const limitWaitTimeOption: INodeProperties = {
 
 export class Chat implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Respond to Chat',
+		displayName: '响应聊天',
 		name: 'chat',
 		icon: 'fa:comments',
 		iconColor: 'black',
 		group: ['input'],
 		version: 1,
-		description: 'Send a message to a chat',
+		description: '向聊天发送消息',
 		defaults: {
-			name: 'Respond to Chat',
+			name: '响应聊天',
 		},
 		codex: {
 			categories: ['Core Nodes', 'HITL'],
@@ -144,14 +142,13 @@ export class Chat implements INodeType {
 		outputs: [NodeConnectionTypes.Main],
 		properties: [
 			{
-				displayName:
-					"Verify you're using a chat trigger with the 'Response Mode' option set to 'Using Response Nodes'",
+				displayName: '请确认您使用的是聊天触发器，并将"响应模式"选项设置为"使用响应节点"',
 				name: 'generalNotice',
 				type: 'notice',
 				default: '',
 			},
 			{
-				displayName: 'Message',
+				displayName: '消息',
 				name: 'message',
 				type: 'string',
 				default: '',
@@ -161,20 +158,20 @@ export class Chat implements INodeType {
 				},
 			},
 			{
-				displayName: 'Wait for User Reply',
+				displayName: '等待用户回复',
 				name: CHAT_WAIT_USER_REPLY,
 				type: 'boolean',
 				default: true,
 			},
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
 				type: 'collection',
-				placeholder: 'Add Option',
+				placeholder: '添加选项',
 				default: {},
 				options: [
 					{
-						displayName: 'Add Memory Input Connection',
+						displayName: '添加记忆输入连接',
 						name: 'memoryConnection',
 						type: 'boolean',
 						default: false,
@@ -225,10 +222,7 @@ export class Chat implements INodeType {
 		);
 
 		if (!chatTrigger) {
-			throw new NodeOperationError(
-				this.getNode(),
-				'Workflow must be started from a chat trigger node',
-			);
+			throw new NodeOperationError(this.getNode(), '工作流必须从聊天触发器节点启动');
 		}
 
 		const parameters = chatTrigger.parameters as {
@@ -239,14 +233,14 @@ export class Chat implements INodeType {
 		if (parameters.mode === 'webhook') {
 			throw new NodeOperationError(
 				this.getNode(),
-				'"Embeded chat" is not supported, change the "Mode" in the chat trigger node to the "Hosted Chat"',
+				'不支持"嵌入式聊天"，请将聊天触发器节点中的"模式"更改为"托管聊天"',
 			);
 		}
 
 		if (parameters.options.responseMode !== 'responseNodes') {
 			throw new NodeOperationError(
 				this.getNode(),
-				'"Response Mode" in the chat trigger node must be set to "Respond Nodes"',
+				'聊天触发器节点中的"响应模式"必须设置为"响应节点"',
 			);
 		}
 

@@ -21,15 +21,15 @@ const properties: INodeProperties[] = [
 		type: 'options',
 		options: [
 			{
-				name: 'Simple',
+				name: '简单',
 				value: 'simple',
 			},
 			{
-				name: 'Random',
+				name: '随机',
 				value: 'random',
 			},
 			{
-				name: 'Code',
+				name: '代码',
 				value: 'code',
 			},
 		],
@@ -43,7 +43,7 @@ const properties: INodeProperties[] = [
 		typeOptions: {
 			multipleValues: true,
 		},
-		placeholder: 'Add Field To Sort By',
+		placeholder: '添加排序字段',
 		options: [
 			{
 				displayName: '',
@@ -58,7 +58,7 @@ const properties: INodeProperties[] = [
 						description: 'The field to sort by',
 						// eslint-disable-next-line n8n-nodes-base/node-param-placeholder-miscased-id
 						placeholder: 'e.g. id',
-						hint: ' Enter the field name as text',
+						hint: ' 以文本形式输入字段名称',
 						requiresDataPath: 'single',
 					},
 					{
@@ -67,11 +67,11 @@ const properties: INodeProperties[] = [
 						type: 'options',
 						options: [
 							{
-								name: 'Ascending',
+								name: '升序',
 								value: 'ascending',
 							},
 							{
-								name: 'Descending',
+								name: '降序',
 								value: 'descending',
 							},
 						],
@@ -124,7 +124,7 @@ return 0;`,
 		displayName: 'Options',
 		name: 'options',
 		type: 'collection',
-		placeholder: 'Add Field',
+		placeholder: '添加字段',
 		default: {},
 		displayOptions: {
 			show: {
