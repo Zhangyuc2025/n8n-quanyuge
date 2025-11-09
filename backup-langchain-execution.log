@@ -1,0 +1,65 @@
+=== n8n Langchain节点备份工具 ===
+
+🔄 开始分析凭证文件...
+  🔍 分析凭证: AnthropicApi
+    → 移动节点目录: llms
+    → 移动节点目录: vendors
+  🔍 分析凭证: AzureEntraCognitiveServicesOAuth2Api
+    ⚠️  未找到使用此凭证的节点
+  🔍 分析凭证: AzureOpenAiApi
+    → 移动节点目录: embeddings
+  🔍 分析凭证: CohereApi
+    → 移动节点目录: rerankers
+  🔍 分析凭证: DeepSeekApi
+    ⚠️  未找到使用此凭证的节点
+  🔍 分析凭证: GooglePalmApi
+    ⚠️  未找到使用此凭证的节点
+  🔍 分析凭证: GroqApi
+    ⚠️  未找到使用此凭证的节点
+  🔍 分析凭证: HuggingFaceApi
+    ⚠️  未找到使用此凭证的节点
+  🔍 分析凭证: LemonadeApi
+    ⚠️  未找到使用此凭证的节点
+  🔍 分析凭证: McpOAuth2Api
+    → 移动节点目录: mcp
+  🔍 分析凭证: MilvusApi
+    → 移动节点目录: vector_store
+  🔍 分析凭证: MistralCloudApi
+    ⚠️  未找到使用此凭证的节点
+  🔍 分析凭证: MotorheadApi
+    → 移动节点目录: memory
+  🔍 分析凭证: OllamaApi
+    ⚠️  未找到使用此凭证的节点
+  🔍 分析凭证: OpenRouterApi
+    ⚠️  未找到使用此凭证的节点
+  🔍 分析凭证: PineconeApi
+    ⚠️  未找到使用此凭证的节点
+  🔍 分析凭证: QdrantApi
+    ⚠️  未找到使用此凭证的节点
+  🔍 分析凭证: SearXngApi
+    → 移动节点目录: tools
+  🔍 分析凭证: SerpApi
+    ⚠️  未找到使用此凭证的节点
+  🔍 分析凭证: VercelAiGatewayApi
+    ⚠️  未找到使用此凭证的节点
+  🔍 分析凭证: WeaviateApi
+    ⚠️  未找到使用此凭证的节点
+  🔍 分析凭证: WolframAlphaApi
+    ⚠️  未找到使用此凭证的节点
+  🔍 分析凭证: XAiApi
+    ⚠️  未找到使用此凭证的节点
+  🔍 分析凭证: XataApi
+    ⚠️  未找到使用此凭证的节点
+  🔍 分析凭证: ZepApi
+    ⚠️  未找到使用此凭证的节点
+
+✅ 移动完成！
+
+📊 最终统计：
+  移动的凭证文件: 25
+  移动的节点目录: 8
+  保留的节点: 11
+
+📄 详细报告: packages/@n8n/nodes-langchain-backup/BACKUP_REPORT.md
+
+✨ 备份完成！核心节点已保留，需要凭证的AI节点已移动到备份目录。

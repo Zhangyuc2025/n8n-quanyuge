@@ -1,4 +1,0 @@
-
-> n8n@1.119.0 typecheck /home/zhang/n8n-quanyuge/packages/cli
-> tsc --noEmit
-

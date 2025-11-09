@@ -1,0 +1,794 @@
+=== n8n 节点备份工具 ===
+
+📊 统计信息：
+  凭证文件总数: 388
+  节点目录总数: 308
+
+🔄 开始移动节点...
+  移动凭证: FormIoApi
+    → 移动节点: FormIo
+  移动凭证: JenkinsApi
+    → 移动节点: Jenkins
+  移动凭证: NetscalerAdcApi
+    ⚠️  未找到对应节点目录
+  移动凭证: GSuiteAdminOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: HttpBasicAuth
+    ⚠️  未找到对应节点目录
+  移动凭证: GoogleSlidesOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: MicrosoftGraphSecurityOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: Smtp
+    ⚠️  未找到对应节点目录
+  移动凭证: RabbitMQ
+    → 移动节点: RabbitMQ
+  移动凭证: Sms77Api
+    → 移动节点: Sms77
+  移动凭证: HarvestApi
+    → 移动节点: Harvest
+  移动凭证: DriftOAuth2Api
+    → 移动节点: Drift
+  移动凭证: TogglApi
+    → 移动节点: Toggl
+  移动凭证: Magento2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: HybridAnalysisApi
+    ⚠️  未找到对应节点目录
+  移动凭证: DisqusApi
+    → 移动节点: Disqus
+  移动凭证: OAuth1Api
+    ⚠️  未找到对应节点目录
+  移动凭证: LingvaNexApi
+    → 移动节点: LingvaNex
+  移动凭证: AirtopApi
+    → 移动节点: Airtop
+  移动凭证: EventbriteApi
+    → 移动节点: Eventbrite
+  移动凭证: CarbonBlackApi
+    ⚠️  未找到对应节点目录
+  移动凭证: Rapid7InsightVmApi
+    ⚠️  未找到对应节点目录
+  移动凭证: JiraSoftwareServerPatApi
+    ⚠️  未找到对应节点目录
+  移动凭证: PagerDutyApi
+    → 移动节点: PagerDuty
+  移动凭证: AzureStorageSharedKeyApi
+    ⚠️  未找到对应节点目录
+  移动凭证: HelpScoutOAuth2Api
+    → 移动节点: HelpScout
+  移动凭证: RaindropOAuth2Api
+    → 移动节点: Raindrop
+  移动凭证: SeaTableApi
+    → 移动节点: SeaTable
+  移动凭证: ShopifyApi
+    → 移动节点: Shopify
+  移动凭证: AcuitySchedulingApi
+    → 移动节点: AcuityScheduling
+  移动凭证: WiseApi
+    → 移动节点: Wise
+  移动凭证: CustomerIoApi
+    → 移动节点: CustomerIo
+  移动凭证: StoryblokContentApi
+    ⚠️  未找到对应节点目录
+  移动凭证: MicrosoftToDoOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: N8nApi
+    → 移动节点: N8n
+  移动凭证: GristApi
+    → 移动节点: Grist
+  移动凭证: SendGridApi
+    → 移动节点: SendGrid
+  移动凭证: VenafiTlsProtectDatacenterApi
+    ⚠️  未找到对应节点目录
+  移动凭证: GoogleBooksOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: MailcheckApi
+    → 移动节点: Mailcheck
+  移动凭证: NextCloudOAuth2Api
+    → 移动节点: NextCloud
+  移动凭证: GetResponseApi
+    → 移动节点: GetResponse
+  移动凭证: AgileCrmApi
+    → 移动节点: AgileCrm
+  移动凭证: AirtableTokenApi
+    ⚠️  未找到对应节点目录
+  移动凭证: ClickUpOAuth2Api
+    → 移动节点: ClickUp
+  移动凭证: Msg91Api
+    → 移动节点: Msg91
+  移动凭证: ClickUpApi
+    ⚠️  未找到对应节点目录
+  移动凭证: PhantombusterApi
+    → 移动节点: Phantombuster
+  移动凭证: StrapiTokenApi
+    ⚠️  未找到对应节点目录
+  移动凭证: BitbucketApi
+    → 移动节点: Bitbucket
+  移动凭证: FigmaApi
+    → 移动节点: Figma
+  移动凭证: TheHiveProjectApi
+    → 移动节点: TheHiveProject
+  移动凭证: MoceanApi
+    → 移动节点: Mocean
+  移动凭证: DropcontactApi
+    → 移动节点: Dropcontact
+  移动凭证: PeekalinkApi
+    → 移动节点: Peekalink
+  移动凭证: MauticApi
+    → 移动节点: Mautic
+  移动凭证: ClockifyApi
+    → 移动节点: Clockify
+  移动凭证: OpenWeatherMapApi
+    → 移动节点: OpenWeatherMap
+  移动凭证: VeroApi
+    → 移动节点: Vero
+  移动凭证: BambooHrApi
+    → 移动节点: BambooHr
+  移动凭证: MicrosoftTeamsOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: GithubApi
+    → 移动节点: Github
+  移动凭证: GoogleBusinessProfileOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: PhilipsHueOAuth2Api
+    → 移动节点: PhilipsHue
+  移动凭证: LinkedInOAuth2Api
+    → 移动节点: LinkedIn
+  移动凭证: MondayComApi
+    → 移动节点: MondayCom
+  移动凭证: ActionNetworkApi
+    → 移动节点: ActionNetwork
+  移动凭证: GoogleSheetsTriggerOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: ServiceNowOAuth2Api
+    → 移动节点: ServiceNow
+  移动凭证: FreshserviceApi
+    → 移动节点: Freshservice
+  移动凭证: BeeminderOAuth2Api
+    → 移动节点: Beeminder
+  移动凭证: SalesforceJwtApi
+    ⚠️  未找到对应节点目录
+  移动凭证: FlowApi
+    → 移动节点: Flow
+  移动凭证: ZscalerZiaApi
+    ⚠️  未找到对应节点目录
+  移动凭证: Ftp
+    → 移动节点: Ftp
+  移动凭证: TrellixEpoApi
+    ⚠️  未找到对应节点目录
+  移动凭证: MailchimpApi
+    → 移动节点: Mailchimp
+  移动凭证: MailchimpOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: SentryIoServerApi
+    ⚠️  未找到对应节点目录
+  移动凭证: CortexApi
+    → 移动节点: Cortex
+  移动凭证: IterableApi
+    → 移动节点: Iterable
+  移动凭证: EgoiApi
+    → 移动节点: Egoi
+  移动凭证: ConvertApi
+    → 移动节点: ConvertKit
+  移动凭证: SentryIoOAuth2Api
+    → 移动节点: SentryIo
+  移动凭证: MalcoreApi
+    ⚠️  未找到对应节点目录
+  移动凭证: HubspotApi
+    → 移动节点: Hubspot
+  移动凭证: DynatraceApi
+    ⚠️  未找到对应节点目录
+  移动凭证: NextCloudApi
+    ⚠️  未找到对应节点目录
+  移动凭证: TrelloApi
+    → 移动节点: Trello
+  移动凭证: DiscourseApi
+    → 移动节点: Discourse
+  移动凭证: SlackOAuth2Api
+    → 移动节点: Slack
+  移动凭证: ShopifyAccessTokenApi
+    ⚠️  未找到对应节点目录
+  移动凭证: NotionOAuth2Api
+    → 移动节点: Notion
+  移动凭证: DemioApi
+    → 移动节点: Demio
+  移动凭证: LinearOAuth2Api
+    → 移动节点: Linear
+  移动凭证: AsanaOAuth2Api
+    → 移动节点: Asana
+  移动凭证: ConvertKitApi
+    ⚠️  未找到对应节点目录
+  移动凭证: EventbriteOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: StackbyApi
+    → 移动节点: Stackby
+  移动凭证: SendyApi
+    → 移动节点: Sendy
+  移动凭证: PushcutApi
+    → 移动节点: Pushcut
+  移动凭证: PaddleApi
+    → 移动节点: Paddle
+  移动凭证: MailerLiteApi
+    → 移动节点: MailerLite
+  移动凭证: CiscoUmbrellaApi
+    ⚠️  未找到对应节点目录
+  移动凭证: GoogleOAuth2Api
+    → 移动节点: Google
+  移动凭证: GoogleAdsOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: MicrosoftAzureCosmosDbSharedKeyApi
+    ⚠️  未找到对应节点目录
+  移动凭证: CalendlyApi
+    → 移动节点: Calendly
+  移动凭证: PagerDutyOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: MailjetEmailApi
+    ⚠️  未找到对应节点目录
+  移动凭证: MarketstackApi
+    → 移动节点: Marketstack
+  移动凭证: OneSimpleApi
+    → 移动节点: OneSimpleApi
+  移动凭证: MicrosoftSharePointOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: CopperApi
+    → 移动节点: Copper
+  移动凭证: AlienVaultApi
+    ⚠️  未找到对应节点目录
+  移动凭证: ApiTemplateIoApi
+    → 移动节点: ApiTemplateIo
+  移动凭证: HomeAssistantApi
+    → 移动节点: HomeAssistant
+  移动凭证: BitwardenApi
+    → 移动节点: Bitwarden
+  移动凭证: TodoistApi
+    → 移动节点: Todoist
+  移动凭证: LoneScaleApi
+    → 移动节点: LoneScale
+  移动凭证: Signl4Api
+    → 移动节点: Signl4
+  移动凭证: AzureStorageOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: ProfitWellApi
+    → 移动节点: ProfitWell
+  移动凭证: MandrillApi
+    → 移动节点: Mandrill
+  移动凭证: CiscoMerakiApi
+    ⚠️  未找到对应节点目录
+  移动凭证: GetResponseOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: ERPNextApi
+    → 移动节点: ERPNext
+  移动凭证: RocketchatApi
+    → 移动节点: Rocketchat
+  移动凭证: ShufflerApi
+    ⚠️  未找到对应节点目录
+  移动凭证: EmeliaApi
+    → 移动节点: Emelia
+  移动凭证: MiroOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: StoryblokManagementApi
+    ⚠️  未找到对应节点目录
+  移动凭证: OracleDBApi
+    ⚠️  未找到对应节点目录
+  移动凭证: SalesforceOAuth2Api
+    → 移动节点: Salesforce
+  移动凭证: ZoomOAuth2Api
+    → 移动节点: Zoom
+  移动凭证: TheHiveApi
+    → 移动节点: TheHive
+  移动凭证: VerticaApi
+    ⚠️  未找到对应节点目录
+  移动凭证: BaserowApi
+    → 移动节点: Baserow
+  移动凭证: NasaApi
+    → 移动节点: Nasa
+  移动凭证: CrowdDevApi
+    → 移动节点: CrowdDev
+  移动凭证: AdaloApi
+    → 移动节点: Adalo
+  移动凭证: HttpSslAuth
+    ⚠️  未找到对应节点目录
+  移动凭证: PayPalApi
+    → 移动节点: PayPal
+  移动凭证: IntercomApi
+    → 移动节点: Intercom
+  移动凭证: GoogleDriveOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: Snowflake
+    → 移动节点: Snowflake
+  移动凭证: LinkedInCommunityManagementOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: MetabaseApi
+    → 移动节点: Metabase
+  移动凭证: FormstackOAuth2Api
+    → 移动节点: Formstack
+  移动凭证: HighLevelOAuth2Api
+    → 移动节点: HighLevel
+  移动凭证: SshPassword
+    ⚠️  未找到对应节点目录
+  移动凭证: GmailOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: ZohoOAuth2Api
+    → 移动节点: Zoho
+  移动凭证: ElasticsearchApi
+    ⚠️  未找到对应节点目录
+  移动凭证: VenafiTlsProtectCloudApi
+    ⚠️  未找到对应节点目录
+  移动凭证: SpotifyOAuth2Api
+    → 移动节点: Spotify
+  移动凭证: MicrosoftExcelOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: AirtableApi
+    → 移动节点: Airtable
+  移动凭证: KitemakerApi
+    → 移动节点: Kitemaker
+  移动凭证: CodaApi
+    → 移动节点: Coda
+  移动凭证: MongoDb
+    → 移动节点: MongoDb
+  移动凭证: GoogleDocsOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: SentryIoApi
+    ⚠️  未找到对应节点目录
+  移动凭证: BeeminderApi
+    ⚠️  未找到对应节点目录
+  移动凭证: DhlApi
+    → 移动节点: Dhl
+  移动凭证: MicrosoftOneDriveOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: FacebookGraphApi
+    ⚠️  未找到对应节点目录
+  移动凭证: JinaAiApi
+    → 移动节点: JinaAI
+  移动凭证: Amqp
+    → 移动节点: Amqp
+  移动凭证: TimescaleDb
+    → 移动节点: TimescaleDb
+  移动凭证: RecordedFutureApi
+    ⚠️  未找到对应节点目录
+  移动凭证: GoogleContactsOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: OnfleetApi
+    → 移动节点: Onfleet
+  移动凭证: AsanaApi
+    ⚠️  未找到对应节点目录
+  移动凭证: HttpQueryAuth
+    ⚠️  未找到对应节点目录
+  移动凭证: KibanaApi
+    ⚠️  未找到对应节点目录
+  移动凭证: MauticOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: HttpDigestAuth
+    ⚠️  未找到对应节点目录
+  移动凭证: RundeckApi
+    → 移动节点: Rundeck
+  移动凭证: AwsAssumeRole
+    ⚠️  未找到对应节点目录
+  移动凭证: DiscordBotApi
+    ⚠️  未找到对应节点目录
+  移动凭证: SalesmateApi
+    → 移动节点: Salesmate
+  移动凭证: CockpitApi
+    → 移动节点: Cockpit
+  移动凭证: HarvestOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: GitlabApi
+    → 移动节点: Gitlab
+  移动凭证: GitPassword
+    ⚠️  未找到对应节点目录
+  移动凭证: FilescanApi
+    ⚠️  未找到对应节点目录
+  移动凭证: Aws
+    → 移动节点: Aws
+  移动凭证: OdooApi
+    → 移动节点: Odoo
+  移动凭证: AutopilotApi
+    → 移动节点: Autopilot
+  移动凭证: MicrosoftAzureMonitorOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: DiscordOAuth2Api
+    → 移动节点: Discord
+  移动凭证: QualysApi
+    ⚠️  未找到对应节点目录
+  移动凭证: BrevoApi
+    → 移动节点: Brevo
+  移动凭证: GoogleApi
+    ⚠️  未找到对应节点目录
+  移动凭证: MonicaCrmApi
+    → 移动节点: MonicaCrm
+  移动凭证: NocoDbApiToken
+    ⚠️  未找到对应节点目录
+  移动凭证: WebflowOAuth2Api
+    → 移动节点: Webflow
+  移动凭证: GitlabOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: GoogleCloudStorageOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: HubspotDeveloperApi
+    ⚠️  未找到对应节点目录
+  移动凭证: HttpHeaderAuth
+    ⚠️  未找到对应节点目录
+  移动凭证: MindeeReceiptApi
+    ⚠️  未找到对应节点目录
+  移动凭证: PerplexityApi
+    → 移动节点: Perplexity
+  移动凭证: WordpressApi
+    → 移动节点: Wordpress
+  移动凭证: WekanApi
+    → 移动节点: Wekan
+  移动凭证: FreshdeskApi
+    → 移动节点: Freshdesk
+  移动凭证: BoxOAuth2Api
+    → 移动节点: Box
+  移动凭证: AirtableOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: AutomizyApi
+    → 移动节点: Automizy
+  移动凭证: GoogleCloudNaturalLanguageOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: MispApi
+    → 移动节点: Misp
+  移动凭证: DfirIrisApi
+    ⚠️  未找到对应节点目录
+  移动凭证: CiscoSecureEndpointApi
+    ⚠️  未找到对应节点目录
+  移动凭证: TwakeServerApi
+    ⚠️  未找到对应节点目录
+  移动凭证: TapfiliateApi
+    → 移动节点: Tapfiliate
+  移动凭证: TypeformOAuth2Api
+    → 移动节点: Typeform
+  移动凭证: MySql
+    → 移动节点: MySql
+  移动凭证: F5BigIpApi
+    ⚠️  未找到对应节点目录
+  移动凭证: Mqtt
+    → 移动节点: MQTT
+  移动凭证: OAuth2Api
+    → 移动节点: nodes
+  移动凭证: NotionApi
+    ⚠️  未找到对应节点目录
+  移动凭证: SolarWindsObservabilityApi
+    ⚠️  未找到对应节点目录
+  移动凭证: XeroOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: UnleashedSoftwareApi
+    ⚠️  未找到对应节点目录
+  移动凭证: GoogleCalendarOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: TypeformApi
+    ⚠️  未找到对应节点目录
+  移动凭证: ZammadTokenAuthApi
+    ⚠️  未找到对应节点目录
+  移动凭证: DatadogApi
+    ⚠️  未找到对应节点目录
+  移动凭证: SshPrivateKey
+    ⚠️  未找到对应节点目录
+  移动凭证: PushbulletOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: BitlyOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: FortiGateApi
+    ⚠️  未找到对应节点目录
+  移动凭证: PipedriveOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: SlackApi
+    ⚠️  未找到对应节点目录
+  移动凭证: Sftp
+    ⚠️  未找到对应节点目录
+  移动凭证: GoogleAnalyticsOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: BitbucketAccessTokenApi
+    ⚠️  未找到对应节点目录
+  移动凭证: YourlsApi
+    ⚠️  未找到对应节点目录
+  移动凭证: MatrixApi
+    ⚠️  未找到对应节点目录
+  移动凭证: UptimeRobotApi
+    ⚠️  未找到对应节点目录
+  移动凭证: TwitterOAuth1Api
+    ⚠️  未找到对应节点目录
+  移动凭证: FormstackApi
+    ⚠️  未找到对应节点目录
+  移动凭证: KeapOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: Postgres
+    ⚠️  未找到对应节点目录
+  移动凭证: FacebookLeadAdsOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: ZendeskOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: SecurityScorecardApi
+    ⚠️  未找到对应节点目录
+  移动凭证: WorkableApi
+    ⚠️  未找到对应节点目录
+  移动凭证: MailgunApi
+    ⚠️  未找到对应节点目录
+  移动凭证: SegmentApi
+    ⚠️  未找到对应节点目录
+  移动凭证: SolarWindsIpamApi
+    ⚠️  未找到对应节点目录
+  移动凭证: KoBoToolboxApi
+    ⚠️  未找到对应节点目录
+  移动凭证: ImpervaWafApi
+    ⚠️  未找到对应节点目录
+  移动凭证: FileMaker
+    ⚠️  未找到对应节点目录
+  移动凭证: ZulipApi
+    ⚠️  未找到对应节点目录
+  移动凭证: GotifyApi
+    ⚠️  未找到对应节点目录
+  移动凭证: MailjetSmsApi
+    ⚠️  未找到对应节点目录
+  移动凭证: CloudflareApi
+    ⚠️  未找到对应节点目录
+  移动凭证: JotFormApi
+    ⚠️  未找到对应节点目录
+  移动凭证: SplunkApi
+    ⚠️  未找到对应节点目录
+  移动凭证: ShopifyOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: ElasticSecurityApi
+    ⚠️  未找到对应节点目录
+  移动凭证: ZammadBasicAuthApi
+    ⚠️  未找到对应节点目录
+  移动凭证: HumanticAiApi
+    ⚠️  未找到对应节点目录
+  移动凭证: GrafanaApi
+    ⚠️  未找到对应节点目录
+  移动凭证: TwilioApi
+    ⚠️  未找到对应节点目录
+  移动凭证: InvoiceNinjaApi
+    ⚠️  未找到对应节点目录
+  移动凭证: OuraApi
+    ⚠️  未找到对应节点目录
+  移动凭证: QuickBaseApi
+    ⚠️  未找到对应节点目录
+  移动凭证: PipedriveApi
+    ⚠️  未找到对应节点目录
+  移动凭证: TwistOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: BrandfetchApi
+    ⚠️  未找到对应节点目录
+  移动凭证: Ldap
+    ⚠️  未找到对应节点目录
+  移动凭证: ZoomApi
+    ⚠️  未找到对应节点目录
+  移动凭证: TwitterOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: CiscoWebexOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: QuestDb
+    ⚠️  未找到对应节点目录
+  移动凭证: TravisCiApi
+    ⚠️  未找到对应节点目录
+  移动凭证: VirusTotalApi
+    ⚠️  未找到对应节点目录
+  移动凭证: WhatsAppTriggerApi
+    ⚠️  未找到对应节点目录
+  移动凭证: StripeApi
+    ⚠️  未找到对应节点目录
+  移动凭证: GoogleBigQueryOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: WooCommerceApi
+    ⚠️  未找到对应节点目录
+  移动凭证: JiraSoftwareServerApi
+    ⚠️  未找到对应节点目录
+  移动凭证: GoogleFirebaseCloudFirestoreOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: NpmApi
+    ⚠️  未找到对应节点目录
+  移动凭证: ClearbitApi
+    ⚠️  未找到对应节点目录
+  移动凭证: FreshworksCrmApi
+    ⚠️  未找到对应节点目录
+  移动凭证: CalendlyOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: GithubOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: BitlyApi
+    ⚠️  未找到对应节点目录
+  移动凭证: MediumApi
+    ⚠️  未找到对应节点目录
+  移动凭证: MicrosoftDynamicsOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: TotpApi
+    ⚠️  未找到对应节点目录
+  移动凭证: GongOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: LineNotifyOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: CrateDb
+    ⚠️  未找到对应节点目录
+  移动凭证: ActiveCampaignApi
+    ⚠️  未找到对应节点目录
+  移动凭证: SupabaseApi
+    ⚠️  未找到对应节点目录
+  移动凭证: HttpCustomAuth
+    ⚠️  未找到对应节点目录
+  移动凭证: VonageApi
+    ⚠️  未找到对应节点目录
+  移动凭证: QuickBooksOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: SyncroMspApi
+    ⚠️  未找到对应节点目录
+  移动凭证: GhostContentApi
+    ⚠️  未找到对应节点目录
+  移动凭证: HaloPSAApi
+    ⚠️  未找到对应节点目录
+  移动凭证: MindeeInvoiceApi
+    ⚠️  未找到对应节点目录
+  移动凭证: TelegramApi
+    ⚠️  未找到对应节点目录
+  移动凭证: HunterApi
+    ⚠️  未找到对应节点目录
+  移动凭证: BannerbearApi
+    ⚠️  未找到对应节点目录
+  移动凭证: HubspotAppToken
+    ⚠️  未找到对应节点目录
+  移动凭证: GhostAdminApi
+    ⚠️  未找到对应节点目录
+  移动凭证: PostHogApi
+    ⚠️  未找到对应节点目录
+  移动凭证: OpenAiApi
+    ⚠️  未找到对应节点目录
+  移动凭证: JwtAuth
+    ⚠️  未找到对应节点目录
+  移动凭证: NetlifyApi
+    ⚠️  未找到对应节点目录
+  移动凭证: ZendeskApi
+    ⚠️  未找到对应节点目录
+  移动凭证: ZabbixApi
+    ⚠️  未找到对应节点目录
+  移动凭证: UProcApi
+    ⚠️  未找到对应节点目录
+  移动凭证: GoogleChatOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: CircleCiApi
+    ⚠️  未找到对应节点目录
+  移动凭证: OktaApi
+    ⚠️  未找到对应节点目录
+  移动凭证: ContentfulApi
+    ⚠️  未找到对应节点目录
+  移动凭证: Auth0ManagementApi
+    ⚠️  未找到对应节点目录
+  移动凭证: CrowdStrikeOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: RedditOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: StrapiApi
+    ⚠️  未找到对应节点目录
+  移动凭证: GoogleTasksOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: MessageBirdApi
+    ⚠️  未找到对应节点目录
+  移动凭证: HighLevelApi
+    ⚠️  未找到对应节点目录
+  移动凭证: Kafka
+    ⚠️  未找到对应节点目录
+  移动凭证: ChargebeeApi
+    ⚠️  未找到对应节点目录
+  移动凭证: YouTubeOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: NocoDb
+    ⚠️  未找到对应节点目录
+  移动凭证: SurveyMonkeyApi
+    ⚠️  未找到对应节点目录
+  移动凭证: DeepLApi
+    ⚠️  未找到对应节点目录
+  移动凭证: PlivoApi
+    ⚠️  未找到对应节点目录
+  移动凭证: GooglePerspectiveOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: OrbitApi
+    ⚠️  未找到对应节点目录
+  移动凭证: MattermostApi
+    ⚠️  未找到对应节点目录
+  移动凭证: DriftApi
+    ⚠️  未找到对应节点目录
+  移动凭证: DropboxApi
+    ⚠️  未找到对应节点目录
+  移动凭证: SekoiaApi
+    ⚠️  未找到对应节点目录
+  移动凭证: HubspotOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: JiraSoftwareCloudApi
+    ⚠️  未找到对应节点目录
+  移动凭证: DropboxOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: MediumOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: TaigaApi
+    ⚠️  未找到对应节点目录
+  移动凭证: MicrosoftOutlookOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: MicrosoftEntraOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: GumroadApi
+    ⚠️  未找到对应节点目录
+  移动凭证: GoToWebinarOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: AcuitySchedulingOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: GoogleTranslateOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: ServiceNowBasicApi
+    ⚠️  未找到对应节点目录
+  移动凭证: HttpBearerAuth
+    ⚠️  未找到对应节点目录
+  移动凭证: TwakeCloudApi
+    ⚠️  未找到对应节点目录
+  移动凭证: LemlistApi
+    ⚠️  未找到对应节点目录
+  移动凭证: GongApi
+    ⚠️  未找到对应节点目录
+  移动凭证: WebflowApi
+    ⚠️  未找到对应节点目录
+  移动凭证: StravaOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: UpleadApi
+    ⚠️  未找到对应节点目录
+  移动凭证: OpenCTIApi
+    ⚠️  未找到对应节点目录
+  移动凭证: QRadarApi
+    ⚠️  未找到对应节点目录
+  移动凭证: S3
+    ⚠️  未找到对应节点目录
+  移动凭证: UrlScanIoApi
+    ⚠️  未找到对应节点目录
+  移动凭证: Imap
+    ⚠️  未找到对应节点目录
+  移动凭证: BubbleApi
+    ⚠️  未找到对应节点目录
+  移动凭证: AffinityApi
+    ⚠️  未找到对应节点目录
+  移动凭证: SurveyMonkeyOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: PostmarkApi
+    ⚠️  未找到对应节点目录
+  移动凭证: SysdigApi
+    ⚠️  未找到对应节点目录
+  移动凭证: Redis
+    ⚠️  未找到对应节点目录
+  移动凭证: CalApi
+    ⚠️  未找到对应节点目录
+  移动凭证: MicrosoftOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: FacebookGraphAppApi
+    ⚠️  未找到对应节点目录
+  移动凭证: MondayComOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: PushoverApi
+    ⚠️  未找到对应节点目录
+  移动凭证: WufooApi
+    ⚠️  未找到对应节点目录
+  移动凭证: SpontitApi
+    ⚠️  未找到对应节点目录
+  移动凭证: MicrosoftSql
+    ⚠️  未找到对应节点目录
+  移动凭证: TodoistOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: GoogleFirebaseRealtimeDatabaseOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: MistApi
+    ⚠️  未找到对应节点目录
+  移动凭证: LinearApi
+    ⚠️  未找到对应节点目录
+  移动凭证: WhatsAppApi
+    ⚠️  未找到对应节点目录
+  移动凭证: GoogleSheetsOAuth2Api
+    ⚠️  未找到对应节点目录
+  移动凭证: DiscordWebhookApi
+    ⚠️  未找到对应节点目录
+
+✅ 移动完成！
+
+📊 最终统计：
+  移动的凭证文件: 388
+  移动的节点目录: 132
+  未找到对应节点: 256
+  保留的节点: 0
+
+📄 详细报告: packages/nodes-base-backup/BACKUP_REPORT.md
+find: ‘packages/nodes-base/nodes’: No such file or directory

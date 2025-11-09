@@ -14,7 +14,7 @@ import { processItem } from './methods/processItem';
 import {
 	getCustomErrorMessage as getCustomOpenAiErrorMessage,
 	isOpenAiError,
-} from '../../vendors/OpenAi/helpers/error-handling';
+} from '@utils/helpers/openai-error-handling';
 
 /**
  * Basic LLM Chain Node Implementation

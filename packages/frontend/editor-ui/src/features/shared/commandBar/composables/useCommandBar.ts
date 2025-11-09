@@ -247,7 +247,9 @@ export function useCommandBar() {
 
 	const items = computed<CommandBarItem[]>(() => {
 		const allItems = activeCommandGroups.value.flatMap((group) => group.commands.value);
-		return allItems.map(wrapItemWithTelemetry);
+		return allItems
+			.filter((item) => item !== undefined && item !== null)
+			.map(wrapItemWithTelemetry);
 	});
 
 	const isLoading = computed(() => {

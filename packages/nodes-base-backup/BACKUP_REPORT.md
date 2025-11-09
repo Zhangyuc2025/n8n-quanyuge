@@ -1,0 +1,436 @@
+
+# 节点备份报告
+
+**生成时间：** 2025-11-09 06:04:58
+
+## 凭证与节点对应关系
+
+- ✅ **CalendlyApi** → Calendly
+- ⚠️ **CalendlyOAuth2Api** → (未找到使用的节点)
+- ⚠️ **CarbonBlackApi** → (未找到使用的节点)
+- ✅ **ChargebeeApi** → Chargebee
+- ✅ **CircleCiApi** → CircleCi
+- ⚠️ **CiscoMerakiApi** → (未找到使用的节点)
+- ⚠️ **CiscoSecureEndpointApi** → (未找到使用的节点)
+- ⚠️ **CiscoUmbrellaApi** → (未找到使用的节点)
+- ✅ **CiscoWebexOAuth2Api** → Cisco
+- ✅ **ClearbitApi** → Clearbit
+- ✅ **ClickUpApi** → ClickUp
+- ⚠️ **ClickUpOAuth2Api** → (未找到使用的节点)
+- ✅ **ClockifyApi** → Clockify
+- ✅ **CloudflareApi** → Cloudflare
+- ✅ **CockpitApi** → Cockpit
+- ✅ **CodaApi** → Coda
+- ✅ **ContentfulApi** → Contentful
+- ⚠️ **ConvertApi** → (未找到使用的节点)
+- ✅ **ConvertKitApi** → ConvertKit
+- ✅ **CopperApi** → Copper
+- ✅ **CortexApi** → Cortex
+- ✅ **CrateDb** → CrateDb
+- ✅ **CrowdDevApi** → CrowdDev
+- ⚠️ **CrowdStrikeOAuth2Api** → (未找到使用的节点)
+- ✅ **CustomerIoApi** → CustomerIo
+- ⚠️ **DatadogApi** → (未找到使用的节点)
+- ✅ **DeepLApi** → DeepL
+- ✅ **DemioApi** → Demio
+- ⚠️ **DfirIrisApi** → (未找到使用的节点)
+- ✅ **DhlApi** → Dhl
+- ✅ **DiscordBotApi** → Discord
+- ⚠️ **DiscordOAuth2Api** → (未找到使用的节点)
+- ⚠️ **DiscordWebhookApi** → (未找到使用的节点)
+- ✅ **DiscourseApi** → Discourse
+- ✅ **DisqusApi** → Disqus
+- ✅ **DriftApi** → Drift
+- ⚠️ **DriftOAuth2Api** → (未找到使用的节点)
+- ✅ **DropboxApi** → Dropbox
+- ⚠️ **DropboxOAuth2Api** → (未找到使用的节点)
+- ✅ **DropcontactApi** → Dropcontact
+- ⚠️ **DynatraceApi** → (未找到使用的节点)
+- ✅ **EgoiApi** → Egoi
+- ✅ **ElasticsearchApi** → Elastic
+- ⚠️ **ElasticSecurityApi** → (未找到使用的节点)
+- ✅ **EmeliaApi** → Emelia
+- ✅ **ERPNextApi** → ERPNext
+- ✅ **EventbriteApi** → Eventbrite
+- ⚠️ **EventbriteOAuth2Api** → (未找到使用的节点)
+- ⚠️ **F5BigIpApi** → (未找到使用的节点)
+- ✅ **FacebookGraphApi** → Facebook
+- ⚠️ **FacebookGraphAppApi** → (未找到使用的节点)
+- ✅ **FacebookLeadAdsOAuth2Api** → FacebookLeadAds
+- ✅ **FigmaApi** → Figma
+- ✅ **FileMaker** → FileMaker
+- ⚠️ **FilescanApi** → (未找到使用的节点)
+- ✅ **FlowApi** → Flow
+- ✅ **FormIoApi** → FormIo
+- ✅ **FormstackApi** → Formstack
+- ⚠️ **FormstackOAuth2Api** → (未找到使用的节点)
+- ⚠️ **FortiGateApi** → (未找到使用的节点)
+- ✅ **FreshdeskApi** → Freshdesk
+- ✅ **FreshserviceApi** → Freshservice
+- ✅ **FreshworksCrmApi** → FreshworksCrm
+- ✅ **Ftp** → Ftp
+- ✅ **GetResponseApi** → GetResponse
+- ⚠️ **GetResponseOAuth2Api** → (未找到使用的节点)
+- ✅ **GhostAdminApi** → Ghost
+- ⚠️ **GhostContentApi** → (未找到使用的节点)
+- ✅ **GithubApi** → Github
+- ⚠️ **GithubOAuth2Api** → (未找到使用的节点)
+- ✅ **GitlabApi** → Gitlab
+- ⚠️ **GitlabOAuth2Api** → (未找到使用的节点)
+- ✅ **GitPassword** → Git
+- ⚠️ **GmailOAuth2Api** → (未找到使用的节点)
+- ✅ **GongApi** → Gong
+- ⚠️ **GongOAuth2Api** → (未找到使用的节点)
+- ✅ **GoogleAdsOAuth2Api** → Google
+- ⚠️ **GoogleAnalyticsOAuth2Api** → (未找到使用的节点)
+- ✅ **GoogleApi** → Evaluation
+- ⚠️ **GoogleBigQueryOAuth2Api** → (未找到使用的节点)
+- ⚠️ **GoogleBooksOAuth2Api** → (未找到使用的节点)
+- ⚠️ **GoogleBusinessProfileOAuth2Api** → (未找到使用的节点)
+- ⚠️ **GoogleCalendarOAuth2Api** → (未找到使用的节点)
+- ⚠️ **GoogleChatOAuth2Api** → (未找到使用的节点)
+- ⚠️ **GoogleCloudNaturalLanguageOAuth2Api** → (未找到使用的节点)
+- ⚠️ **GoogleCloudStorageOAuth2Api** → (未找到使用的节点)
+- ⚠️ **GoogleContactsOAuth2Api** → (未找到使用的节点)
+- ⚠️ **GoogleDocsOAuth2Api** → (未找到使用的节点)
+- ⚠️ **GoogleDriveOAuth2Api** → (未找到使用的节点)
+- ⚠️ **GoogleFirebaseCloudFirestoreOAuth2Api** → (未找到使用的节点)
+- ⚠️ **GoogleFirebaseRealtimeDatabaseOAuth2Api** → (未找到使用的节点)
+- ⚠️ **GoogleOAuth2Api** → (未找到使用的节点)
+- ⚠️ **GooglePerspectiveOAuth2Api** → (未找到使用的节点)
+- ⚠️ **GoogleSheetsOAuth2Api** → (未找到使用的节点)
+- ⚠️ **GoogleSheetsTriggerOAuth2Api** → (未找到使用的节点)
+- ⚠️ **GoogleSlidesOAuth2Api** → (未找到使用的节点)
+- ⚠️ **GoogleTasksOAuth2Api** → (未找到使用的节点)
+- ⚠️ **GoogleTranslateOAuth2Api** → (未找到使用的节点)
+- ✅ **GotifyApi** → Gotify
+- ✅ **GoToWebinarOAuth2Api** → GoToWebinar
+- ✅ **GrafanaApi** → Grafana
+- ✅ **GristApi** → Grist
+- ⚠️ **GSuiteAdminOAuth2Api** → (未找到使用的节点)
+- ✅ **GumroadApi** → Gumroad
+- ✅ **HaloPSAApi** → HaloPSA
+- ✅ **HarvestApi** → Harvest
+- ⚠️ **HarvestOAuth2Api** → (未找到使用的节点)
+- ✅ **HelpScoutOAuth2Api** → HelpScout
+- ✅ **HighLevelApi** → HighLevel
+- ⚠️ **HighLevelOAuth2Api** → (未找到使用的节点)
+- ✅ **HomeAssistantApi** → HomeAssistant
+- ✅ **HttpBasicAuth** → HttpRequest
+- ✅ **HttpBasicAuth** → Pipedrive
+- ✅ **HttpBasicAuth** → Webhook
+- ✅ **HttpBasicAuth** → GraphQL
+- ✅ **HttpBasicAuth** → Form
+- ⚠️ **HttpBearerAuth** → (未找到使用的节点)
+- ⚠️ **HttpCustomAuth** → (未找到使用的节点)
+- ⚠️ **HttpDigestAuth** → (未找到使用的节点)
+- ⚠️ **HttpHeaderAuth** → (未找到使用的节点)
+- ✅ **HttpQueryAuth** → Jira
+- ⚠️ **HttpSslAuth** → (未找到使用的节点)
+- ✅ **HubspotApi** → Hubspot
+- ⚠️ **HubspotAppToken** → (未找到使用的节点)
+- ⚠️ **HubspotDeveloperApi** → (未找到使用的节点)
+- ⚠️ **HubspotOAuth2Api** → (未找到使用的节点)
+- ✅ **HumanticAiApi** → HumanticAI
+- ✅ **HunterApi** → Hunter
+- ⚠️ **HybridAnalysisApi** → (未找到使用的节点)
+- ✅ **Imap** → EmailReadImap
+- ⚠️ **ImpervaWafApi** → (未找到使用的节点)
+- ✅ **IntercomApi** → Intercom
+- ✅ **InvoiceNinjaApi** → InvoiceNinja
+- ✅ **IterableApi** → Iterable
+- ✅ **JenkinsApi** → Jenkins
+- ✅ **JinaAiApi** → JinaAI
+- ⚠️ **JiraSoftwareCloudApi** → (未找到使用的节点)
+- ⚠️ **JiraSoftwareServerApi** → (未找到使用的节点)
+- ⚠️ **JiraSoftwareServerPatApi** → (未找到使用的节点)
+- ✅ **JotFormApi** → JotForm
+- ✅ **JwtAuth** → Jwt
+- ✅ **JwtAuth** → RespondToWebhook
+- ✅ **Kafka** → Kafka
+- ✅ **KeapOAuth2Api** → Keap
+- ⚠️ **KibanaApi** → (未找到使用的节点)
+- ✅ **KitemakerApi** → Kitemaker
+- ✅ **KoBoToolboxApi** → KoBoToolbox
+- ✅ **Ldap** → Ldap
+- ✅ **Ldap** → Mattermost
+- ✅ **LemlistApi** → Lemlist
+- ✅ **LinearApi** → Linear
+- ⚠️ **LinearOAuth2Api** → (未找到使用的节点)
+- ✅ **LineNotifyOAuth2Api** → Line
+- ✅ **LingvaNexApi** → LingvaNex
+- ✅ **LinkedInCommunityManagementOAuth2Api** → LinkedIn
+- ⚠️ **LinkedInOAuth2Api** → (未找到使用的节点)
+- ✅ **LoneScaleApi** → LoneScale
+- ✅ **Magento2Api** → Magento
+- ✅ **MailcheckApi** → Mailcheck
+- ✅ **MailchimpApi** → Mailchimp
+- ⚠️ **MailchimpOAuth2Api** → (未找到使用的节点)
+- ✅ **MailerLiteApi** → MailerLite
+- ✅ **MailgunApi** → Mailgun
+- ✅ **MailjetEmailApi** → Mailjet
+- ⚠️ **MailjetSmsApi** → (未找到使用的节点)
+- ⚠️ **MalcoreApi** → (未找到使用的节点)
+- ✅ **MandrillApi** → Mandrill
+- ✅ **MarketstackApi** → Marketstack
+- ✅ **MatrixApi** → Matrix
+- ⚠️ **MattermostApi** → (未找到使用的节点)
+- ✅ **MauticApi** → Mautic
+- ⚠️ **MauticOAuth2Api** → (未找到使用的节点)
+- ✅ **MediumApi** → Medium
+- ⚠️ **MediumOAuth2Api** → (未找到使用的节点)
+- ✅ **MessageBirdApi** → MessageBird
+- ✅ **MetabaseApi** → Metabase
+- ⚠️ **MicrosoftAzureCosmosDbSharedKeyApi** → (未找到使用的节点)
+- ⚠️ **MicrosoftAzureMonitorOAuth2Api** → (未找到使用的节点)
+- ⚠️ **MicrosoftDynamicsOAuth2Api** → (未找到使用的节点)
+- ⚠️ **MicrosoftEntraOAuth2Api** → (未找到使用的节点)
+- ⚠️ **MicrosoftExcelOAuth2Api** → (未找到使用的节点)
+- ⚠️ **MicrosoftGraphSecurityOAuth2Api** → (未找到使用的节点)
+- ⚠️ **MicrosoftOAuth2Api** → (未找到使用的节点)
+- ⚠️ **MicrosoftOneDriveOAuth2Api** → (未找到使用的节点)
+- ⚠️ **MicrosoftOutlookOAuth2Api** → (未找到使用的节点)
+- ⚠️ **MicrosoftSharePointOAuth2Api** → (未找到使用的节点)
+- ⚠️ **MicrosoftSql** → (未找到使用的节点)
+- ⚠️ **MicrosoftTeamsOAuth2Api** → (未找到使用的节点)
+- ⚠️ **MicrosoftToDoOAuth2Api** → (未找到使用的节点)
+- ✅ **MindeeInvoiceApi** → Mindee
+- ⚠️ **MindeeReceiptApi** → (未找到使用的节点)
+- ⚠️ **MiroOAuth2Api** → (未找到使用的节点)
+- ✅ **MispApi** → Misp
+- ⚠️ **MistApi** → (未找到使用的节点)
+- ✅ **MoceanApi** → Mocean
+- ✅ **MondayComApi** → MondayCom
+- ⚠️ **MondayComOAuth2Api** → (未找到使用的节点)
+- ✅ **MongoDb** → MongoDb
+- ✅ **MonicaCrmApi** → MonicaCrm
+- ✅ **Mqtt** → MQTT
+- ✅ **Msg91Api** → Msg91
+- ✅ **MySql** → MySql
+- ✅ **N8nApi** → N8n
+- ✅ **NasaApi** → Nasa
+- ✅ **NetlifyApi** → Netlify
+- ⚠️ **NetscalerAdcApi** → (未找到使用的节点)
+- ✅ **NextCloudApi** → NextCloud
+- ⚠️ **NextCloudOAuth2Api** → (未找到使用的节点)
+- ✅ **NocoDbApiToken** → NocoDB
+- ⚠️ **NocoDb** → (未找到使用的节点)
+- ✅ **NotionApi** → Notion
+- ⚠️ **NotionOAuth2Api** → (未找到使用的节点)
+- ✅ **NpmApi** → Npm
+- ⚠️ **OAuth1Api** → (未找到使用的节点)
+- ⚠️ **OAuth2Api** → (未找到使用的节点)
+- ✅ **OdooApi** → Odoo
+- ✅ **OktaApi** → Okta
+- ✅ **OneSimpleApi** → OneSimpleApi
+- ✅ **OnfleetApi** → Onfleet
+- ✅ **OpenAiApi** → OpenAi
+- ⚠️ **OpenCTIApi** → (未找到使用的节点)
+- ✅ **OpenWeatherMapApi** → OpenWeatherMap
+- ✅ **OracleDBApi** → Oracle
+- ✅ **OrbitApi** → Orbit
+- ✅ **OuraApi** → Oura
+- ✅ **PaddleApi** → Paddle
+- ✅ **PagerDutyApi** → PagerDuty
+- ⚠️ **PagerDutyOAuth2Api** → (未找到使用的节点)
+- ✅ **PayPalApi** → PayPal
+- ✅ **PeekalinkApi** → Peekalink
+- ✅ **PerplexityApi** → Perplexity
+- ✅ **PhantombusterApi** → Phantombuster
+- ✅ **PhilipsHueOAuth2Api** → PhilipsHue
+- ⚠️ **PipedriveApi** → (未找到使用的节点)
+- ⚠️ **PipedriveOAuth2Api** → (未找到使用的节点)
+- ✅ **PlivoApi** → Plivo
+- ✅ **Postgres** → Postgres
+- ✅ **PostHogApi** → PostHog
+- ✅ **PostmarkApi** → Postmark
+- ✅ **ProfitWellApi** → ProfitWell
+- ✅ **PushbulletOAuth2Api** → Pushbullet
+- ✅ **PushcutApi** → Pushcut
+- ✅ **PushoverApi** → Pushover
+- ⚠️ **QRadarApi** → (未找到使用的节点)
+- ⚠️ **QualysApi** → (未找到使用的节点)
+- ✅ **QuestDb** → QuestDb
+- ✅ **QuickBaseApi** → QuickBase
+- ✅ **QuickBooksOAuth2Api** → QuickBooks
+- ✅ **RabbitMQ** → RabbitMQ
+- ✅ **RaindropOAuth2Api** → Raindrop
+- ⚠️ **Rapid7InsightVmApi** → (未找到使用的节点)
+- ⚠️ **RecordedFutureApi** → (未找到使用的节点)
+- ✅ **RedditOAuth2Api** → Reddit
+- ✅ **Redis** → Redis
+- ✅ **RocketchatApi** → Rocketchat
+- ✅ **RundeckApi** → Rundeck
+- ✅ **S3** → S3
+- ✅ **SalesforceJwtApi** → Salesforce
+- ⚠️ **SalesforceOAuth2Api** → (未找到使用的节点)
+- ✅ **SalesmateApi** → Salesmate
+- ✅ **SeaTableApi** → SeaTable
+- ✅ **SecurityScorecardApi** → SecurityScorecard
+- ✅ **SegmentApi** → Segment
+- ⚠️ **SekoiaApi** → (未找到使用的节点)
+- ✅ **SendGridApi** → SendGrid
+- ✅ **SendyApi** → Sendy
+- ✅ **SentryIoApi** → SentryIo
+- ⚠️ **SentryIoOAuth2Api** → (未找到使用的节点)
+- ⚠️ **SentryIoServerApi** → (未找到使用的节点)
+- ✅ **ServiceNowBasicApi** → ServiceNow
+- ⚠️ **ServiceNowOAuth2Api** → (未找到使用的节点)
+- ⚠️ **Sftp** → (未找到使用的节点)
+- ✅ **ShopifyAccessTokenApi** → Shopify
+- ⚠️ **ShopifyApi** → (未找到使用的节点)
+- ⚠️ **ShopifyOAuth2Api** → (未找到使用的节点)
+- ⚠️ **ShufflerApi** → (未找到使用的节点)
+- ✅ **Signl4Api** → Signl4
+- ✅ **SlackApi** → Slack
+- ⚠️ **SlackOAuth2Api** → (未找到使用的节点)
+- ✅ **Sms77Api** → Sms77
+- ✅ **Smtp** → EmailSend
+- ✅ **Snowflake** → Snowflake
+- ⚠️ **SolarWindsIpamApi** → (未找到使用的节点)
+- ⚠️ **SolarWindsObservabilityApi** → (未找到使用的节点)
+- ✅ **SplunkApi** → Splunk
+- ✅ **SpontitApi** → Spontit
+- ✅ **SpotifyOAuth2Api** → Spotify
+- ✅ **SshPassword** → Ssh
+- ⚠️ **SshPrivateKey** → (未找到使用的节点)
+- ✅ **StackbyApi** → Stackby
+- ✅ **StoryblokContentApi** → Storyblok
+- ⚠️ **StoryblokManagementApi** → (未找到使用的节点)
+- ✅ **StrapiApi** → Strapi
+- ⚠️ **StrapiTokenApi** → (未找到使用的节点)
+- ✅ **StravaOAuth2Api** → Strava
+- ✅ **StripeApi** → Stripe
+- ✅ **SupabaseApi** → Supabase
+- ✅ **SurveyMonkeyApi** → SurveyMonkey
+- ⚠️ **SurveyMonkeyOAuth2Api** → (未找到使用的节点)
+- ✅ **SyncroMspApi** → SyncroMSP
+- ⚠️ **SysdigApi** → (未找到使用的节点)
+- ✅ **TaigaApi** → Taiga
+- ✅ **TapfiliateApi** → Tapfiliate
+- ✅ **TelegramApi** → Telegram
+- ✅ **TheHiveApi** → TheHive
+- ✅ **TheHiveProjectApi** → TheHiveProject
+- ✅ **TimescaleDb** → TimescaleDb
+- ✅ **TodoistApi** → Todoist
+- ⚠️ **TodoistOAuth2Api** → (未找到使用的节点)
+- ✅ **TogglApi** → Toggl
+- ✅ **TotpApi** → Totp
+- ✅ **TravisCiApi** → TravisCi
+- ⚠️ **TrellixEpoApi** → (未找到使用的节点)
+- ✅ **TrelloApi** → Trello
+- ✅ **TwakeCloudApi** → Twake
+- ⚠️ **TwakeServerApi** → (未找到使用的节点)
+- ✅ **TwilioApi** → Twilio
+- ✅ **TwistOAuth2Api** → Twist
+- ✅ **TwitterOAuth1Api** → Twitter
+- ⚠️ **TwitterOAuth2Api** → (未找到使用的节点)
+- ✅ **TypeformApi** → Typeform
+- ⚠️ **TypeformOAuth2Api** → (未找到使用的节点)
+- ✅ **UnleashedSoftwareApi** → UnleashedSoftware
+- ✅ **UpleadApi** → Uplead
+- ✅ **UProcApi** → UProc
+- ✅ **UptimeRobotApi** → UptimeRobot
+- ✅ **UrlScanIoApi** → UrlScanIo
+- ✅ **VenafiTlsProtectCloudApi** → Venafi
+- ⚠️ **VenafiTlsProtectDatacenterApi** → (未找到使用的节点)
+- ✅ **VeroApi** → Vero
+- ⚠️ **VerticaApi** → (未找到使用的节点)
+- ⚠️ **VirusTotalApi** → (未找到使用的节点)
+- ✅ **VonageApi** → Vonage
+- ✅ **WebflowApi** → Webflow
+- ⚠️ **WebflowOAuth2Api** → (未找到使用的节点)
+- ✅ **WekanApi** → Wekan
+- ⚠️ **WhatsAppApi** → (未找到使用的节点)
+- ✅ **WhatsAppTriggerApi** → WhatsApp
+- ✅ **WiseApi** → Wise
+- ✅ **WooCommerceApi** → WooCommerce
+- ✅ **WordpressApi** → Wordpress
+- ✅ **WorkableApi** → Workable
+- ✅ **WufooApi** → Wufoo
+- ✅ **XeroOAuth2Api** → Xero
+- ✅ **YourlsApi** → Yourls
+- ⚠️ **YouTubeOAuth2Api** → (未找到使用的节点)
+- ⚠️ **ZabbixApi** → (未找到使用的节点)
+- ✅ **ZammadBasicAuthApi** → Zammad
+- ⚠️ **ZammadTokenAuthApi** → (未找到使用的节点)
+- ✅ **ZendeskApi** → Zendesk
+- ⚠️ **ZendeskOAuth2Api** → (未找到使用的节点)
+- ✅ **ZohoOAuth2Api** → Zoho
+- ✅ **ZoomApi** → Zoom
+- ⚠️ **ZoomOAuth2Api** → (未找到使用的节点)
+- ⚠️ **ZscalerZiaApi** → (未找到使用的节点)
+- ✅ **ZulipApi** → Zulip
+
+## 统计汇总
+
+| 项目 | 数量 |
+|------|------|
+| 移动的凭证文件 | 350 |
+| 移动的节点 | 219 |
+| 保留的核心节点 | 62 |
+
+## 保留的核心节点列表
+
+- AiTransform
+- Brevo
+- Code
+- CoinGecko
+- CompareDatasets
+- Compression
+- Cron
+- Crypto
+- DataTable
+- DateTime
+- DebugHelper
+- E2eTest
+- EditImage
+- ErrorTrigger
+- ExecuteCommand
+- ExecuteWorkflow
+- ExecutionData
+- Files
+- Filter
+- Function
+- FunctionItem
+- HackerNews
+- Html
+- HtmlExtract
+- ICalendar
+- If
+- Interval
+- ItemLists
+- LocalFileTrigger
+- ManualTrigger
+- Markdown
+- Merge
+- MistralAI
+- MoveBinaryData
+- N8nTrainingCustomerDatastore
+- N8nTrainingCustomerMessenger
+- N8nTrigger
+- Netscaler
+- NoOp
+- OpenThesaurus
+- PostBin
+- QuickChart
+- ReadBinaryFile
+- ReadBinaryFiles
+- ReadPdf
+- RenameKeys
+- RssFeedRead
+- Schedule
+- Set
+- Simulate
+- SplitInBatches
+- SpreadsheetFile
+- SseTrigger
+- Start
+- StickyNote
+- StopAndError
+- Switch
+- Transform
+- Wait
+- WorkflowTrigger
+- WriteBinaryFile
+- Xml
