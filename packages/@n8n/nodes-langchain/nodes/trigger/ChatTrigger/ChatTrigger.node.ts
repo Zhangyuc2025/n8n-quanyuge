@@ -26,56 +26,54 @@ import { assertValidLoadPreviousSessionOption } from './types';
 
 const CHAT_TRIGGER_PATH_IDENTIFIER = 'chat';
 const allowFileUploadsOption: INodeProperties = {
-	displayName: 'Allow File Uploads',
+	displayName: '允许文件上传',
 	name: 'allowFileUploads',
 	type: 'boolean',
 	default: false,
-	description: 'Whether to allow file uploads in the chat',
+	description: '是否允许在聊天中上传文件',
 };
 const allowedFileMimeTypeOption: INodeProperties = {
-	displayName: 'Allowed File Mime Types',
+	displayName: '允许的文件 MIME 类型',
 	name: 'allowedFilesMimeTypes',
 	type: 'string',
 	default: '*',
-	placeholder: 'e.g. image/*, text/*, application/pdf',
+	placeholder: '例如 image/*, text/*, application/pdf',
 	description:
-		'Allowed file types for upload. Comma-separated list of <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types" target="_blank">MIME types</a>.',
+		'允许上传的文件类型。逗号分隔的 <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types" target="_blank">MIME 类型</a>列表。',
 };
 
 const respondToWebhookResponseMode = {
-	name: "Using 'Respond to Webhook' Node",
+	name: '使用「响应 Webhook」节点',
 	value: 'responseNode',
-	description: 'Response defined in that node',
+	description: '在该节点中定义响应',
 };
 
 const lastNodeResponseMode = {
-	name: 'When Last Node Finishes',
+	name: '最后一个节点完成时',
 	value: 'lastNode',
-	description: 'Returns data of the last-executed node',
+	description: '返回最后执行的节点的数据',
 };
 
 const streamingResponseMode = {
-	name: 'Streaming',
+	name: '流式传输',
 	value: 'streaming',
-	description: 'Streaming response from specified nodes (e.g. Agents)',
+	description: '从指定节点（例如代理）流式传输响应',
 };
 
 const respondNodesResponseMode = {
-	name: 'Using Response Nodes',
+	name: '使用响应节点',
 	value: 'responseNodes',
-	description:
-		"Send responses to the chat by using 'Respond to Chat' or 'Respond to Webhook' nodes",
+	description: '使用「响应聊天」或「响应 Webhook」节点向聊天发送响应',
 };
 
 const commonOptionsFields: INodeProperties[] = [
 	// CORS parameters are only valid for when chat is used in hosted or webhook mode
 	{
-		displayName: 'Allowed Origins (CORS)',
+		displayName: '允许的来源（CORS）',
 		name: 'allowedOrigins',
 		type: 'string',
 		default: '*',
-		description:
-			'Comma-separated list of URLs allowed for cross-origin non-preflight requests. Use * (default) to allow all origins.',
+		description: '允许跨域非预检请求的 URL 列表（逗号分隔）。使用 *（默认）允许所有来源。',
 		displayOptions: {
 			show: {
 				'/mode': ['hostedChat', 'webhook'],
@@ -99,7 +97,7 @@ const commonOptionsFields: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Input Placeholder',
+		displayName: '输入占位符',
 		name: 'inputPlaceholder',
 		type: 'string',
 		displayOptions: {
@@ -107,36 +105,36 @@ const commonOptionsFields: INodeProperties[] = [
 				'/mode': ['hostedChat'],
 			},
 		},
-		default: 'Type your question..',
-		placeholder: 'e.g. Type your message here',
-		description: 'Shown as placeholder text in the chat input field',
+		default: '输入您的问题..',
+		placeholder: '例如 在此输入您的消息',
+		description: '在聊天输入框中显示的占位符文本',
 	},
 	{
-		displayName: 'Load Previous Session',
+		displayName: '加载之前的会话',
 		name: 'loadPreviousSession',
 		type: 'options',
 		options: [
 			{
-				name: 'Off',
+				name: '关闭',
 				value: 'notSupported',
-				description: 'Loading messages of previous session is turned off',
+				description: '关闭加载之前会话的消息',
 			},
 			{
-				name: 'From Memory',
+				name: '从记忆加载',
 				value: 'memory',
-				description: 'Load session messages from memory',
+				description: '从记忆中加载会话消息',
 			},
 			{
-				name: 'Manually',
+				name: '手动加载',
 				value: 'manually',
-				description: 'Manually return messages of session',
+				description: '手动返回会话消息',
 			},
 		],
 		default: 'notSupported',
-		description: 'If loading messages of a previous session should be enabled',
+		description: '是否启用加载之前会话的消息',
 	},
 	{
-		displayName: 'Require Button Click to Start Chat',
+		displayName: '需要点击按钮开始聊天',
 		name: 'showWelcomeScreen',
 		type: 'boolean',
 		displayOptions: {
@@ -145,10 +143,10 @@ const commonOptionsFields: INodeProperties[] = [
 			},
 		},
 		default: false,
-		description: 'Whether to show the welcome screen at the start of the chat',
+		description: '是否在聊天开始时显示欢迎屏幕',
 	},
 	{
-		displayName: 'Start Conversation Button Text',
+		displayName: '开始对话按钮文本',
 		name: 'getStarted',
 		type: 'string',
 		displayOptions: {
@@ -157,12 +155,12 @@ const commonOptionsFields: INodeProperties[] = [
 				'/mode': ['hostedChat'],
 			},
 		},
-		default: 'New Conversation',
-		placeholder: 'e.g. New Conversation',
-		description: 'Shown as part of the welcome screen, in the middle of the chat window',
+		default: '新对话',
+		placeholder: '例如 新对话',
+		description: '作为欢迎屏幕的一部分显示在聊天窗口中间',
 	},
 	{
-		displayName: 'Subtitle',
+		displayName: '副标题',
 		name: 'subtitle',
 		type: 'string',
 		displayOptions: {
@@ -170,12 +168,12 @@ const commonOptionsFields: INodeProperties[] = [
 				'/mode': ['hostedChat'],
 			},
 		},
-		default: "Start a chat. We're here to help you 24/7.",
-		placeholder: "e.g. We're here for you",
-		description: 'Shown at the top of the chat, under the title',
+		default: '开始聊天。我们随时为您提供帮助。',
+		placeholder: '例如 我们随时为您服务',
+		description: '显示在聊天顶部，标题下方',
 	},
 	{
-		displayName: 'Title',
+		displayName: '标题',
 		name: 'title',
 		type: 'string',
 		displayOptions: {
@@ -183,12 +181,12 @@ const commonOptionsFields: INodeProperties[] = [
 				'/mode': ['hostedChat'],
 			},
 		},
-		default: 'Hi there! 👋',
-		placeholder: 'e.g. Welcome',
-		description: 'Shown at the top of the chat',
+		default: '您好！👋',
+		placeholder: '例如 欢迎',
+		description: '显示在聊天顶部',
 	},
 	{
-		displayName: 'Custom Chat Styling',
+		displayName: '自定义聊天样式',
 		name: 'customCss',
 		type: 'string',
 		typeOptions: {
@@ -203,27 +201,27 @@ const commonOptionsFields: INodeProperties[] = [
 		default: `
 ${cssVariables}
 
-/* You can override any class styles, too. Right-click inspect in Chat UI to find class to override. */
+/* 您也可以覆盖任何类样式。在聊天界面中右键检查以查找要覆盖的类。 */
 .chat-message {
 	max-width: 50%;
 }
 `.trim(),
-		description: 'Override default styling of the public chat interface with CSS',
+		description: '使用 CSS 覆盖公共聊天界面的默认样式',
 	},
 ];
 
 export class ChatTrigger extends Node {
 	description: INodeTypeDescription = {
-		displayName: 'Chat Trigger',
+		displayName: '聊天触发器',
 		name: 'chatTrigger',
 		icon: 'fa:comments',
 		iconColor: 'black',
 		group: ['trigger'],
 		version: [1, 1.1, 1.2, 1.3, 1.4],
 		defaultVersion: 1.4,
-		description: 'Runs the workflow when an n8n generated webchat is submitted',
+		description: '当收到 n8n 生成的网络聊天消息时运行工作流',
 		defaults: {
-			name: 'When chat message received',
+			name: '收到聊天消息时',
 		},
 		codex: {
 			categories: ['Core Nodes'],
@@ -246,7 +244,7 @@ export class ChatTrigger extends Node {
 
 			return [
 				{
-					displayName: 'Memory',
+					displayName: '记忆',
 					maxConnections: 1,
 					type: '${NodeConnectionTypes.AiMemory}',
 					required: true,
@@ -283,35 +281,34 @@ export class ChatTrigger extends Node {
 				ndvHideUrl: '={{ !$parameter.public }}',
 			},
 		],
-		eventTriggerDescription: 'Waiting for you to submit the chat',
-		activationMessage: 'You can now make calls to your production chat URL.',
+		eventTriggerDescription: '等待您提交聊天消息',
+		activationMessage: '您现在可以调用生产聊天 URL。',
 		triggerPanel: false,
 		properties: [
 			/**
 			 * @note If we change this property, also update it in ChatEmbedModal.vue
 			 */
 			{
-				displayName: 'Make Chat Publicly Available',
+				displayName: '公开聊天',
 				name: 'public',
 				type: 'boolean',
 				default: false,
-				description:
-					'Whether the chat should be publicly available or only accessible through the manual chat interface',
+				description: '聊天是否应公开可用，或仅可通过手动聊天界面访问',
 			},
 			{
-				displayName: 'Mode',
+				displayName: '模式',
 				name: 'mode',
 				type: 'options',
 				options: [
 					{
-						name: 'Hosted Chat',
+						name: '托管聊天',
 						value: 'hostedChat',
-						description: 'Chat on a page served by n8n',
+						description: '在 n8n 提供的页面上聊天',
 					},
 					{
-						name: 'Embedded Chat',
+						name: '嵌入式聊天',
 						value: 'webhook',
-						description: 'Chat through a widget embedded in another page, or by calling a webhook',
+						description: '通过嵌入在其他页面中的小部件聊天，或通过调用 webhook',
 					},
 				],
 				default: 'hostedChat',
@@ -322,8 +319,7 @@ export class ChatTrigger extends Node {
 				},
 			},
 			{
-				displayName:
-					'Chat will be live at the URL above once you activate this workflow. Live executions will show up in the ‘executions’ tab',
+				displayName: '激活此工作流后，聊天将在上述 URL 上线。实时执行将显示在「执行」选项卡中',
 				name: 'hostedChatNotice',
 				type: 'notice',
 				displayOptions: {
@@ -336,7 +332,7 @@ export class ChatTrigger extends Node {
 			},
 			{
 				displayName:
-					'Follow the instructions <a href="https://www.npmjs.com/package/@n8n/chat" target="_blank">here</a> to embed chat in a webpage (or just call the webhook URL at the top of this section). Chat will be live once you activate this workflow',
+					'请按照<a href="https://www.npmjs.com/package/@n8n/chat" target="_blank">这里</a>的说明将聊天嵌入网页（或直接调用本节顶部的 webhook URL）。激活此工作流后，聊天将上线',
 				name: 'embeddedChatNotice',
 				type: 'notice',
 				displayOptions: {
@@ -348,7 +344,7 @@ export class ChatTrigger extends Node {
 				default: '',
 			},
 			{
-				displayName: 'Authentication',
+				displayName: '身份验证',
 				name: 'authentication',
 				type: 'options',
 				displayOptions: {
@@ -358,26 +354,26 @@ export class ChatTrigger extends Node {
 				},
 				options: [
 					{
-						name: 'Basic Auth',
+						name: '基本身份验证',
 						value: 'basicAuth',
-						description: 'Simple username and password (the same one for all users)',
+						description: '简单的用户名和密码（所有用户使用相同的凭据）',
 					},
 					{
 						// eslint-disable-next-line n8n-nodes-base/node-param-display-name-miscased
-						name: 'n8n User Auth',
+						name: 'n8n 用户认证',
 						value: 'n8nUserAuth',
-						description: 'Require user to be logged in with their n8n account',
+						description: '要求用户使用其 n8n 帐户登录',
 					},
 					{
-						name: 'None',
+						name: '无',
 						value: 'none',
 					},
 				],
 				default: 'none',
-				description: 'The way to authenticate',
+				description: '身份验证方式',
 			},
 			{
-				displayName: 'Initial Message(s)',
+				displayName: '初始消息',
 				name: 'initialMessages',
 				type: 'string',
 				displayOptions: {
@@ -389,17 +385,17 @@ export class ChatTrigger extends Node {
 				typeOptions: {
 					rows: 3,
 				},
-				default: 'Hi there! 👋\nMy name is Nathan. How can I assist you today?',
-				description: 'Default messages shown at the start of the chat, one per line',
+				default: '您好！👋\n我是 Nathan。今天我能为您提供什么帮助？',
+				description: '在聊天开始时显示的默认消息，每行一条',
 			},
 			{
 				// eslint-disable-next-line n8n-nodes-base/node-param-display-name-miscased
-				displayName: 'Make Available in n8n Chat',
+				displayName: '在 n8n Chat 中可用',
 				name: 'availableInChat',
 				type: 'boolean',
 				default: false,
 				noDataExpression: true,
-				description: 'Whether to make the agent available in n8n Chat',
+				description: '是否使代理在 n8n Chat 中可用',
 				displayOptions: {
 					show: {
 						'@version': [{ _cnd: { gte: 1.4 } }],
@@ -407,12 +403,12 @@ export class ChatTrigger extends Node {
 				},
 			},
 			{
-				displayName: 'Agent Name',
+				displayName: '代理名称',
 				name: 'agentName',
 				type: 'string',
 				default: '',
 				noDataExpression: true,
-				description: 'The name of the agent on n8n Chat',
+				description: 'n8n Chat 上的代理名称',
 				displayOptions: {
 					show: {
 						availableInChat: [true],
@@ -420,7 +416,7 @@ export class ChatTrigger extends Node {
 				},
 			},
 			{
-				displayName: 'Agent Description',
+				displayName: '代理描述',
 				name: 'agentDescription',
 				type: 'string',
 				typeOptions: {
@@ -428,7 +424,7 @@ export class ChatTrigger extends Node {
 				},
 				default: '',
 				noDataExpression: true,
-				description: 'The description of the agent on n8n Chat',
+				description: 'n8n Chat 上的代理描述',
 				displayOptions: {
 					show: {
 						availableInChat: [true],
@@ -436,7 +432,7 @@ export class ChatTrigger extends Node {
 				},
 			},
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
 				type: 'collection',
 				displayOptions: {
@@ -445,13 +441,13 @@ export class ChatTrigger extends Node {
 						'@version': [1, 1.1],
 					},
 				},
-				placeholder: 'Add Field',
+				placeholder: '添加字段',
 				default: {},
 				options: [allowFileUploadsOption, allowedFileMimeTypeOption],
 			},
 			// Options for versions 1.0 and 1.1 (without streaming)
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
 				type: 'collection',
 				displayOptions: {
@@ -461,23 +457,23 @@ export class ChatTrigger extends Node {
 						'@version': [1, 1.1],
 					},
 				},
-				placeholder: 'Add Field',
+				placeholder: '添加字段',
 				default: {},
 				options: [
 					...commonOptionsFields,
 					{
-						displayName: 'Response Mode',
+						displayName: '响应模式',
 						name: 'responseMode',
 						type: 'options',
 						options: [lastNodeResponseMode, respondToWebhookResponseMode],
 						default: 'lastNode',
-						description: 'When and how to respond to the webhook',
+						description: '何时以及如何响应 webhook',
 					},
 				],
 			},
 			// Options for version 1.2 (with streaming)
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
 				type: 'collection',
 				displayOptions: {
@@ -487,22 +483,22 @@ export class ChatTrigger extends Node {
 						'@version': [1.2],
 					},
 				},
-				placeholder: 'Add Field',
+				placeholder: '添加字段',
 				default: {},
 				options: [
 					...commonOptionsFields,
 					{
-						displayName: 'Response Mode',
+						displayName: '响应模式',
 						name: 'responseMode',
 						type: 'options',
 						options: [lastNodeResponseMode, respondToWebhookResponseMode, streamingResponseMode],
 						default: 'lastNode',
-						description: 'When and how to respond to the webhook',
+						description: '何时以及如何响应 webhook',
 					},
 				],
 			},
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
 				type: 'collection',
 				displayOptions: {
@@ -511,23 +507,23 @@ export class ChatTrigger extends Node {
 						'@version': [{ _cnd: { gte: 1.3 } }],
 					},
 				},
-				placeholder: 'Add Field',
+				placeholder: '添加字段',
 				default: {},
 				options: [
 					allowFileUploadsOption,
 					allowedFileMimeTypeOption,
 					{
-						displayName: 'Response Mode',
+						displayName: '响应模式',
 						name: 'responseMode',
 						type: 'options',
 						options: [lastNodeResponseMode, respondNodesResponseMode],
 						default: 'lastNode',
-						description: 'When and how to respond to the chat',
+						description: '何时以及如何响应聊天',
 					},
 				],
 			},
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
 				type: 'collection',
 				displayOptions: {
@@ -537,26 +533,26 @@ export class ChatTrigger extends Node {
 						'@version': [{ _cnd: { gte: 1.3 } }],
 					},
 				},
-				placeholder: 'Add Field',
+				placeholder: '添加字段',
 				default: {},
 				options: [
 					...commonOptionsFields,
 					{
-						displayName: 'Response Mode',
+						displayName: '响应模式',
 						name: 'responseMode',
 						type: 'options',
 						options: [lastNodeResponseMode, streamingResponseMode, respondToWebhookResponseMode],
 						default: 'lastNode',
-						description: 'When and how to respond to the chat',
+						description: '何时以及如何响应聊天',
 						displayOptions: { show: { '/mode': ['webhook'] } },
 					},
 					{
-						displayName: 'Response Mode',
+						displayName: '响应模式',
 						name: 'responseMode',
 						type: 'options',
 						options: [lastNodeResponseMode, streamingResponseMode, respondNodesResponseMode],
 						default: 'lastNode',
-						description: 'When and how to respond to the webhook',
+						description: '何时以及如何响应 webhook',
 						displayOptions: { show: { '/mode': ['hostedChat'] } },
 					},
 				],
@@ -687,7 +683,7 @@ export class ChatTrigger extends Node {
 			if (webhookName === 'setup') {
 				const webhookUrlRaw = ctx.getNodeWebhookUrl('default');
 				if (!webhookUrlRaw) {
-					throw new NodeOperationError(ctx.getNode(), 'Default webhook url not set');
+					throw new NodeOperationError(ctx.getNode(), '未设置默认 webhook URL');
 				}
 
 				const webhookUrl =
