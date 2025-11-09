@@ -14,28 +14,28 @@ import { vmResolver } from '../Code/JavaScriptSandbox';
 
 export class FunctionItem implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Function Item',
+		displayName: '函数项',
 		name: 'functionItem',
 		hidden: true,
 		icon: 'fa:code',
 		group: ['transform'],
 		version: 1,
-		description: 'Run custom function code which gets executed once per item',
+		description: '运行自定义函数代码，每个数据项执行一次',
 		defaults: {
-			name: 'Function Item',
+			name: '函数项',
 			color: '#ddbb33',
 		},
 		inputs: [NodeConnectionTypes.Main],
 		outputs: [NodeConnectionTypes.Main],
 		properties: [
 			{
-				displayName: 'A newer version of this node type is available, called the ‘Code’ node',
+				displayName: '此节点类型有更新的版本，称为"代码"节点',
 				name: 'notice',
 				type: 'notice',
 				default: '',
 			},
 			{
-				displayName: 'JavaScript Code',
+				displayName: 'JavaScript 代码',
 				name: 'functionCode',
 				typeOptions: {
 					alwaysOpenEditWindow: true,
@@ -44,18 +44,18 @@ export class FunctionItem implements INodeType {
 					rows: 10,
 				},
 				type: 'string',
-				default: `// Code here will run once per input item.
-// More info and help: https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.functionitem/
-// Tip: You can use luxon for dates and $jmespath for querying JSON structures
+				default: `// 此处的代码将对每个输入数据项运行一次
+// 更多信息和帮助：https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.functionitem/
+// 提示：你可以使用 luxon 处理日期，使用 $jmespath 查询 JSON 结构
 
-// Add a new field called 'myNewField' to the JSON of the item
+// 在数据项的 JSON 中添加一个名为 'myNewField' 的新字段
 item.myNewField = 1;
 
-// You can write logs to the browser console
-console.log('Done!');
+// 你可以在浏览器控制台中写入日志
+console.log('完成！');
 
 return item;`,
-				description: 'The JavaScript code to execute for each item',
+				description: '要为每个数据项执行的 JavaScript 代码',
 				noDataExpression: true,
 			},
 		],
@@ -134,7 +134,7 @@ return item;`,
 						if (!data) {
 							throw new NodeOperationError(
 								this.getNode(),
-								'No data was provided to setBinaryDataAsync (data: IBinaryKeyData).',
+								'未向 setBinaryDataAsync 提供数据 (data: IBinaryKeyData)。',
 							);
 						}
 
@@ -207,10 +207,7 @@ return item;`,
 
 				// Do very basic validation of the data
 				if (jsonData === undefined) {
-					throw new NodeOperationError(
-						this.getNode(),
-						'No data got returned. Always an object has to be returned!',
-					);
+					throw new NodeOperationError(this.getNode(), '未返回任何数据。始终要返回一个对象！');
 				}
 
 				const returnItem: INodeExecutionData = {

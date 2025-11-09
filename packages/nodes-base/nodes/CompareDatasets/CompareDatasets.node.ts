@@ -16,16 +16,16 @@ import {
 
 export class CompareDatasets implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Compare Datasets',
+		displayName: '数据集对比',
 		name: 'compareDatasets',
 		icon: 'file:compare.svg',
 		group: ['transform'],
 		version: [1, 2, 2.1, 2.2, 2.3],
-		description: 'Compare two inputs for changes',
-		defaults: { name: 'Compare Datasets' },
+		description: '对比两个输入的变化',
+		defaults: { name: '数据集对比' },
 
 		inputs: [NodeConnectionTypes.Main, NodeConnectionTypes.Main],
-		inputNames: ['Input A', 'Input B'],
+		inputNames: ['输入 A', '输入 B'],
 		requiredInputs: 1,
 
 		outputs: [
@@ -34,47 +34,47 @@ export class CompareDatasets implements INodeType {
 			NodeConnectionTypes.Main,
 			NodeConnectionTypes.Main,
 		],
-		outputNames: ['In A only', 'Same', 'Different', 'In B only'],
+		outputNames: ['仅在 A 中', '相同', '不同', '仅在 B 中'],
 		properties: [
 			{
 				displayName:
-					'Items from different branches are paired together when the fields below match. If paired, the rest of the fields are compared to determine whether the items are the same or different',
+					'当下面的字段匹配时，来自不同分支的项目会配对在一起。如果配对，其余字段会被比较以确定项目是否相同',
 				name: 'infoBox',
 				type: 'notice',
 				default: '',
 			},
 			{
-				displayName: 'Fields to Match',
+				displayName: '要匹配的字段',
 				name: 'mergeByFields',
 				type: 'fixedCollection',
-				placeholder: 'Add Fields to Match',
+				placeholder: '添加要匹配的字段',
 				default: { values: [{ field1: '', field2: '' }] },
 				typeOptions: {
 					multipleValues: true,
 				},
 				options: [
 					{
-						displayName: 'Values',
+						displayName: '值',
 						name: 'values',
 						values: [
 							{
-								displayName: 'Input A Field',
+								displayName: '输入 A 字段',
 								name: 'field1',
 								type: 'string',
 								default: '',
 								// eslint-disable-next-line n8n-nodes-base/node-param-placeholder-miscased-id
-								placeholder: 'e.g. id',
-								hint: ' Enter the field name as text',
+								placeholder: '例如：id',
+								hint: '输入字段名称作为文本',
 								requiresDataPath: 'single',
 							},
 							{
-								displayName: 'Input B Field',
+								displayName: '输入 B 字段',
 								name: 'field2',
 								type: 'string',
 								default: '',
 								// eslint-disable-next-line n8n-nodes-base/node-param-placeholder-miscased-id
-								placeholder: 'e.g. id',
-								hint: ' Enter the field name as text',
+								placeholder: '例如：id',
+								hint: '输入字段名称作为文本',
 								requiresDataPath: 'single',
 							},
 						],
@@ -82,28 +82,28 @@ export class CompareDatasets implements INodeType {
 				],
 			},
 			{
-				displayName: 'When There Are Differences',
+				displayName: '当存在差异时',
 				name: 'resolve',
 				type: 'options',
 				default: 'preferInput2',
 				options: [
 					{
-						name: 'Use Input A Version',
+						name: '使用输入 A 版本',
 						value: 'preferInput1',
 					},
 					{
-						name: 'Use Input B Version',
+						name: '使用输入 B 版本',
 						value: 'preferInput2',
 					},
 					{
-						name: 'Use a Mix of Versions',
+						name: '使用混合版本',
 						value: 'mix',
-						description: 'Output uses different inputs for different fields',
+						description: '输出对不同字段使用不同的输入',
 					},
 					{
-						name: 'Include Both Versions',
+						name: '包括两个版本',
 						value: 'includeBoth',
-						description: 'Output contains all data (but structure more complex)',
+						description: '输出包含所有数据（但结构更复杂）',
 					},
 				],
 				displayOptions: {
@@ -113,28 +113,28 @@ export class CompareDatasets implements INodeType {
 				},
 			},
 			{
-				displayName: 'When There Are Differences',
+				displayName: '当存在差异时',
 				name: 'resolve',
 				type: 'options',
 				default: 'includeBoth',
 				options: [
 					{
-						name: 'Use Input A Version',
+						name: '使用输入 A 版本',
 						value: 'preferInput1',
 					},
 					{
-						name: 'Use Input B Version',
+						name: '使用输入 B 版本',
 						value: 'preferInput2',
 					},
 					{
-						name: 'Use a Mix of Versions',
+						name: '使用混合版本',
 						value: 'mix',
-						description: 'Output uses different inputs for different fields',
+						description: '输出对不同字段使用不同的输入',
 					},
 					{
-						name: 'Include Both Versions',
+						name: '包括两个版本',
 						value: 'includeBoth',
-						description: 'Output contains all data (but structure more complex)',
+						description: '输出包含所有数据（但结构更复杂）',
 					},
 				],
 				displayOptions: {
@@ -144,12 +144,11 @@ export class CompareDatasets implements INodeType {
 				},
 			},
 			{
-				displayName: 'Fuzzy Compare',
+				displayName: '模糊对比',
 				name: 'fuzzyCompare',
 				type: 'boolean',
 				default: false,
-				description:
-					"Whether to tolerate small type differences when comparing fields. E.g. the number 3 and the string '3' are treated as the same.",
+				description: '是否在比较字段时容忍小的类型差异。例如，数字 3 和字符串 "3" 被视为相同。',
 				displayOptions: {
 					hide: {
 						'@version': [1],
@@ -157,17 +156,17 @@ export class CompareDatasets implements INodeType {
 				},
 			},
 			{
-				displayName: 'Prefer',
+				displayName: '偏好',
 				name: 'preferWhenMix',
 				type: 'options',
 				default: 'input1',
 				options: [
 					{
-						name: 'Input A Version',
+						name: '输入 A 版本',
 						value: 'input1',
 					},
 					{
-						name: 'Input B Version',
+						name: '输入 B 版本',
 						value: 'input2',
 					},
 				],
@@ -178,13 +177,13 @@ export class CompareDatasets implements INodeType {
 				},
 			},
 			{
-				displayName: 'For Everything Except',
+				displayName: '除了以下字段外的所有内容',
 				name: 'exceptWhenMix',
 				type: 'string',
 				default: '',
 				// eslint-disable-next-line n8n-nodes-base/node-param-placeholder-miscased-id
-				placeholder: 'e.g. id, country',
-				hint: 'Enter the names of the input fields as text, separated by commas',
+				placeholder: '例如：id, country',
+				hint: '输入字段名称作为文本，用逗号分隔',
 				displayOptions: {
 					show: {
 						resolve: ['mix'],
@@ -193,30 +192,28 @@ export class CompareDatasets implements INodeType {
 				requiresDataPath: 'multiple',
 			},
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
 				type: 'collection',
-				placeholder: 'Add option',
+				placeholder: '添加选项',
 				default: {},
 				options: [
 					{
-						displayName: 'Fields to Skip Comparing',
+						displayName: '跳过对比的字段',
 						name: 'skipFields',
 						type: 'string',
 						default: '',
-						placeholder: 'e.g. updated_at, updated_by',
-						hint: 'Enter the field names as text, separated by commas',
-						description:
-							"Fields that shouldn't be included when checking whether two items are the same",
+						placeholder: '例如：updated_at, updated_by',
+						hint: '输入字段名称作为文本，用逗号分隔',
+						description: '在检查两个项目是否相同时不应包含的字段',
 						requiresDataPath: 'multiple',
 					},
 					{
-						displayName: 'Fuzzy Compare',
+						displayName: '模糊对比',
 						name: 'fuzzyCompare',
 						type: 'boolean',
 						default: false,
-						description:
-							"Whether to tolerate small type differences when comparing fields. E.g. the number 3 and the string '3' are treated as the same.",
+						description: '是否在比较字段时容忍小的类型差异。例如，数字 3 和字符串 "3" 被视为相同。',
 						displayOptions: {
 							show: {
 								'@version': [1],
@@ -224,28 +221,27 @@ export class CompareDatasets implements INodeType {
 						},
 					},
 					{
-						displayName: 'Disable Dot Notation',
+						displayName: '禁用点符号',
 						name: 'disableDotNotation',
 						type: 'boolean',
 						default: false,
-						description:
-							'Whether to disallow referencing child fields using `parent.child` in the field name',
+						description: '是否禁止在字段名称中使用 `parent.child` 引用子字段',
 					},
 					{
-						displayName: 'Multiple Matches',
+						displayName: '多个匹配项',
 						name: 'multipleMatches',
 						type: 'options',
 						default: 'first',
 						options: [
 							{
-								name: 'Include First Match Only',
+								name: '仅包括第一个匹配项',
 								value: 'first',
-								description: 'Only ever output a single item per match',
+								description: '每个匹配项仅输出一个项目',
 							},
 							{
-								name: 'Include All Matches',
+								name: '包括所有匹配项',
 								value: 'all',
-								description: 'Output multiple items if there are multiple matches',
+								description: '如果有多个匹配项，输出多个项目',
 							},
 						],
 					},

@@ -13,7 +13,7 @@ export { insert, get, rowExists, rowNotExists, deleteRows, update, upsert };
 
 export const description: INodeProperties[] = [
 	{
-		displayName: 'Operation',
+		displayName: '操作',
 		name: 'operation',
 		type: 'options',
 		noDataExpression: true,
@@ -24,60 +24,60 @@ export const description: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Delete',
+				name: '删除',
 				value: deleteRows.FIELD,
-				description: 'Delete row(s)',
-				action: 'Delete row(s)',
+				description: '删除行',
+				action: '删除行',
 			},
 			{
-				name: 'Get',
+				name: '获取',
 				value: get.FIELD,
-				description: 'Get row(s)',
-				action: 'Get row(s)',
+				description: '获取行',
+				action: '获取行',
 			},
 			{
-				name: 'If Row Exists',
+				name: '如果行存在',
 				value: rowExists.FIELD,
-				description: 'Match input items that are in the data table',
-				action: 'If row exists',
+				description: '匹配数据表中存在的输入项',
+				action: '如果行存在',
 			},
 			{
-				name: 'If Row Does Not Exist',
+				name: '如果行不存在',
 				value: rowNotExists.FIELD,
-				description: 'Match input items that are not in the data table',
-				action: 'If row does not exist',
+				description: '匹配数据表中不存在的输入项',
+				action: '如果行不存在',
 			},
 			{
-				name: 'Insert',
+				name: '插入',
 				value: insert.FIELD,
-				description: 'Insert a new row',
-				action: 'Insert row',
+				description: '插入新行',
+				action: '插入行',
 			},
 			{
-				name: 'Update',
+				name: '更新',
 				value: update.FIELD,
-				description: 'Update row(s) matching certain fields',
-				action: 'Update row(s)',
+				description: '更新匹配特定字段的行',
+				action: '更新行',
 			},
 			{
-				name: 'Upsert',
+				name: '插入或更新',
 				value: upsert.FIELD,
-				description: 'Update row(s), or insert if there is no match',
-				action: 'Upsert row(s)',
+				description: '更新行，或如果没有匹配则插入',
+				action: '插入或更新行',
 			},
 		],
 		default: 'insert',
 	},
 	{
 		// eslint-disable-next-line n8n-nodes-base/node-param-display-name-miscased
-		displayName: 'Data table',
+		displayName: '数据表',
 		name: DATA_TABLE_ID_FIELD,
 		type: 'resourceLocator',
 		default: { mode: 'list', value: '' },
 		required: true,
 		modes: [
 			{
-				displayName: 'From List',
+				displayName: '从列表选择',
 				name: 'list',
 				type: 'list',
 				typeOptions: {

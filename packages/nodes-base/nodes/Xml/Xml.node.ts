@@ -15,8 +15,8 @@ export class Xml implements INodeType {
 		iconColor: 'purple',
 		group: ['transform'],
 		version: 1,
-		subtitle: '={{$parameter["mode"]==="jsonToxml" ? "JSON to XML" : "XML to JSON"}}',
-		description: 'Convert data from and to XML',
+		subtitle: '={{$parameter["mode"]==="jsonToxml" ? "JSON 转 XML" : "XML 转 JSON"}}',
+		description: '在 XML 和 JSON 格式之间转换数据',
 		defaults: {
 			name: 'XML',
 			color: '#333377',
@@ -25,27 +25,26 @@ export class Xml implements INodeType {
 		outputs: [NodeConnectionTypes.Main],
 		properties: [
 			{
-				displayName: 'Mode',
+				displayName: '模式',
 				name: 'mode',
 				type: 'options',
 				options: [
 					{
-						name: 'JSON to XML',
+						name: 'JSON 转 XML',
 						value: 'jsonToxml',
-						description: 'Converts data from JSON to XML',
+						description: '将 JSON 数据转换为 XML 格式',
 					},
 					{
-						name: 'XML to JSON',
+						name: 'XML 转 JSON',
 						value: 'xmlToJson',
-						description: 'Converts data from XML to JSON',
+						description: '将 XML 数据转换为 JSON 格式',
 					},
 				],
 				default: 'xmlToJson',
-				description: 'From and to what format the data should be converted',
+				description: '选择数据转换的方向和格式',
 			},
 			{
-				displayName:
-					"If your XML is inside a binary file, use the 'Extract from File' node to convert it to text first",
+				displayName: '如果 XML 数据在二进制文件中，请先使用"从文件提取"节点将其转换为文本',
 				name: 'xmlNotice',
 				type: 'notice',
 				default: '',
@@ -60,7 +59,7 @@ export class Xml implements INodeType {
 			//         option:jsonToxml
 			// ----------------------------------
 			{
-				displayName: 'Property Name',
+				displayName: '属性名称',
 				name: 'dataPropertyName',
 				type: 'string',
 				displayOptions: {
@@ -70,13 +69,13 @@ export class Xml implements INodeType {
 				},
 				default: 'data',
 				required: true,
-				description: 'Name of the property to which to contains the converted XML data',
+				description: '用于存放转换后 XML 数据的属性名称',
 			},
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
 				type: 'collection',
-				placeholder: 'Add option',
+				placeholder: '添加选项',
 				displayOptions: {
 					show: {
 						mode: ['jsonToxml'],
@@ -85,47 +84,47 @@ export class Xml implements INodeType {
 				default: {},
 				options: [
 					{
-						displayName: 'Allow Surrogate Chars',
+						displayName: '允许代理字符',
 						name: 'allowSurrogateChars',
 						type: 'boolean',
 						default: false,
-						description: 'Whether to allow using characters from the Unicode surrogate blocks',
+						description: '是否允许使用 Unicode 代理块中的字符',
 					},
 					{
-						displayName: 'Attribute Key',
+						displayName: '属性键前缀',
 						name: 'attrkey',
 						type: 'string',
 						default: '$',
-						description: 'Prefix that is used to access the attributes',
+						description: '用于访问 XML 属性的前缀字符',
 					},
 					{
-						displayName: 'Cdata',
+						displayName: 'CDATA 包裹',
 						name: 'cdata',
 						type: 'boolean',
 						default: false,
 						description:
-							'Whether to wrap text nodes in &lt;![CDATA[ ... ]]&gt; instead of escaping when necessary. Does not add &lt;![CDATA[ ... ]]&gt; if it is not required.',
+							'是否在必要时使用 &lt;![CDATA[ ... ]]&gt; 包裹文本节点，而不是转义。仅在需要时才添加 CDATA 标记。',
 					},
 					{
-						displayName: 'Character Key',
+						displayName: '字符键前缀',
 						name: 'charkey',
 						type: 'string',
 						default: '_',
-						description: 'Prefix that is used to access the character content',
+						description: '用于访问字符内容的前缀字符',
 					},
 					{
-						displayName: 'Headless',
+						displayName: '省略 XML 头',
 						name: 'headless',
 						type: 'boolean',
 						default: false,
-						description: 'Whether to omit the XML header',
+						description: '是否省略 XML 声明头（&lt;?xml version="1.0"?&gt;）',
 					},
 					{
-						displayName: 'Root Name',
+						displayName: '根元素名称',
 						name: 'rootName',
 						type: 'string',
 						default: 'root',
-						description: 'Root element name to be used',
+						description: '要使用的 XML 根元素名称',
 					},
 				],
 			},
@@ -134,7 +133,7 @@ export class Xml implements INodeType {
 			//         option:xmlToJson
 			// ----------------------------------
 			{
-				displayName: 'Property Name',
+				displayName: '属性名称',
 				name: 'dataPropertyName',
 				type: 'string',
 				displayOptions: {
@@ -144,13 +143,13 @@ export class Xml implements INodeType {
 				},
 				default: 'data',
 				required: true,
-				description: 'Name of the property which contains the XML data to convert',
+				description: '包含要转换的 XML 数据的属性名称',
 			},
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
 				type: 'collection',
-				placeholder: 'Add option',
+				placeholder: '添加选项',
 				displayOptions: {
 					show: {
 						mode: ['xmlToJson'],
@@ -159,70 +158,69 @@ export class Xml implements INodeType {
 				default: {},
 				options: [
 					{
-						displayName: 'Attribute Key',
+						displayName: '属性键前缀',
 						name: 'attrkey',
 						type: 'string',
 						default: '$',
-						description: 'Prefix that is used to access the attributes',
+						description: '用于访问 XML 属性的前缀字符',
 					},
 					{
-						displayName: 'Character Key',
+						displayName: '字符键前缀',
 						name: 'charkey',
 						type: 'string',
 						default: '_',
-						description: 'Prefix that is used to access the character content',
+						description: '用于访问字符内容的前缀字符',
 					},
 					{
-						displayName: 'Explicit Array',
+						displayName: '显式数组',
 						name: 'explicitArray',
 						type: 'boolean',
 						default: false,
 						description:
-							'Whether to always put child nodes in an array if true; otherwise an array is created only if there is more than one',
+							'是否始终将子节点放入数组中。如果为 false，仅在有多个相同名称的子节点时才创建数组。',
 					},
 					{
-						displayName: 'Explicit Root',
+						displayName: '显式根节点',
 						name: 'explicitRoot',
 						type: 'boolean',
 						default: true,
-						description:
-							'Whether to set this if you want to get the root node in the resulting object',
+						description: '是否在结果对象中保留根节点。如果为 false，将直接返回根节点的内容。',
 					},
 					{
-						displayName: 'Ignore Attributes',
+						displayName: '忽略属性',
 						name: 'ignoreAttrs',
 						type: 'boolean',
 						default: false,
-						description: 'Whether to ignore all XML attributes and only create text nodes',
+						description: '是否忽略所有 XML 属性，仅创建文本节点',
 					},
 					{
-						displayName: 'Merge Attributes',
+						displayName: '合并属性',
 						name: 'mergeAttrs',
 						type: 'boolean',
 						default: true,
 						description:
-							'Whether to merge attributes and child elements as properties of the parent, instead of keying attributes off a child attribute object. This option is ignored if ignoreAttrs is true.',
+							'是否将属性和子元素合并为父对象的属性，而不是将属性放在单独的子对象中。如果"忽略属性"为 true，此选项将被忽略。',
 					},
 					{
-						displayName: 'Normalize',
+						displayName: '标准化空白',
 						name: 'normalize',
 						type: 'boolean',
 						default: false,
-						description: 'Whether to trim whitespaces inside text nodes',
+						description: '是否修剪文本节点内部的空白字符',
 					},
 					{
-						displayName: 'Normalize Tags',
+						displayName: '标准化标签',
 						name: 'normalizeTags',
 						type: 'boolean',
 						default: false,
-						description: 'Whether to normalize all tag names to lowercase',
+						description: '是否将所有标签名称转换为小写',
 					},
 					{
-						displayName: 'Trim',
+						displayName: '修剪空白',
 						name: 'trim',
 						type: 'boolean',
 						default: false,
-						description: 'Whether to trim the whitespace at the beginning and end of text nodes',
+						description: '是否修剪文本节点开头和结尾的空白字符',
 					},
 				],
 			},
@@ -256,7 +254,7 @@ export class Xml implements INodeType {
 					if (item.json[dataPropertyName] === undefined) {
 						throw new NodeOperationError(
 							this.getNode(),
-							`Item has no JSON property called "${dataPropertyName}"`,
+							`数据项缺少名为 "${dataPropertyName}" 的 JSON 属性`,
 							{ itemIndex },
 						);
 					}
@@ -275,7 +273,7 @@ export class Xml implements INodeType {
 						},
 					});
 				} else {
-					throw new NodeOperationError(this.getNode(), `The operation "${mode}" is not known!`, {
+					throw new NodeOperationError(this.getNode(), `未知的操作模式 "${mode}"`, {
 						itemIndex,
 					});
 				}

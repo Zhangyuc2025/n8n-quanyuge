@@ -37,15 +37,15 @@ import {
 
 export class ToolHttpRequest implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'HTTP Request Tool',
+		displayName: 'HTTP 请求工具',
 		name: 'toolHttpRequest',
 		icon: { light: 'file:httprequest.svg', dark: 'file:httprequest.dark.svg' },
 		group: ['output'],
 		version: [1, 1.1],
-		description: 'Makes an HTTP request and returns the response data',
+		description: '发出 HTTP 请求并返回响应数据',
 		subtitle: '={{ $parameter.toolDescription }}',
 		defaults: {
-			name: 'HTTP Request',
+			name: 'HTTP 请求',
 		},
 		credentials: [],
 		codex: {
@@ -68,23 +68,22 @@ export class ToolHttpRequest implements INodeType {
 		inputs: [],
 
 		outputs: [NodeConnectionTypes.AiTool],
-		outputNames: ['Tool'],
+		outputNames: ['工具'],
 		properties: [
 			getConnectionHintNoticeField([NodeConnectionTypes.AiAgent]),
 			{
-				displayName: 'Description',
+				displayName: '描述',
 				name: 'toolDescription',
 				type: 'string',
-				description:
-					'Explain to LLM what this tool does, better description would allow LLM to produce expected result',
-				placeholder: 'e.g. Get the current weather in the requested city',
+				description: '向 LLM 解释此工具的作用，更好的描述将使 LLM 产生预期的结果',
+				placeholder: '例如：获取请求城市的当前天气',
 				default: '',
 				typeOptions: {
 					rows: 3,
 				},
 			},
 			{
-				displayName: 'Method',
+				displayName: '方法',
 				name: 'method',
 				type: 'options',
 				options: [

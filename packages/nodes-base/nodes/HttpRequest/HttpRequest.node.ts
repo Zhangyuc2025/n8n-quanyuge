@@ -8,12 +8,12 @@ import { HttpRequestV3 } from './V3/HttpRequestV3.node';
 export class HttpRequest extends VersionedNodeType {
 	constructor() {
 		const baseDescription: INodeTypeBaseDescription = {
-			displayName: 'HTTP Request',
+			displayName: 'HTTP 请求',
 			name: 'httpRequest',
 			icon: { light: 'file:httprequest.svg', dark: 'file:httprequest.dark.svg' },
 			group: ['output'],
 			subtitle: '={{$parameter["requestMethod"] + ": " + $parameter["url"]}}',
-			description: 'Makes an HTTP request and returns the response data',
+			description: '发起 HTTP 请求并返回响应数据',
 			defaultVersion: 4.3,
 		};
 

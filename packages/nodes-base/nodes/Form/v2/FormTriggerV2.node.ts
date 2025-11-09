@@ -32,16 +32,16 @@ const useWorkflowTimezone: INodeProperties = {
 };
 
 const descriptionV2: INodeTypeDescription = {
-	displayName: 'n8n Form Trigger',
+	displayName: 'n8n 表单触发器',
 	name: 'formTrigger',
 	icon: 'file:form.svg',
 	group: ['trigger'],
 	// since trigger and node are sharing descriptions and logic we need to sync the versions
 	// and keep them aligned in both nodes
 	version: [2, 2.1, 2.2, 2.3],
-	description: 'Generate webforms in n8n and pass their responses to the workflow',
+	description: '在 n8n 中生成 Web 表单并将其响应传递给工作流',
 	defaults: {
-		name: 'On form submission',
+		name: '表单提交时',
 	},
 
 	inputs: [],
@@ -84,16 +84,16 @@ const descriptionV2: INodeTypeDescription = {
 	],
 	properties: [
 		{
-			displayName: 'Authentication',
+			displayName: '身份验证',
 			name: FORM_TRIGGER_AUTHENTICATION_PROPERTY,
 			type: 'options',
 			options: [
 				{
-					name: 'Basic Auth',
+					name: '基本认证',
 					value: 'basicAuth',
 				},
 				{
-					name: 'None',
+					name: '无',
 					value: 'none',
 				},
 			],

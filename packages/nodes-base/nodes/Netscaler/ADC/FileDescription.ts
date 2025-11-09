@@ -2,25 +2,25 @@ import type { INodeProperties } from 'n8n-workflow';
 
 export const fileDescription: INodeProperties[] = [
 	{
-		displayName: 'Operation',
+		displayName: '操作',
 		name: 'operation',
 		type: 'options',
 		noDataExpression: true,
 		options: [
 			{
-				name: 'Delete',
+				name: '删除',
 				value: 'delete',
-				action: 'Delete a file',
+				action: '删除文件',
 			},
 			{
-				name: 'Download',
+				name: '下载',
 				value: 'download',
-				action: 'Download a file',
+				action: '下载文件',
 			},
 			{
-				name: 'Upload',
+				name: '上传',
 				value: 'upload',
-				action: 'Upload a file',
+				action: '上传文件',
 			},
 		],
 		default: 'upload',
@@ -32,7 +32,7 @@ export const fileDescription: INodeProperties[] = [
 	},
 	// Upload --------------------------------------------------------------------------
 	{
-		displayName: 'File Location',
+		displayName: '文件位置',
 		name: 'fileLocation',
 		type: 'string',
 		required: true,
@@ -45,7 +45,7 @@ export const fileDescription: INodeProperties[] = [
 		default: '/nsconfig/ssl/',
 	},
 	{
-		displayName: 'Input Data Field Name',
+		displayName: '输入数据字段名',
 		name: 'binaryProperty',
 		type: 'string',
 		required: true,
@@ -56,13 +56,13 @@ export const fileDescription: INodeProperties[] = [
 			},
 		},
 		default: 'data',
-		description: 'The name of the incoming field containing the binary file data to be processed',
+		description: '包含要处理的二进制文件数据的传入字段的名称',
 	},
 	{
-		displayName: 'Options',
+		displayName: '选项',
 		name: 'options',
 		type: 'collection',
-		placeholder: 'Add option',
+		placeholder: '添加选项',
 		default: {},
 		displayOptions: {
 			show: {
@@ -72,17 +72,17 @@ export const fileDescription: INodeProperties[] = [
 		},
 		options: [
 			{
-				displayName: 'File Name',
+				displayName: '文件名',
 				name: 'fileName',
 				type: 'string',
 				default: '',
-				description: 'Name of the file. It should not include filepath.',
+				description: '文件的名称。不应包含文件路径。',
 			},
 		],
 	},
 	// Delete, Download ---------------------------------------------------------------
 	{
-		displayName: 'File Location',
+		displayName: '文件位置',
 		name: 'fileLocation',
 		type: 'string',
 		required: true,
@@ -95,12 +95,12 @@ export const fileDescription: INodeProperties[] = [
 		default: '/nsconfig/ssl/',
 	},
 	{
-		displayName: 'File Name',
+		displayName: '文件名',
 		name: 'fileName',
 		type: 'string',
 		default: '',
 		required: true,
-		description: 'Name of the file. It should not include filepath.',
+		description: '文件的名称。不应包含文件路径。',
 		displayOptions: {
 			show: {
 				operation: ['delete', 'download'],
@@ -109,12 +109,12 @@ export const fileDescription: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Put Output in Field',
+		displayName: '放入输出字段',
 		name: 'binaryProperty',
 		type: 'string',
 		required: true,
 		default: 'data',
-		description: 'The name of the output field to put the binary file data in',
+		description: '放置二进制文件数据的输出字段的名称',
 		displayOptions: {
 			show: {
 				operation: ['download'],

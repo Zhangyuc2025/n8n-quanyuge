@@ -27,70 +27,84 @@ import { configuredOutputs } from './utils/outputs';
 import { formatPrivateKey, generatePairedItemData } from '../../utils/utilities';
 
 const respondWithProperty: INodeProperties = {
-	displayName: 'Respond With',
+	displayName: '响应内容',
 	name: 'respondWith',
 	type: 'options',
 	options: [
 		{
-			name: 'All Incoming Items',
+			name: '所有输入项',
 			value: 'allIncomingItems',
-			description: 'Respond with all input JSON items',
+			description: '响应所有输入的 JSON 数据项',
 		},
 		{
-			name: 'Binary File',
+			name: '二进制文件',
 			value: 'binary',
-			description: 'Respond with incoming file binary data',
+			description: '响应输入的二进制文件数据',
 		},
 		{
-			name: 'First Incoming Item',
+			name: '第一个输入项',
 			value: 'firstIncomingItem',
-			description: 'Respond with the first input JSON item',
+			description: '响应第一个输入的 JSON 数据项',
 		},
 		{
 			name: 'JSON',
 			value: 'json',
-			description: 'Respond with a custom JSON body',
+			description: '响应自定义 JSON 数据',
 		},
 		{
-			name: 'JWT Token',
+			name: 'JWT 令牌',
 			value: 'jwt',
-			description: 'Respond with a JWT token',
+			description: '响应 JWT 令牌',
 		},
 		{
-			name: 'No Data',
+			name: '无数据',
 			value: 'noData',
-			description: 'Respond with an empty body',
+			description: '响应空内容',
 		},
 		{
-			name: 'Redirect',
+			name: '重定向',
 			value: 'redirect',
-			description: 'Respond with a redirect to a given URL',
+			description: '重定向到指定 URL',
 		},
 		{
-			name: 'Text',
+			name: '文本',
 			value: 'text',
-			description: 'Respond with a simple text message body',
+			description: '响应简单的文本消息',
 		},
 	],
 	default: 'firstIncomingItem',
-	description: 'The data that should be returned',
+	description: '应该返回的数据类型',
 };
 
 export class RespondToWebhook implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Respond to Webhook',
+		displayName: '响应 Webhook',
 		icon: { light: 'file:webhook.svg', dark: 'file:webhook.dark.svg' },
 		name: 'respondToWebhook',
 		group: ['transform'],
 		version: [1, 1.1, 1.2, 1.3, 1.4, 1.5],
 		// Keep the default version at 1.4 until streaming is fully supported
 		defaultVersion: 1.4,
-		description: 'Returns data for Webhook',
+		description: '向 Webhook 返回数据',
 		defaults: {
-			name: 'Respond to Webhook',
+			name: '响应 Webhook',
 		},
 		inputs: [NodeConnectionTypes.Main],
 		outputs: `={{(${configuredOutputs})($nodeVersion, $parameter)}}`,
+		codex: {
+			categories: ['Core Nodes'],
+			resources: {
+				primaryDocumentation: [
+					{
+						url: 'https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.respondtowebhook/',
+					},
+				],
+				tutorialLinks: {
+					documentation:
+						'https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.respondtowebhook/',
+				},
+			},
+		},
 		credentials: [
 			{
 				name: 'jwtAuth',
@@ -104,18 +118,17 @@ export class RespondToWebhook implements INodeType {
 		],
 		properties: [
 			{
-				displayName: 'Enable Response Output Branch',
+				displayName: '启用响应输出分支',
 				name: 'enableResponseOutput',
 				type: 'boolean',
 				default: false,
-				description:
-					'Whether to provide an additional output branch with the response sent to the webhook',
+				description: '是否提供额外的输出分支，包含发送到 Webhook 的响应数据',
 				isNodeSetting: true,
 				displayOptions: { show: { '@version': [{ _cnd: { gte: 1.4 } }] } },
 			},
 			{
 				displayName:
-					'Verify that the "Webhook" node\'s "Respond" parameter is set to "Using Respond to Webhook Node". <a href="https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.respondtowebhook/" target="_blank">More details',
+					'请确保 "Webhook" 节点的 "响应方式" 参数设置为 "使用响应 Webhook 节点"。<a href="{{documentation}}" target="_blank">了解更多',
 				name: 'generalNotice',
 				type: 'notice',
 				default: '',
@@ -130,7 +143,7 @@ export class RespondToWebhook implements INodeType {
 				displayOptions: { show: { '@version': [{ _cnd: { gte: 1.2 } }] } },
 			},
 			{
-				displayName: 'Credentials',
+				displayName: '凭据',
 				name: 'credentials',
 				type: 'credentials',
 				default: '',
@@ -141,8 +154,7 @@ export class RespondToWebhook implements INodeType {
 				},
 			},
 			{
-				displayName:
-					'When using expressions, note that this node will only run for the first item in the input data',
+				displayName: '使用表达式时，请注意此节点仅对输入数据中的第一项运行',
 				name: 'webhookNotice',
 				type: 'notice',
 				displayOptions: {
@@ -153,7 +165,7 @@ export class RespondToWebhook implements INodeType {
 				default: '',
 			},
 			{
-				displayName: 'Redirect URL',
+				displayName: '重定向 URL',
 				name: 'redirectURL',
 				type: 'string',
 				required: true,
@@ -163,12 +175,12 @@ export class RespondToWebhook implements INodeType {
 					},
 				},
 				default: '',
-				placeholder: 'e.g. http://www.n8n.io',
-				description: 'The URL to redirect to',
+				placeholder: '例如：http://www.n8n.io',
+				description: '要重定向到的 URL 地址',
 				validateType: 'url',
 			},
 			{
-				displayName: 'Response Body',
+				displayName: '响应主体',
 				name: 'responseBody',
 				type: 'json',
 				displayOptions: {
@@ -180,10 +192,10 @@ export class RespondToWebhook implements INodeType {
 				typeOptions: {
 					rows: 4,
 				},
-				description: 'The HTTP response JSON data',
+				description: 'HTTP 响应的 JSON 数据',
 			},
 			{
-				displayName: 'Payload',
+				displayName: '载荷数据',
 				name: 'payload',
 				type: 'json',
 				displayOptions: {
@@ -196,10 +208,10 @@ export class RespondToWebhook implements INodeType {
 					rows: 4,
 				},
 				validateType: 'object',
-				description: 'The payload to include in the JWT token',
+				description: '要包含在 JWT 令牌中的数据载荷',
 			},
 			{
-				displayName: 'Response Body',
+				displayName: '响应主体',
 				name: 'responseBody',
 				type: 'string',
 				displayOptions: {
@@ -211,11 +223,11 @@ export class RespondToWebhook implements INodeType {
 					rows: 2,
 				},
 				default: '',
-				placeholder: 'e.g. Workflow completed',
-				description: 'The HTTP response text data',
+				placeholder: '例如：工作流已完成',
+				description: 'HTTP 响应的文本数据',
 			},
 			{
-				displayName: 'Response Data Source',
+				displayName: '响应数据源',
 				name: 'responseDataSource',
 				type: 'options',
 				displayOptions: {
@@ -225,20 +237,20 @@ export class RespondToWebhook implements INodeType {
 				},
 				options: [
 					{
-						name: 'Choose Automatically From Input',
+						name: '从输入自动选择',
 						value: 'automatically',
-						description: 'Use if input data will contain a single piece of binary data',
+						description: '如果输入数据包含单个二进制数据时使用',
 					},
 					{
-						name: 'Specify Myself',
+						name: '手动指定',
 						value: 'set',
-						description: 'Enter the name of the input field the binary data will be in',
+						description: '输入包含二进制数据的输入字段名称',
 					},
 				],
 				default: 'automatically',
 			},
 			{
-				displayName: 'Input Field Name',
+				displayName: '输入字段名称',
 				name: 'inputFieldName',
 				type: 'string',
 				required: true,
@@ -249,11 +261,10 @@ export class RespondToWebhook implements INodeType {
 						responseDataSource: ['set'],
 					},
 				},
-				description: 'The name of the node input field with the binary data',
+				description: '包含二进制数据的节点输入字段名称',
 			},
 			{
-				displayName:
-					'To avoid unexpected behavior, add a "Content-Type" response header with the appropriate value',
+				displayName: '为避免意外行为，请添加具有适当值的 "Content-Type" 响应头',
 				name: 'contentTypeNotice',
 				type: 'notice',
 				default: '',
@@ -264,14 +275,14 @@ export class RespondToWebhook implements INodeType {
 				},
 			},
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
 				type: 'collection',
-				placeholder: 'Add option',
+				placeholder: '添加选项',
 				default: {},
 				options: [
 					{
-						displayName: 'Response Code',
+						displayName: '响应状态码',
 						name: 'responseCode',
 						type: 'number',
 						typeOptions: {
@@ -279,13 +290,13 @@ export class RespondToWebhook implements INodeType {
 							maxValue: 599,
 						},
 						default: 200,
-						description: 'The HTTP response code to return. Defaults to 200.',
+						description: '要返回的 HTTP 响应状态码。默认为 200。',
 					},
 					{
-						displayName: 'Response Headers',
+						displayName: '响应头',
 						name: 'responseHeaders',
-						placeholder: 'Add Response Header',
-						description: 'Add headers to the webhook response',
+						placeholder: '添加响应头',
+						description: '向 Webhook 响应添加 HTTP 头',
 						type: 'fixedCollection',
 						typeOptions: {
 							multipleValues: true,
@@ -294,28 +305,28 @@ export class RespondToWebhook implements INodeType {
 						options: [
 							{
 								name: 'entries',
-								displayName: 'Entries',
+								displayName: '条目',
 								values: [
 									{
-										displayName: 'Name',
+										displayName: '名称',
 										name: 'name',
 										type: 'string',
 										default: '',
-										description: 'Name of the header',
+										description: 'HTTP 头的名称',
 									},
 									{
-										displayName: 'Value',
+										displayName: '值',
 										name: 'value',
 										type: 'string',
 										default: '',
-										description: 'Value of the header',
+										description: 'HTTP 头的值',
 									},
 								],
 							},
 						],
 					},
 					{
-						displayName: 'Put Response in Field',
+						displayName: '将响应放入字段',
 						name: 'responseKey',
 						type: 'string',
 						displayOptions: {
@@ -324,15 +335,15 @@ export class RespondToWebhook implements INodeType {
 							},
 						},
 						default: '',
-						description: 'The name of the response field to put all items in',
-						placeholder: 'e.g. data',
+						description: '要将所有项放入的响应字段名称',
+						placeholder: '例如：data',
 					},
 					{
-						displayName: 'Enable Streaming',
+						displayName: '启用流式传输',
 						name: 'enableStreaming',
 						type: 'boolean',
 						default: true,
-						description: 'Whether to enable streaming to the response',
+						description: '是否启用流式传输响应',
 						displayOptions: {
 							show: {
 								['/respondWith']: ['allIncomingItems', 'firstIncomingItem', 'text', 'json', 'jwt'],
@@ -378,14 +389,10 @@ export class RespondToWebhook implements INodeType {
 		try {
 			if (nodeVersion >= 1.1) {
 				if (!connectedNodes.some(({ type }) => WEBHOOK_NODE_TYPES.includes(type))) {
-					throw new NodeOperationError(
-						this.getNode(),
-						new Error('No Webhook node found in the workflow'),
-						{
-							description:
-								'Insert a Webhook node to your workflow and set the “Respond” parameter to “Using Respond to Webhook Node” ',
-						},
-					);
+					throw new NodeOperationError(this.getNode(), new Error('工作流中未找到 Webhook 节点'), {
+						description:
+							'请在工作流中插入 Webhook 节点，并将"响应方式"参数设置为"使用响应 Webhook 节点"',
+					});
 				}
 			}
 
@@ -413,9 +420,8 @@ export class RespondToWebhook implements INodeType {
 							responseBody = jsonParse(responseBodyParameter);
 						} catch (error) {
 							throw new NodeOperationError(this.getNode(), error as Error, {
-								message: "Invalid JSON in 'Response Body' field",
-								description:
-									"Check that the syntax of the JSON in the 'Response Body' parameter is valid",
+								message: '"响应主体"字段中的 JSON 无效',
+								description: '请检查"响应主体"参数中的 JSON 语法是否正确',
 							});
 						}
 					}
@@ -453,7 +459,7 @@ export class RespondToWebhook implements INodeType {
 					}
 				} catch (error) {
 					throw new NodeOperationError(this.getNode(), error as Error, {
-						message: 'Error signing JWT token',
+						message: '签署 JWT 令牌时出错',
 					});
 				}
 			} else if (respondWith === 'allIncomingItems') {
@@ -489,7 +495,7 @@ export class RespondToWebhook implements INodeType {
 				const item = items[0];
 
 				if (item.binary === undefined) {
-					throw new NodeOperationError(this.getNode(), 'No binary data exists on the first item!');
+					throw new NodeOperationError(this.getNode(), '第一个数据项中不存在二进制数据！');
 				}
 
 				let responseBinaryPropertyName: string;
@@ -501,10 +507,7 @@ export class RespondToWebhook implements INodeType {
 				} else {
 					const binaryKeys = Object.keys(item.binary);
 					if (binaryKeys.length === 0) {
-						throw new NodeOperationError(
-							this.getNode(),
-							'No binary data exists on the first item!',
-						);
+						throw new NodeOperationError(this.getNode(), '第一个数据项中不存在二进制数据！');
 					}
 					responseBinaryPropertyName = binaryKeys[0];
 				}
@@ -516,10 +519,7 @@ export class RespondToWebhook implements INodeType {
 				headers.location = this.getNodeParameter('redirectURL', 0) as string;
 				statusCode = (options.responseCode as number) ?? 307;
 			} else if (respondWith !== 'noData') {
-				throw new NodeOperationError(
-					this.getNode(),
-					`The Response Data option "${respondWith}" is not supported!`,
-				);
+				throw new NodeOperationError(this.getNode(), `不支持的响应数据选项 "${respondWith}"`);
 			}
 
 			const chatTrigger = connectedNodes.find(

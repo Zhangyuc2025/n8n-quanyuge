@@ -7,11 +7,11 @@ import { FormTriggerV2 } from './v2/FormTriggerV2.node';
 export class FormTrigger extends VersionedNodeType {
 	constructor() {
 		const baseDescription: INodeTypeBaseDescription = {
-			displayName: 'n8n Form Trigger',
+			displayName: 'n8n 表单触发器',
 			name: 'formTrigger',
 			icon: 'file:form.svg',
 			group: ['trigger'],
-			description: 'Generate webforms in n8n and pass their responses to the workflow',
+			description: '在 n8n 中生成 Web 表单并将其响应传递给工作流',
 			defaultVersion: 2.3,
 		};
 

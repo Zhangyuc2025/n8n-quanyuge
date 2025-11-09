@@ -13,15 +13,15 @@ import { getConnectionHintNoticeField } from '@utils/sharedFields';
 
 export class TextSplitterCharacterTextSplitter implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Character Text Splitter',
+		displayName: '字符文本分割器',
 		name: 'textSplitterCharacterTextSplitter',
 		icon: 'fa:grip-lines-vertical',
 		iconColor: 'black',
 		group: ['transform'],
 		version: 1,
-		description: 'Split text into chunks by characters',
+		description: '按字符将文本分割成块',
 		defaults: {
-			name: 'Character Text Splitter',
+			name: '字符文本分割器',
 		},
 		codex: {
 			categories: ['AI'],
@@ -40,28 +40,28 @@ export class TextSplitterCharacterTextSplitter implements INodeType {
 		inputs: [],
 
 		outputs: [NodeConnectionTypes.AiTextSplitter],
-		outputNames: ['Text Splitter'],
+		outputNames: ['文本分割器'],
 		properties: [
 			getConnectionHintNoticeField([NodeConnectionTypes.AiDocument]),
 			{
-				displayName: 'Separator',
+				displayName: '分隔符',
 				name: 'separator',
 				type: 'string',
 				default: '',
 			},
 			{
-				displayName: 'Chunk Size',
+				displayName: '分块大小',
 				name: 'chunkSize',
 				type: 'number',
 				default: 1000,
-				description: 'Maximum number of characters per chunk',
+				description: '每个块的最大字符数',
 			},
 			{
-				displayName: 'Chunk Overlap',
+				displayName: '分块重叠',
 				name: 'chunkOverlap',
 				type: 'number',
 				default: 0,
-				description: 'Number of characters shared between consecutive chunks to preserve context',
+				description: '连续分块之间共享的字符数，用于保留上下文',
 			},
 		],
 	};

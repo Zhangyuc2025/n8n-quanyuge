@@ -5,7 +5,7 @@ import { includeInputFields } from './common.descriptions';
 export const FormatDateDescription: INodeProperties[] = [
 	{
 		displayName:
-			"You can also do this using an expression, e.g. <code>{{your_date.format('yyyy-MM-dd')}}</code>. <a target='_blank' href='https://docs.n8n.io/code/cookbook/luxon/'>More info</a>",
+			"您也可以使用表达式完成此操作，例如 <code>{{your_date.format('yyyy-MM-dd')}}</code>。<a target='_blank' href='https://docs.n8n.io/code/cookbook/luxon/'>了解更多</a>",
 		name: 'notice',
 		type: 'notice',
 		default: '',
@@ -16,10 +16,10 @@ export const FormatDateDescription: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Date',
+		displayName: '日期',
 		name: 'date',
 		type: 'string',
-		description: 'The date that you want to format',
+		description: '您要格式化的日期',
 		default: '',
 		displayOptions: {
 			show: {
@@ -28,7 +28,7 @@ export const FormatDateDescription: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Format',
+		displayName: '格式',
 		name: 'format',
 		type: 'options',
 		displayOptions: {
@@ -39,50 +39,50 @@ export const FormatDateDescription: INodeProperties[] = [
 		// eslint-disable-next-line n8n-nodes-base/node-param-options-type-unsorted-items
 		options: [
 			{
-				name: 'Custom Format',
+				name: '自定义格式',
 				value: 'custom',
 			},
 			{
 				name: 'MM/DD/YYYY',
 				value: 'MM/dd/yyyy',
-				description: 'Example: 09/04/1986',
+				description: '例：09/04/1986',
 			},
 			{
 				name: 'YYYY/MM/DD',
 				value: 'yyyy/MM/dd',
-				description: 'Example: 1986/04/09',
+				description: '例：1986/04/09',
 			},
 			{
 				name: 'MMMM DD YYYY',
 				value: 'MMMM dd yyyy',
-				description: 'Example: April 09 1986',
+				description: '例：April 09 1986',
 			},
 			{
 				name: 'MM-DD-YYYY',
 				value: 'MM-dd-yyyy',
-				description: 'Example: 09-04-1986',
+				description: '例：09-04-1986',
 			},
 			{
 				name: 'YYYY-MM-DD',
 				value: 'yyyy-MM-dd',
-				description: 'Example: 1986-04-09',
+				description: '例：1986-04-09',
 			},
 			{
-				name: 'Unix Timestamp',
+				name: 'Unix 时间戳',
 				value: 'X',
-				description: 'Example: 1672531200',
+				description: '例：1672531200',
 			},
 			{
-				name: 'Unix Ms Timestamp',
+				name: 'Unix 毫秒时间戳',
 				value: 'x',
-				description: 'Example: 1674691200000',
+				description: '例：1674691200000',
 			},
 		],
 		default: 'MM/dd/yyyy',
-		description: 'The format to convert the date to',
+		description: '要将日期转换为的格式',
 	},
 	{
-		displayName: 'Custom Format',
+		displayName: '自定义格式',
 		name: 'customFormat',
 		type: 'string',
 		displayOptions: {
@@ -91,16 +91,16 @@ export const FormatDateDescription: INodeProperties[] = [
 				operation: ['formatDate'],
 			},
 		},
-		hint: 'List of special tokens <a target="_blank" href="https://moment.github.io/luxon/#/formatting?id=table-of-tokens">More info</a>',
+		hint: '特殊令牌列表 <a target="_blank" href="https://moment.github.io/luxon/#/formatting?id=table-of-tokens">了解更多</a>',
 		default: '',
 		placeholder: 'yyyy-MM-dd',
 	},
 	{
-		displayName: 'Output Field Name',
+		displayName: '输出字段名称',
 		name: 'outputFieldName',
 		type: 'string',
 		default: 'formattedDate',
-		description: 'Name of the field to put the output in',
+		description: '放置输出的字段名称',
 		displayOptions: {
 			show: {
 				operation: ['formatDate'],
@@ -108,10 +108,10 @@ export const FormatDateDescription: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Options',
+		displayName: '选项',
 		name: 'options',
 		type: 'collection',
-		placeholder: 'Add option',
+		placeholder: '添加选项',
 		displayOptions: {
 			show: {
 				operation: ['formatDate'],
@@ -121,21 +121,21 @@ export const FormatDateDescription: INodeProperties[] = [
 		options: [
 			includeInputFields,
 			{
-				displayName: 'From Date Format',
+				displayName: '来自日期格式',
 				name: 'fromFormat',
 				type: 'string',
-				default: 'e.g yyyyMMdd',
-				hint: 'Tokens are case sensitive',
+				default: '例如 yyyyMMdd',
+				hint: '令牌区分大小写',
 				// eslint-disable-next-line n8n-nodes-base/node-param-description-miscased-id
 				description:
-					'Format in which the input \'Date\' is, it\'s helpful when the format is not recognized automatically. Use those <a href="https://moment.github.io/luxon/#/formatting?id=table-of-tokens&id=table-of-tokens" target="_blank">tokens</a> to define the format.',
+					'输入"日期"的格式，当格式无法自动识别时很有帮助。使用这些 <a href="https://moment.github.io/luxon/#/formatting?id=table-of-tokens&id=table-of-tokens" target="_blank">令牌</a> 定义格式。',
 			},
 			{
-				displayName: 'Use Workflow Timezone',
+				displayName: '使用工作流时区',
 				name: 'timezone',
 				type: 'boolean',
 				default: false,
-				description: "Whether to use the timezone of the input or the workflow's timezone",
+				description: '是否使用输入的时区或工作流的时区',
 			},
 		],
 	},

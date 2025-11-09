@@ -22,7 +22,7 @@ export class NetscalerAdc implements INodeType {
 		group: ['output'],
 		version: 1,
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
-		description: 'Consume Netscaler ADC API',
+		description: '使用 Netscaler ADC API',
 		defaults: {
 			name: 'Netscaler ADC',
 		},
@@ -36,17 +36,17 @@ export class NetscalerAdc implements INodeType {
 		outputs: [NodeConnectionTypes.Main],
 		properties: [
 			{
-				displayName: 'Resource',
+				displayName: '资源',
 				name: 'resource',
 				type: 'options',
 				noDataExpression: true,
 				options: [
 					{
-						name: 'Certificate',
+						name: '证书',
 						value: 'certificate',
 					},
 					{
-						name: 'File',
+						name: '文件',
 						value: 'file',
 					},
 				],

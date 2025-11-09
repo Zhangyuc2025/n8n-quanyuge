@@ -19,32 +19,32 @@ const properties: INodeProperties[] = [
 	toEmailProperty,
 
 	{
-		displayName: 'Subject',
+		displayName: '主题',
 		name: 'subject',
 		type: 'string',
 		default: '',
-		placeholder: 'My subject line',
-		description: 'Subject line of the email',
+		placeholder: '我的主题行',
+		description: '电子邮件的主题行',
 	},
 	{
-		displayName: 'Email Format',
+		displayName: '邮件格式',
 		name: 'emailFormat',
 		type: 'options',
 		options: [
 			{
-				name: 'Text',
+				name: '纯文本',
 				value: 'text',
-				description: 'Send email as plain text',
+				description: '以纯文本格式发送邮件',
 			},
 			{
 				name: 'HTML',
 				value: 'html',
-				description: 'Send email as HTML',
+				description: '以 HTML 格式发送邮件',
 			},
 			{
-				name: 'Both',
+				name: '两者都发',
 				value: 'both',
-				description: "Send both formats, recipient's client selects version to display",
+				description: '发送两种格式，收件人的客户端选择要显示的版本',
 			},
 		],
 		default: 'html',
@@ -55,12 +55,12 @@ const properties: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Email Format',
+		displayName: '邮件格式',
 		name: 'emailFormat',
 		type: 'options',
 		options: [
 			{
-				name: 'Text',
+				name: '纯文本',
 				value: 'text',
 			},
 			{
@@ -68,7 +68,7 @@ const properties: INodeProperties[] = [
 				value: 'html',
 			},
 			{
-				name: 'Both',
+				name: '两者都发',
 				value: 'both',
 			},
 		],
@@ -80,14 +80,14 @@ const properties: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Text',
+		displayName: '文本内容',
 		name: 'text',
 		type: 'string',
 		typeOptions: {
 			rows: 5,
 		},
 		default: '',
-		description: 'Plain text message of email',
+		description: '邮件的纯文本内容',
 		displayOptions: {
 			show: {
 				emailFormat: ['text', 'both'],
@@ -95,14 +95,14 @@ const properties: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'HTML',
+		displayName: 'HTML 内容',
 		name: 'html',
 		type: 'string',
 		typeOptions: {
 			rows: 5,
 		},
 		default: '',
-		description: 'HTML text message of email',
+		description: '邮件的 HTML 内容',
 		displayOptions: {
 			show: {
 				emailFormat: ['html', 'both'],
@@ -110,55 +110,54 @@ const properties: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Options',
+		displayName: '选项',
 		name: 'options',
 		type: 'collection',
-		placeholder: 'Add option',
+		placeholder: '添加选项',
 		default: {},
 		options: [
 			{
 				...appendAttributionOption,
-				description:
-					'Whether to include the phrase “This email was sent automatically with n8n” to the end of the email',
+				description: '是否在邮件末尾包含"此邮件由 n8n 自动发送"的说明',
 			},
 			{
-				displayName: 'Attachments',
+				displayName: '附件',
 				name: 'attachments',
 				type: 'string',
 				default: '',
 				description:
-					'Name of the binary properties that contain data to add to email as attachment. Multiple ones can be comma-separated. Reference embedded images or other content within the body of an email message, e.g. &lt;img src="cid:image_1"&gt;',
+					'包含要作为附件添加到邮件的数据的二进制属性名称。多个属性可以用逗号分隔。引用邮件正文中嵌入的图像或其他内容，例如：&lt;img src="cid:image_1"&gt;',
 			},
 			{
-				displayName: 'CC Email',
+				displayName: '抄送邮箱',
 				name: 'ccEmail',
 				type: 'string',
 				default: '',
 				placeholder: 'cc@example.com',
-				description: 'Email address of CC recipient',
+				description: '抄送收件人的电子邮件地址',
 			},
 			{
-				displayName: 'BCC Email',
+				displayName: '密送邮箱',
 				name: 'bccEmail',
 				type: 'string',
 				default: '',
 				placeholder: 'bcc@example.com',
-				description: 'Email address of BCC recipient',
+				description: '密送收件人的电子邮件地址',
 			},
 			{
-				displayName: 'Ignore SSL Issues (Insecure)',
+				displayName: '忽略 SSL 问题（不安全）',
 				name: 'allowUnauthorizedCerts',
 				type: 'boolean',
 				default: false,
-				description: 'Whether to connect even if SSL certificate validation is not possible',
+				description: '即使 SSL 证书验证失败也进行连接',
 			},
 			{
-				displayName: 'Reply To',
+				displayName: '回复地址',
 				name: 'replyTo',
 				type: 'string',
 				default: '',
 				placeholder: 'info@example.com',
-				description: 'The email address to send the reply to',
+				description: '用于接收回复的电子邮件地址',
 			},
 		],
 	},

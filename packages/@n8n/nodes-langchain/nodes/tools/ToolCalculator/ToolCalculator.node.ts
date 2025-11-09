@@ -20,15 +20,15 @@ function getTool(ctx: ISupplyDataFunctions | IExecuteFunctions): Calculator {
 
 export class ToolCalculator implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Calculator',
+		displayName: '计算器',
 		name: 'toolCalculator',
 		icon: 'fa:calculator',
 		iconColor: 'black',
 		group: ['transform'],
 		version: 1,
-		description: 'Make it easier for AI agents to perform arithmetic',
+		description: '让 AI 智能体更轻松地执行算术运算',
 		defaults: {
-			name: 'Calculator',
+			name: '计算器',
 		},
 		codex: {
 			categories: ['AI'],
@@ -48,7 +48,7 @@ export class ToolCalculator implements INodeType {
 		inputs: [],
 
 		outputs: [NodeConnectionTypes.AiTool],
-		outputNames: ['Tool'],
+		outputNames: ['工具'],
 		properties: [getConnectionHintNoticeField([NodeConnectionTypes.AiAgent])],
 	};
 

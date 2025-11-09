@@ -16,15 +16,15 @@ import { processDocuments } from '../shared/processDocuments';
 // This node is deprecated. Use VectorStoreInMemory instead.
 export class VectorStoreInMemoryInsert implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'In Memory Vector Store Insert',
+		displayName: '内存向量存储插入',
 		name: 'vectorStoreInMemoryInsert',
 		icon: 'fa:database',
 		group: ['transform'],
 		version: 1,
 		hidden: true,
-		description: 'Insert data into an in-memory vector store',
+		description: '将数据插入内存向量存储',
 		defaults: {
-			name: 'In Memory Vector Store Insert',
+			name: '内存向量存储插入',
 		},
 		codex: {
 			categories: ['AI'],
@@ -43,13 +43,13 @@ export class VectorStoreInMemoryInsert implements INodeType {
 		inputs: [
 			NodeConnectionTypes.Main,
 			{
-				displayName: 'Document',
+				displayName: '文档',
 				maxConnections: 1,
 				type: NodeConnectionTypes.AiDocument,
 				required: true,
 			},
 			{
-				displayName: 'Embedding',
+				displayName: '嵌入',
 				maxConnections: 1,
 				type: NodeConnectionTypes.AiEmbedding,
 				required: true,
@@ -59,25 +59,24 @@ export class VectorStoreInMemoryInsert implements INodeType {
 		properties: [
 			{
 				displayName:
-					'The embbded data are stored in the server memory, so they will be lost when the server is restarted. Additionally, if the amount of data is too large, it may cause the server to crash due to insufficient memory.',
+					'嵌入的数据存储在服务器内存中，因此在服务器重启时会丢失。此外，如果数据量太大，可能会因内存不足而导致服务器崩溃。',
 				name: 'notice',
 				type: 'notice',
 				default: '',
 			},
 			{
-				displayName: 'Clear Store',
+				displayName: '清除存储',
 				name: 'clearStore',
 				type: 'boolean',
 				default: false,
-				description: 'Whether to clear the store before inserting new data',
+				description: '是否在插入新数据之前清除存储',
 			},
 			{
-				displayName: 'Memory Key',
+				displayName: '内存键',
 				name: 'memoryKey',
 				type: 'string',
 				default: 'vector_store_key',
-				description:
-					'The key to use to store the vector memory in the workflow data. The key will be prefixed with the workflow ID to avoid collisions.',
+				description: '用于在工作流数据中存储向量内存的键。该键将以工作流 ID 为前缀，以避免冲突。',
 			},
 		],
 	};

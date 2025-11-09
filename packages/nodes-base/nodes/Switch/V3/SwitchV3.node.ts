@@ -54,34 +54,34 @@ export class SwitchV3 implements INodeType {
 			subtitle: `=mode: {{(${capitalize})($parameter["mode"])}}`,
 			version: [3, 3.1, 3.2, 3.3],
 			defaults: {
-				name: 'Switch',
+				name: '分支',
 				color: '#506000',
 			},
 			inputs: [NodeConnectionTypes.Main],
 			outputs: `={{(${configuredOutputs})($parameter)}}`,
 			properties: [
 				{
-					displayName: 'Mode',
+					displayName: '模式',
 					name: 'mode',
 					type: 'options',
 					noDataExpression: true,
 					options: [
 						{
-							name: 'Rules',
+							name: '规则',
 							value: 'rules',
-							description: 'Build a matching rule for each output',
+							description: '为每个输出构建匹配规则',
 						},
 						{
-							name: 'Expression',
+							name: '表达式',
 							value: 'expression',
-							description: 'Write an expression to return the output index',
+							description: '编写表达式以返回输出索引',
 						},
 					],
 					default: 'rules',
-					description: 'How data should be routed',
+					description: '数据路由方式',
 				},
 				{
-					displayName: 'Number of Outputs',
+					displayName: '输出数量',
 					name: 'numberOutputs',
 					type: 'number',
 					noDataExpression: true,
@@ -92,10 +92,10 @@ export class SwitchV3 implements INodeType {
 						},
 					},
 					default: 4,
-					description: 'How many outputs to create',
+					description: '要创建的输出数量',
 				},
 				{
-					displayName: 'Number of Outputs',
+					displayName: '输出数量',
 					name: 'numberOutputs',
 					type: 'number',
 					displayOptions: {
@@ -105,14 +105,14 @@ export class SwitchV3 implements INodeType {
 						},
 					},
 					default: 4,
-					description: 'How many outputs to create',
+					description: '要创建的输出数量',
 				},
 				{
-					displayName: 'Output Index',
+					displayName: '输出索引',
 					name: 'output',
 					type: 'number',
 					validateType: 'number',
-					hint: 'The index to route the item to, starts at 0',
+					hint: '要路由项目的索引，从 0 开始',
 					displayOptions: {
 						show: {
 							mode: ['expression'],
@@ -121,12 +121,12 @@ export class SwitchV3 implements INodeType {
 					// eslint-disable-next-line n8n-nodes-base/node-param-default-wrong-for-number
 					default: '={{}}',
 					description:
-						'The output index to send the input item to. Use an expression to calculate which input item should be routed to which output. The expression must return a number.',
+						'要发送输入项目的输出索引。使用表达式计算应将哪个输入项目路由到哪个输出。表达式必须返回数字。',
 				},
 				{
-					displayName: 'Routing Rules',
+					displayName: '路由规则',
 					name: 'rules',
-					placeholder: 'Add Routing Rule',
+					placeholder: '添加路由规则',
 					type: 'fixedCollection',
 					typeOptions: {
 						multipleValues: true,
@@ -164,12 +164,12 @@ export class SwitchV3 implements INodeType {
 					options: [
 						{
 							name: 'values',
-							displayName: 'Values',
+							displayName: '值',
 							values: [
 								{
-									displayName: 'Conditions',
+									displayName: '条件',
 									name: 'conditions',
-									placeholder: 'Add Condition',
+									placeholder: '添加条件',
 									type: 'filter',
 									default: {},
 									typeOptions: {
@@ -182,17 +182,17 @@ export class SwitchV3 implements INodeType {
 									},
 								},
 								{
-									displayName: 'Rename Output',
+									displayName: '重命名输出',
 									name: 'renameOutput',
 									type: 'boolean',
 									default: false,
 								},
 								{
-									displayName: 'Output Name',
+									displayName: '输出名称',
 									name: 'outputKey',
 									type: 'string',
 									default: '',
-									description: 'The label of output to which to send data to if rule matches',
+									description: '规则匹配时发送数据的输出标签',
 									displayOptions: {
 										show: {
 											renameOutput: [true],
@@ -213,10 +213,10 @@ export class SwitchV3 implements INodeType {
 					},
 				},
 				{
-					displayName: 'Options',
+					displayName: '选项',
 					name: 'options',
 					type: 'collection',
-					placeholder: 'Add option',
+					placeholder: '添加选项',
 					default: {},
 					displayOptions: {
 						show: {
@@ -226,7 +226,7 @@ export class SwitchV3 implements INodeType {
 					options: [
 						{
 							// eslint-disable-next-line n8n-nodes-base/node-param-display-name-wrong-for-dynamic-options
-							displayName: 'Fallback Output',
+							displayName: '备用输出',
 							name: 'fallbackOutput',
 							type: 'options',
 							typeOptions: {
@@ -235,12 +235,11 @@ export class SwitchV3 implements INodeType {
 							},
 							default: 'none',
 							// eslint-disable-next-line n8n-nodes-base/node-param-description-wrong-for-dynamic-options
-							description:
-								'If no rule matches the item will be sent to this output, by default they will be ignored',
+							description: '如果没有规则匹配，项目将发送到此输出，默认情况下它们将被忽略',
 						},
 						{
-							displayName: 'Ignore Case',
-							description: 'Whether to ignore letter case when evaluating conditions',
+							displayName: '忽略大小写',
+							description: '评估条件时是否忽略字母大小写',
 							name: 'ignoreCase',
 							type: 'boolean',
 							default: true,
@@ -254,10 +253,10 @@ export class SwitchV3 implements INodeType {
 							},
 						},
 						{
-							displayName: 'Rename Fallback Output',
+							displayName: '重命名备用输出',
 							name: 'renameFallbackOutput',
 							type: 'string',
-							placeholder: 'e.g. Fallback',
+							placeholder: '例如：备用',
 							default: '',
 							displayOptions: {
 								show: {
@@ -267,12 +266,11 @@ export class SwitchV3 implements INodeType {
 						},
 						{
 							// eslint-disable-next-line n8n-nodes-base/node-param-display-name-miscased
-							displayName: 'Send data to all matching outputs',
+							displayName: '发送数据到所有匹配的输出',
 							name: 'allMatchingOutputs',
 							type: 'boolean',
 							default: false,
-							description:
-								'Whether to send data to all outputs meeting conditions (and not just the first one)',
+							description: '是否将数据发送到所有满足条件的输出（而不仅仅是第一个）',
 						},
 					],
 				},
@@ -288,22 +286,22 @@ export class SwitchV3 implements INodeType {
 				const outputOptions: INodePropertyOptions[] = [
 					{
 						// eslint-disable-next-line n8n-nodes-base/node-param-display-name-miscased
-						name: 'None (default)',
+						name: '无（默认）',
 						value: 'none',
-						description: 'Items will be ignored',
+						description: '项目将被忽略',
 					},
 					{
-						name: 'Extra Output',
+						name: '额外输出',
 						value: 'extra',
-						description: 'Items will be sent to the extra, separate, output',
+						description: '项目将被发送到额外的独立输出',
 					},
 				];
 
 				for (const [index, rule] of rules.entries()) {
 					outputOptions.push({
-						name: `Output ${rule.outputKey || index}`,
+						name: `输出 ${rule.outputKey || index}`,
 						value: index,
-						description: `Items will be sent to the same output as when matched rule ${index + 1}`,
+						description: `项目将发送到与匹配规则 ${index + 1} 相同的输出`,
 					});
 				}
 
@@ -320,17 +318,15 @@ export class SwitchV3 implements INodeType {
 
 		const checkIndexRange = (returnDataLength: number, index: number, itemIndex = 0) => {
 			if (Number(index) === returnDataLength) {
-				throw new NodeOperationError(this.getNode(), `The ouput ${index} is not allowed. `, {
+				throw new NodeOperationError(this.getNode(), `不允许使用输出 ${index}。`, {
 					itemIndex,
-					description: `Output indexes are zero based, if you want to use the extra output use ${
-						index - 1
-					}`,
+					description: `输出索引从零开始，如果要使用额外输出，请使用 ${index - 1}`,
 				});
 			}
 			if (index < 0 || index > returnDataLength) {
-				throw new NodeOperationError(this.getNode(), `The ouput ${index} is not allowed`, {
+				throw new NodeOperationError(this.getNode(), `不允许使用输出 ${index}`, {
 					itemIndex,
-					description: `It has to be between 0 and ${returnDataLength - 1}`,
+					description: `必须在 0 到 ${returnDataLength - 1} 之间`,
 				});
 			}
 		};

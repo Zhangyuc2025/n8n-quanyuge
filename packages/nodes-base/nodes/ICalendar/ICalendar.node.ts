@@ -18,7 +18,7 @@ export class ICalendar implements INodeType {
 		group: ['input'],
 		version: 1,
 		subtitle: '={{$parameter["operation"]}}',
-		description: 'Create iCalendar file',
+		description: '创建 iCalendar 文件',
 		defaults: {
 			name: 'iCalendar',
 			color: '#408000',
@@ -28,13 +28,13 @@ export class ICalendar implements INodeType {
 		credentials: [],
 		properties: [
 			{
-				displayName: 'Operation',
+				displayName: '操作',
 				name: 'operation',
 				type: 'options',
 				noDataExpression: true,
 				options: [
 					{
-						name: 'Create Event File',
+						name: '创建事件文件',
 						value: 'createEventFile',
 					},
 				],

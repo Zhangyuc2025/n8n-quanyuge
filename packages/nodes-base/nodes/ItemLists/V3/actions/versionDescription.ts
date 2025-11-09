@@ -4,27 +4,27 @@ import { NodeConnectionTypes, type INodeTypeDescription } from 'n8n-workflow';
 import * as itemList from './itemList';
 
 export const versionDescription: INodeTypeDescription = {
-	displayName: 'Item Lists',
+	displayName: '项目列表',
 	name: 'itemLists',
 	icon: 'file:itemLists.svg',
 	group: ['input'],
 	subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
-	description: 'Helper for working with lists of items and transforming arrays',
+	description: '用于处理项目列表和转换数组的辅助工具',
 	version: [3, 3.1],
 	defaults: {
-		name: 'Item Lists',
+		name: '项目列表',
 	},
 	inputs: [NodeConnectionTypes.Main],
 	outputs: [NodeConnectionTypes.Main],
 	credentials: [],
 	properties: [
 		{
-			displayName: 'Resource',
+			displayName: '资源',
 			name: 'resource',
 			type: 'hidden',
 			options: [
 				{
-					name: 'Item List',
+					name: '项目列表',
 					value: 'itemList',
 				},
 			],

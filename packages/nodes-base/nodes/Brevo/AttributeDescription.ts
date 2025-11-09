@@ -9,7 +9,7 @@ import { BrevoNode } from './GenericFunctions';
 
 export const attributeOperations: INodeProperties[] = [
 	{
-		displayName: 'Operation',
+		displayName: '操作',
 		name: 'operation',
 		type: 'options',
 		noDataExpression: true,
@@ -20,7 +20,7 @@ export const attributeOperations: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Create',
+				name: '创建',
 				value: 'create',
 				routing: {
 					request: {
@@ -54,10 +54,10 @@ export const attributeOperations: INodeProperties[] = [
 						],
 					},
 				},
-				action: 'Create an attribute',
+				action: '创建属性',
 			},
 			{
-				name: 'Update',
+				name: '更新',
 				value: 'update',
 				routing: {
 					request: {
@@ -65,10 +65,10 @@ export const attributeOperations: INodeProperties[] = [
 						url: '=/v3/contacts/attributes/{{$parameter.updateAttributeCategory}}/{{encodeURI($parameter.updateAttributeName)}}',
 					},
 				},
-				action: 'Update an attribute',
+				action: '更新属性',
 			},
 			{
-				name: 'Delete',
+				name: '删除',
 				value: 'delete',
 				routing: {
 					request: {
@@ -86,10 +86,10 @@ export const attributeOperations: INodeProperties[] = [
 						],
 					},
 				},
-				action: 'Delete an attribute',
+				action: '删除属性',
 			},
 			{
-				name: 'Get Many',
+				name: '获取多个',
 				value: 'getAll',
 				routing: {
 					request: {
@@ -110,7 +110,7 @@ export const attributeOperations: INodeProperties[] = [
 						],
 					},
 				},
-				action: 'Get many attributes',
+				action: '获取多个属性',
 			},
 		],
 		default: 'create',
@@ -119,10 +119,10 @@ export const attributeOperations: INodeProperties[] = [
 
 const createAttributeOperations: INodeProperties[] = [
 	{
-		displayName: 'Category',
+		displayName: '分类',
 		name: 'attributeCategory',
 		default: 'normal',
-		description: 'Category of the attribute',
+		description: '属性的分类',
 		displayOptions: {
 			show: {
 				resource: ['attribute'],
@@ -131,23 +131,23 @@ const createAttributeOperations: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Calculated',
+				name: '已计算',
 				value: 'calculated',
 			},
 			{
-				name: 'Category',
+				name: '分类',
 				value: 'category',
 			},
 			{
-				name: 'Global',
+				name: '全局',
 				value: 'global',
 			},
 			{
-				name: 'Normal',
+				name: '常规',
 				value: 'normal',
 			},
 			{
-				name: 'Transactional',
+				name: '事务',
 				value: 'transactional',
 			},
 		],
@@ -155,10 +155,10 @@ const createAttributeOperations: INodeProperties[] = [
 		required: true,
 	},
 	{
-		displayName: 'Name',
+		displayName: '名称',
 		name: 'attributeName',
 		default: '',
-		description: 'Name of the attribute',
+		description: '属性的名称',
 		displayOptions: {
 			show: {
 				resource: ['attribute'],
@@ -169,10 +169,10 @@ const createAttributeOperations: INodeProperties[] = [
 		type: 'string',
 	},
 	{
-		displayName: 'Type',
+		displayName: '类型',
 		name: 'attributeType',
 		default: '',
-		description: 'Attribute Type',
+		description: '属性类型',
 		displayOptions: {
 			show: {
 				resource: ['attribute'],
@@ -182,19 +182,19 @@ const createAttributeOperations: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Boolean',
+				name: '布尔值',
 				value: 'boolean',
 			},
 			{
-				name: 'Date',
+				name: '日期',
 				value: 'date',
 			},
 			{
-				name: 'Float',
+				name: '浮点数',
 				value: 'float',
 			},
 			{
-				name: 'Text',
+				name: '文本',
 				value: 'text',
 			},
 		],
@@ -209,10 +209,10 @@ const createAttributeOperations: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Value',
+		displayName: '值',
 		name: 'attributeValue',
 		default: '',
-		description: 'Value of the attribute',
+		description: '属性的值',
 		displayOptions: {
 			show: {
 				resource: ['attribute'],
@@ -232,10 +232,10 @@ const createAttributeOperations: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Contact Attribute List',
+		displayName: '联系人属性列表',
 		name: 'attributeCategoryList',
 		type: 'collection',
-		placeholder: 'Add Attributes',
+		placeholder: '添加属性',
 		default: {},
 		displayOptions: {
 			show: {
@@ -246,9 +246,9 @@ const createAttributeOperations: INodeProperties[] = [
 		},
 		options: [
 			{
-				displayName: 'Contact Attributes',
+				displayName: '联系人属性',
 				name: 'categoryEnumeration',
-				placeholder: 'Add Attribute',
+				placeholder: '添加属性',
 				type: 'fixedCollection',
 				typeOptions: {
 					multipleValues: true,
@@ -256,14 +256,14 @@ const createAttributeOperations: INodeProperties[] = [
 				options: [
 					{
 						name: 'attributesValues',
-						displayName: 'Attribute',
+						displayName: '属性',
 						values: [
 							{
-								displayName: 'Value ID',
+								displayName: '值ID',
 								name: 'attributeCategoryValue',
 								type: 'number',
 								default: 1,
-								description: 'ID of the value, must be numeric',
+								description: '值的ID，必须为数字',
 								routing: {
 									send: {
 										value: '={{$value}}',
@@ -273,7 +273,7 @@ const createAttributeOperations: INodeProperties[] = [
 								},
 							},
 							{
-								displayName: 'Label',
+								displayName: '标签',
 								name: 'attributeCategoryLabel',
 								type: 'string',
 								default: '',
@@ -284,13 +284,13 @@ const createAttributeOperations: INodeProperties[] = [
 										type: 'body',
 									},
 								},
-								description: 'Label of the value',
+								description: '值的标签',
 							},
 						],
 					},
 				],
 				default: {},
-				description: 'List of values and labels that the attribute can take',
+				description: '属性可以取值的值和标签列表',
 			},
 		],
 	},
@@ -298,10 +298,10 @@ const createAttributeOperations: INodeProperties[] = [
 
 const updateAttributeOperations: INodeProperties[] = [
 	{
-		displayName: 'Category',
+		displayName: '分类',
 		name: 'updateAttributeCategory',
 		default: 'calculated',
-		description: 'Category of the attribute',
+		description: '属性的分类',
 		displayOptions: {
 			show: {
 				resource: ['attribute'],
@@ -310,25 +310,25 @@ const updateAttributeOperations: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Calculated',
+				name: '已计算',
 				value: 'calculated',
 			},
 			{
-				name: 'Category',
+				name: '分类',
 				value: 'category',
 			},
 			{
-				name: 'Global',
+				name: '全局',
 				value: 'global',
 			},
 		],
 		type: 'options',
 	},
 	{
-		displayName: 'Name',
+		displayName: '名称',
 		name: 'updateAttributeName',
 		default: '',
-		description: 'Name of the existing attribute',
+		description: '现有属性的名称',
 		displayOptions: {
 			show: {
 				resource: ['attribute'],
@@ -338,10 +338,10 @@ const updateAttributeOperations: INodeProperties[] = [
 		type: 'string',
 	},
 	{
-		displayName: 'Value',
+		displayName: '值',
 		name: 'updateAttributeValue',
 		default: '',
-		description: 'Value of the attribute to update',
+		description: '要更新的属性值',
 		displayOptions: {
 			show: {
 				resource: ['attribute'],
@@ -362,12 +362,12 @@ const updateAttributeOperations: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Update Fields',
+		displayName: '更新字段',
 		name: 'updateAttributeCategoryList',
 		default: {},
-		description: 'List of the values and labels that the attribute can take',
+		description: '属性可以取值的值和标签列表',
 		type: 'collection',
-		placeholder: 'Add Field',
+		placeholder: '添加字段',
 		displayOptions: {
 			show: {
 				resource: ['attribute'],
@@ -377,9 +377,9 @@ const updateAttributeOperations: INodeProperties[] = [
 		},
 		options: [
 			{
-				displayName: 'Contact Attributes',
+				displayName: '联系人属性',
 				name: 'updateCategoryEnumeration',
-				placeholder: 'Add Attribute',
+				placeholder: '添加属性',
 				type: 'fixedCollection',
 				typeOptions: {
 					multipleValues: true,
@@ -387,14 +387,14 @@ const updateAttributeOperations: INodeProperties[] = [
 				options: [
 					{
 						name: 'updateAttributesValues',
-						displayName: 'Attribute',
+						displayName: '属性',
 						values: [
 							{
-								displayName: 'Value',
+								displayName: '值',
 								name: 'attributeCategoryValue',
 								type: 'number',
 								default: 1,
-								description: 'ID of the value, must be numeric',
+								description: '值的ID，必须为数字',
 								routing: {
 									send: {
 										value: '={{$value}}',
@@ -404,7 +404,7 @@ const updateAttributeOperations: INodeProperties[] = [
 								},
 							},
 							{
-								displayName: 'Label',
+								displayName: '标签',
 								name: 'attributeCategoryLabel',
 								type: 'string',
 								default: '',
@@ -415,13 +415,13 @@ const updateAttributeOperations: INodeProperties[] = [
 										type: 'body',
 									},
 								},
-								description: 'Label of the value',
+								description: '值的标签',
 							},
 						],
 					},
 				],
 				default: {},
-				description: 'List of values and labels that the attribute can take',
+				description: '属性可以取值的值和标签列表',
 			},
 		],
 	},
@@ -429,10 +429,10 @@ const updateAttributeOperations: INodeProperties[] = [
 
 const deleteAttribueOperations: INodeProperties[] = [
 	{
-		displayName: 'Category',
+		displayName: '分类',
 		name: 'deleteAttributeCategory',
 		default: 'normal',
-		description: 'Category of the attribute',
+		description: '属性的分类',
 		displayOptions: {
 			show: {
 				resource: ['attribute'],
@@ -441,33 +441,33 @@ const deleteAttribueOperations: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Calculated',
+				name: '已计算',
 				value: 'calculated',
 			},
 			{
-				name: 'Category',
+				name: '分类',
 				value: 'category',
 			},
 			{
-				name: 'Global',
+				name: '全局',
 				value: 'global',
 			},
 			{
-				name: 'Normal',
+				name: '常规',
 				value: 'normal',
 			},
 			{
-				name: 'Transactional',
+				name: '事务',
 				value: 'transactional',
 			},
 		],
 		type: 'options',
 	},
 	{
-		displayName: 'Name',
+		displayName: '名称',
 		name: 'deleteAttributeName',
 		default: '',
-		description: 'Name of the attribute',
+		description: '属性的名称',
 		displayOptions: {
 			show: {
 				resource: ['attribute'],
@@ -480,7 +480,7 @@ const deleteAttribueOperations: INodeProperties[] = [
 
 const getAllAttributeOperations: INodeProperties[] = [
 	{
-		displayName: 'Return All',
+		displayName: '返回全部',
 		name: 'returnAll',
 		type: 'boolean',
 		displayOptions: {
@@ -490,10 +490,10 @@ const getAllAttributeOperations: INodeProperties[] = [
 			},
 		},
 		default: false,
-		description: 'Whether to return all results or only up to a given limit',
+		description: '是否返回所有结果或仅返回至给定限制',
 	},
 	{
-		displayName: 'Limit',
+		displayName: '限制',
 		name: 'limit',
 		type: 'number',
 		displayOptions: {
@@ -520,7 +520,7 @@ const getAllAttributeOperations: INodeProperties[] = [
 			},
 		},
 		default: 50,
-		description: 'Max number of results to return',
+		description: '返回结果的最大数量',
 	},
 ];
 

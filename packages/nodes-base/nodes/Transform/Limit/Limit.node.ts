@@ -8,45 +8,45 @@ import { NodeConnectionTypes } from 'n8n-workflow';
 
 export class Limit implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Limit',
+		displayName: '限制',
 		name: 'limit',
 		icon: 'file:limit.svg',
 		group: ['transform'],
 		subtitle: '',
 		version: 1,
-		description: 'Restrict the number of items',
+		description: '限制数据项的数量',
 		defaults: {
-			name: 'Limit',
+			name: '限制',
 		},
 		inputs: [NodeConnectionTypes.Main],
 		outputs: [NodeConnectionTypes.Main],
 		properties: [
 			{
-				displayName: 'Max Items',
+				displayName: '最大项目数',
 				name: 'maxItems',
 				type: 'number',
 				typeOptions: {
 					minValue: 1,
 				},
 				default: 1,
-				description: 'If there are more items than this number, some are removed',
+				description: '如果项目数量超过此数字，将删除一些项目',
 			},
 			{
-				displayName: 'Keep',
+				displayName: '保留',
 				name: 'keep',
 				type: 'options',
 				options: [
 					{
-						name: 'First Items',
+						name: '前面的项目',
 						value: 'firstItems',
 					},
 					{
-						name: 'Last Items',
+						name: '后面的项目',
 						value: 'lastItems',
 					},
 				],
 				default: 'firstItems',
-				description: 'When removing items, whether to keep the ones at the start or the ending',
+				description: '删除项目时，是保留开头还是结尾的项目',
 			},
 		],
 	};

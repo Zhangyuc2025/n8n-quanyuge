@@ -7,12 +7,12 @@ import { IfV2 } from './V2/IfV2.node';
 export class If extends VersionedNodeType {
 	constructor() {
 		const baseDescription: INodeTypeBaseDescription = {
-			displayName: 'If',
+			displayName: '条件判断',
 			name: 'if',
 			icon: 'fa:map-signs',
 			iconColor: 'green',
 			group: ['transform'],
-			description: 'Route items to different branches (true/false)',
+			description: '将项目路由到不同的分支（真/假）',
 			defaultVersion: 2.2,
 		};
 

@@ -7,11 +7,11 @@ export const configuredOutputs = (
 		return [
 			{
 				type: 'main',
-				displayName: 'Input Data',
+				displayName: '输入数据',
 			},
 			{
 				type: 'main',
-				displayName: 'Response',
+				displayName: '响应',
 			},
 		];
 	}

@@ -1,35 +1,35 @@
 import type { INodeProperties } from 'n8n-workflow';
 
 export const operationProperty: INodeProperties = {
-	displayName: 'Operation',
+	displayName: '操作',
 	name: 'operation',
 	type: 'options',
 	noDataExpression: true,
 	options: [
 		{
-			name: 'Read From File',
+			name: '从文件读取',
 			value: 'fromFile',
-			description: 'Reads data from a spreadsheet file',
-			action: 'Read data from a spreadsheet file',
+			description: '从电子表格文件读取数据',
+			action: '从电子表格文件读取数据',
 		},
 		{
-			name: 'Write to File',
+			name: '写入文件',
 			value: 'toFile',
-			description: 'Writes the workflow data to a spreadsheet file',
-			action: 'Write data to a spreadsheet file',
+			description: '将工作流数据写入电子表格文件',
+			action: '将数据写入电子表格文件',
 		},
 	],
 	default: 'fromFile',
 };
 
 export const binaryProperty: INodeProperties = {
-	displayName: 'Input Binary Field',
+	displayName: '输入二进制字段',
 	name: 'binaryPropertyName',
 	type: 'string',
 	default: 'data',
 	required: true,
 	placeholder: '',
-	hint: 'The name of the input field containing the file data to be processed',
+	hint: '包含要处理的文件数据的输入字段名称',
 	displayOptions: {
 		show: {
 			operation: ['fromFile'],
@@ -39,29 +39,29 @@ export const binaryProperty: INodeProperties = {
 
 export const toFileProperties: INodeProperties[] = [
 	{
-		displayName: 'File Format',
+		displayName: '文件格式',
 		name: 'fileFormat',
 		type: 'options',
 		options: [
 			{
 				name: 'CSV',
 				value: 'csv',
-				description: 'Comma-separated values',
+				description: '逗号分隔值',
 			},
 			{
 				name: 'HTML',
 				value: 'html',
-				description: 'HTML Table',
+				description: 'HTML 表格',
 			},
 			{
 				name: 'ODS',
 				value: 'ods',
-				description: 'OpenDocument Spreadsheet',
+				description: 'OpenDocument 电子表格',
 			},
 			{
 				name: 'RTF',
 				value: 'rtf',
-				description: 'Rich Text Format',
+				description: '富文本格式',
 			},
 			{
 				name: 'XLS',
@@ -80,10 +80,10 @@ export const toFileProperties: INodeProperties[] = [
 				operation: ['toFile'],
 			},
 		},
-		description: 'The format of the file to save the data as',
+		description: '保存数据的文件格式',
 	},
 	{
-		displayName: 'Put Output File in Field',
+		displayName: '输出文件放入字段',
 		name: 'binaryPropertyName',
 		type: 'string',
 		default: 'data',
@@ -94,15 +94,15 @@ export const toFileProperties: INodeProperties[] = [
 			},
 		},
 		placeholder: '',
-		hint: 'The name of the output binary field to put the file in',
+		hint: '要将文件放入的输出二进制字段名称',
 	},
 ];
 
 export const toFileOptions: INodeProperties = {
-	displayName: 'Options',
+	displayName: '选项',
 	name: 'options',
 	type: 'collection',
-	placeholder: 'Add option',
+	placeholder: '添加选项',
 	default: {},
 	displayOptions: {
 		show: {
@@ -111,7 +111,7 @@ export const toFileOptions: INodeProperties = {
 	},
 	options: [
 		{
-			displayName: 'Compression',
+			displayName: '压缩',
 			name: 'compression',
 			type: 'boolean',
 			displayOptions: {
@@ -120,25 +120,24 @@ export const toFileOptions: INodeProperties = {
 				},
 			},
 			default: false,
-			description: 'Whether compression will be applied or not',
+			description: '是否应用压缩',
 		},
 		{
-			displayName: 'File Name',
+			displayName: '文件名',
 			name: 'fileName',
 			type: 'string',
 			default: '',
-			description:
-				'File name to set in binary data. By default will "spreadsheet.&lt;fileFormat&gt;" be used.',
+			description: '在二进制数据中设置的文件名。默认使用 "spreadsheet.&lt;fileFormat&gt;"',
 		},
 		{
-			displayName: 'Header Row',
+			displayName: '标题行',
 			name: 'headerRow',
 			type: 'boolean',
 			default: true,
-			description: 'Whether the first row of the file contains the header names',
+			description: '文件的第一行是否包含标题名称',
 		},
 		{
-			displayName: 'Sheet Name',
+			displayName: '工作表名称',
 			name: 'sheetName',
 			type: 'string',
 			displayOptions: {
@@ -147,16 +146,16 @@ export const toFileOptions: INodeProperties = {
 				},
 			},
 			default: 'Sheet',
-			description: 'Name of the sheet to create in the spreadsheet',
+			description: '在电子表格中创建的工作表名称',
 		},
 	],
 };
 
 export const fromFileOptions: INodeProperties = {
-	displayName: 'Options',
+	displayName: '选项',
 	name: 'options',
 	type: 'collection',
-	placeholder: 'Add option',
+	placeholder: '添加选项',
 	default: {},
 	displayOptions: {
 		show: {
@@ -165,7 +164,7 @@ export const fromFileOptions: INodeProperties = {
 	},
 	options: [
 		{
-			displayName: 'Delimiter',
+			displayName: '分隔符',
 			name: 'delimiter',
 			type: 'string',
 			displayOptions: {
@@ -174,11 +173,11 @@ export const fromFileOptions: INodeProperties = {
 				},
 			},
 			default: ',',
-			placeholder: 'e.g. ,',
-			description: 'Set the field delimiter, usually a comma',
+			placeholder: '例如：,',
+			description: '设置字段分隔符，通常是逗号',
 		},
 		{
-			displayName: 'Encoding',
+			displayName: '编码',
 			name: 'encoding',
 			type: 'options',
 			displayOptions: {
@@ -198,7 +197,7 @@ export const fromFileOptions: INodeProperties = {
 			default: 'utf-8',
 		},
 		{
-			displayName: 'Exclude Byte Order Mark (BOM)',
+			displayName: '排除字节顺序标记 (BOM)',
 			name: 'enableBOM',
 			type: 'boolean',
 			displayOptions: {
@@ -207,11 +206,10 @@ export const fromFileOptions: INodeProperties = {
 				},
 			},
 			default: false,
-			description:
-				'Whether to detect and exclude the byte-order-mark from the CSV Input if present',
+			description: '是否检测并排除 CSV 输入中的字节顺序标记（如果存在）',
 		},
 		{
-			displayName: 'Preserve Quotes',
+			displayName: '保留引号',
 			name: 'relaxQuotes',
 			type: 'boolean',
 			displayOptions: {
@@ -220,26 +218,24 @@ export const fromFileOptions: INodeProperties = {
 				},
 			},
 			default: false,
-			description:
-				"Whether to handle unclosed quotes in CSV fields as part of the field's content instead of throwing a parsing error",
+			description: '是否将 CSV 字段中未闭合的引号作为字段内容的一部分处理，而不是抛出解析错误',
 		},
 		{
-			displayName: 'Header Row',
+			displayName: '标题行',
 			name: 'headerRow',
 			type: 'boolean',
 			default: true,
-			description: 'Whether the first row of the file contains the header names',
+			description: '文件的第一行是否包含标题名称',
 		},
 		{
-			displayName: 'Include Empty Cells',
+			displayName: '包含空单元格',
 			name: 'includeEmptyCells',
 			type: 'boolean',
 			default: false,
-			description:
-				'Whether to include empty cells when reading from file. They will be filled with an empty string.',
+			description: '从文件读取时是否包含空单元格。空单元格将填充为空字符串',
 		},
 		{
-			displayName: 'Max Number of Rows to Load',
+			displayName: '最大加载行数',
 			name: 'maxRowCount',
 			type: 'number',
 			displayOptions: {
@@ -248,45 +244,42 @@ export const fromFileOptions: INodeProperties = {
 				},
 			},
 			default: -1,
-			placeholder: 'e.g. 10',
-			description:
-				'Stop handling records after the requested number of rows are read. Use -1 if you want to load all rows.',
+			placeholder: '例如：10',
+			description: '读取指定行数后停止处理记录。如果要加载所有行，请使用 -1',
 		},
 		{
-			displayName: 'Range',
+			displayName: '范围',
 			name: 'range',
 			type: 'string',
 			default: '',
 			description:
-				'The range to read from the table. If set to a number it will be the starting row. If set to string it will be used as A1-style notation range.',
+				'从表中读取的范围。如果设置为数字，则为起始行。如果设置为字符串，则用作 A1 样式表示法范围',
 		},
 		{
-			displayName: 'RAW Data',
+			displayName: '原始数据',
 			name: 'rawData',
 			type: 'boolean',
 			default: false,
-			description: 'Whether to return RAW data, instead of parsing it',
+			description: '是否返回原始数据，而不是解析后的数据',
 		},
 		{
-			displayName: 'Read As String',
+			displayName: '作为字符串读取',
 			name: 'readAsString',
 			type: 'boolean',
 			default: false,
 			// eslint-disable-next-line n8n-nodes-base/node-param-description-boolean-without-whether
-			description:
-				'In some cases and file formats, it is necessary to read as string to ensure special characters are interpreted correctly',
+			description: '在某些情况和文件格式中，需要作为字符串读取以确保正确解释特殊字符',
 		},
 		{
-			displayName: 'Sheet Name',
+			displayName: '工作表名称',
 			name: 'sheetName',
 			type: 'string',
 			default: 'Sheet',
-			placeholder: 'e.g. mySheet',
-			description:
-				'Name of the sheet to read from in the spreadsheet (if supported). If not set, the first one will be chosen.',
+			placeholder: '例如：mySheet',
+			description: '电子表格中要读取的工作表名称（如果支持）。如果未设置，将选择第一个',
 		},
 		{
-			displayName: 'Starting Line',
+			displayName: '起始行',
 			name: 'fromLine',
 			type: 'number',
 			displayOptions: {
@@ -295,33 +288,32 @@ export const fromFileOptions: INodeProperties = {
 				},
 			},
 			default: 0,
-			placeholder: 'e.g. 0',
-			description: 'Start handling records from the requested line number. Starts at 0.',
+			placeholder: '例如：0',
+			description: '从请求的行号开始处理记录。从 0 开始',
 		},
 		{
-			displayName: 'Skip Records With Errors',
+			displayName: '跳过有错误的记录',
 			name: 'skipRecordsWithErrors',
 			type: 'fixedCollection',
 			default: { value: { enabled: true, maxSkippedRecords: -1 } },
 			options: [
 				{
-					displayName: 'Value',
+					displayName: '值',
 					name: 'value',
 					values: [
 						{
-							displayName: 'Enabled',
+							displayName: '启用',
 							name: 'enabled',
 							type: 'boolean',
 							default: false,
-							description: 'Whether to skip records with errors when reading from file',
+							description: '从文件读取时是否跳过有错误的记录',
 						},
 						{
-							displayName: 'Max Skipped Records',
+							displayName: '最大跳过记录数',
 							name: 'maxSkippedRecords',
 							type: 'number',
 							default: -1,
-							description:
-								'The maximum number of records that can be skipped, will throw an error if exceeded. Set to -1 to remove limit.',
+							description: '可以跳过的最大记录数，超过此数量将抛出错误。设置为 -1 以移除限制',
 						},
 					],
 				},

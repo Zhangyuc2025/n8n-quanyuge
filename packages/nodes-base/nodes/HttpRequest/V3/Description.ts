@@ -4,12 +4,12 @@ import { optimizeResponseProperties } from '../shared/optimizeResponse';
 
 const preBuiltAgentsCallout: INodeProperties = {
 	// eslint-disable-next-line n8n-nodes-base/node-param-display-name-miscased
-	displayName: 'Try the HTTP request tool with our pre-built',
+	displayName: '试用我们的预置 HTTP 请求工具',
 	name: 'preBuiltAgentsCalloutHttpRequest',
 	type: 'callout',
 	typeOptions: {
 		calloutAction: {
-			label: 'Joke agent',
+			label: '笑话代理',
 			icon: 'bot',
 			type: 'openSampleWorkflowTemplate',
 			templateId: 'joke_agent_with_http_tool',
@@ -27,7 +27,7 @@ export const mainProperties: INodeProperties[] = [
 		default: '',
 	},
 	{
-		displayName: 'Method',
+		displayName: '请求方法',
 		name: 'method',
 		type: 'options',
 		options: [
@@ -61,43 +61,42 @@ export const mainProperties: INodeProperties[] = [
 			},
 		],
 		default: 'GET',
-		description: 'The request method to use',
+		description: '要使用的 HTTP 请求方法',
 	},
 	{
-		displayName: 'URL',
+		displayName: 'URL 地址',
 		name: 'url',
 		type: 'string',
 		default: '',
 		placeholder: 'http://example.com/index.html',
-		description: 'The URL to make the request to',
+		description: '要发送请求的 URL 地址',
 		required: true,
 	},
 	{
-		displayName: 'Authentication',
+		displayName: '认证方式',
 		name: 'authentication',
 		noDataExpression: true,
 		type: 'options',
 		options: [
 			{
-				name: 'None',
+				name: '无',
 				value: 'none',
 			},
 			{
-				name: 'Predefined Credential Type',
+				name: '预定义凭证类型',
 				value: 'predefinedCredentialType',
-				description:
-					"We've already implemented auth for many services so that you don't have to set it up manually",
+				description: '我们已经为许多服务实现了认证，无需您手动设置',
 			},
 			{
-				name: 'Generic Credential Type',
+				name: '通用凭证类型',
 				value: 'genericCredentialType',
-				description: 'Fully customizable. Choose between basic, header, OAuth2, etc.',
+				description: '完全可自定义。可选择基本认证、请求头认证、OAuth2 等。',
 			},
 		],
 		default: 'none',
 	},
 	{
-		displayName: 'Credential Type',
+		displayName: '凭证类型',
 		name: 'nodeCredentialType',
 		type: 'credentialsSelect',
 		noDataExpression: true,
@@ -111,8 +110,7 @@ export const mainProperties: INodeProperties[] = [
 		},
 	},
 	{
-		displayName:
-			'Make sure you have specified the scope(s) for the Service Account in the credential',
+		displayName: '请确保您已在凭证中为服务账户指定了作用域',
 		name: 'googleApiWarning',
 		type: 'notice',
 		default: '',
@@ -123,7 +121,7 @@ export const mainProperties: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Generic Auth Type',
+		displayName: '通用认证类型',
 		name: 'genericAuthType',
 		type: 'credentialsSelect',
 		required: true,
@@ -136,14 +134,14 @@ export const mainProperties: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'SSL Certificates',
+		displayName: 'SSL 证书',
 		name: 'provideSslCertificates',
 		type: 'boolean',
 		default: false,
 		isNodeSetting: true,
 	},
 	{
-		displayName: "Provide certificates in node's 'Credential for SSL Certificates' parameter",
+		displayName: '在节点的「SSL 证书凭证」参数中提供证书',
 		name: 'provideSslCertificatesNotice',
 		type: 'notice',
 		default: '',
@@ -155,7 +153,7 @@ export const mainProperties: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'SSL Certificate',
+		displayName: 'SSL 证书',
 		name: 'sslCertificate',
 		type: 'credentials',
 		default: '',
@@ -166,15 +164,15 @@ export const mainProperties: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Send Query Parameters',
+		displayName: '发送查询参数',
 		name: 'sendQuery',
 		type: 'boolean',
 		default: false,
 		noDataExpression: true,
-		description: 'Whether the request has query params or not',
+		description: '请求是否包含查询参数',
 	},
 	{
-		displayName: 'Specify Query Parameters',
+		displayName: '指定查询参数方式',
 		name: 'specifyQuery',
 		type: 'options',
 		displayOptions: {
@@ -184,18 +182,18 @@ export const mainProperties: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Using Fields Below',
+				name: '使用下方字段',
 				value: 'keypair',
 			},
 			{
-				name: 'Using JSON',
+				name: '使用 JSON',
 				value: 'json',
 			},
 		],
 		default: 'keypair',
 	},
 	{
-		displayName: 'Query Parameters',
+		displayName: '查询参数',
 		name: 'queryParameters',
 		type: 'fixedCollection',
 		displayOptions: {
@@ -207,7 +205,7 @@ export const mainProperties: INodeProperties[] = [
 		typeOptions: {
 			multipleValues: true,
 		},
-		placeholder: 'Add Parameter',
+		placeholder: '添加参数',
 		default: {
 			parameters: [
 				{
@@ -219,16 +217,16 @@ export const mainProperties: INodeProperties[] = [
 		options: [
 			{
 				name: 'parameters',
-				displayName: 'Parameter',
+				displayName: '参数',
 				values: [
 					{
-						displayName: 'Name',
+						displayName: '名称',
 						name: 'name',
 						type: 'string',
 						default: '',
 					},
 					{
-						displayName: 'Value',
+						displayName: '值',
 						name: 'value',
 						type: 'string',
 						default: '',
@@ -250,15 +248,15 @@ export const mainProperties: INodeProperties[] = [
 		default: '',
 	},
 	{
-		displayName: 'Send Headers',
+		displayName: '发送请求头',
 		name: 'sendHeaders',
 		type: 'boolean',
 		default: false,
 		noDataExpression: true,
-		description: 'Whether the request has headers or not',
+		description: '请求是否包含请求头',
 	},
 	{
-		displayName: 'Specify Headers',
+		displayName: '指定请求头方式',
 		name: 'specifyHeaders',
 		type: 'options',
 		displayOptions: {
@@ -268,18 +266,18 @@ export const mainProperties: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Using Fields Below',
+				name: '使用下方字段',
 				value: 'keypair',
 			},
 			{
-				name: 'Using JSON',
+				name: '使用 JSON',
 				value: 'json',
 			},
 		],
 		default: 'keypair',
 	},
 	{
-		displayName: 'Header Parameters',
+		displayName: '请求头参数',
 		name: 'headerParameters',
 		type: 'fixedCollection',
 		displayOptions: {
@@ -291,7 +289,7 @@ export const mainProperties: INodeProperties[] = [
 		typeOptions: {
 			multipleValues: true,
 		},
-		placeholder: 'Add Parameter',
+		placeholder: '添加参数',
 		default: {
 			parameters: [
 				{
@@ -303,16 +301,16 @@ export const mainProperties: INodeProperties[] = [
 		options: [
 			{
 				name: 'parameters',
-				displayName: 'Parameter',
+				displayName: '参数',
 				values: [
 					{
-						displayName: 'Name',
+						displayName: '名称',
 						name: 'name',
 						type: 'string',
 						default: '',
 					},
 					{
-						displayName: 'Value',
+						displayName: '值',
 						name: 'value',
 						type: 'string',
 						default: '',
@@ -334,15 +332,15 @@ export const mainProperties: INodeProperties[] = [
 		default: '',
 	},
 	{
-		displayName: 'Send Body',
+		displayName: '发送请求体',
 		name: 'sendBody',
 		type: 'boolean',
 		default: false,
 		noDataExpression: true,
-		description: 'Whether the request has a body or not',
+		description: '请求是否包含请求体',
 	},
 	{
-		displayName: 'Body Content Type',
+		displayName: '请求体内容类型',
 		name: 'contentType',
 		type: 'options',
 		displayOptions: {
@@ -352,11 +350,11 @@ export const mainProperties: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Form Urlencoded',
+				name: '表单编码',
 				value: 'form-urlencoded',
 			},
 			{
-				name: 'Form-Data',
+				name: '表单数据',
 				value: 'multipart-form-data',
 			},
 			{
@@ -365,19 +363,19 @@ export const mainProperties: INodeProperties[] = [
 			},
 			{
 				// eslint-disable-next-line n8n-nodes-base/node-param-display-name-miscased
-				name: 'n8n Binary File',
+				name: 'n8n 二进制文件',
 				value: 'binaryData',
 			},
 			{
-				name: 'Raw',
+				name: '原始',
 				value: 'raw',
 			},
 		],
 		default: 'json',
-		description: 'Content-Type to use to send body parameters',
+		description: '用于发送请求体参数的内容类型',
 	},
 	{
-		displayName: 'Specify Body',
+		displayName: '指定请求体方式',
 		name: 'specifyBody',
 		type: 'options',
 		displayOptions: {
@@ -388,21 +386,21 @@ export const mainProperties: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Using Fields Below',
+				name: '使用下方字段',
 				value: 'keypair',
 			},
 			{
-				name: 'Using JSON',
+				name: '使用 JSON',
 				value: 'json',
 			},
 		],
 		default: 'keypair',
 		// eslint-disable-next-line n8n-nodes-base/node-param-description-miscased-json
 		description:
-			'The body can be specified using explicit fields (<code>keypair</code>) or using a JavaScript object (<code>json</code>)',
+			'可以使用显式字段（<code>keypair</code>）或 JavaScript 对象（<code>json</code>）指定请求体',
 	},
 	{
-		displayName: 'Body Parameters',
+		displayName: '请求体参数',
 		name: 'bodyParameters',
 		type: 'fixedCollection',
 		displayOptions: {
@@ -415,7 +413,7 @@ export const mainProperties: INodeProperties[] = [
 		typeOptions: {
 			multipleValues: true,
 		},
-		placeholder: 'Add Parameter',
+		placeholder: '添加参数',
 		default: {
 			parameters: [
 				{
@@ -427,22 +425,22 @@ export const mainProperties: INodeProperties[] = [
 		options: [
 			{
 				name: 'parameters',
-				displayName: 'Parameter',
+				displayName: '参数',
 				values: [
 					{
-						displayName: 'Name',
+						displayName: '名称',
 						name: 'name',
 						type: 'string',
 						default: '',
 						description:
-							'ID of the field to set. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+							'要设置的字段 ID。从列表中选择，或使用<a href="https://docs.n8n.io/code/expressions/">表达式</a>指定 ID。',
 					},
 					{
-						displayName: 'Value',
+						displayName: '值',
 						name: 'value',
 						type: 'string',
 						default: '',
-						description: 'Value of the field to set',
+						description: '要设置的字段值',
 					},
 				],
 			},
@@ -462,7 +460,7 @@ export const mainProperties: INodeProperties[] = [
 		default: '',
 	},
 	{
-		displayName: 'Body Parameters',
+		displayName: '请求体参数',
 		name: 'bodyParameters',
 		type: 'fixedCollection',
 		displayOptions: {
@@ -489,7 +487,7 @@ export const mainProperties: INodeProperties[] = [
 				displayName: 'Parameter',
 				values: [
 					{
-						displayName: 'Parameter Type',
+						displayName: '参数类型',
 						name: 'parameterType',
 						type: 'options',
 						options: [
@@ -526,7 +524,7 @@ export const mainProperties: INodeProperties[] = [
 						description: 'Value of the field to set',
 					},
 					{
-						displayName: 'Input Data Field Name',
+						displayName: '输入数据字段名',
 						name: 'inputDataFieldName',
 						type: 'string',
 						displayOptions: {
@@ -565,7 +563,7 @@ export const mainProperties: INodeProperties[] = [
 		default: 'keypair',
 	},
 	{
-		displayName: 'Body Parameters',
+		displayName: '请求体参数',
 		name: 'bodyParameters',
 		type: 'fixedCollection',
 		displayOptions: {
@@ -612,7 +610,7 @@ export const mainProperties: INodeProperties[] = [
 		],
 	},
 	{
-		displayName: 'Body',
+		displayName: '请求体',
 		name: 'body',
 		type: 'string',
 		displayOptions: {
@@ -625,7 +623,7 @@ export const mainProperties: INodeProperties[] = [
 		placeholder: 'field1=value1&field2=value2',
 	},
 	{
-		displayName: 'Input Data Field Name',
+		displayName: '输入数据字段名',
 		name: 'inputDataFieldName',
 		type: 'string',
 		displayOptions: {
@@ -638,7 +636,7 @@ export const mainProperties: INodeProperties[] = [
 		description: 'The name of the incoming field containing the binary file data to be processed',
 	},
 	{
-		displayName: 'Content Type',
+		displayName: '内容类型',
 		name: 'rawContentType',
 		type: 'string',
 		displayOptions: {
@@ -651,7 +649,7 @@ export const mainProperties: INodeProperties[] = [
 		placeholder: 'text/html',
 	},
 	{
-		displayName: 'Body',
+		displayName: '请求体',
 		name: 'body',
 		type: 'string',
 		displayOptions: {
@@ -664,16 +662,16 @@ export const mainProperties: INodeProperties[] = [
 		placeholder: '',
 	},
 	{
-		displayName: 'Options',
+		displayName: '选项',
 		name: 'options',
 		type: 'collection',
-		placeholder: 'Add option',
+		placeholder: '添加选项',
 		default: {},
 		options: [
 			{
-				displayName: 'Batching',
+				displayName: '批次处理',
 				name: 'batching',
-				placeholder: 'Add Batching',
+				placeholder: '添加批次处理',
 				type: 'fixedCollection',
 				typeOptions: {
 					multipleValues: false,
@@ -683,11 +681,11 @@ export const mainProperties: INodeProperties[] = [
 				},
 				options: [
 					{
-						displayName: 'Batching',
+						displayName: '批次处理',
 						name: 'batch',
 						values: [
 							{
-								displayName: 'Items per Batch',
+								displayName: '每批项目数',
 								name: 'batchSize',
 								type: 'number',
 								typeOptions: {
@@ -714,7 +712,7 @@ export const mainProperties: INodeProperties[] = [
 				],
 			},
 			{
-				displayName: 'Ignore SSL Issues (Insecure)',
+				displayName: '忽略 SSL 证书问题（不安全）',
 				name: 'allowUnauthorizedCerts',
 				type: 'boolean',
 				noDataExpression: true,
@@ -724,7 +722,7 @@ export const mainProperties: INodeProperties[] = [
 					'Whether to download the response even if SSL certificate validation is not possible',
 			},
 			{
-				displayName: 'Array Format in Query Parameters',
+				displayName: '查询参数中的数组格式',
 				name: 'queryParameterArrays',
 				type: 'options',
 				displayOptions: {
@@ -755,14 +753,14 @@ export const mainProperties: INodeProperties[] = [
 				default: 'brackets',
 			},
 			{
-				displayName: 'Lowercase Headers',
+				displayName: '小写请求头',
 				name: 'lowercaseHeaders',
 				type: 'boolean',
 				default: true,
 				description: 'Whether to lowercase header names',
 			},
 			{
-				displayName: 'Redirects',
+				displayName: '重定向',
 				name: 'redirect',
 				placeholder: 'Add Redirect',
 				type: 'fixedCollection',
@@ -776,7 +774,7 @@ export const mainProperties: INodeProperties[] = [
 						name: 'redirect',
 						values: [
 							{
-								displayName: 'Follow Redirects',
+								displayName: '跟随重定向',
 								name: 'followRedirects',
 								type: 'boolean',
 								default: false,
@@ -784,7 +782,7 @@ export const mainProperties: INodeProperties[] = [
 								description: 'Whether to follow all redirects',
 							},
 							{
-								displayName: 'Max Redirects',
+								displayName: '最大重定向次数',
 								name: 'maxRedirects',
 								type: 'number',
 								displayOptions: {
@@ -805,7 +803,7 @@ export const mainProperties: INodeProperties[] = [
 				},
 			},
 			{
-				displayName: 'Redirects',
+				displayName: '重定向',
 				name: 'redirect',
 				placeholder: 'Add Redirect',
 				type: 'fixedCollection',
@@ -821,7 +819,7 @@ export const mainProperties: INodeProperties[] = [
 						name: 'redirect',
 						values: [
 							{
-								displayName: 'Follow Redirects',
+								displayName: '跟随重定向',
 								name: 'followRedirects',
 								type: 'boolean',
 								default: true,
@@ -829,7 +827,7 @@ export const mainProperties: INodeProperties[] = [
 								description: 'Whether to follow all redirects',
 							},
 							{
-								displayName: 'Max Redirects',
+								displayName: '最大重定向次数',
 								name: 'maxRedirects',
 								type: 'number',
 								displayOptions: {
@@ -850,7 +848,7 @@ export const mainProperties: INodeProperties[] = [
 				},
 			},
 			{
-				displayName: 'Response',
+				displayName: '响应',
 				name: 'response',
 				placeholder: 'Add response',
 				type: 'fixedCollection',
@@ -862,11 +860,11 @@ export const mainProperties: INodeProperties[] = [
 				},
 				options: [
 					{
-						displayName: 'Response',
+						displayName: '响应',
 						name: 'response',
 						values: [
 							{
-								displayName: 'Include Response Headers and Status',
+								displayName: '包含响应头和状态',
 								name: 'fullResponse',
 								type: 'boolean',
 								default: false,
@@ -874,14 +872,14 @@ export const mainProperties: INodeProperties[] = [
 									'Whether to return the full response (headers and response status code) data instead of only the body',
 							},
 							{
-								displayName: 'Never Error',
+								displayName: '永不报错',
 								name: 'neverError',
 								type: 'boolean',
 								default: false,
 								description: 'Whether to succeeds also when status code is not 2xx',
 							},
 							{
-								displayName: 'Response Format',
+								displayName: '响应格式',
 								name: 'responseFormat',
 								type: 'options',
 								noDataExpression: true,
@@ -907,7 +905,7 @@ export const mainProperties: INodeProperties[] = [
 								description: 'The format in which the data gets returned from the URL',
 							},
 							{
-								displayName: 'Put Output in Field',
+								displayName: '输出到字段',
 								name: 'outputPropertyName',
 								type: 'string',
 								default: 'data',
@@ -925,7 +923,7 @@ export const mainProperties: INodeProperties[] = [
 				],
 			},
 			{
-				displayName: 'Pagination',
+				displayName: '分页',
 				name: 'pagination',
 				placeholder: 'Add pagination',
 				type: 'fixedCollection',
@@ -937,11 +935,11 @@ export const mainProperties: INodeProperties[] = [
 				},
 				options: [
 					{
-						displayName: 'Pagination',
+						displayName: '分页',
 						name: 'pagination',
 						values: [
 							{
-								displayName: 'Pagination Mode',
+								displayName: '分页模式',
 								name: 'paginationMode',
 								type: 'options',
 								typeOptions: {
@@ -977,7 +975,7 @@ export const mainProperties: INodeProperties[] = [
 								default: '',
 							},
 							{
-								displayName: 'Next URL',
+								displayName: '下一页 URL',
 								name: 'nextURL',
 								type: 'string',
 								displayOptions: {
@@ -990,7 +988,7 @@ export const mainProperties: INodeProperties[] = [
 									'Should evaluate to the URL of the next page. <a href="https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/#pagination" target="_blank">More info</a>.',
 							},
 							{
-								displayName: 'Parameters',
+								displayName: '参数',
 								name: 'parameters',
 								type: 'fixedCollection',
 								displayOptions: {
@@ -1018,7 +1016,7 @@ export const mainProperties: INodeProperties[] = [
 										displayName: 'Parameter',
 										values: [
 											{
-												displayName: 'Type',
+												displayName: '类型',
 												name: 'type',
 												type: 'options',
 												options: [
@@ -1057,7 +1055,7 @@ export const mainProperties: INodeProperties[] = [
 								],
 							},
 							{
-								displayName: 'Pagination Complete When',
+								displayName: '分页完成条件',
 								name: 'paginationCompleteWhen',
 								type: 'options',
 								typeOptions: {
@@ -1114,7 +1112,7 @@ export const mainProperties: INodeProperties[] = [
 									'Should evaluate to true when pagination is complete. <a href="https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/#pagination" target="_blank">More info</a>.',
 							},
 							{
-								displayName: 'Limit Pages Fetched',
+								displayName: '限制获取页数',
 								name: 'limitPagesFetched',
 								type: 'boolean',
 								typeOptions: {
@@ -1130,7 +1128,7 @@ export const mainProperties: INodeProperties[] = [
 								description: 'Whether the number of requests should be limited',
 							},
 							{
-								displayName: 'Max Pages',
+								displayName: '最大页数',
 								name: 'maxRequests',
 								type: 'number',
 								typeOptions: {
@@ -1166,7 +1164,7 @@ export const mainProperties: INodeProperties[] = [
 				],
 			},
 			{
-				displayName: 'Proxy',
+				displayName: '代理服务器',
 				name: 'proxy',
 				type: 'string',
 				default: '',
@@ -1174,7 +1172,7 @@ export const mainProperties: INodeProperties[] = [
 				description: 'HTTP proxy to use',
 			},
 			{
-				displayName: 'Timeout',
+				displayName: '超时时间',
 				name: 'timeout',
 				type: 'number',
 				typeOptions: {

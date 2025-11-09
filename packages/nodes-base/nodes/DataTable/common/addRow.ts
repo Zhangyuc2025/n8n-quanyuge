@@ -11,7 +11,7 @@ import { dataObjectToApiInput } from './utils';
 
 export function makeAddRow(operation: string, displayOptions: IDisplayOptions) {
 	return {
-		displayName: 'Columns',
+		displayName: '列',
 		name: 'columns',
 		type: 'resourceMapper',
 		default: {
@@ -23,12 +23,12 @@ export function makeAddRow(operation: string, displayOptions: IDisplayOptions) {
 		typeOptions: {
 			loadOptionsDependsOn: [`${DATA_TABLE_ID_FIELD}.value`],
 			resourceMapper: {
-				valuesLabel: `Values to ${operation}`,
+				valuesLabel: `要${operation}的值`,
 				resourceMapperMethod: 'getDataTables',
 				mode: 'add',
 				fieldWords: {
-					singular: 'column',
-					plural: 'columns',
+					singular: '列',
+					plural: '列',
 				},
 				addAllFields: true,
 				multiKeyMatch: true,

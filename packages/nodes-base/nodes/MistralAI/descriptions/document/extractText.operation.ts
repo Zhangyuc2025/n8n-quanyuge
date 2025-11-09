@@ -3,7 +3,7 @@ import { updateDisplayOptions } from 'n8n-workflow';
 
 const properties: INodeProperties[] = [
 	{
-		displayName: 'Model',
+		displayName: '模型',
 		name: 'model',
 		type: 'options',
 		options: [
@@ -12,35 +12,35 @@ const properties: INodeProperties[] = [
 				value: 'mistral-ocr-latest',
 			},
 		],
-		description: 'The OCR model to use',
+		description: '要使用的 OCR 模型',
 		required: true,
 		default: 'mistral-ocr-latest',
 	},
 	{
-		displayName: 'Document Type',
+		displayName: '文档类型',
 		name: 'documentType',
 		type: 'options',
 		options: [
 			{
-				name: 'Document',
+				name: '文档',
 				value: 'document_url',
 			},
 			{
-				name: 'Image',
+				name: '图片',
 				value: 'image_url',
 			},
 		],
-		description: 'The type of document to process',
+		description: '要处理的文档类型',
 		required: true,
 		default: 'document_url',
 	},
 	{
-		displayName: 'Input Type',
+		displayName: '输入类型',
 		name: 'inputType',
 		type: 'options',
 		options: [
 			{
-				name: 'Binary Data',
+				name: '二进制数据',
 				value: 'binary',
 			},
 			{
@@ -48,7 +48,7 @@ const properties: INodeProperties[] = [
 				value: 'url',
 			},
 		],
-		description: 'How the document will be provided',
+		description: '文档的提供方式',
 		required: true,
 		default: 'binary',
 		disabledOptions: {
@@ -58,12 +58,12 @@ const properties: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Input Binary Field',
+		displayName: '输入二进制字段',
 		name: 'binaryProperty',
 		type: 'string',
-		description: 'Name of the input binary field that contains the file to process',
-		placeholder: 'e.g. data',
-		hint: 'Uploaded document files must not exceed 50 MB in size and should be no longer than 1,000 pages.',
+		description: '包含要处理文件的输入二进制字段名称',
+		placeholder: '例如：data',
+		hint: '上传的文档文件大小不得超过 50 MB，且页数不得超过 1,000 页。',
 		required: true,
 		default: 'data',
 		displayOptions: {
@@ -76,8 +76,8 @@ const properties: INodeProperties[] = [
 		displayName: 'URL',
 		name: 'url',
 		type: 'string',
-		description: 'URL of the document or image to process',
-		placeholder: 'e.g. https://example.com/document.pdf',
+		description: '要处理的文档或图片的 URL',
+		placeholder: '例如：https://example.com/document.pdf',
 		required: true,
 		default: '',
 		displayOptions: {
@@ -87,25 +87,24 @@ const properties: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Options',
+		displayName: '选项',
 		name: 'options',
 		type: 'collection',
-		placeholder: 'Add Option',
+		placeholder: '添加选项',
 		default: {},
 		options: [
 			{
-				displayName: 'Enable Batch Processing',
+				displayName: '启用批处理',
 				name: 'batch',
 				type: 'boolean',
-				description:
-					'Whether to process multiple documents in a single API call (more cost-efficient)',
+				description: '是否在单次 API 调用中处理多个文档（更具成本效益）',
 				default: false,
 			},
 			{
-				displayName: 'Batch Size',
+				displayName: '批处理大小',
 				name: 'batchSize',
 				type: 'number',
-				description: 'Maximum number of documents to process in a single batch',
+				description: '单次批处理中要处理的最大文档数',
 				default: 50,
 				typeOptions: { maxValue: 2048 },
 				required: true,
@@ -116,11 +115,11 @@ const properties: INodeProperties[] = [
 				},
 			},
 			{
-				displayName: 'Delete Files After Processing',
+				displayName: '处理后删除文件',
 				name: 'deleteFiles',
 				type: 'boolean',
 				default: true,
-				description: 'Whether to delete the files on Mistral Cloud after processing',
+				description: '是否在处理后删除 Mistral Cloud 上的文件',
 				displayOptions: {
 					show: {
 						batch: [true],

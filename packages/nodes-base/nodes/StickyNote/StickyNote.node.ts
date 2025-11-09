@@ -7,14 +7,14 @@ import type {
 
 export class StickyNote implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Sticky Note',
+		displayName: '便签',
 		name: 'stickyNote',
 		icon: 'fa:sticky-note',
 		group: ['input'],
 		version: 1,
-		description: 'Make your workflow easier to understand',
+		description: '让您的工作流更易于理解',
 		defaults: {
-			name: 'Sticky Note',
+			name: '便签',
 			color: '#FFD233',
 		},
 
@@ -23,28 +23,28 @@ export class StickyNote implements INodeType {
 		outputs: [],
 		properties: [
 			{
-				displayName: 'Content',
+				displayName: '内容',
 				name: 'content',
 				type: 'string',
 				default:
-					"## I'm a note \n**Double click** to edit me. [Guide](https://docs.n8n.io/workflows/sticky-notes/)",
+					'## 我是便签 \n**双击** 编辑我。[指南](https://docs.n8n.io/workflows/sticky-notes/)',
 			},
 			{
-				displayName: 'Height',
+				displayName: '高度',
 				name: 'height',
 				type: 'number',
 				required: true,
 				default: 160,
 			},
 			{
-				displayName: 'Width',
+				displayName: '宽度',
 				name: 'width',
 				type: 'number',
 				required: true,
 				default: 240,
 			},
 			{
-				displayName: 'Color',
+				displayName: '颜色',
 				name: 'color',
 
 				type: 'number',

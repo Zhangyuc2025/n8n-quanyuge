@@ -20,7 +20,7 @@ function getInputs(parameters: IDataObject) {
 	const inputs: INodeInputConfiguration[] = [
 		{ displayName: '', type: 'main' },
 		{
-			displayName: 'Model',
+			displayName: '模型',
 			maxConnections: 1,
 			type: 'ai_languageModel',
 			required: true,
@@ -29,7 +29,7 @@ function getInputs(parameters: IDataObject) {
 
 	if (operationMode === 'documentLoader') {
 		inputs.push({
-			displayName: 'Document',
+			displayName: '文档',
 			type: 'ai_document',
 			required: true,
 			maxConnections: 1,
@@ -39,7 +39,7 @@ function getInputs(parameters: IDataObject) {
 
 	if (chunkingMode === 'advanced') {
 		inputs.push({
-			displayName: 'Text Splitter',
+			displayName: '文本分割器',
 			type: 'ai_textSplitter',
 			required: false,
 			maxConnections: 1,
@@ -57,7 +57,7 @@ export class ChainSummarizationV2 implements INodeType {
 			...baseDescription,
 			version: [2, 2.1],
 			defaults: {
-				name: 'Summarization Chain',
+				name: '摘要链',
 				color: '#909298',
 			},
 
@@ -67,46 +67,46 @@ export class ChainSummarizationV2 implements INodeType {
 			properties: [
 				getTemplateNoticeField(1951),
 				{
-					displayName: 'Data to Summarize',
+					displayName: '要摘要的数据',
 					name: 'operationMode',
 					noDataExpression: true,
 					type: 'options',
-					description: 'How to pass data into the summarization chain',
+					description: '如何将数据传入摘要链',
 					default: 'nodeInputJson',
 					options: [
 						{
-							name: 'Use Node Input (JSON)',
+							name: '使用节点输入（JSON）',
 							value: 'nodeInputJson',
-							description: 'Summarize the JSON data coming into this node from the previous one',
+							description: '摘要从上一个节点传入本节点的 JSON 数据',
 						},
 						{
-							name: 'Use Node Input (Binary)',
+							name: '使用节点输入（二进制）',
 							value: 'nodeInputBinary',
-							description: 'Summarize the binary data coming into this node from the previous one',
+							description: '摘要从上一个节点传入本节点的二进制数据',
 						},
 						{
-							name: 'Use Document Loader',
+							name: '使用文档加载器',
 							value: 'documentLoader',
-							description: 'Use a loader sub-node with more configuration options',
+							description: '使用具有更多配置选项的加载器子节点',
 						},
 					],
 				},
 				{
-					displayName: 'Chunking Strategy',
+					displayName: '分块策略',
 					name: 'chunkingMode',
 					noDataExpression: true,
 					type: 'options',
-					description: 'Chunk splitting strategy',
+					description: '分块分割策略',
 					default: 'simple',
 					options: [
 						{
-							name: 'Simple (Define Below)',
+							name: '简单（在下面定义）',
 							value: 'simple',
 						},
 						{
-							name: 'Advanced',
+							name: '高级',
 							value: 'advanced',
-							description: 'Use a splitter sub-node with more configuration options',
+							description: '使用具有更多配置选项的分割器子节点',
 						},
 					],
 					displayOptions: {
@@ -116,10 +116,9 @@ export class ChainSummarizationV2 implements INodeType {
 					},
 				},
 				{
-					displayName: 'Characters Per Chunk',
+					displayName: '每个分块的字符数',
 					name: 'chunkSize',
-					description:
-						'Controls the max size (in terms of number of characters) of the final document chunk',
+					description: '控制最终文档分块的最大大小（以字符数计）',
 					type: 'number',
 					default: 1000,
 					displayOptions: {
@@ -129,10 +128,10 @@ export class ChainSummarizationV2 implements INodeType {
 					},
 				},
 				{
-					displayName: 'Chunk Overlap (Characters)',
+					displayName: '分块重叠（字符）',
 					name: 'chunkOverlap',
 					type: 'number',
-					description: 'Specifies how much characters overlap there should be between chunks',
+					description: '指定分块之间应有多少字符重叠',
 					default: 200,
 					displayOptions: {
 						show: {
@@ -141,19 +140,18 @@ export class ChainSummarizationV2 implements INodeType {
 					},
 				},
 				{
-					displayName: 'Options',
+					displayName: '选项',
 					name: 'options',
 					type: 'collection',
 					default: {},
-					placeholder: 'Add Option',
+					placeholder: '添加选项',
 					options: [
 						{
-							displayName: 'Input Data Field Name',
+							displayName: '输入数据字段名称',
 							name: 'binaryDataKey',
 							type: 'string',
 							default: 'data',
-							description:
-								'The name of the field in the agent or chain’s input that contains the binary file to be processed',
+							description: '智能体或链输入中包含要处理的二进制文件的字段名称',
 							displayOptions: {
 								show: {
 									'/operationMode': ['nodeInputBinary'],
@@ -161,7 +159,7 @@ export class ChainSummarizationV2 implements INodeType {
 							},
 						},
 						{
-							displayName: 'Summarization Method and Prompts',
+							displayName: '摘要方法和提示词',
 							name: 'summarizationMethodAndPrompts',
 							type: 'fixedCollection',
 							default: {
@@ -171,45 +169,43 @@ export class ChainSummarizationV2 implements INodeType {
 									combineMapPrompt: DEFAULT_PROMPT_TEMPLATE,
 								},
 							},
-							placeholder: 'Add Option',
+							placeholder: '添加选项',
 							typeOptions: {},
 							options: [
 								{
 									name: 'values',
-									displayName: 'Values',
+									displayName: '值',
 									values: [
 										{
-											displayName: 'Summarization Method',
+											displayName: '摘要方法',
 											name: 'summarizationMethod',
 											type: 'options',
-											description: 'The type of summarization to run',
+											description: '要运行的摘要类型',
 											default: 'map_reduce',
 											options: [
 												{
-													name: 'Map Reduce (Recommended)',
+													name: '映射归并（推荐）',
 													value: 'map_reduce',
-													description:
-														'Summarize each document (or chunk) individually, then summarize those summaries',
+													description: '分别摘要每个文档（或分块），然后再摘要这些摘要',
 												},
 												{
-													name: 'Refine',
+													name: '精炼',
 													value: 'refine',
 													description:
-														'Summarize the first document (or chunk). Then update that summary based on the next document (or chunk), and repeat.',
+														'摘要第一个文档（或分块），然后基于下一个文档（或分块）更新该摘要，并重复此过程',
 												},
 												{
-													name: 'Stuff',
+													name: '填充',
 													value: 'stuff',
-													description:
-														'Pass all documents (or chunks) at once. Ideal for small datasets.',
+													description: '一次性传递所有文档（或分块）。适用于小数据集',
 												},
 											],
 										},
 										{
-											displayName: 'Individual Summary Prompt',
+											displayName: '单个摘要提示词',
 											name: 'combineMapPrompt',
 											type: 'string',
-											hint: 'The prompt to summarize an individual document (or chunk)',
+											hint: '用于摘要单个文档（或分块）的提示词',
 											displayOptions: {
 												hide: {
 													'/options.summarizationMethodAndPrompts.values.summarizationMethod': [
@@ -224,11 +220,11 @@ export class ChainSummarizationV2 implements INodeType {
 											},
 										},
 										{
-											displayName: 'Final Prompt to Combine',
+											displayName: '最终合并提示词',
 											name: 'prompt',
 											type: 'string',
 											default: DEFAULT_PROMPT_TEMPLATE,
-											hint: 'The prompt to combine individual summaries',
+											hint: '用于合并各个摘要的提示词',
 											displayOptions: {
 												hide: {
 													'/options.summarizationMethodAndPrompts.values.summarizationMethod': [
@@ -242,7 +238,7 @@ export class ChainSummarizationV2 implements INodeType {
 											},
 										},
 										{
-											displayName: 'Prompt',
+											displayName: '提示词',
 											name: 'prompt',
 											type: 'string',
 											default: DEFAULT_PROMPT_TEMPLATE,
@@ -259,7 +255,7 @@ export class ChainSummarizationV2 implements INodeType {
 											},
 										},
 										{
-											displayName: 'Subsequent (Refine) Prompt',
+											displayName: '后续（精炼）提示词',
 											name: 'refinePrompt',
 											type: 'string',
 											displayOptions: {
@@ -271,13 +267,13 @@ export class ChainSummarizationV2 implements INodeType {
 												},
 											},
 											default: REFINE_PROMPT_TEMPLATE,
-											hint: 'The prompt to refine the summary based on the next document (or chunk)',
+											hint: '基于下一个文档（或分块）精炼摘要的提示词',
 											typeOptions: {
 												rows: 9,
 											},
 										},
 										{
-											displayName: 'Initial Prompt',
+											displayName: '初始提示词',
 											name: 'refineQuestionPrompt',
 											type: 'string',
 											displayOptions: {
@@ -289,7 +285,7 @@ export class ChainSummarizationV2 implements INodeType {
 												},
 											},
 											default: DEFAULT_PROMPT_TEMPLATE,
-											hint: 'The prompt for the first document (or chunk)',
+											hint: '用于第一个文档（或分块）的提示词',
 											typeOptions: {
 												rows: 9,
 											},

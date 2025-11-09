@@ -8,11 +8,11 @@ export class SpreadsheetFile extends VersionedNodeType {
 	constructor() {
 		const baseDescription: INodeTypeBaseDescription = {
 			hidden: true,
-			displayName: 'Spreadsheet File',
+			displayName: '电子表格文件',
 			name: 'spreadsheetFile',
 			icon: 'fa:table',
 			group: ['transform'],
-			description: 'Reads and writes data from a spreadsheet file like CSV, XLS, ODS, etc',
+			description: '从电子表格文件（如 CSV、XLS、ODS 等）读取和写入数据',
 			defaultVersion: 2,
 		};
 

@@ -4,7 +4,7 @@ import { BrevoNode } from './GenericFunctions';
 
 export const emailOperations: INodeProperties[] = [
 	{
-		displayName: 'Operation',
+		displayName: '操作',
 		name: 'operation',
 		type: 'options',
 		noDataExpression: true,
@@ -15,14 +15,14 @@ export const emailOperations: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Send',
+				name: '发送',
 				value: 'send',
-				action: 'Send a transactional email',
+				action: '发送事务性电子邮件',
 			},
 			{
-				name: 'Send Template',
+				name: '发送模板',
 				value: 'sendTemplate',
-				action: 'Send an email with an existing Template',
+				action: '使用现有模板发送电子邮件',
 			},
 		],
 		routing: {
@@ -37,7 +37,7 @@ export const emailOperations: INodeProperties[] = [
 
 const sendHtmlEmailFields: INodeProperties[] = [
 	{
-		displayName: 'Send HTML',
+		displayName: '发送HTML',
 		name: 'sendHTML',
 		type: 'boolean',
 		displayOptions: {
@@ -49,7 +49,7 @@ const sendHtmlEmailFields: INodeProperties[] = [
 		default: false,
 	},
 	{
-		displayName: 'Subject',
+		displayName: '主题',
 		name: 'subject',
 		type: 'string',
 		displayOptions: {
@@ -65,10 +65,10 @@ const sendHtmlEmailFields: INodeProperties[] = [
 			},
 		},
 		default: '',
-		description: 'Subject of the email',
+		description: '电子邮件的主题',
 	},
 	{
-		displayName: 'Text Content',
+		displayName: '文本内容',
 		name: 'textContent',
 		type: 'string',
 		displayOptions: {
@@ -85,10 +85,10 @@ const sendHtmlEmailFields: INodeProperties[] = [
 			},
 		},
 		default: '',
-		description: 'Text content of the message',
+		description: '邮件的文本内容',
 	},
 	{
-		displayName: 'HTML Content',
+		displayName: 'HTML内容',
 		name: 'htmlContent',
 		type: 'string',
 		displayOptions: {
@@ -105,10 +105,10 @@ const sendHtmlEmailFields: INodeProperties[] = [
 			},
 		},
 		default: '',
-		description: 'HTML content of the message',
+		description: '邮件的HTML内容',
 	},
 	{
-		displayName: 'Sender',
+		displayName: '发件人',
 		name: 'sender',
 		type: 'string',
 		displayOptions: {
@@ -126,7 +126,7 @@ const sendHtmlEmailFields: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Receipients',
+		displayName: '收件人',
 		name: 'receipients',
 		type: 'string',
 		displayOptions: {
@@ -144,10 +144,10 @@ const sendHtmlEmailFields: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Additional Fields',
+		displayName: '附加字段',
 		name: 'additionalFields',
-		placeholder: 'Add Field',
-		description: 'Additional fields to add',
+		placeholder: '添加字段',
+		description: '要添加的附加字段',
 		type: 'collection',
 		default: {},
 		displayOptions: {
@@ -158,23 +158,22 @@ const sendHtmlEmailFields: INodeProperties[] = [
 		},
 		options: [
 			{
-				displayName: 'Attachments',
+				displayName: '附件',
 				name: 'emailAttachments',
-				placeholder: 'Add Attachment',
+				placeholder: '添加附件',
 				type: 'fixedCollection',
 				default: {},
 				options: [
 					{
 						name: 'attachment',
-						displayName: 'Attachment Data',
+						displayName: '附件数据',
 						values: [
 							{
-								displayName: 'Input Data Field Name',
+								displayName: '输入数据字段名称',
 								default: '',
 								name: 'binaryPropertyName',
 								type: 'string',
-								description:
-									'The name of the incoming field containing the binary file data to be processed',
+								description: '包含要处理的二进制文件数据的传入字段的名称',
 							},
 						],
 					},
@@ -186,18 +185,18 @@ const sendHtmlEmailFields: INodeProperties[] = [
 				},
 			},
 			{
-				displayName: 'Receipients BCC',
+				displayName: '密送收件人',
 				name: 'receipientsBCC',
-				placeholder: 'Add BCC',
+				placeholder: '添加密送',
 				type: 'fixedCollection',
 				default: {},
 				options: [
 					{
 						name: 'receipientBcc',
-						displayName: 'Receipient',
+						displayName: '收件人',
 						values: [
 							{
-								displayName: 'Receipient',
+								displayName: '收件人',
 								name: 'bcc',
 								type: 'string',
 								default: '',
@@ -212,18 +211,18 @@ const sendHtmlEmailFields: INodeProperties[] = [
 				},
 			},
 			{
-				displayName: 'Receipients CC',
+				displayName: '抄送收件人',
 				name: 'receipientsCC',
-				placeholder: 'Add CC',
+				placeholder: '添加抄送',
 				type: 'fixedCollection',
 				default: {},
 				options: [
 					{
 						name: 'receipientCc',
-						displayName: 'Receipient',
+						displayName: '收件人',
 						values: [
 							{
-								displayName: 'Receipient',
+								displayName: '收件人',
 								name: 'cc',
 								type: 'string',
 								default: '',
@@ -238,19 +237,19 @@ const sendHtmlEmailFields: INodeProperties[] = [
 				},
 			},
 			{
-				displayName: 'Email Tags',
+				displayName: '电子邮件标签',
 				name: 'emailTags',
 				default: {},
-				description: 'Add tags to your emails to find them more easily',
-				placeholder: 'Add Email Tags',
+				description: '向电子邮件添加标签以便更容易找到它们',
+				placeholder: '添加电子邮件标签',
 				type: 'fixedCollection',
 				options: [
 					{
-						displayName: 'Tags',
+						displayName: '标签',
 						name: 'tags',
 						values: [
 							{
-								displayName: 'Tag',
+								displayName: '标签',
 								default: '',
 								name: 'tag',
 								type: 'string',
@@ -270,7 +269,7 @@ const sendHtmlEmailFields: INodeProperties[] = [
 
 const sendHtmlTemplateEmailFields: INodeProperties[] = [
 	{
-		displayName: 'Template ID',
+		displayName: '模板ID',
 		name: 'templateId',
 		type: 'options',
 		default: '',
@@ -327,7 +326,7 @@ const sendHtmlTemplateEmailFields: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Receipients',
+		displayName: '收件人',
 		name: 'receipients',
 		type: 'string',
 		displayOptions: {
@@ -345,11 +344,11 @@ const sendHtmlTemplateEmailFields: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Additional Fields',
+		displayName: '附加字段',
 		name: 'additionalFields',
 		type: 'collection',
-		description: 'Additional fields to add',
-		placeholder: 'Add Field',
+		description: '要添加的附加字段',
+		placeholder: '添加字段',
 		default: {},
 		displayOptions: {
 			show: {
@@ -359,23 +358,22 @@ const sendHtmlTemplateEmailFields: INodeProperties[] = [
 		},
 		options: [
 			{
-				displayName: 'Attachments',
+				displayName: '附件',
 				name: 'emailAttachments',
-				placeholder: 'Add Attachment',
+				placeholder: '添加附件',
 				type: 'fixedCollection',
 				default: {},
 				options: [
 					{
-						displayName: 'Attachment Data',
+						displayName: '附件数据',
 						name: 'attachment',
 						values: [
 							{
-								displayName: 'Input Data Field Name',
+								displayName: '输入数据字段名称',
 								name: 'binaryPropertyName',
 								default: '',
 								type: 'string',
-								description:
-									'The name of the incoming field containing the binary file data to be processed',
+								description: '包含要处理的二进制文件数据的传入字段的名称',
 							},
 						],
 					},
@@ -387,19 +385,19 @@ const sendHtmlTemplateEmailFields: INodeProperties[] = [
 				},
 			},
 			{
-				displayName: 'Email Tags',
+				displayName: '电子邮件标签',
 				name: 'emailTags',
 				default: {},
-				description: 'Add tags to your emails to find them more easily',
-				placeholder: 'Add Email Tags',
+				description: '向电子邮件添加标签以便更容易找到它们',
+				placeholder: '添加电子邮件标签',
 				type: 'fixedCollection',
 				options: [
 					{
-						displayName: 'Tags',
+						displayName: '标签',
 						name: 'tags',
 						values: [
 							{
-								displayName: 'Tag',
+								displayName: '标签',
 								default: '',
 								name: 'tag',
 								type: 'string',
@@ -414,24 +412,24 @@ const sendHtmlTemplateEmailFields: INodeProperties[] = [
 				},
 			},
 			{
-				displayName: 'Template Parameters',
+				displayName: '模板参数',
 				name: 'templateParameters',
 				default: {},
-				description: 'Pass a set of attributes to customize the template',
-				placeholder: 'Add Parameter',
+				description: '传递一组属性来自定义模板',
+				placeholder: '添加参数',
 				type: 'fixedCollection',
 				options: [
 					{
 						name: 'parameterValues',
-						displayName: 'Parameters',
+						displayName: '参数',
 						values: [
 							{
-								displayName: 'Parameter',
+								displayName: '参数',
 								name: 'parameters',
 								type: 'string',
 								default: '',
 								placeholder: 'key=value',
-								description: 'Comma-separated key=value pairs',
+								description: '逗号分隔的 key=value 对',
 							},
 						],
 					},

@@ -8,16 +8,16 @@ import {
 
 export class Start implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Start',
+		displayName: '开始',
 		name: 'start',
 		icon: 'fa:play',
 		group: ['input'],
 		version: 1,
-		description: 'Starts the workflow execution from this node',
+		description: '从此节点开始工作流执行',
 		maxNodes: 1,
 		hidden: true,
 		defaults: {
-			name: 'Start',
+			name: '开始',
 			color: '#00e000',
 		},
 
@@ -25,8 +25,7 @@ export class Start implements INodeType {
 		outputs: [NodeConnectionTypes.Main],
 		properties: [
 			{
-				displayName:
-					'This node is where a manual workflow execution starts. To make one, go back to the canvas and click ‘execute workflow’',
+				displayName: '此节点是手动工作流执行的起点。要执行工作流，请返回画布并点击"执行工作流"',
 				name: 'notice',
 				type: 'notice',
 				default: '',

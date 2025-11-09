@@ -10,29 +10,29 @@ import { NodeConnectionTypes, jsonParse } from 'n8n-workflow';
 
 export class SseTrigger implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'SSE Trigger',
+		displayName: 'SSE 触发器',
 		name: 'sseTrigger',
 		icon: 'fa:cloud-download-alt',
 		iconColor: 'dark-blue',
 		group: ['trigger'],
 		version: 1,
-		description: 'Triggers the workflow when Server-Sent Events occur',
+		description: '当服务器发送事件发生时触发工作流',
 		eventTriggerDescription: '',
-		activationMessage: 'You can now make calls to your SSE URL to trigger executions.',
+		activationMessage: '现在您可以调用 SSE URL 来触发执行。',
 		defaults: {
-			name: 'SSE Trigger',
+			name: 'SSE 触发器',
 			color: '#225577',
 		},
 		triggerPanel: {
 			header: '',
 			executionsHelp: {
 				inactive:
-					"<b>While building your workflow</b>, click the 'execute step' button, then trigger an SSE event. This will trigger an execution, which will show up in this editor.<br /> <br /><b>Once you're happy with your workflow</b>, <a data-key='activate'>activate</a> it. Then every time a change is detected, the workflow will execute. These executions will show up in the <a data-key='executions'>executions list</a>, but not in the editor.",
+					"<b>在构建工作流时</b>，点击「执行步骤」按钮，然后触发 SSE 事件。这将触发执行，并显示在此编辑器中。<br /> <br /><b>一旦您对工作流满意</b>，请<a data-key='activate'>激活</a>它。然后每次检测到更改时，工作流都会执行。这些执行将显示在<a data-key='executions'>执行列表</a>中，但不会显示在编辑器中。",
 				active:
-					"<b>While building your workflow</b>, click the 'execute step' button, then trigger an SSE event. This will trigger an execution, which will show up in this editor.<br /> <br /><b>Your workflow will also execute automatically</b>, since it's activated. Every time a change is detected, this node will trigger an execution. These executions will show up in the <a data-key='executions'>executions list</a>, but not in the editor.",
+					"<b>在构建工作流时</b>，点击「执行步骤」按钮，然后触发 SSE 事件。这将触发执行，并显示在此编辑器中。<br /> <br /><b>您的工作流也会自动执行</b>，因为它已激活。每次检测到更改时，此节点都会触发执行。这些执行将显示在<a data-key='executions'>执行列表</a>中，但不会显示在编辑器中。",
 			},
 			activationHint:
-				"Once you’ve finished building your workflow, <a data-key='activate'>activate</a> it to have it also listen continuously (you just won’t see those executions here).",
+				"一旦您完成工作流构建，请<a data-key='activate'>激活</a>它以使其持续监听（您只是看不到这些执行）。",
 		},
 		inputs: [],
 		outputs: [NodeConnectionTypes.Main],
@@ -43,7 +43,7 @@ export class SseTrigger implements INodeType {
 				type: 'string',
 				default: '',
 				placeholder: 'http://example.com',
-				description: 'The URL to receive the SSE from',
+				description: '要接收 SSE 的 URL',
 				required: true,
 			},
 		],

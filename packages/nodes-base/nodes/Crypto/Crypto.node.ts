@@ -27,16 +27,16 @@ const supportedAlgorithms = getHashes()
 
 export class Crypto implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Crypto',
+		displayName: '密码学',
 		name: 'crypto',
 		icon: 'fa:key',
 		iconColor: 'green',
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["action"]}}',
-		description: 'Provide cryptographic utilities',
+		description: '提供密码学工具',
 		defaults: {
-			name: 'Crypto',
+			name: '密码学',
 			color: '#408000',
 		},
 		usableAsTool: true,
@@ -44,39 +44,39 @@ export class Crypto implements INodeType {
 		outputs: [NodeConnectionTypes.Main],
 		properties: [
 			{
-				displayName: 'Action',
+				displayName: '操作',
 				name: 'action',
 				type: 'options',
 				options: [
 					{
-						name: 'Generate',
-						description: 'Generate random string',
+						name: '生成',
+						description: '生成随机字符串',
 						value: 'generate',
-						action: 'Generate random string',
+						action: '生成随机字符串',
 					},
 					{
-						name: 'Hash',
-						description: 'Hash a text or file in a specified format',
+						name: '哈希',
+						description: '对文本或文件进行指定格式的哈希',
 						value: 'hash',
-						action: 'Hash a text or file in a specified format',
+						action: '对文本或文件进行指定格式的哈希',
 					},
 					{
-						name: 'Hmac',
-						description: 'Hmac a text or file in a specified format',
+						name: 'HMAC',
+						description: '对文本或文件进行指定格式的 HMAC',
 						value: 'hmac',
-						action: 'HMAC a text or file in a specified format',
+						action: '对文本或文件进行指定格式的 HMAC',
 					},
 					{
-						name: 'Sign',
-						description: 'Sign a string using a private key',
+						name: '签名',
+						description: '使用私钥对字符串进行签名',
 						value: 'sign',
-						action: 'Sign a string using a private key',
+						action: '使用私钥对字符串进行签名',
 					},
 				],
 				default: 'hash',
 			},
 			{
-				displayName: 'Type',
+				displayName: '类型',
 				name: 'type',
 				displayOptions: {
 					show: {
@@ -115,11 +115,11 @@ export class Crypto implements INodeType {
 					},
 				],
 				default: 'MD5',
-				description: 'The hash type to use',
+				description: '要使用的哈希类型',
 				required: true,
 			},
 			{
-				displayName: 'Binary File',
+				displayName: '二进制文件',
 				name: 'binaryData',
 				type: 'boolean',
 				default: false,
@@ -129,10 +129,10 @@ export class Crypto implements INodeType {
 						action: ['hash', 'hmac'],
 					},
 				},
-				description: 'Whether the data to hashed should be taken from binary field',
+				description: '是否应从二进制字段中获取要哈希的数据',
 			},
 			{
-				displayName: 'Binary Property Name',
+				displayName: '二进制属性名称',
 				name: 'binaryPropertyName',
 				displayOptions: {
 					show: {
@@ -142,11 +142,11 @@ export class Crypto implements INodeType {
 				},
 				type: 'string',
 				default: 'data',
-				description: 'Name of the binary property which contains the input data',
+				description: '包含输入数据的二进制属性的名称',
 				required: true,
 			},
 			{
-				displayName: 'Value',
+				displayName: '值',
 				name: 'value',
 				displayOptions: {
 					show: {
@@ -156,11 +156,11 @@ export class Crypto implements INodeType {
 				},
 				type: 'string',
 				default: '',
-				description: 'The value that should be hashed',
+				description: '应该被哈希的值',
 				required: true,
 			},
 			{
-				displayName: 'Property Name',
+				displayName: '属性名称',
 				name: 'dataPropertyName',
 				type: 'string',
 				default: 'data',
@@ -170,10 +170,10 @@ export class Crypto implements INodeType {
 						action: ['hash'],
 					},
 				},
-				description: 'Name of the property to which to write the hash',
+				description: '写入哈希值的属性名称',
 			},
 			{
-				displayName: 'Encoding',
+				displayName: '编码',
 				name: 'encoding',
 				displayOptions: {
 					show: {
@@ -195,7 +195,7 @@ export class Crypto implements INodeType {
 				required: true,
 			},
 			{
-				displayName: 'Type',
+				displayName: '类型',
 				name: 'type',
 				displayOptions: {
 					show: {
@@ -234,11 +234,11 @@ export class Crypto implements INodeType {
 					},
 				],
 				default: 'MD5',
-				description: 'The hash type to use',
+				description: '要使用的哈希类型',
 				required: true,
 			},
 			{
-				displayName: 'Value',
+				displayName: '值',
 				name: 'value',
 				displayOptions: {
 					show: {
@@ -248,11 +248,11 @@ export class Crypto implements INodeType {
 				},
 				type: 'string',
 				default: '',
-				description: 'The value of which the hmac should be created',
+				description: '应该创建 HMAC 的值',
 				required: true,
 			},
 			{
-				displayName: 'Property Name',
+				displayName: '属性名称',
 				name: 'dataPropertyName',
 				type: 'string',
 				default: 'data',
@@ -262,10 +262,10 @@ export class Crypto implements INodeType {
 						action: ['hmac'],
 					},
 				},
-				description: 'Name of the property to which to write the hmac',
+				description: '写入 HMAC 的属性名称',
 			},
 			{
-				displayName: 'Secret',
+				displayName: '密钥',
 				name: 'secret',
 				displayOptions: {
 					show: {
@@ -278,7 +278,7 @@ export class Crypto implements INodeType {
 				required: true,
 			},
 			{
-				displayName: 'Encoding',
+				displayName: '编码',
 				name: 'encoding',
 				displayOptions: {
 					show: {
@@ -300,7 +300,7 @@ export class Crypto implements INodeType {
 				required: true,
 			},
 			{
-				displayName: 'Value',
+				displayName: '值',
 				name: 'value',
 				displayOptions: {
 					show: {
@@ -309,11 +309,11 @@ export class Crypto implements INodeType {
 				},
 				type: 'string',
 				default: '',
-				description: 'The value that should be signed',
+				description: '应该被签名的值',
 				required: true,
 			},
 			{
-				displayName: 'Property Name',
+				displayName: '属性名称',
 				name: 'dataPropertyName',
 				type: 'string',
 				default: 'data',
@@ -323,10 +323,10 @@ export class Crypto implements INodeType {
 						action: ['sign'],
 					},
 				},
-				description: 'Name of the property to which to write the signed value',
+				description: '写入签名值的属性名称',
 			},
 			{
-				displayName: 'Algorithm Name or ID',
+				displayName: '算法名称或 ID',
 				name: 'algorithm',
 				displayOptions: {
 					show: {
@@ -335,13 +335,13 @@ export class Crypto implements INodeType {
 				},
 				type: 'options',
 				description:
-					'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
+					'从列表中选择，或使用<a href="https://docs.n8n.io/code/expressions/">表达式</a>指定 ID',
 				options: supportedAlgorithms,
 				default: '',
 				required: true,
 			},
 			{
-				displayName: 'Encoding',
+				displayName: '编码',
 				name: 'encoding',
 				displayOptions: {
 					show: {
@@ -363,7 +363,7 @@ export class Crypto implements INodeType {
 				required: true,
 			},
 			{
-				displayName: 'Private Key',
+				displayName: '私钥',
 				name: 'privateKey',
 				displayOptions: {
 					show: {
@@ -371,12 +371,12 @@ export class Crypto implements INodeType {
 					},
 				},
 				type: 'string',
-				description: 'Private key to use when signing the string',
+				description: '签名字符串时使用的私钥',
 				default: '',
 				required: true,
 			},
 			{
-				displayName: 'Property Name',
+				displayName: '属性名称',
 				name: 'dataPropertyName',
 				type: 'string',
 				default: 'data',
@@ -386,10 +386,10 @@ export class Crypto implements INodeType {
 						action: ['generate'],
 					},
 				},
-				description: 'Name of the property to which to write the random string',
+				description: '写入随机字符串的属性名称',
 			},
 			{
-				displayName: 'Type',
+				displayName: '类型',
 				name: 'encodingType',
 				displayOptions: {
 					show: {
@@ -416,15 +416,15 @@ export class Crypto implements INodeType {
 					},
 				],
 				default: 'uuid',
-				description: 'Encoding that will be used to generate string',
+				description: '用于生成字符串的编码',
 				required: true,
 			},
 			{
-				displayName: 'Length',
+				displayName: '长度',
 				name: 'stringLength',
 				type: 'number',
 				default: 32,
-				description: 'Length of the generated string',
+				description: '生成的字符串的长度',
 				displayOptions: {
 					show: {
 						action: ['generate'],

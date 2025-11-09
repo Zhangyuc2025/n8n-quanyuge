@@ -10,12 +10,11 @@ const commonDescription: INodeProperties = {
 	},
 	default: '',
 	description:
-		'Python code to execute.<br><br>Tip: You can use built-in methods and variables like <code>_today</code> for dates and <code>_jmespath</code> for querying JSON structures. <a href="https://docs.n8n.io/code/builtin/">Learn more</a>.',
+		'要执行的 Python 代码。<br><br>提示：您可以使用内置方法和变量（如 <code>_today</code>）处理日期，使用 <code>_jmespath</code> 查询 JSON 结构。<a href="{{pythonBuiltin}}">了解更多</a>。',
 	noDataExpression: true,
 };
 
-const PRINT_INSTRUCTION =
-	'Debug by using <code>print()</code> statements and viewing their output in the browser console.';
+const PRINT_INSTRUCTION = '使用 <code>print()</code> 语句调试，并在浏览器控制台中查看输出。';
 
 export const pythonCodeDescription: INodeProperties[] = [
 	{
@@ -48,7 +47,7 @@ export const pythonCodeDescription: INodeProperties[] = [
 		default: '',
 	},
 	{
-		displayName: `${PRINT_INSTRUCTION}<br><br>The native Python option does not support <code>_</code> syntax and helpers, except for <code>_items</code> in all-items mode and <code>_item</code> in per-item mode.`,
+		displayName: `${PRINT_INSTRUCTION}<br><br>原生 Python 选项不支持 <code>_</code> 语法和辅助函数，但在"所有项目"模式下支持 <code>_items</code>，在"每个项目"模式下支持 <code>_item</code>。`,
 		name: 'notice',
 		type: 'notice',
 		displayOptions: {

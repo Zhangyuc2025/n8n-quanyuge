@@ -51,15 +51,15 @@ async function getTool(
 
 export class ToolVectorStore implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Vector Store Question Answer Tool',
+		displayName: '向量存储问答工具',
 		name: 'toolVectorStore',
 		icon: 'fa:database',
 		iconColor: 'black',
 		group: ['transform'],
 		version: [1, 1.1],
-		description: 'Answer questions with a vector store',
+		description: '使用向量存储回答问题',
 		defaults: {
-			name: 'Answer questions with a vector store',
+			name: '使用向量存储回答问题',
 		},
 		codex: {
 			categories: ['AI'],

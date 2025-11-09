@@ -37,15 +37,15 @@ function objectToString(obj: Record<string, string> | IDataObject, level = 0) {
 
 export class RetrieverWorkflow implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Workflow Retriever',
+		displayName: '工作流检索器',
 		name: 'retrieverWorkflow',
 		icon: 'fa:box-open',
 		iconColor: 'black',
 		group: ['transform'],
 		version: [1, 1.1],
-		description: 'Use an n8n Workflow as Retriever',
+		description: '将 n8n 工作流用作检索器',
 		defaults: {
-			name: 'Workflow Retriever',
+			name: '工作流检索器',
 		},
 		codex: {
 			categories: ['AI'],
@@ -63,44 +63,43 @@ export class RetrieverWorkflow implements INodeType {
 		inputs: [],
 		outputs: [
 			{
-				displayName: 'Retriever',
+				displayName: '检索器',
 				maxConnections: 1,
 				type: NodeConnectionTypes.AiRetriever,
 			},
 		],
 		properties: [
 			{
-				displayName:
-					'The workflow will receive "query" as input and the output of the last node will be returned and converted to Documents',
+				displayName: '工作流将接收 "query" 作为输入，最后一个节点的输出将被返回并转换为文档',
 				name: 'executeNotice',
 				type: 'notice',
 				default: '',
 			},
 			{
-				displayName: 'Source',
+				displayName: '来源',
 				name: 'source',
 				type: 'options',
 				options: [
 					{
-						name: 'Database',
+						name: '数据库',
 						value: 'database',
-						description: 'Load the workflow from the database by ID',
+						description: '通过 ID 从数据库加载工作流',
 					},
 					{
-						name: 'Parameter',
+						name: '参数',
 						value: 'parameter',
-						description: 'Load the workflow from a parameter',
+						description: '从参数加载工作流',
 					},
 				],
 				default: 'database',
-				description: 'Where to get the workflow to execute from',
+				description: '从哪里获取要执行的工作流',
 			},
 
 			// ----------------------------------
 			//         source:database
 			// ----------------------------------
 			{
-				displayName: 'Workflow ID',
+				displayName: '工作流 ID',
 				name: 'workflowId',
 				type: 'string',
 				displayOptions: {
@@ -111,10 +110,10 @@ export class RetrieverWorkflow implements INodeType {
 				},
 				default: '',
 				required: true,
-				description: 'The workflow to execute',
+				description: '要执行的工作流',
 			},
 			{
-				displayName: 'Workflow',
+				displayName: '工作流',
 				name: 'workflowId',
 				type: 'workflowSelector',
 				displayOptions: {
@@ -131,7 +130,7 @@ export class RetrieverWorkflow implements INodeType {
 			//         source:parameter
 			// ----------------------------------
 			{
-				displayName: 'Workflow JSON',
+				displayName: '工作流 JSON',
 				name: 'workflowJson',
 				type: 'json',
 				typeOptions: {
@@ -144,18 +143,18 @@ export class RetrieverWorkflow implements INodeType {
 				},
 				default: '\n\n\n',
 				required: true,
-				description: 'The workflow JSON code to execute',
+				description: '要执行的工作流 JSON 代码',
 			},
 
 			// ----------------------------------
 			//         For all
 			// ----------------------------------
 			{
-				displayName: 'Workflow Values',
+				displayName: '工作流值',
 				name: 'fields',
-				placeholder: 'Add Value',
+				placeholder: '添加值',
 				type: 'fixedCollection',
-				description: 'Set the values which should be made available in the workflow',
+				description: '设置应在工作流中提供的值',
 				typeOptions: {
 					multipleValues: true,
 					sortable: true,
@@ -164,50 +163,49 @@ export class RetrieverWorkflow implements INodeType {
 				options: [
 					{
 						name: 'values',
-						displayName: 'Values',
+						displayName: '值',
 						values: [
 							{
-								displayName: 'Name',
+								displayName: '名称',
 								name: 'name',
 								type: 'string',
 								default: '',
-								placeholder: 'e.g. fieldName',
-								description:
-									'Name of the field to set the value of. Supports dot-notation. Example: data.person[0].name.',
+								placeholder: '例如：fieldName',
+								description: '要设置值的字段名称。支持点表示法。例如：data.person[0].name。',
 								requiresDataPath: 'single',
 							},
 							{
-								displayName: 'Type',
+								displayName: '类型',
 								name: 'type',
 								type: 'options',
-								description: 'The field value type',
+								description: '字段值类型',
 								// eslint-disable-next-line n8n-nodes-base/node-param-options-type-unsorted-items
 								options: [
 									{
-										name: 'String',
+										name: '字符串',
 										value: 'stringValue',
 									},
 									{
-										name: 'Number',
+										name: '数字',
 										value: 'numberValue',
 									},
 									{
-										name: 'Boolean',
+										name: '布尔值',
 										value: 'booleanValue',
 									},
 									{
-										name: 'Array',
+										name: '数组',
 										value: 'arrayValue',
 									},
 									{
-										name: 'Object',
+										name: '对象',
 										value: 'objectValue',
 									},
 								],
 								default: 'stringValue',
 							},
 							{
-								displayName: 'Value',
+								displayName: '值',
 								name: 'stringValue',
 								type: 'string',
 								default: '',
@@ -220,7 +218,7 @@ export class RetrieverWorkflow implements INodeType {
 								ignoreValidationDuringExecution: true,
 							},
 							{
-								displayName: 'Value',
+								displayName: '值',
 								name: 'numberValue',
 								type: 'string',
 								default: '',
@@ -233,17 +231,17 @@ export class RetrieverWorkflow implements INodeType {
 								ignoreValidationDuringExecution: true,
 							},
 							{
-								displayName: 'Value',
+								displayName: '值',
 								name: 'booleanValue',
 								type: 'options',
 								default: 'true',
 								options: [
 									{
-										name: 'True',
+										name: '真',
 										value: 'true',
 									},
 									{
-										name: 'False',
+										name: '假',
 										value: 'false',
 									},
 								],
@@ -256,11 +254,11 @@ export class RetrieverWorkflow implements INodeType {
 								ignoreValidationDuringExecution: true,
 							},
 							{
-								displayName: 'Value',
+								displayName: '值',
 								name: 'arrayValue',
 								type: 'string',
 								default: '',
-								placeholder: 'e.g. [ arrayItem1, arrayItem2, arrayItem3 ]',
+								placeholder: '例如：[ arrayItem1, arrayItem2, arrayItem3 ]',
 								displayOptions: {
 									show: {
 										type: ['arrayValue'],
@@ -270,7 +268,7 @@ export class RetrieverWorkflow implements INodeType {
 								ignoreValidationDuringExecution: true,
 							},
 							{
-								displayName: 'Value',
+								displayName: '值',
 								name: 'objectValue',
 								type: 'json',
 								default: '={}',
@@ -345,7 +343,7 @@ export class RetrieverWorkflow implements INodeType {
 					} catch (error) {
 						throw new NodeOperationError(
 							this.executeFunctions.getNode(),
-							`The provided workflow is not valid JSON: "${(error as Error).message}"`,
+							`提供的工作流不是有效的 JSON: "${(error as Error).message}"`,
 							{
 								itemIndex,
 							},

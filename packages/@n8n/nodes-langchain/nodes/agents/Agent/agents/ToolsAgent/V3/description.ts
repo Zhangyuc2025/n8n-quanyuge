@@ -26,7 +26,7 @@ export const toolsAgentProperties: INodeProperties = {
 	name: 'options',
 	type: 'collection',
 	default: {},
-	placeholder: 'Add Option',
+	placeholder: '添加选项',
 	options: [
 		...commonOptions,
 		enableStreaminOption,

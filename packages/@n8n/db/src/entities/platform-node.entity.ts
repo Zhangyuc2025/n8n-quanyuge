@@ -4,19 +4,21 @@ import { datetimeColumnType, JsonColumn, WithTimestamps } from './abstract-entit
 import type { User } from './user';
 
 /**
- * 平台节点表
- * Platform node entity for storing official and third-party approved nodes
+ * 平台节点表（统一节点管理）
+ * Platform node entity for storing all nodes (builtin, platform, third-party)
  *
  * 职责：
- * - 存储平台官方节点和第三方审核通过的节点
+ * - 存储所有节点：内置节点、平台官方节点、第三方节点
  * - 管理节点定义（INodeTypeDescription）
  * - 管理节点执行代码
  * - 处理第三方节点的审核流程
  * - 配置计费信息（如果是平台托管服务）
+ * - 管理教学文档链接（可后台修改）
  *
- * 节点类型：
+ * 节点来源类型（source_type）：
+ * - 'builtin': 内置节点（Set, If, Code等142个基础节点）
  * - 'platform_official': 平台官方节点
- * - 'third_party_approved': 第三方审核通过的节点
+ * - 'third_party': 第三方节点
  */
 @Entity()
 export class PlatformNode extends WithTimestamps {
@@ -40,6 +42,39 @@ export class PlatformNode extends WithTimestamps {
 	 */
 	@Column({ type: 'varchar', length: 50, name: 'node_type' })
 	nodeType: string;
+
+	/**
+	 * 节点来源类型
+	 * Source type: 'builtin' | 'platform_official' | 'third_party'
+	 */
+	@Column({
+		type: 'varchar',
+		length: 50,
+		name: 'source_type',
+		default: 'platform_official',
+	})
+	sourceType: 'builtin' | 'platform_official' | 'third_party';
+
+	/**
+	 * 教学文档 URL（可后台管理界面修改）
+	 * Documentation URL (editable in admin panel)
+	 */
+	@Column({ type: 'text', nullable: true, name: 'documentation_url' })
+	documentationUrl: string | null;
+
+	/**
+	 * 完整文档配置（codex.resources）
+	 * Full documentation configuration (from codex.resources)
+	 */
+	@JsonColumn({ nullable: true, name: 'documentation_config' })
+	documentationConfig: Record<string, unknown> | null;
+
+	/**
+	 * 完整 codex 配置（分类、标签、资源等）
+	 * Full codex configuration (categories, tags, resources, etc.)
+	 */
+	@JsonColumn({ nullable: true })
+	codex: Record<string, unknown> | null;
 
 	/**
 	 * 节点定义（完整的 INodeTypeDescription）

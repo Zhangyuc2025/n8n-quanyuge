@@ -21,19 +21,19 @@ const displayOptions: IDisplayOptions = {
 export const description: INodeProperties[] = [
 	makeAddRow(FIELD, displayOptions),
 	{
-		displayName: 'Options',
+		displayName: '选项',
 		name: 'options',
 		type: 'collection',
-		placeholder: 'Add Option',
+		placeholder: '添加选项',
 		default: {},
 		options: [
 			{
-				displayName: 'Optimize Bulk',
+				displayName: '优化批量',
 				name: 'optimizeBulk',
 				type: 'boolean',
 				default: false,
 				noDataExpression: true, // bulk inserts don't support expressions so this is a bit paradoxical
-				description: 'Whether to improve bulk insert performance 5x by not returning inserted data',
+				description: '是否通过不返回插入的数据来将批量插入性能提高5倍',
 			},
 		],
 		displayOptions,
@@ -52,7 +52,7 @@ export async function execute(
 	if (optimizeBulkEnabled) {
 		// This function is always called by index, so we inherently cannot operate in bulk
 		this.addExecutionHints({
-			message: 'Unable to optimize bulk insert due to expression in Data table ID ',
+			message: '由于数据表 ID 中的表达式，无法优化批量插入',
 			location: 'outputPane',
 		});
 		const json = await dataTableProxy.insertRows([row], 'count');

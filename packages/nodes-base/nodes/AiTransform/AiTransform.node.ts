@@ -18,39 +18,37 @@ const { CODE_ENABLE_STDOUT } = process.env;
 
 export class AiTransform implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'AI Transform',
+		displayName: 'AI 数据转换',
 		name: 'aiTransform',
 		icon: 'file:aitransform.svg',
 		group: ['transform'],
 		version: 1,
-		description: 'Modify data based on instructions written in plain english',
+		description: '基于自然语言指令修改数据',
 		defaults: {
-			name: 'AI Transform',
+			name: 'AI 数据转换',
 		},
 		inputs: [NodeConnectionTypes.Main],
 		outputs: [NodeConnectionTypes.Main],
 		parameterPane: 'wide',
 		hints: [
 			{
-				message:
-					"This node doesn't have access to the contents of binary files. To use those contents here, use the 'Extract from File' node first.",
+				message: '此节点无法访问二进制文件的内容。要在此使用这些内容，请先使用"从文件提取"节点。',
 				displayCondition: '={{ $input.all().some(i => i.binary) }}',
 				location: 'outputPane',
 			},
 		],
 		properties: [
 			{
-				displayName: 'Instructions',
+				displayName: '指令',
 				name: 'instructions',
 				type: 'button',
 				default: '',
 				description:
-					"Provide instructions on how you want to transform the data, then click 'Generate code'. Use dot notation to refer to nested fields (e.g. address.street).",
-				placeholder:
-					"Example: Merge 'firstname' and 'lastname' into a field 'details.name' and sort by 'email'",
+					'提供如何转换数据的指令，然后点击"生成代码"。使用点表示法引用嵌套字段（例如 address.street）。',
+				placeholder: '例如：将 firstname 和 lastname 合并到字段 details.name 并按 email 排序',
 				typeOptions: {
 					buttonConfig: {
-						label: 'Generate code',
+						label: '生成代码',
 						hasInputField: true,
 						inputFieldMaxLength: 500,
 						action: {
@@ -61,13 +59,13 @@ export class AiTransform implements INodeType {
 				},
 			},
 			{
-				displayName: 'Code Generated For Prompt',
+				displayName: '为提示生成的代码',
 				name: AI_TRANSFORM_CODE_GENERATED_FOR_PROMPT,
 				type: 'hidden',
 				default: '',
 			},
 			{
-				displayName: 'Generated JavaScript',
+				displayName: '生成的 JavaScript',
 				name: AI_TRANSFORM_JS_CODE,
 				type: 'string',
 				typeOptions: {
@@ -75,7 +73,7 @@ export class AiTransform implements INodeType {
 					editorIsReadOnly: true,
 				},
 				default: '',
-				hint: 'Read-only. To edit this code, adjust the instructions or copy and paste it into a Code node.',
+				hint: '只读。要编辑此代码，请调整指令或将其复制粘贴到代码节点中。',
 				noDataExpression: true,
 			},
 		],
@@ -96,13 +94,12 @@ export class AiTransform implements INodeType {
 				if (!code) {
 					const instructions = this.getNodeParameter('instructions', index) as string;
 					if (!instructions) {
-						throw new NodeOperationError(node, 'Missing instructions to generate code', {
-							description:
-								"Enter your prompt in the 'Instructions' parameter and click 'Generate code'",
+						throw new NodeOperationError(node, '缺少生成代码的指令', {
+							description: '在"指令"参数中输入提示词并点击"生成代码"',
 						});
 					}
-					throw new NodeOperationError(node, 'Missing code for data transformation', {
-						description: "Click the 'Generate code' button to create the code",
+					throw new NodeOperationError(node, '缺少数据转换代码', {
+						description: '点击"生成代码"按钮创建代码',
 					});
 				}
 			} catch (error) {

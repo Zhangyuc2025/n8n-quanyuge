@@ -8,12 +8,12 @@ import { AgentV3 } from './V3/AgentV3.node';
 export class Agent extends VersionedNodeType {
 	constructor() {
 		const baseDescription: INodeTypeBaseDescription = {
-			displayName: 'AI Agent',
+			displayName: 'AI 智能体',
 			name: 'agent',
 			icon: 'fa:robot',
 			iconColor: 'black',
 			group: ['transform'],
-			description: 'Generates an action plan and executes it. Can use external tools.',
+			description: '生成行动计划并执行。可以使用外部工具。',
 			codex: {
 				alias: ['LangChain', 'Chat', 'Conversational', 'Plan and Execute', 'ReAct', 'Tools'],
 				categories: ['AI'],
@@ -26,6 +26,11 @@ export class Agent extends VersionedNodeType {
 							url: 'https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/',
 						},
 					],
+					// 额外的教学资源（将同步到数据库 documentationConfig）
+					tutorialLinks: {
+						quickStart: 'https://docs.n8n.io/advanced-ai/intro-tutorial/',
+						exampleWorkflow: '/workflows/templates/1954',
+					},
 				},
 			},
 			defaultVersion: 3,

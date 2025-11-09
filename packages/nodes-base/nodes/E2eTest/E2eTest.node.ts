@@ -14,52 +14,52 @@ import { remoteOptions, resourceMapperFields, returnData, searchOptions } from '
 
 export class E2eTest implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'E2E Test',
+		displayName: 'E2E 测试',
 		name: 'e2eTest',
 		icon: 'fa:play',
 		group: ['output'],
 		version: 1,
 		subtitle: '={{$parameter["operation"]}}',
-		description: 'Dummy node used for e2e testing',
+		description: '用于端到端测试的虚拟节点',
 		defaults: {
-			name: 'E2E Test',
+			name: 'E2E 测试',
 		},
 		usableAsTool: true,
 		inputs: [NodeConnectionTypes.Main],
 		outputs: [NodeConnectionTypes.Main],
 		properties: [
 			{
-				displayName: 'Operation',
+				displayName: '操作',
 				name: 'operation',
 				type: 'options',
 				noDataExpression: true,
 				options: [
 					{
-						name: 'Remote Options',
+						name: '远程选项',
 						value: 'remoteOptions',
 					},
 					{
-						name: 'Resource Locator',
+						name: '资源定位器',
 						value: 'resourceLocator',
 					},
 					{
-						name: 'Resource Mapping Component',
+						name: '资源映射组件',
 						value: 'resourceMapper',
 					},
 				],
 				default: 'remoteOptions',
 			},
 			{
-				displayName: 'Field ID',
+				displayName: '字段 ID',
 				name: 'fieldId',
 				type: 'string',
 				default: '',
 			},
 			{
-				displayName: 'Remote Options Name or ID',
+				displayName: '远程选项名称或 ID',
 				name: 'remoteOptions',
 				description:
-					'Remote options to load. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+					'要加载的远程选项。从列表中选择，或使用<a href="https://docs.n8n.io/code/expressions/">表达式</a>指定 ID。',
 				type: 'options',
 				typeOptions: {
 					loadOptionsDependsOn: ['fieldId'],
@@ -74,7 +74,7 @@ export class E2eTest implements INodeType {
 				},
 			},
 			{
-				displayName: 'Resource Locator',
+				displayName: '资源定位器',
 				name: 'rlc',
 				type: 'resourceLocator',
 				default: { mode: 'list', value: '' },
@@ -86,7 +86,7 @@ export class E2eTest implements INodeType {
 				},
 				modes: [
 					{
-						displayName: 'From List',
+						displayName: '从列表中选择',
 						name: 'list',
 						type: 'list',
 						typeOptions: {
@@ -95,7 +95,7 @@ export class E2eTest implements INodeType {
 						},
 					},
 					{
-						displayName: 'By URL',
+						displayName: '通过 URL',
 						name: 'url',
 						type: 'string',
 						placeholder: 'https://example.com/user/a4071e98-7d40-41fb-8911-ce3e7bf94fb2',
@@ -105,7 +105,7 @@ export class E2eTest implements INodeType {
 								properties: {
 									regex:
 										'https://example.com/user/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}',
-									errorMessage: 'Not a valid example URL',
+									errorMessage: '不是有效的示例 URL',
 								},
 							},
 						],
@@ -124,7 +124,7 @@ export class E2eTest implements INodeType {
 								type: 'regex',
 								properties: {
 									regex: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}',
-									errorMessage: 'Not a valid UUI',
+									errorMessage: '不是有效的 UUID',
 								},
 							},
 						],
@@ -133,7 +133,7 @@ export class E2eTest implements INodeType {
 				],
 			},
 			{
-				displayName: 'Resource Mapping Component',
+				displayName: '资源映射组件',
 				name: 'resourceMapper',
 				type: 'resourceMapper',
 				noDataExpression: true,
@@ -148,8 +148,8 @@ export class E2eTest implements INodeType {
 						resourceMapperMethod: 'getMappingColumns',
 						mode: 'upsert',
 						fieldWords: {
-							singular: 'column',
-							plural: 'columns',
+							singular: '列',
+							plural: '列',
 						},
 						addAllFields: true,
 						multiKeyMatch: false,
@@ -162,7 +162,7 @@ export class E2eTest implements INodeType {
 				},
 			},
 			{
-				displayName: 'Other Non Important Field',
+				displayName: '其他非重要字段',
 				name: 'otherField',
 				type: 'string',
 				default: '',

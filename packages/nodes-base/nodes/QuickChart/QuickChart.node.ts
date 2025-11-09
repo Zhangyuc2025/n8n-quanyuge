@@ -24,7 +24,7 @@ export class QuickChart implements INodeType {
 		name: 'quickChart',
 		icon: 'file:quickChart.svg',
 		group: ['output'],
-		description: 'Create a chart via QuickChart',
+		description: '通过 QuickChart 创建图表',
 		version: 1,
 		defaults: {
 			name: 'QuickChart',
@@ -34,31 +34,31 @@ export class QuickChart implements INodeType {
 		outputs: [NodeConnectionTypes.Main],
 		properties: [
 			{
-				displayName: 'Chart Type',
+				displayName: '图表类型',
 				name: 'chartType',
 				type: 'options',
 				default: 'bar',
 				options: CHART_TYPE_OPTIONS,
-				description: 'The type of chart to create',
+				description: '要创建的图表类型',
 			},
 			{
-				displayName: 'Add Labels',
+				displayName: '添加标签',
 				name: 'labelsMode',
 				type: 'options',
 				options: [
 					{
-						name: 'Manually',
+						name: '手动',
 						value: 'manually',
 					},
 					{
-						name: 'From Array',
+						name: '从数组',
 						value: 'array',
 					},
 				],
 				default: 'manually',
 			},
 			{
-				displayName: 'Labels',
+				displayName: '标签',
 				name: 'labelsUi',
 				type: 'fixedCollection',
 				typeOptions: {
@@ -67,15 +67,15 @@ export class QuickChart implements INodeType {
 				},
 				default: {},
 				required: true,
-				description: 'Labels to use in the chart',
-				placeholder: 'Add Label',
+				description: '图表中使用的标签',
+				placeholder: '添加标签',
 				options: [
 					{
 						name: 'labelsValues',
-						displayName: 'Labels',
+						displayName: '标签',
 						values: [
 							{
-								displayName: 'Label',
+								displayName: '标签',
 								name: 'label',
 								type: 'string',
 								default: '',
@@ -90,58 +90,57 @@ export class QuickChart implements INodeType {
 				},
 			},
 			{
-				displayName: 'Labels Array',
+				displayName: '标签数组',
 				name: 'labelsArray',
 				type: 'string',
 				required: true,
 				default: '',
-				placeholder: 'e.g. ["Berlin", "Paris", "Rome", "New York"]',
+				placeholder: '例如：["北京", "上海", "广州", "深圳"]',
 				displayOptions: {
 					show: {
 						labelsMode: ['array'],
 					},
 				},
-				description: 'The array of labels to be used in the chart',
+				description: '图表中使用的标签数组',
 			},
 			{
-				displayName: 'Data',
+				displayName: '数据',
 				name: 'data',
 				type: 'json',
 				default: '',
 				description:
-					'Data to use for the dataset, documentation and examples <a href="https://quickchart.io/documentation/chart-types/" target="_blank">here</a>',
-				placeholder: 'e.g. [60, 10, 12, 20]',
+					'用于数据集的数据，文档和示例参见<a href="https://quickchart.io/documentation/chart-types/" target="_blank">这里</a>',
+				placeholder: '例如：[60, 10, 12, 20]',
 				required: true,
 			},
 			{
-				displayName: 'Put Output In Field',
+				displayName: '输出字段',
 				name: 'output',
 				type: 'string',
 				default: 'data',
 				required: true,
-				description:
-					'The binary data will be displayed in the Output panel on the right, under the Binary tab',
-				hint: 'The name of the output field to put the binary file data in',
+				description: '二进制数据将显示在右侧输出面板的二进制选项卡下',
+				hint: '用于放置二进制文件数据的输出字段名称',
 			},
 			{
-				displayName: 'Chart Options',
+				displayName: '图表选项',
 				name: 'chartOptions',
 				type: 'collection',
-				placeholder: 'Add option',
+				placeholder: '添加选项',
 				default: {},
 				options: [
 					{
-						displayName: 'Background Color',
+						displayName: '背景颜色',
 						name: 'backgroundColor',
 						type: 'color',
 						typeOptions: {
 							showAlpha: true,
 						},
 						default: '',
-						description: 'Background color of the chart',
+						description: '图表的背景颜色',
 					},
 					{
-						displayName: 'Device Pixel Ratio',
+						displayName: '设备像素比',
 						name: 'devicePixelRatio',
 						type: 'number',
 						default: 2,
@@ -149,14 +148,14 @@ export class QuickChart implements INodeType {
 							minValue: 1,
 							maxValue: 2,
 						},
-						description: 'Pixel ratio of the chart',
+						description: '图表的像素比',
 					},
 					{
-						displayName: 'Format',
+						displayName: '格式',
 						name: 'format',
 						type: 'options',
 						default: 'png',
-						description: 'File format of the resulting chart',
+						description: '生成图表的文件格式',
 						options: [
 							{
 								name: 'PNG',
@@ -177,18 +176,18 @@ export class QuickChart implements INodeType {
 						],
 					},
 					{
-						displayName: 'Height',
+						displayName: '高度',
 						name: 'height',
 						type: 'number',
 						default: 300,
-						description: 'Height of the chart',
+						description: '图表的高度',
 					},
 					{
-						displayName: 'Horizontal',
+						displayName: '水平方向',
 						name: 'horizontal',
 						type: 'boolean',
 						default: false,
-						description: 'Whether the chart should use its Y axis horizontal',
+						description: '是否使图表的 Y 轴水平放置',
 						displayOptions: {
 							show: {
 								'/chartType': HORIZONTAL_CHARTS,
@@ -196,48 +195,47 @@ export class QuickChart implements INodeType {
 						},
 					},
 					{
-						displayName: 'Width',
+						displayName: '宽度',
 						name: 'width',
 						type: 'number',
 						default: 500,
-						description: 'Width of the chart',
+						description: '图表的宽度',
 					},
 				],
 			},
 			{
-				displayName: 'Dataset Options',
+				displayName: '数据集选项',
 				name: 'datasetOptions',
 				type: 'collection',
-				placeholder: 'Add option',
+				placeholder: '添加选项',
 				default: {},
 				options: [
 					{
-						displayName: 'Background Color',
+						displayName: '背景颜色',
 						name: 'backgroundColor',
 						type: 'color',
 						default: '',
 						typeOptions: {
 							showAlpha: true,
 						},
-						description:
-							'Color used for the background the dataset (area of a line graph, fill of a bar chart, etc.)',
+						description: '用于数据集背景的颜色（折线图的区域、柱状图的填充等）',
 					},
 					{
-						displayName: 'Border Color',
+						displayName: '边框颜色',
 						name: 'borderColor',
 						type: 'color',
 						typeOptions: {
 							showAlpha: true,
 						},
 						default: '',
-						description: 'Color used for lines of the dataset',
+						description: '用于数据集线条的颜色',
 					},
 					{
-						displayName: 'Fill',
+						displayName: '填充',
 						name: 'fill',
 						type: 'boolean',
 						default: true,
-						description: 'Whether to fill area of the dataset',
+						description: '是否填充数据集区域',
 						displayOptions: {
 							show: {
 								'/chartType': Fill_CHARTS,
@@ -245,57 +243,57 @@ export class QuickChart implements INodeType {
 						},
 					},
 					{
-						displayName: 'Label',
+						displayName: '标签',
 						name: 'label',
 						type: 'string',
 						default: '',
-						description: 'The label of the dataset',
+						description: '数据集的标签',
 					},
 					{
-						displayName: 'Point Style',
+						displayName: '点样式',
 						name: 'pointStyle',
 						type: 'options',
 						default: 'circle',
-						description: 'Style to use for points of the dataset',
+						description: '数据集点使用的样式',
 						options: [
 							{
-								name: 'Circle',
+								name: '圆形',
 								value: 'circle',
 							},
 							{
-								name: 'Cross',
+								name: '十字',
 								value: 'cross',
 							},
 							{
-								name: 'CrossRot',
+								name: '旋转十字',
 								value: 'crossRot',
 							},
 							{
-								name: 'Dash',
+								name: '破折号',
 								value: 'dash',
 							},
 							{
-								name: 'Line',
+								name: '线条',
 								value: 'line',
 							},
 							{
-								name: 'Rect',
+								name: '矩形',
 								value: 'rect',
 							},
 							{
-								name: 'Rect Rot',
+								name: '旋转矩形',
 								value: 'rectRot',
 							},
 							{
-								name: 'Rect Rounded',
+								name: '圆角矩形',
 								value: 'rectRounded',
 							},
 							{
-								name: 'Star',
+								name: '星形',
 								value: 'star',
 							},
 							{
-								name: 'Triangle',
+								name: '三角形',
 								value: 'triangle',
 							},
 						],

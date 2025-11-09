@@ -17,10 +17,7 @@ function parseDateByFormat(this: IExecuteFunctions, value: string, fromFormat: s
 	const date = moment(value, fromFormat, true);
 	if (moment(date).isValid()) return date;
 
-	throw new NodeOperationError(
-		this.getNode(),
-		'Date input cannot be parsed. Please recheck the value and the "From Format" field.',
-	);
+	throw new NodeOperationError(this.getNode(), '日期输入无法解析。请重新检查值和"输入格式"字段。');
 }
 
 function getIsoValue(this: IExecuteFunctions, value: string) {
@@ -29,7 +26,7 @@ function getIsoValue(this: IExecuteFunctions, value: string) {
 	} catch (error) {
 		throw new NodeOperationError(
 			this.getNode(),
-			'Unrecognized date input. Please specify a format in the "From Format" field.',
+			'无法识别的日期输入。请在"输入格式"字段中指定格式。',
 		);
 	}
 }
@@ -40,20 +37,20 @@ function parseDateByDefault(this: IExecuteFunctions, value: string) {
 
 	throw new NodeOperationError(
 		this.getNode(),
-		'Unrecognized date input. Please specify a format in the "From Format" field.',
+		'无法识别的日期输入。请在"输入格式"字段中指定格式。',
 	);
 }
 
 const versionDescription: INodeTypeDescription = {
-	displayName: 'Date & Time',
+	displayName: '日期和时间',
 	name: 'dateTime',
 	icon: 'fa:clock',
 	group: ['transform'],
 	version: 1,
-	description: 'Allows you to manipulate date and time values',
+	description: '允许你操纵日期和时间值',
 	subtitle: '={{$parameter["action"]}}',
 	defaults: {
-		name: 'Date & Time',
+		name: '日期和时间',
 		color: '#408000',
 	},
 	inputs: [NodeConnectionTypes.Main],
@@ -61,33 +58,33 @@ const versionDescription: INodeTypeDescription = {
 	properties: [
 		{
 			displayName:
-				"More powerful date functionality is available in <a href='https://docs.n8n.io/code/cookbook/luxon/' target='_blank'>expressions</a>,</br> e.g. <code>{{ $now.plus(1, 'week') }}</code>",
+				"更强大的日期功能可在<a href='https://docs.n8n.io/code/cookbook/luxon/' target='_blank'>表达式</a>中使用,</br> 例如 <code>{{ $now.plus(1, 'week') }}</code>",
 			name: 'noticeDateTime',
 			type: 'notice',
 			default: '',
 		},
 		{
-			displayName: 'Action',
+			displayName: '操作',
 			name: 'action',
 			type: 'options',
 			options: [
 				{
-					name: 'Calculate a Date',
-					description: 'Add or subtract time from a date',
+					name: '计算日期',
+					description: '从日期加或减时间',
 					value: 'calculate',
-					action: 'Add or subtract time from a date',
+					action: '从日期加或减时间',
 				},
 				{
-					name: 'Format a Date',
-					description: 'Convert a date to a different format',
+					name: '格式化日期',
+					description: '将日期转换为其他格式',
 					value: 'format',
-					action: 'Convert a date to a different format',
+					action: '将日期转换为其他格式',
 				},
 			],
 			default: 'format',
 		},
 		{
-			displayName: 'Value',
+			displayName: '值',
 			name: 'value',
 			displayOptions: {
 				show: {
@@ -96,11 +93,11 @@ const versionDescription: INodeTypeDescription = {
 			},
 			type: 'string',
 			default: '',
-			description: 'The value that should be converted',
+			description: '应该被转换的值',
 			required: true,
 		},
 		{
-			displayName: 'Property Name',
+			displayName: '属性名称',
 			name: 'dataPropertyName',
 			type: 'string',
 			default: 'data',
@@ -110,10 +107,10 @@ const versionDescription: INodeTypeDescription = {
 					action: ['format'],
 				},
 			},
-			description: 'Name of the property to which to write the converted date',
+			description: '要写入转换后日期的属性名称',
 		},
 		{
-			displayName: 'Custom Format',
+			displayName: '自定义格式',
 			name: 'custom',
 			displayOptions: {
 				show: {
@@ -122,10 +119,10 @@ const versionDescription: INodeTypeDescription = {
 			},
 			type: 'boolean',
 			default: false,
-			description: 'Whether a predefined format should be selected or custom format entered',
+			description: '是否应该选择预定义格式或输入自定义格式',
 		},
 		{
-			displayName: 'To Format',
+			displayName: '转换为格式',
 			name: 'toFormat',
 			displayOptions: {
 				show: {
@@ -136,10 +133,10 @@ const versionDescription: INodeTypeDescription = {
 			type: 'string',
 			default: '',
 			placeholder: 'YYYY-MM-DD',
-			description: 'The format to convert the date to',
+			description: '要转换日期到的格式',
 		},
 		{
-			displayName: 'To Format',
+			displayName: '转换为格式',
 			name: 'toFormat',
 			type: 'options',
 			displayOptions: {
@@ -153,44 +150,44 @@ const versionDescription: INodeTypeDescription = {
 				{
 					name: 'MM/DD/YYYY',
 					value: 'MM/DD/YYYY',
-					description: 'Example: 09/04/1986',
+					description: '示例: 09/04/1986',
 				},
 				{
 					name: 'YYYY/MM/DD',
 					value: 'YYYY/MM/DD',
-					description: 'Example: 1986/04/09',
+					description: '示例: 1986/04/09',
 				},
 				{
 					name: 'MMMM DD YYYY',
 					value: 'MMMM DD YYYY',
-					description: 'Example: April 09 1986',
+					description: '示例: April 09 1986',
 				},
 				{
 					name: 'MM-DD-YYYY',
 					value: 'MM-DD-YYYY',
-					description: 'Example: 09-04-1986',
+					description: '示例: 09-04-1986',
 				},
 				{
 					name: 'YYYY-MM-DD',
 					value: 'YYYY-MM-DD',
-					description: 'Example: 1986-04-09',
+					description: '示例: 1986-04-09',
 				},
 				{
-					name: 'Unix Timestamp',
+					name: 'Unix 时间戳',
 					value: 'X',
-					description: 'Example: 513388800.879',
+					description: '示例: 513388800.879',
 				},
 				{
-					name: 'Unix Ms Timestamp',
+					name: 'Unix 毫秒时间戳',
 					value: 'x',
-					description: 'Example: 513388800',
+					description: '示例: 513388800',
 				},
 			],
 			default: 'MM/DD/YYYY',
-			description: 'The format to convert the date to',
+			description: '要转换日期到的格式',
 		},
 		{
-			displayName: 'Options',
+			displayName: '选项',
 			name: 'options',
 			displayOptions: {
 				show: {
@@ -198,18 +195,18 @@ const versionDescription: INodeTypeDescription = {
 				},
 			},
 			type: 'collection',
-			placeholder: 'Add option',
+			placeholder: '添加选项',
 			default: {},
 			options: [
 				{
-					displayName: 'From Format',
+					displayName: '输入格式',
 					name: 'fromFormat',
 					type: 'string',
 					default: '',
-					description: 'In case the input format is not recognized you can provide the format',
+					description: '如果输入格式无法识别,你可以提供格式',
 				},
 				{
-					displayName: 'From Timezone Name or ID',
+					displayName: '输入时区名称或 ID',
 					name: 'fromTimezone',
 					type: 'options',
 					typeOptions: {
@@ -217,10 +214,10 @@ const versionDescription: INodeTypeDescription = {
 					},
 					default: 'UTC',
 					description:
-						'The timezone to convert from. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+						'要转换的时区。从列表中选择,或使用<a href="https://docs.n8n.io/code/expressions/">表达式</a>指定 ID。',
 				},
 				{
-					displayName: 'To Timezone Name or ID',
+					displayName: '转换至时区名称或 ID',
 					name: 'toTimezone',
 					type: 'options',
 					typeOptions: {
@@ -228,12 +225,12 @@ const versionDescription: INodeTypeDescription = {
 					},
 					default: 'UTC',
 					description:
-						'The timezone to convert to. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+						'要转换至的时区。从列表中选择,或使用<a href="https://docs.n8n.io/code/expressions/">表达式</a>指定 ID。',
 				},
 			],
 		},
 		{
-			displayName: 'Date Value',
+			displayName: '日期值',
 			name: 'value',
 			displayOptions: {
 				show: {
@@ -242,11 +239,11 @@ const versionDescription: INodeTypeDescription = {
 			},
 			type: 'string',
 			default: '',
-			description: 'The date string or timestamp from which you want to add/subtract time',
+			description: '你要加/减时间的日期字符串或时间戳',
 			required: true,
 		},
 		{
-			displayName: 'Operation',
+			displayName: '操作',
 			name: 'operation',
 			displayOptions: {
 				show: {
@@ -257,23 +254,23 @@ const versionDescription: INodeTypeDescription = {
 			noDataExpression: true,
 			options: [
 				{
-					name: 'Add',
+					name: '加',
 					value: 'add',
-					description: 'Add time to Date Value',
-					action: 'Add time to Date Value',
+					description: '向日期值添加时间',
+					action: '向日期值添加时间',
 				},
 				{
-					name: 'Subtract',
+					name: '减',
 					value: 'subtract',
-					description: 'Subtract time from Date Value',
-					action: 'Subtract time from Date Value',
+					description: '从日期值减去时间',
+					action: '从日期值减去时间',
 				},
 			],
 			default: 'add',
 			required: true,
 		},
 		{
-			displayName: 'Duration',
+			displayName: '持续时间',
 			name: 'duration',
 			displayOptions: {
 				show: {
@@ -286,12 +283,12 @@ const versionDescription: INodeTypeDescription = {
 			},
 			default: 0,
 			required: true,
-			description: 'E.g. enter “10” then select “Days” if you want to add 10 days to Date Value.',
+			description: '例如输入"10",然后如果你想向日期值添加 10 天,选择"天"。',
 		},
 		{
-			displayName: 'Time Unit',
+			displayName: '时间单位',
 			name: 'timeUnit',
-			description: 'Time unit for Duration parameter above',
+			description: '上述持续时间参数的时间单位',
 			displayOptions: {
 				show: {
 					action: ['calculate'],
@@ -301,39 +298,39 @@ const versionDescription: INodeTypeDescription = {
 			// eslint-disable-next-line n8n-nodes-base/node-param-options-type-unsorted-items
 			options: [
 				{
-					name: 'Quarters',
+					name: '季度',
 					value: 'quarters',
 				},
 				{
-					name: 'Years',
+					name: '年',
 					value: 'years',
 				},
 				{
-					name: 'Months',
+					name: '月',
 					value: 'months',
 				},
 				{
-					name: 'Weeks',
+					name: '周',
 					value: 'weeks',
 				},
 				{
-					name: 'Days',
+					name: '天',
 					value: 'days',
 				},
 				{
-					name: 'Hours',
+					name: '小时',
 					value: 'hours',
 				},
 				{
-					name: 'Minutes',
+					name: '分钟',
 					value: 'minutes',
 				},
 				{
-					name: 'Seconds',
+					name: '秒',
 					value: 'seconds',
 				},
 				{
-					name: 'Milliseconds',
+					name: '毫秒',
 					value: 'milliseconds',
 				},
 			],
@@ -341,7 +338,7 @@ const versionDescription: INodeTypeDescription = {
 			required: true,
 		},
 		{
-			displayName: 'Property Name',
+			displayName: '属性名称',
 			name: 'dataPropertyName',
 			type: 'string',
 			default: 'data',
@@ -351,13 +348,13 @@ const versionDescription: INodeTypeDescription = {
 					action: ['calculate'],
 				},
 			},
-			description: 'Name of the output property to which to write the converted date',
+			description: '要写入转换后日期的输出属性名称',
 		},
 		{
-			displayName: 'Options',
+			displayName: '选项',
 			name: 'options',
 			type: 'collection',
-			placeholder: 'Add option',
+			placeholder: '添加选项',
 			default: {},
 			displayOptions: {
 				show: {
@@ -366,12 +363,12 @@ const versionDescription: INodeTypeDescription = {
 			},
 			options: [
 				{
-					displayName: 'From Format',
+					displayName: '输入格式',
 					name: 'fromFormat',
 					type: 'string',
 					default: '',
 					description:
-						'Format for parsing the value as a date. If unrecognized, specify the <a href="https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.datetime/#faqs">format</a> for the value.',
+						'用于将值解析为日期的格式。如果无法识别,请指定值的<a href="https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.datetime/#faqs">格式</a>。',
 				},
 			],
 		},
@@ -450,7 +447,7 @@ export class DateTimeV1 implements INodeType {
 					if (options.fromFormat === undefined && !moment(currentDate).isValid()) {
 						throw new NodeOperationError(
 							this.getNode(),
-							'The date input format could not be recognized. Please set the "From Format" field',
+							'日期输入格式无法识别。请设置"输入格式"字段',
 							{ itemIndex: i },
 						);
 					}

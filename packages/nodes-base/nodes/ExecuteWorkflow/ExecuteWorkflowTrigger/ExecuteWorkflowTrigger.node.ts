@@ -20,17 +20,16 @@ import { getFieldEntries } from '../../../utils/workflowInputsResourceMapping/Ge
 
 export class ExecuteWorkflowTrigger implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Execute Workflow Trigger',
+		displayName: '执行工作流触发器',
 		name: 'executeWorkflowTrigger',
 		icon: 'fa:sign-out-alt',
 		group: ['trigger'],
 		version: [1, 1.1],
-		description:
-			'Helpers for calling other n8n workflows. Used for designing modular, microservice-like workflows.',
+		description: '用于调用其他 n8n 工作流的助手。用于设计模块化、类似微服务的工作流。',
 		eventTriggerDescription: '',
 		maxNodes: 1,
 		defaults: {
-			name: 'When Executed by Another Workflow',
+			name: '当被另一个工作流执行时',
 			color: '#ff6d5a',
 		},
 		inputs: [],
@@ -38,7 +37,7 @@ export class ExecuteWorkflowTrigger implements INodeType {
 		hints: [
 			{
 				message:
-					"This workflow isn't set to accept any input data. Fill out the workflow input schema or change the workflow to accept any data passed to it.",
+					'此工作流未设置为接受任何输入数据。请填写工作流输入架构或将工作流更改为接受传递给它的任何数据。',
 				// This condition checks if we have no input fields, which gets a bit awkward:
 				// For WORKFLOW_INPUTS: keys() only contains `VALUES` if at least one value is provided
 				// For JSON_EXAMPLE: We remove all whitespace and check if we're left with an empty object. Note that we already error if the example is not valid JSON
@@ -51,23 +50,23 @@ export class ExecuteWorkflowTrigger implements INodeType {
 		],
 		properties: [
 			{
-				displayName: 'Events',
+				displayName: '事件',
 				name: 'events',
 				type: 'hidden',
 				noDataExpression: true,
 				options: [
 					{
-						name: 'Workflow Call',
+						name: '工作流调用',
 						value: 'worklfow_call',
-						description: 'When executed by another workflow using Execute Workflow Trigger',
-						action: 'When executed by Another Workflow',
+						description: '当被另一个使用执行工作流触发器的工作流执行时',
+						action: '当被另一个工作流执行时',
 					},
 				],
 				default: 'worklfow_call',
 			},
 			{
 				displayName:
-					"When an ‘execute workflow’ node calls this workflow, the execution starts here. Any data passed into the 'execute workflow' node will be output by this node.",
+					'当"执行工作流"节点调用此工作流时，执行从此处开始。传递到"执行工作流"节点的任何数据都将由此节点输出。',
 				name: 'notice',
 				type: 'notice',
 				default: '',
@@ -76,7 +75,7 @@ export class ExecuteWorkflowTrigger implements INodeType {
 				},
 			},
 			{
-				displayName: 'This node is out of date. Please upgrade by removing it and adding a new one',
+				displayName: '此节点已过时。请通过删除它并添加新节点来升级',
 				name: 'outdatedVersionWarning',
 				type: 'notice',
 				displayOptions: { show: { '@version': [{ _cnd: { eq: 1 } }] } },
@@ -84,27 +83,27 @@ export class ExecuteWorkflowTrigger implements INodeType {
 			},
 			{
 				// eslint-disable-next-line n8n-nodes-base/node-param-display-name-miscased
-				displayName: 'Input data mode',
+				displayName: '输入数据模式',
 				name: INPUT_SOURCE,
 				type: 'options',
 				options: [
 					{
 						// eslint-disable-next-line n8n-nodes-base/node-param-display-name-miscased
-						name: 'Define using fields below',
+						name: '使用下方字段定义',
 						value: WORKFLOW_INPUTS,
-						description: 'Provide input fields via UI',
+						description: '通过 UI 提供输入字段',
 					},
 					{
 						// eslint-disable-next-line n8n-nodes-base/node-param-display-name-miscased
-						name: 'Define using JSON example',
+						name: '使用 JSON 示例定义',
 						value: JSON_EXAMPLE,
-						description: 'Generate a schema from an example JSON object',
+						description: '从示例 JSON 对象生成架构',
 					},
 					{
 						// eslint-disable-next-line n8n-nodes-base/node-param-display-name-miscased
-						name: 'Accept all data',
+						name: '接受所有数据',
 						value: PASSTHROUGH,
-						description: 'Use all incoming data from the parent workflow',
+						description: '使用来自父工作流的所有传入数据',
 					},
 				],
 				default: WORKFLOW_INPUTS,
@@ -115,7 +114,7 @@ export class ExecuteWorkflowTrigger implements INodeType {
 			},
 			{
 				displayName:
-					'Provide an example object to infer fields and their types.<br>To allow any type for a given field, set the value to null.',
+					'提供一个示例对象以推断字段及其类型。<br>要允许给定字段的任何类型，请将值设置为 null。',
 				name: `${JSON_EXAMPLE}_notice`,
 				type: 'notice',
 				default: '',
@@ -124,7 +123,7 @@ export class ExecuteWorkflowTrigger implements INodeType {
 				},
 			},
 			{
-				displayName: 'JSON Example',
+				displayName: 'JSON 示例',
 				name: JSON_EXAMPLE,
 				type: 'json',
 				default: JSON.stringify(
@@ -143,12 +142,11 @@ export class ExecuteWorkflowTrigger implements INodeType {
 				},
 			},
 			{
-				displayName: 'Workflow Input Schema',
+				displayName: '工作流输入架构',
 				name: WORKFLOW_INPUTS,
-				placeholder: 'Add field',
+				placeholder: '添加字段',
 				type: 'fixedCollection',
-				description:
-					'Define expected input fields. If no inputs are provided, all data from the calling workflow will be passed through.',
+				description: '定义预期的输入字段。如果未提供输入，则将传递来自调用工作流的所有数据。',
 				typeOptions: {
 					multipleValues: true,
 					sortable: true,
@@ -161,25 +159,23 @@ export class ExecuteWorkflowTrigger implements INodeType {
 				options: [
 					{
 						name: VALUES,
-						displayName: 'Values',
+						displayName: '值',
 						values: [
 							{
-								displayName: 'Name',
+								displayName: '名称',
 								name: 'name',
 								type: 'string',
 								default: '',
-								placeholder: 'e.g. fieldName',
-								description:
-									'A unique name for this workflow input, used to reference it from another workflows',
+								placeholder: '例如：fieldName',
+								description: '此工作流输入的唯一名称，用于从其他工作流中引用它',
 								required: true,
 								noDataExpression: true,
 							},
 							{
-								displayName: 'Type',
+								displayName: '类型',
 								name: 'type',
 								type: 'options',
-								description:
-									"Expected data type for this input value. Determines how this field's values are stored, validated, and displayed.",
+								description: '此输入值的预期数据类型。决定如何存储、验证和显示此字段的值。',
 								options: TYPE_OPTIONS,
 								required: true,
 								default: 'string',

@@ -10,102 +10,99 @@ import type {
 import { NodeConnectionTypes, deepCopy } from 'n8n-workflow';
 
 const versionDescription: INodeTypeDescription = {
-	displayName: 'Set',
+	displayName: '设置',
 	name: 'set',
 	icon: 'fa:pen',
 	group: ['input'],
 	version: [1, 2],
-	description: 'Sets values on items and optionally remove other values',
+	description: '在项目上设置值并可选择删除其他值',
 	defaults: {
-		name: 'Set',
+		name: '设置',
 		color: '#0000FF',
 	},
 	inputs: [NodeConnectionTypes.Main],
 	outputs: [NodeConnectionTypes.Main],
 	properties: [
 		{
-			displayName: 'Keep Only Set',
+			displayName: '仅保留设置的值',
 			name: 'keepOnlySet',
 			type: 'boolean',
 			default: false,
-			description: 'Whether only the values set on this node should be kept and all others removed',
+			description: '是否仅保留在此节点设置的值并删除所有其他值',
 		},
 		{
-			displayName: 'Values to Set',
+			displayName: '要设置的值',
 			name: 'values',
-			placeholder: 'Add Value',
+			placeholder: '添加值',
 			type: 'fixedCollection',
 			typeOptions: {
 				multipleValues: true,
 				sortable: true,
 			},
-			description: 'The value to set',
+			description: '要设置的值',
 			default: {},
 			options: [
 				{
 					name: 'boolean',
-					displayName: 'Boolean',
+					displayName: '布尔值',
 					values: [
 						{
-							displayName: 'Name',
+							displayName: '名称',
 							name: 'name',
 							type: 'string',
 							requiresDataPath: 'single',
 							default: 'propertyName',
-							description:
-								'Name of the property to write data to. Supports dot-notation. Example: "data.person[0].name"',
+							description: '要写入数据的属性名称。支持点表示法。示例："data.person[0].name"',
 						},
 						{
-							displayName: 'Value',
+							displayName: '值',
 							name: 'value',
 							type: 'boolean',
 							default: false,
 							// eslint-disable-next-line n8n-nodes-base/node-param-description-boolean-without-whether
-							description: 'The boolean value to write in the property',
+							description: '要写入属性的布尔值',
 						},
 					],
 				},
 				{
 					name: 'number',
-					displayName: 'Number',
+					displayName: '数字',
 					values: [
 						{
-							displayName: 'Name',
+							displayName: '名称',
 							name: 'name',
 							type: 'string',
 							default: 'propertyName',
 							requiresDataPath: 'single',
-							description:
-								'Name of the property to write data to. Supports dot-notation. Example: "data.person[0].name"',
+							description: '要写入数据的属性名称。支持点表示法。示例："data.person[0].name"',
 						},
 						{
-							displayName: 'Value',
+							displayName: '值',
 							name: 'value',
 							type: 'number',
 							default: 0,
-							description: 'The number value to write in the property',
+							description: '要写入属性的数字值',
 						},
 					],
 				},
 				{
 					name: 'string',
-					displayName: 'String',
+					displayName: '字符串',
 					values: [
 						{
-							displayName: 'Name',
+							displayName: '名称',
 							name: 'name',
 							type: 'string',
 							default: 'propertyName',
 							requiresDataPath: 'single',
-							description:
-								'Name of the property to write data to. Supports dot-notation. Example: "data.person[0].name"',
+							description: '要写入数据的属性名称。支持点表示法。示例："data.person[0].name"',
 						},
 						{
-							displayName: 'Value',
+							displayName: '值',
 							name: 'value',
 							type: 'string',
 							default: '',
-							description: 'The string value to write in the property',
+							description: '要写入属性的字符串值',
 						},
 					],
 				},
@@ -113,20 +110,20 @@ const versionDescription: INodeTypeDescription = {
 		},
 
 		{
-			displayName: 'Options',
+			displayName: '选项',
 			name: 'options',
 			type: 'collection',
-			placeholder: 'Add option',
+			placeholder: '添加选项',
 			default: {},
 			options: [
 				{
-					displayName: 'Dot Notation',
+					displayName: '点表示法',
 					name: 'dotNotation',
 					type: 'boolean',
 					default: true,
 					// eslint-disable-next-line n8n-nodes-base/node-param-description-boolean-without-whether
 					description:
-						'<p>By default, dot-notation is used in property names. This means that "a.b" will set the property "b" underneath "a" so { "a": { "b": value} }.<p></p>If that is not intended this can be deactivated, it will then set { "a.b": value } instead.</p>.',
+						'<p>默认情况下，属性名称使用点表示法。这意味着"a.b"将在"a"下设置属性"b"，即 { "a": { "b": value} }。<p></p>如果不希望这样，可以停用此选项，它将设置 { "a.b": value }。</p>',
 				},
 			],
 		},

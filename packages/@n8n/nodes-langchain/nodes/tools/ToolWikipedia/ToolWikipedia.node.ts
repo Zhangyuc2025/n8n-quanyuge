@@ -15,8 +15,7 @@ import { getConnectionHintNoticeField } from '@utils/sharedFields';
 function getTool(ctx: ISupplyDataFunctions | IExecuteFunctions): WikipediaQueryRun {
 	const WikiTool = new WikipediaQueryRun();
 	WikiTool.name = ctx.getNode().name;
-	WikiTool.description =
-		'A tool for interacting with and fetching data from the Wikipedia API. The input should always be a string query.';
+	WikiTool.description = '用于与 Wikipedia API 交互并从中获取数据的工具。输入应始终是字符串查询。';
 	return WikiTool;
 }
 
@@ -27,7 +26,7 @@ export class ToolWikipedia implements INodeType {
 		icon: 'file:wikipedia.svg',
 		group: ['transform'],
 		version: 1,
-		description: 'Search in Wikipedia',
+		description: '在 Wikipedia 中搜索',
 		defaults: {
 			name: 'Wikipedia',
 		},
@@ -49,7 +48,7 @@ export class ToolWikipedia implements INodeType {
 		inputs: [],
 
 		outputs: [NodeConnectionTypes.AiTool],
-		outputNames: ['Tool'],
+		outputNames: ['工具'],
 		properties: [getConnectionHintNoticeField([NodeConnectionTypes.AiAgent])],
 	};
 

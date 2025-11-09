@@ -37,59 +37,59 @@ export class MergeV2 implements INodeType {
 			...baseDescription,
 			version: [2, 2.1],
 			defaults: {
-				name: 'Merge',
+				name: '合并',
 			},
 
 			inputs: [NodeConnectionTypes.Main, NodeConnectionTypes.Main],
 			outputs: [NodeConnectionTypes.Main],
-			inputNames: ['Input 1', 'Input 2'],
+			inputNames: ['输入 1', '输入 2'],
 			// If mode is chooseBranch data from both branches is required
 			// to continue, else data from any input suffices
 			requiredInputs: '={{ $parameter["mode"] === "chooseBranch" ? [0, 1] : 1 }}',
 			properties: [
 				{
-					displayName: 'Mode',
+					displayName: '模式',
 					name: 'mode',
 					type: 'options',
 					options: [
 						{
-							name: 'Append',
+							name: '追加',
 							value: 'append',
-							description: 'All items of input 1, then all items of input 2',
+							description: '输入 1 的所有数据项，然后是输入 2 的所有数据项',
 						},
 						{
-							name: 'Combine',
+							name: '组合',
 							value: 'combine',
-							description: 'Merge matching items together',
+							description: '将匹配的数据项合并在一起',
 						},
 						{
-							name: 'Choose Branch',
+							name: '选择分支',
 							value: 'chooseBranch',
-							description: 'Output input data, without modifying it',
+							description: '输出输入数据，不做任何修改',
 						},
 					],
 					default: 'append',
-					description: 'How data of branches should be merged',
+					description: '如何合并分支的数据',
 				},
 				{
-					displayName: 'Combination Mode',
+					displayName: '组合模式',
 					name: 'combinationMode',
 					type: 'options',
 					options: [
 						{
-							name: 'Merge By Fields',
+							name: '按字段合并',
 							value: 'mergeByFields',
-							description: 'Combine items with the same field values',
+							description: '合并具有相同字段值的数据项',
 						},
 						{
-							name: 'Merge By Position',
+							name: '按位置合并',
 							value: 'mergeByPosition',
-							description: 'Combine items based on their order',
+							description: '基于数据项的顺序进行合并',
 						},
 						{
-							name: 'Multiplex',
+							name: '多路复用',
 							value: 'multiplex',
-							description: 'All possible item combinations (cross join)',
+							description: '所有可能的数据项组合（交叉连接）',
 						},
 					],
 					default: 'mergeByFields',
@@ -101,37 +101,37 @@ export class MergeV2 implements INodeType {
 				},
 				// mergeByFields ------------------------------------------------------------------
 				{
-					displayName: 'Fields to Match',
+					displayName: '要匹配的字段',
 					name: 'mergeByFields',
 					type: 'fixedCollection',
-					placeholder: 'Add Fields to Match',
+					placeholder: '添加要匹配的字段',
 					default: { values: [{ field1: '', field2: '' }] },
 					typeOptions: {
 						multipleValues: true,
 					},
 					options: [
 						{
-							displayName: 'Values',
+							displayName: '值',
 							name: 'values',
 							values: [
 								{
-									displayName: 'Input 1 Field',
+									displayName: '输入 1 字段',
 									name: 'field1',
 									type: 'string',
 									default: '',
 									// eslint-disable-next-line n8n-nodes-base/node-param-placeholder-miscased-id
-									placeholder: 'e.g. id',
-									hint: ' Enter the field name as text',
+									placeholder: '例如：id',
+									hint: ' 以文本形式输入字段名',
 									requiresDataPath: 'single',
 								},
 								{
-									displayName: 'Input 2 Field',
+									displayName: '输入 2 字段',
 									name: 'field2',
 									type: 'string',
 									default: '',
 									// eslint-disable-next-line n8n-nodes-base/node-param-placeholder-miscased-id
-									placeholder: 'e.g. id',
-									hint: ' Enter the field name as text',
+									placeholder: '例如：id',
+									hint: ' 以文本形式输入字段名',
 									requiresDataPath: 'single',
 								},
 							],
@@ -145,36 +145,35 @@ export class MergeV2 implements INodeType {
 					},
 				},
 				{
-					displayName: 'Output Type',
+					displayName: '输出类型',
 					name: 'joinMode',
 					type: 'options',
 					// eslint-disable-next-line n8n-nodes-base/node-param-options-type-unsorted-items
 					options: [
 						{
-							name: 'Keep Matches',
+							name: '保留匹配项',
 							value: 'keepMatches',
-							description: 'Items that match, merged together (inner join)',
+							description: '匹配的数据项合并在一起（内连接）',
 						},
 						{
-							name: 'Keep Non-Matches',
+							name: '保留不匹配项',
 							value: 'keepNonMatches',
-							description: "Items that don't match",
+							description: '不匹配的数据项',
 						},
 						{
-							name: 'Keep Everything',
+							name: '保留所有',
 							value: 'keepEverything',
-							description:
-								"Items that match merged together, plus items that don't match (outer join)",
+							description: '匹配的数据项合并在一起，加上不匹配的数据项（外连接）',
 						},
 						{
-							name: 'Enrich Input 1',
+							name: '丰富输入 1',
 							value: 'enrichInput1',
-							description: 'All of input 1, with data from input 2 added in (left join)',
+							description: '输入 1 的全部数据，加上来自输入 2 的数据（左连接）',
 						},
 						{
-							name: 'Enrich Input 2',
+							name: '丰富输入 2',
 							value: 'enrichInput2',
-							description: 'All of input 2, with data from input 1 added in (right join)',
+							description: '输入 2 的全部数据，加上来自输入 1 的数据（右连接）',
 						},
 					],
 					default: 'keepMatches',
@@ -186,20 +185,20 @@ export class MergeV2 implements INodeType {
 					},
 				},
 				{
-					displayName: 'Output Data From',
+					displayName: '输出数据来源',
 					name: 'outputDataFrom',
 					type: 'options',
 					options: [
 						{
-							name: 'Both Inputs Merged Together',
+							name: '两个输入合并在一起',
 							value: 'both',
 						},
 						{
-							name: 'Input 1',
+							name: '输入 1',
 							value: 'input1',
 						},
 						{
-							name: 'Input 2',
+							name: '输入 2',
 							value: 'input2',
 						},
 					],
@@ -213,20 +212,20 @@ export class MergeV2 implements INodeType {
 					},
 				},
 				{
-					displayName: 'Output Data From',
+					displayName: '输出数据来源',
 					name: 'outputDataFrom',
 					type: 'options',
 					options: [
 						{
-							name: 'Both Inputs Appended Together',
+							name: '两个输入追加在一起',
 							value: 'both',
 						},
 						{
-							name: 'Input 1',
+							name: '输入 1',
 							value: 'input1',
 						},
 						{
-							name: 'Input 2',
+							name: '输入 2',
 							value: 'input2',
 						},
 					],
@@ -242,12 +241,12 @@ export class MergeV2 implements INodeType {
 
 				// chooseBranch -----------------------------------------------------------------
 				{
-					displayName: 'Output Type',
+					displayName: '输出类型',
 					name: 'chooseBranchMode',
 					type: 'options',
 					options: [
 						{
-							name: 'Wait for Both Inputs to Arrive',
+							name: '等待两个输入都到达',
 							value: 'waitForBoth',
 						},
 					],
@@ -259,20 +258,20 @@ export class MergeV2 implements INodeType {
 					},
 				},
 				{
-					displayName: 'Output',
+					displayName: '输出',
 					name: 'output',
 					type: 'options',
 					options: [
 						{
-							name: 'Input 1 Data',
+							name: '输入 1 数据',
 							value: 'input1',
 						},
 						{
-							name: 'Input 2 Data',
+							name: '输入 2 数据',
 							value: 'input2',
 						},
 						{
-							name: 'A Single, Empty Item',
+							name: '单个空数据项',
 							value: 'empty',
 						},
 					],

@@ -30,51 +30,51 @@ import {
 
 export class DebugHelper implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'DebugHelper',
+		displayName: '调试助手',
 		name: 'debugHelper',
 		icon: { light: 'file:DebugHelper.svg', dark: 'file:DebugHelper.dark.svg' },
 		group: ['output'],
 		subtitle: '={{$parameter["category"]}}',
-		description: 'Causes problems intentionally and generates useful data for debugging',
+		description: '有意引发问题并生成调试数据',
 		version: 1,
 		defaults: {
-			name: 'DebugHelper',
+			name: '调试助手',
 		},
 		inputs: [NodeConnectionTypes.Main],
 		outputs: [NodeConnectionTypes.Main],
 		credentials: [],
 		properties: [
 			{
-				displayName: 'Category',
+				displayName: '类别',
 				name: 'category',
 				type: 'options',
 				noDataExpression: true,
 				options: [
 					{
-						name: 'Do Nothing',
+						name: '什么都不做',
 						value: 'doNothing',
-						description: 'Does nothing',
+						description: '不执行任何操作',
 					},
 					{
-						name: 'Throw Error',
+						name: '抛出错误',
 						value: 'throwError',
-						description: 'Throws an error with the specified type and message',
+						description: '抛出指定类型和消息的错误',
 					},
 					{
-						name: 'Out Of Memory',
+						name: '内存溢出',
 						value: 'oom',
-						description: 'Generates a large amount of memory to cause an out of memory error',
+						description: '生成大量内存以引发内存溢出错误',
 					},
 					{
-						name: 'Generate Random Data',
+						name: '生成随机数据',
 						value: 'randomData',
-						description: 'Generates random data sets',
+						description: '生成随机数据集',
 					},
 				],
 				default: 'throwError',
 			},
 			{
-				displayName: 'Error Type',
+				displayName: '错误类型',
 				name: 'throwErrorType',
 				type: 'options',
 				noDataExpression: true,
@@ -100,11 +100,11 @@ export class DebugHelper implements INodeType {
 				},
 			},
 			{
-				displayName: 'Error Message',
+				displayName: '错误消息',
 				name: 'throwErrorMessage',
 				type: 'string',
 				default: 'Node has thrown an error',
-				description: 'The message to send as part of the error',
+				description: '作为错误一部分发送的消息',
 				displayOptions: {
 					show: {
 						category: ['throwError'],
@@ -112,11 +112,11 @@ export class DebugHelper implements INodeType {
 				},
 			},
 			{
-				displayName: 'Memory Size to Generate',
+				displayName: '生成的内存大小',
 				name: 'memorySizeValue',
 				type: 'number',
 				default: 10,
-				description: 'The approximate amount of memory to generate. Be generous...',
+				description: '要生成的大概内存量，尽量给多点...',
 				displayOptions: {
 					show: {
 						category: ['oom'],
@@ -124,25 +124,25 @@ export class DebugHelper implements INodeType {
 				},
 			},
 			{
-				displayName: 'Data Type',
+				displayName: '数据类型',
 				name: 'randomDataType',
 				type: 'options',
 				noDataExpression: true,
 				options: [
 					{
-						name: 'Address',
+						name: '地址',
 						value: 'address',
 					},
 					{
-						name: 'Coordinates',
+						name: '坐标',
 						value: 'latLong',
 					},
 					{
-						name: 'Credit Card',
+						name: '信用卡',
 						value: 'creditCard',
 					},
 					{
-						name: 'Email',
+						name: '邮箱',
 						value: 'email',
 					},
 					{
@@ -166,7 +166,7 @@ export class DebugHelper implements INodeType {
 						value: 'url',
 					},
 					{
-						name: 'User Data',
+						name: '用户数据',
 						value: 'user',
 					},
 					{
@@ -174,7 +174,7 @@ export class DebugHelper implements INodeType {
 						value: 'uuid',
 					},
 					{
-						name: 'Version',
+						name: '版本',
 						value: 'semver',
 					},
 				],
@@ -186,11 +186,11 @@ export class DebugHelper implements INodeType {
 				},
 			},
 			{
-				displayName: 'NanoId Alphabet',
+				displayName: 'NanoId 字符集',
 				name: 'nanoidAlphabet',
 				type: 'string',
 				default: '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
-				description: 'The alphabet to use for generating the nanoIds',
+				description: '用于生成 NanoId 的字符集',
 				displayOptions: {
 					show: {
 						category: ['randomData'],
@@ -199,11 +199,11 @@ export class DebugHelper implements INodeType {
 				},
 			},
 			{
-				displayName: 'NanoId Length',
+				displayName: 'NanoId 长度',
 				name: 'nanoidLength',
 				type: 'string',
 				default: '16',
-				description: 'The length of each nanoIds',
+				description: '每个 NanoId 的长度',
 				displayOptions: {
 					show: {
 						category: ['randomData'],
@@ -212,13 +212,12 @@ export class DebugHelper implements INodeType {
 				},
 			},
 			{
-				displayName: 'Seed',
+				displayName: '种子',
 				name: 'randomDataSeed',
 				type: 'string',
 				default: '',
-				placeholder: 'Leave empty for random seed',
-				description:
-					'If set, seed to use for generating the data (same seed will generate the same data)',
+				placeholder: '留空则随机生成种子',
+				description: '如果设置，则使用该种子生成数据（相同的种子将生成相同的数据）',
 				displayOptions: {
 					show: {
 						category: ['randomData'],
@@ -226,11 +225,11 @@ export class DebugHelper implements INodeType {
 				},
 			},
 			{
-				displayName: 'Number of Items to Generate',
+				displayName: '生成的项目数',
 				name: 'randomDataCount',
 				type: 'number',
 				default: 10,
-				description: 'The number of random data items to generate into an array',
+				description: '要生成到数组中的随机数据项数量',
 				displayOptions: {
 					show: {
 						category: ['randomData'],
@@ -238,11 +237,11 @@ export class DebugHelper implements INodeType {
 				},
 			},
 			{
-				displayName: 'Output as Single Array',
+				displayName: '输出为单个数组',
 				name: 'randomDataSingleArray',
 				type: 'boolean',
 				default: false,
-				description: 'Whether to output a single array instead of multiple items',
+				description: '是否输出为单个数组而不是多个项目',
 				displayOptions: {
 					show: {
 						category: ['randomData'],

@@ -110,24 +110,24 @@ export class HttpRequestV1 implements INodeType {
 				//           v1 params
 				// ----------------------------------
 				{
-					displayName: 'Authentication',
+					displayName: '认证方式',
 					name: 'authentication',
 					type: 'options',
 					options: [
 						{
-							name: 'Basic Auth',
+							name: '基本认证',
 							value: 'basicAuth',
 						},
 						{
-							name: 'Digest Auth',
+							name: '摘要认证',
 							value: 'digestAuth',
 						},
 						{
-							name: 'Header Auth',
+							name: '请求头认证',
 							value: 'headerAuth',
 						},
 						{
-							name: 'None',
+							name: '无',
 							value: 'none',
 						},
 						{
@@ -139,19 +139,19 @@ export class HttpRequestV1 implements INodeType {
 							value: 'oAuth2',
 						},
 						{
-							name: 'Query Auth',
+							name: '查询参数认证',
 							value: 'queryAuth',
 						},
 					],
 					default: 'none',
-					description: 'The way to authenticate',
+					description: '认证方式',
 				},
 
 				// ----------------------------------
 				//        versionless params
 				// ----------------------------------
 				{
-					displayName: 'Request Method',
+					displayName: '请求方法',
 					name: 'requestMethod',
 					type: 'options',
 					options: [
@@ -185,33 +185,32 @@ export class HttpRequestV1 implements INodeType {
 						},
 					],
 					default: 'GET',
-					description: 'The request method to use',
+					description: '要使用的 HTTP 请求方法',
 				},
 				{
-					displayName: 'URL',
+					displayName: 'URL 地址',
 					name: 'url',
 					type: 'string',
 					default: '',
 					placeholder: 'http://example.com/index.html',
-					description: 'The URL to make the request to',
+					description: '要发送请求的 URL 地址',
 					required: true,
 				},
 				{
-					displayName: 'Ignore SSL Issues (Insecure)',
+					displayName: '忽略 SSL 证书问题（不安全）',
 					name: 'allowUnauthorizedCerts',
 					type: 'boolean',
 					default: false,
 					// eslint-disable-next-line n8n-nodes-base/node-param-description-wrong-for-ignore-ssl-issues
-					description:
-						'Whether to download the response even if SSL certificate validation is not possible',
+					description: '是否在 SSL 证书验证失败时仍下载响应内容',
 				},
 				{
-					displayName: 'Response Format',
+					displayName: '响应格式',
 					name: 'responseFormat',
 					type: 'options',
 					options: [
 						{
-							name: 'File',
+							name: '文件',
 							value: 'file',
 						},
 						{
@@ -219,15 +218,15 @@ export class HttpRequestV1 implements INodeType {
 							value: 'json',
 						},
 						{
-							name: 'String',
+							name: '字符串',
 							value: 'string',
 						},
 					],
 					default: 'json',
-					description: 'The format in which the data gets returned from the URL',
+					description: '从 URL 返回的数据格式',
 				},
 				{
-					displayName: 'Property Name',
+					displayName: '属性名称',
 					name: 'dataPropertyName',
 					type: 'string',
 					default: 'data',
@@ -237,10 +236,10 @@ export class HttpRequestV1 implements INodeType {
 							responseFormat: ['string'],
 						},
 					},
-					description: 'Name of the property to which to write the response data',
+					description: '用于写入响应数据的属性名称',
 				},
 				{
-					displayName: 'Put Output File in Field',
+					displayName: '输出文件字段名',
 					name: 'dataPropertyName',
 					type: 'string',
 					default: 'data',
@@ -250,48 +249,46 @@ export class HttpRequestV1 implements INodeType {
 							responseFormat: ['file'],
 						},
 					},
-					hint: 'The name of the output binary field to put the file in',
+					hint: '用于存放文件的输出二进制字段名称',
 				},
 
 				{
-					displayName: 'JSON/RAW Parameters',
+					displayName: 'JSON/原始格式参数',
 					name: 'jsonParameters',
 					type: 'boolean',
 					default: false,
-					description:
-						'Whether the query and/or body parameter should be set via the value-key pair UI or JSON/RAW',
+					description: '是否通过键值对界面或 JSON/原始格式设置查询参数和/或请求体参数',
 				},
 
 				{
-					displayName: 'Options',
+					displayName: '选项',
 					name: 'options',
 					type: 'collection',
-					placeholder: 'Add option',
+					placeholder: '添加选项',
 					default: {},
 					options: [
 						{
-							displayName: 'Batch Interval',
+							displayName: '批次间隔',
 							name: 'batchInterval',
 							type: 'number',
 							typeOptions: {
 								minValue: 0,
 							},
 							default: 1000,
-							description: 'Time (in milliseconds) between each batch of requests. 0 for disabled.',
+							description: '每批请求之间的时间间隔（毫秒）。设为 0 表示禁用。',
 						},
 						{
-							displayName: 'Batch Size',
+							displayName: '批次大小',
 							name: 'batchSize',
 							type: 'number',
 							typeOptions: {
 								minValue: -1,
 							},
 							default: 50,
-							description:
-								'Input will be split in batches to throttle requests. -1 for disabled. 0 will be treated as 1.',
+							description: '输入将被分批处理以限制请求频率。-1 表示禁用，0 将被视为 1。',
 						},
 						{
-							displayName: 'Body Content Type',
+							displayName: '请求体内容类型',
 							name: 'bodyContentType',
 							type: 'options',
 							displayOptions: {
@@ -305,56 +302,56 @@ export class HttpRequestV1 implements INodeType {
 									value: 'json',
 								},
 								{
-									name: 'RAW/Custom',
+									name: '原始/自定义',
 									value: 'raw',
 								},
 								{
-									name: 'Form-Data Multipart',
+									name: '表单数据（Multipart）',
 									value: 'multipart-form-data',
 								},
 								{
-									name: 'Form Urlencoded',
+									name: '表单编码',
 									value: 'form-urlencoded',
 								},
 							],
 							default: 'json',
-							description: 'Content-Type to use to send body parameters',
+							description: '用于发送请求体参数的内容类型',
 						},
 						{
-							displayName: 'Full Response',
+							displayName: '完整响应',
 							name: 'fullResponse',
 							type: 'boolean',
 							default: false,
-							description: 'Whether to return the full response data instead of only the body',
+							description: '是否返回完整的响应数据而不仅是响应体',
 						},
 						{
-							displayName: 'Follow All Redirects',
+							displayName: '跟随所有重定向',
 							name: 'followAllRedirects',
 							type: 'boolean',
 							default: false,
-							description: 'Whether to follow All HTTP 3xx redirects',
+							description: '是否跟随所有 HTTP 3xx 重定向',
 						},
 						{
-							displayName: 'Follow GET/HEAD Redirect',
+							displayName: '跟随 GET/HEAD 重定向',
 							name: 'followRedirect',
 							type: 'boolean',
 							default: true,
-							description: 'Whether to follow GET or HEAD HTTP 3xx redirects',
+							description: '是否跟随 GET 或 HEAD 的 HTTP 3xx 重定向',
 						},
 						{
-							displayName: 'Ignore Response Code',
+							displayName: '忽略响应代码',
 							name: 'ignoreResponseCode',
 							type: 'boolean',
 							default: false,
-							description: 'Whether to succeeds also when status code is not 2xx',
+							description: '是否在状态码不是 2xx 时也视为成功',
 						},
 						{
-							displayName: 'MIME Type',
+							displayName: 'MIME 类型',
 							name: 'bodyContentCustomMimeType',
 							type: 'string',
 							default: '',
 							placeholder: 'text/xml',
-							description: 'Specify the mime type for raw/custom body type',
+							description: '为原始/自定义请求体类型指定 MIME 类型',
 							displayOptions: {
 								show: {
 									'/requestMethod': ['PATCH', 'POST', 'PUT'],
@@ -362,19 +359,19 @@ export class HttpRequestV1 implements INodeType {
 							},
 						},
 						{
-							displayName: 'Proxy',
+							displayName: '代理服务器',
 							name: 'proxy',
 							type: 'string',
 							default: '',
 							placeholder: 'http://myproxy:3128',
-							description: 'HTTP proxy to use',
+							description: '要使用的 HTTP 代理服务器',
 						},
 						{
-							displayName: 'Split Into Items',
+							displayName: '拆分为多个项目',
 							name: 'splitIntoItems',
 							type: 'boolean',
 							default: false,
-							description: 'Whether to output each element of an array as own item',
+							description: '是否将数组的每个元素作为单独的项目输出',
 							displayOptions: {
 								show: {
 									'/responseFormat': ['json'],
@@ -382,30 +379,29 @@ export class HttpRequestV1 implements INodeType {
 							},
 						},
 						{
-							displayName: 'Timeout',
+							displayName: '超时时间',
 							name: 'timeout',
 							type: 'number',
 							typeOptions: {
 								minValue: 1,
 							},
 							default: 10000,
-							description:
-								'Time in ms to wait for the server to send response headers (and start the response body) before aborting the request',
+							description: '等待服务器发送响应头（并开始响应体）的时间（毫秒），超时后将中止请求',
 						},
 						{
-							displayName: 'Use Querystring',
+							displayName: '使用查询字符串',
 							name: 'useQueryString',
 							type: 'boolean',
 							default: false,
 							description:
-								'Whether you need arrays to be serialized as foo=bar&foo=baz instead of the default foo[0]=bar&foo[1]=baz',
+								'是否需要将数组序列化为 foo=bar&foo=baz 而不是默认的 foo[0]=bar&foo[1]=baz',
 						},
 					],
 				},
 
 				// Body Parameter
 				{
-					displayName: 'Send Binary File',
+					displayName: '发送二进制文件',
 					name: 'sendBinaryData',
 					type: 'boolean',
 					displayOptions: {
@@ -419,10 +415,10 @@ export class HttpRequestV1 implements INodeType {
 						},
 					},
 					default: false,
-					description: 'Whether binary data should be send as body',
+					description: '是否将二进制数据作为请求体发送',
 				},
 				{
-					displayName: 'Input Binary Field',
+					displayName: '输入二进制字段',
 					name: 'binaryPropertyName',
 					type: 'string',
 					required: true,
@@ -436,12 +432,12 @@ export class HttpRequestV1 implements INodeType {
 							requestMethod: ['PATCH', 'POST', 'PUT'],
 						},
 					},
-					hint: 'The name of the input binary field containing the file to be uploaded',
+					hint: '包含要上传文件的输入二进制字段名称',
 					description:
-						'For Form-Data Multipart, they can be provided in the format: <code>"sendKey1:binaryProperty1,sendKey2:binaryProperty2</code>',
+						'对于表单数据（Multipart），可以使用格式：<code>"sendKey1:binaryProperty1,sendKey2:binaryProperty2</code>',
 				},
 				{
-					displayName: 'Body Parameters',
+					displayName: '请求体参数',
 					name: 'bodyParametersJson',
 					type: 'json',
 					displayOptions: {
@@ -454,12 +450,12 @@ export class HttpRequestV1 implements INodeType {
 						},
 					},
 					default: '',
-					description: 'Body parameters as JSON or RAW',
+					description: '以 JSON 或原始格式的请求体参数',
 				},
 				{
-					displayName: 'Body Parameters',
+					displayName: '请求体参数',
 					name: 'bodyParametersUi',
-					placeholder: 'Add Parameter',
+					placeholder: '添加参数',
 					type: 'fixedCollection',
 					typeOptions: {
 						multipleValues: true,
@@ -470,26 +466,26 @@ export class HttpRequestV1 implements INodeType {
 							requestMethod: ['PATCH', 'POST', 'PUT', 'DELETE'],
 						},
 					},
-					description: 'The body parameter to send',
+					description: '要发送的请求体参数',
 					default: {},
 					options: [
 						{
 							name: 'parameter',
-							displayName: 'Parameter',
+							displayName: '参数',
 							values: [
 								{
-									displayName: 'Name',
+									displayName: '名称',
 									name: 'name',
 									type: 'string',
 									default: '',
-									description: 'Name of the parameter',
+									description: '参数名称',
 								},
 								{
-									displayName: 'Value',
+									displayName: '值',
 									name: 'value',
 									type: 'string',
 									default: '',
-									description: 'Value of the parameter',
+									description: '参数值',
 								},
 							],
 						},
@@ -498,7 +494,7 @@ export class HttpRequestV1 implements INodeType {
 
 				// Header Parameters
 				{
-					displayName: 'Headers',
+					displayName: '请求头',
 					name: 'headerParametersJson',
 					type: 'json',
 					displayOptions: {
@@ -507,12 +503,12 @@ export class HttpRequestV1 implements INodeType {
 						},
 					},
 					default: '',
-					description: 'Header parameters as JSON or RAW',
+					description: '以 JSON 或原始格式的请求头参数',
 				},
 				{
-					displayName: 'Headers',
+					displayName: '请求头',
 					name: 'headerParametersUi',
-					placeholder: 'Add Header',
+					placeholder: '添加请求头',
 					type: 'fixedCollection',
 					typeOptions: {
 						multipleValues: true,
@@ -522,26 +518,26 @@ export class HttpRequestV1 implements INodeType {
 							jsonParameters: [false],
 						},
 					},
-					description: 'The headers to send',
+					description: '要发送的请求头',
 					default: {},
 					options: [
 						{
 							name: 'parameter',
-							displayName: 'Header',
+							displayName: '请求头',
 							values: [
 								{
-									displayName: 'Name',
+									displayName: '名称',
 									name: 'name',
 									type: 'string',
 									default: '',
-									description: 'Name of the header',
+									description: '请求头名称',
 								},
 								{
-									displayName: 'Value',
+									displayName: '值',
 									name: 'value',
 									type: 'string',
 									default: '',
-									description: 'Value to set for the header',
+									description: '请求头的值',
 								},
 							],
 						},
@@ -550,7 +546,7 @@ export class HttpRequestV1 implements INodeType {
 
 				// Query Parameter
 				{
-					displayName: 'Query Parameters',
+					displayName: '查询参数',
 					name: 'queryParametersJson',
 					type: 'json',
 					displayOptions: {
@@ -559,12 +555,12 @@ export class HttpRequestV1 implements INodeType {
 						},
 					},
 					default: '',
-					description: 'Query parameters as JSON (flat object)',
+					description: '以 JSON 格式（扁平对象）的查询参数',
 				},
 				{
-					displayName: 'Query Parameters',
+					displayName: '查询参数',
 					name: 'queryParametersUi',
-					placeholder: 'Add Parameter',
+					placeholder: '添加参数',
 					type: 'fixedCollection',
 					typeOptions: {
 						multipleValues: true,
@@ -574,34 +570,33 @@ export class HttpRequestV1 implements INodeType {
 							jsonParameters: [false],
 						},
 					},
-					description: 'The query parameter to send',
+					description: '要发送的查询参数',
 					default: {},
 					options: [
 						{
 							name: 'parameter',
-							displayName: 'Parameter',
+							displayName: '参数',
 							values: [
 								{
-									displayName: 'Name',
+									displayName: '名称',
 									name: 'name',
 									type: 'string',
 									default: '',
-									description: 'Name of the parameter',
+									description: '参数名称',
 								},
 								{
-									displayName: 'Value',
+									displayName: '值',
 									name: 'value',
 									type: 'string',
 									default: '',
-									description: 'Value of the parameter',
+									description: '参数值',
 								},
 							],
 						},
 					],
 				},
 				{
-					displayName:
-						"You can view the raw requests this node makes in your browser's developer console",
+					displayName: '您可以在浏览器的开发者控制台中查看此节点发出的原始请求',
 					name: 'infoMessage',
 					type: 'notice',
 					default: '',

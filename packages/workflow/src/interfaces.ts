@@ -2833,6 +2833,12 @@ export type CodexData = {
 	resources?: {
 		credentialDocumentation?: DocumentationLink[];
 		primaryDocumentation?: DocumentationLink[];
+		// 教程链接（可自定义键名，用于动态链接替换）
+		tutorialLinks?: { [key: string]: string };
+		// 视频链接
+		videos?: DocumentationLink[];
+		// 博客链接
+		blogs?: DocumentationLink[];
 	};
 	alias?: string[];
 };

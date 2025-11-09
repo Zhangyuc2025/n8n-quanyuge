@@ -101,45 +101,43 @@ export const buildInputSchemaField = (props?: {
 export const inputSchemaField = buildInputSchemaField();
 
 export const promptTypeOptions: INodeProperties = {
-	displayName: 'Source for Prompt (User Message)',
+	displayName: '提示词来源（用户消息）',
 	name: 'promptType',
 	type: 'options',
 	options: [
 		{
-			name: 'Connected Chat Trigger Node',
+			name: '聊天触发器节点',
 			value: 'auto',
-			description:
-				"Looks for an input field called 'chatInput' that is coming from a directly connected Chat Trigger",
+			description: "从直接连接的聊天触发器中查找名为 'chatInput' 的输入字段",
 		},
 		{
-			name: 'Connected Guardrails Node',
+			name: '护栏节点',
 			value: 'guardrails',
-			description:
-				"Looks for an input field called 'guardrailsInput' that is coming from a directly connected Guardrails Node",
+			description: "从直接连接的护栏节点中查找名为 'guardrailsInput' 的输入字段",
 		},
 		{
-			name: 'Define below',
+			name: '手动定义',
 			value: 'define',
-			description: 'Use an expression to reference data in previous nodes or enter static text',
+			description: '使用表达式引用之前节点的数据或输入静态文本',
 		},
 	],
 	default: 'auto',
 };
 
 export const textInput: INodeProperties = {
-	displayName: 'Prompt (User Message)',
+	displayName: '提示词（用户消息）',
 	name: 'text',
 	type: 'string',
 	required: true,
 	default: '',
-	placeholder: 'e.g. Hello, how can you help me?',
+	placeholder: '例如：你好，你可以帮我做什么？',
 	typeOptions: {
 		rows: 2,
 	},
 };
 
 export const textFromPreviousNode: INodeProperties = {
-	displayName: 'Prompt (User Message)',
+	displayName: '提示词（用户消息）',
 	name: 'text',
 	type: 'string',
 	required: true,
@@ -151,7 +149,7 @@ export const textFromPreviousNode: INodeProperties = {
 };
 
 export const textFromGuardrailsNode: INodeProperties = {
-	displayName: 'Prompt (User Message)',
+	displayName: '提示词（用户消息）',
 	name: 'text',
 	type: 'string',
 	required: true,

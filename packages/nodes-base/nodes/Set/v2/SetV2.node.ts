@@ -16,58 +16,57 @@ import * as raw from './raw.mode';
 type Mode = 'manual' | 'raw';
 
 const versionDescription: INodeTypeDescription = {
-	displayName: 'Edit Fields (Set)',
+	displayName: '编辑字段 (Set)',
 	name: 'set',
 	iconColor: 'blue',
 	group: ['input'],
 	version: [3, 3.1, 3.2, 3.3, 3.4],
-	description: 'Modify, add, or remove item fields',
+	description: '修改、添加或删除项目字段',
 	subtitle: '={{$parameter["mode"]}}',
 	defaults: {
-		name: 'Edit Fields',
+		name: '编辑字段',
 	},
 	inputs: [NodeConnectionTypes.Main],
 	outputs: [NodeConnectionTypes.Main],
 	properties: [
 		{
-			displayName: 'Mode',
+			displayName: '模式',
 			name: 'mode',
 			type: 'options',
 			noDataExpression: true,
 			options: [
 				{
-					name: 'Manual Mapping',
+					name: '手动映射',
 					value: 'manual',
-					description: 'Edit item fields one by one',
-					action: 'Edit item fields one by one',
+					description: '逐个编辑项目字段',
+					action: '逐个编辑项目字段',
 				},
 				{
 					name: 'JSON',
 					value: 'raw',
-					description: 'Customize item output with JSON',
-					action: 'Customize item output with JSON',
+					description: '使用 JSON 自定义项目输出',
+					action: '使用 JSON 自定义项目输出',
 				},
 			],
 			default: 'manual',
 		},
 		{
-			displayName: 'Duplicate Item',
+			displayName: '重复项目',
 			name: 'duplicateItem',
 			type: 'boolean',
 			default: false,
 			isNodeSetting: true,
-			description: 'Whether this item should be duplicated a set number of times',
+			description: '是否将此项目重复指定次数',
 		},
 		{
-			displayName: 'Duplicate Item Count',
+			displayName: '重复项目次数',
 			name: 'duplicateCount',
 			type: 'number',
 			default: 0,
 			typeOptions: {
 				minValue: 0,
 			},
-			description:
-				'How many times the item should be duplicated, mainly used for testing and debugging',
+			description: '项目应重复的次数，主要用于测试和调试',
 			isNodeSetting: true,
 			displayOptions: {
 				show: {
@@ -76,8 +75,7 @@ const versionDescription: INodeTypeDescription = {
 			},
 		},
 		{
-			displayName:
-				'Item duplication is set in the node settings. This option will be ignored when the workflow runs automatically.',
+			displayName: '项目重复设置在节点设置中。当工作流自动运行时，此选项将被忽略。',
 			name: 'duplicateWarning',
 			type: 'notice',
 			default: '',
@@ -90,10 +88,10 @@ const versionDescription: INodeTypeDescription = {
 		...raw.description,
 		...manual.description,
 		{
-			displayName: 'Include in Output',
+			displayName: '包含在输出中',
 			name: 'include',
 			type: 'options',
-			description: 'How to select the fields you want to include in your output items',
+			description: '如何选择要包含在输出项目中的字段',
 			default: 'all',
 			displayOptions: {
 				show: {
@@ -102,34 +100,33 @@ const versionDescription: INodeTypeDescription = {
 			},
 			options: [
 				{
-					name: 'All Input Fields',
+					name: '所有输入字段',
 					value: INCLUDE.ALL,
-					description: 'Also include all unchanged fields from the input',
+					description: '同时包含输入中所有未更改的字段',
 				},
 				{
-					name: 'No Input Fields',
+					name: '不包含输入字段',
 					value: INCLUDE.NONE,
-					description: 'Include only the fields specified above',
+					description: '仅包含上面指定的字段',
 				},
 				{
-					name: 'Selected Input Fields',
+					name: '选定的输入字段',
 					value: INCLUDE.SELECTED,
-					description: 'Also include the fields listed in the parameter “Fields to Include”',
+					description: '同时包含"要包含的字段"参数中列出的字段',
 				},
 				{
-					name: 'All Input Fields Except',
+					name: '除外的输入字段',
 					value: INCLUDE.EXCEPT,
-					description: 'Exclude the fields listed in the parameter “Fields to Exclude”',
+					description: '排除"要排除的字段"参数中列出的字段',
 				},
 			],
 		},
 		{
-			displayName: 'Include Other Input Fields',
+			displayName: '包含其他输入字段',
 			name: 'includeOtherFields',
 			type: 'boolean',
 			default: false,
-			description:
-				"Whether to pass to the output all the input fields (along with the fields set in 'Fields to Set')",
+			description: '是否将所有输入字段（连同"要设置的字段"中设置的字段）传递到输出',
 			displayOptions: {
 				hide: {
 					'@version': [3, 3.1, 3.2],
@@ -137,10 +134,10 @@ const versionDescription: INodeTypeDescription = {
 			},
 		},
 		{
-			displayName: 'Input Fields to Include',
+			displayName: '要包含的输入字段',
 			name: 'include',
 			type: 'options',
-			description: 'How to select the fields you want to include in your output items',
+			description: '如何选择要包含在输出项目中的字段',
 			default: 'all',
 			displayOptions: {
 				hide: {
@@ -150,30 +147,29 @@ const versionDescription: INodeTypeDescription = {
 			},
 			options: [
 				{
-					name: 'All',
+					name: '全部',
 					value: INCLUDE.ALL,
-					description: 'Also include all unchanged fields from the input',
+					description: '同时包含输入中所有未更改的字段',
 				},
 				{
-					name: 'Selected',
+					name: '选定',
 					value: INCLUDE.SELECTED,
-					description: 'Also include the fields listed in the parameter “Fields to Include”',
+					description: '同时包含"要包含的字段"参数中列出的字段',
 				},
 				{
-					name: 'All Except',
+					name: '除外',
 					value: INCLUDE.EXCEPT,
-					description: 'Exclude the fields listed in the parameter “Fields to Exclude”',
+					description: '排除"要排除的字段"参数中列出的字段',
 				},
 			],
 		},
 		{
-			displayName: 'Fields to Include',
+			displayName: '要包含的字段',
 			name: 'includeFields',
 			type: 'string',
 			default: '',
-			placeholder: 'e.g. fieldToInclude1,fieldToInclude2',
-			description:
-				'Comma-separated list of the field names you want to include in the output. You can drag the selected fields from the input panel.',
+			placeholder: '例如：fieldToInclude1,fieldToInclude2',
+			description: '要包含在输出中的字段名称的逗号分隔列表。您可以从输入面板拖动选定的字段。',
 			requiresDataPath: 'multiple',
 			displayOptions: {
 				show: {
@@ -183,13 +179,12 @@ const versionDescription: INodeTypeDescription = {
 			},
 		},
 		{
-			displayName: 'Fields to Exclude',
+			displayName: '要排除的字段',
 			name: 'excludeFields',
 			type: 'string',
 			default: '',
-			placeholder: 'e.g. fieldToExclude1,fieldToExclude2',
-			description:
-				'Comma-separated list of the field names you want to exclude from the output. You can drag the selected fields from the input panel.',
+			placeholder: '例如：fieldToExclude1,fieldToExclude2',
+			description: '要从输出中排除的字段名称的逗号分隔列表。您可以从输入面板拖动选定的字段。',
 			requiresDataPath: 'multiple',
 			displayOptions: {
 				show: {
@@ -199,13 +194,12 @@ const versionDescription: INodeTypeDescription = {
 			},
 		},
 		{
-			displayName: 'Fields to Include',
+			displayName: '要包含的字段',
 			name: 'includeFields',
 			type: 'string',
 			default: '',
-			placeholder: 'e.g. fieldToInclude1,fieldToInclude2',
-			description:
-				'Comma-separated list of the field names you want to include in the output. You can drag the selected fields from the input panel.',
+			placeholder: '例如：fieldToInclude1,fieldToInclude2',
+			description: '要包含在输出中的字段名称的逗号分隔列表。您可以从输入面板拖动选定的字段。',
 			requiresDataPath: 'multiple',
 			displayOptions: {
 				show: {
@@ -218,13 +212,12 @@ const versionDescription: INodeTypeDescription = {
 			},
 		},
 		{
-			displayName: 'Fields to Exclude',
+			displayName: '要排除的字段',
 			name: 'excludeFields',
 			type: 'string',
 			default: '',
-			placeholder: 'e.g. fieldToExclude1,fieldToExclude2',
-			description:
-				'Comma-separated list of the field names you want to exclude from the output. You can drag the selected fields from the input panel.',
+			placeholder: '例如：fieldToExclude1,fieldToExclude2',
+			description: '要从输出中排除的字段名称的逗号分隔列表。您可以从输入面板拖动选定的字段。',
 			requiresDataPath: 'multiple',
 			displayOptions: {
 				show: {
@@ -237,14 +230,14 @@ const versionDescription: INodeTypeDescription = {
 			},
 		},
 		{
-			displayName: 'Options',
+			displayName: '选项',
 			name: 'options',
 			type: 'collection',
-			placeholder: 'Add option',
+			placeholder: '添加选项',
 			default: {},
 			options: [
 				{
-					displayName: 'Include Binary File',
+					displayName: '包含二进制文件',
 					name: 'includeBinary',
 					type: 'boolean',
 					default: true,
@@ -253,15 +246,14 @@ const versionDescription: INodeTypeDescription = {
 							'@version': [{ _cnd: { gte: 3.4 } }],
 						},
 					},
-					description: 'Whether binary data should be included if present in the input item',
+					description: '如果输入项目中存在二进制数据，是否应包含',
 				},
 				{
-					displayName: 'Strip Binary Data',
+					displayName: '移除二进制数据',
 					name: 'stripBinary',
 					type: 'boolean',
 					default: true,
-					description:
-						'Whether binary data should be stripped from the input item. Only applies when "Include Other Input Fields" is enabled.',
+					description: '是否应从输入项目中移除二进制数据。仅在启用"包含其他输入字段"时适用。',
 					displayOptions: {
 						show: {
 							'@version': [{ _cnd: { gte: 3.4 } }],
@@ -270,12 +262,11 @@ const versionDescription: INodeTypeDescription = {
 					},
 				},
 				{
-					displayName: 'Ignore Type Conversion Errors',
+					displayName: '忽略类型转换错误',
 					name: 'ignoreConversionErrors',
 					type: 'boolean',
 					default: false,
-					description:
-						'Whether to ignore field type errors and apply a less strict type conversion',
+					description: '是否忽略字段类型错误并应用较宽松的类型转换',
 					displayOptions: {
 						show: {
 							'/mode': ['manual'],
@@ -283,13 +274,13 @@ const versionDescription: INodeTypeDescription = {
 					},
 				},
 				{
-					displayName: 'Support Dot Notation',
+					displayName: '支持点表示法',
 					name: 'dotNotation',
 					type: 'boolean',
 					default: true,
 					// eslint-disable-next-line n8n-nodes-base/node-param-description-boolean-without-whether
 					description:
-						'By default, dot-notation is used in property names. This means that "a.b" will set the property "b" underneath "a" so { "a": { "b": value} }. If that is not intended this can be deactivated, it will then set { "a.b": value } instead.',
+						'默认情况下，属性名称使用点表示法。这意味着"a.b"将在"a"下设置属性"b"，即 { "a": { "b": value} }。如果不希望这样，可以停用此选项，它将设置 { "a.b": value }。',
 				},
 			],
 		},

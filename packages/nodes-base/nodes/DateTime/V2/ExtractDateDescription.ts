@@ -5,7 +5,7 @@ import { includeInputFields } from './common.descriptions';
 export const ExtractDateDescription: INodeProperties[] = [
 	{
 		displayName:
-			'You can also do this using an expression, e.g. <code>{{ your_date.extract("month") }}}</code>. <a target="_blank" href="https://docs.n8n.io/code/cookbook/luxon/">More info</a>',
+			'您也可以使用表达式完成此操作，例如 <code>{{ your_date.extract("month") }}}</code>。<a target="_blank" href="https://docs.n8n.io/code/cookbook/luxon/">了解更多</a>',
 		name: 'notice',
 		type: 'notice',
 		default: '',
@@ -16,10 +16,10 @@ export const ExtractDateDescription: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Date',
+		displayName: '日期',
 		name: 'date',
 		type: 'string',
-		description: 'The date that you want to round',
+		description: '要提取的日期',
 		default: '',
 		displayOptions: {
 			show: {
@@ -28,37 +28,37 @@ export const ExtractDateDescription: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Part',
+		displayName: '部分',
 		name: 'part',
 		type: 'options',
 		// eslint-disable-next-line n8n-nodes-base/node-param-options-type-unsorted-items
 		options: [
 			{
-				name: 'Year',
+				name: '年',
 				value: 'year',
 			},
 			{
-				name: 'Month',
+				name: '月',
 				value: 'month',
 			},
 			{
-				name: 'Week',
+				name: '周',
 				value: 'week',
 			},
 			{
-				name: 'Day',
+				name: '日',
 				value: 'day',
 			},
 			{
-				name: 'Hour',
+				name: '小时',
 				value: 'hour',
 			},
 			{
-				name: 'Minute',
+				name: '分钟',
 				value: 'minute',
 			},
 			{
-				name: 'Second',
+				name: '秒',
 				value: 'second',
 			},
 		],
@@ -70,11 +70,11 @@ export const ExtractDateDescription: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Output Field Name',
+		displayName: '输出字段名称',
 		name: 'outputFieldName',
 		type: 'string',
 		default: 'datePart',
-		description: 'Name of the field to put the output in',
+		description: '放置输出的字段名称',
 		displayOptions: {
 			show: {
 				operation: ['extractDate'],
@@ -82,10 +82,10 @@ export const ExtractDateDescription: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Options',
+		displayName: '选项',
 		name: 'options',
 		type: 'collection',
-		placeholder: 'Add option',
+		placeholder: '添加选项',
 		displayOptions: {
 			show: {
 				operation: ['extractDate'],

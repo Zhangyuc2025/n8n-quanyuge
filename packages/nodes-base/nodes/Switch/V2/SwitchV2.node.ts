@@ -19,7 +19,7 @@ export class SwitchV2 implements INodeType {
 			...baseDescription,
 			version: [2],
 			defaults: {
-				name: 'Switch',
+				name: '分支',
 				color: '#506000',
 			},
 			inputs: [NodeConnectionTypes.Main],
@@ -46,30 +46,30 @@ export class SwitchV2 implements INodeType {
 
 			properties: [
 				{
-					displayName: 'Mode',
+					displayName: '模式',
 					name: 'mode',
 					type: 'options',
 					options: [
 						{
-							name: 'Expression',
+							name: '表达式',
 							value: 'expression',
-							description: 'Expression decides how to route data',
+							description: '使用表达式决定如何路由数据',
 						},
 						{
-							name: 'Rules',
+							name: '规则',
 							value: 'rules',
-							description: 'Rules decide how to route data',
+							description: '使用规则决定如何路由数据',
 						},
 					],
 					default: 'rules',
-					description: 'How data should be routed',
+					description: '数据路由方式',
 				},
 
 				// ----------------------------------
 				//         mode:expression
 				// ----------------------------------
 				{
-					displayName: 'Output',
+					displayName: '输出索引',
 					name: 'output',
 					type: 'string',
 					displayOptions: {
@@ -78,11 +78,11 @@ export class SwitchV2 implements INodeType {
 						},
 					},
 					default: '',
-					description: 'The index of output to which to send data to',
+					description: '要发送数据的输出索引',
 				},
 
 				{
-					displayName: 'Outputs Amount',
+					displayName: '输出数量',
 					name: 'outputsAmount',
 					type: 'number',
 					displayOptions: {
@@ -91,14 +91,14 @@ export class SwitchV2 implements INodeType {
 						},
 					},
 					default: 4,
-					description: 'Amount of outputs to create',
+					description: '要创建的输出数量',
 				},
 
 				// ----------------------------------
 				//         mode:rules
 				// ----------------------------------
 				{
-					displayName: 'Data Type',
+					displayName: '数据类型',
 					name: 'dataType',
 					type: 'options',
 					displayOptions: {
@@ -108,31 +108,31 @@ export class SwitchV2 implements INodeType {
 					},
 					options: [
 						{
-							name: 'Boolean',
+							name: '布尔值',
 							value: 'boolean',
 						},
 						{
-							name: 'Date & Time',
+							name: '日期时间',
 							value: 'dateTime',
 						},
 						{
-							name: 'Number',
+							name: '数字',
 							value: 'number',
 						},
 						{
-							name: 'String',
+							name: '字符串',
 							value: 'string',
 						},
 					],
 					default: 'number',
-					description: 'The type of data to route on',
+					description: '要路由的数据类型',
 				},
 
 				// ----------------------------------
 				//         dataType:boolean
 				// ----------------------------------
 				{
-					displayName: 'Value 1',
+					displayName: '值 1',
 					name: 'value1',
 					type: 'boolean',
 					displayOptions: {
@@ -143,12 +143,12 @@ export class SwitchV2 implements INodeType {
 					},
 					default: false,
 					// eslint-disable-next-line n8n-nodes-base/node-param-description-boolean-without-whether
-					description: 'The value to compare with the first one',
+					description: '要与第二个值进行比较的值',
 				},
 				{
-					displayName: 'Routing Rules',
+					displayName: '路由规则',
 					name: 'rules',
-					placeholder: 'Add Routing Rule',
+					placeholder: '添加路由规则',
 					type: 'fixedCollection',
 					typeOptions: {
 						multipleValues: true,
@@ -164,40 +164,40 @@ export class SwitchV2 implements INodeType {
 					options: [
 						{
 							name: 'rules',
-							displayName: 'Boolean',
+							displayName: '布尔值',
 							values: [
 								// eslint-disable-next-line n8n-nodes-base/node-param-operation-without-no-data-expression
 								{
-									displayName: 'Operation',
+									displayName: '操作',
 									name: 'operation',
 									type: 'options',
 									options: [
 										{
-											name: 'Equal',
+											name: '等于',
 											value: 'equal',
 										},
 										{
-											name: 'Not Equal',
+											name: '不等于',
 											value: 'notEqual',
 										},
 									],
 									default: 'equal',
-									description: 'Operation to decide where the data should be mapped to',
+									description: '决定数据路由到哪里的操作',
 								},
 								{
-									displayName: 'Value 2',
+									displayName: '值 2',
 									name: 'value2',
 									type: 'boolean',
 									default: false,
 									// eslint-disable-next-line n8n-nodes-base/node-param-description-boolean-without-whether
-									description: 'The value to compare with the first one',
+									description: '要与第一个值进行比较的值',
 								},
 								{
-									displayName: 'Output Key',
+									displayName: '输出键',
 									name: 'outputKey',
 									type: 'string',
 									default: '',
-									description: 'The label of output to which to send data to if rule matches',
+									description: '规则匹配时发送数据的输出标签',
 								},
 							],
 						},
@@ -208,7 +208,7 @@ export class SwitchV2 implements INodeType {
 				//         dataType:dateTime
 				// ----------------------------------
 				{
-					displayName: 'Value 1',
+					displayName: '值 1',
 					name: 'value1',
 					type: 'dateTime',
 					displayOptions: {
@@ -218,12 +218,12 @@ export class SwitchV2 implements INodeType {
 						},
 					},
 					default: '',
-					description: 'The value to compare with the second one',
+					description: '要与第二个值进行比较的值',
 				},
 				{
-					displayName: 'Routing Rules',
+					displayName: '路由规则',
 					name: 'rules',
-					placeholder: 'Add Routing Rule',
+					placeholder: '添加路由规则',
 					type: 'fixedCollection',
 					typeOptions: {
 						multipleValues: true,
@@ -239,39 +239,39 @@ export class SwitchV2 implements INodeType {
 					options: [
 						{
 							name: 'rules',
-							displayName: 'Dates',
+							displayName: '日期',
 							values: [
 								// eslint-disable-next-line n8n-nodes-base/node-param-operation-without-no-data-expression
 								{
-									displayName: 'Operation',
+									displayName: '操作',
 									name: 'operation',
 									type: 'options',
 									options: [
 										{
-											name: 'Occurred After',
+											name: '晚于',
 											value: 'after',
 										},
 										{
-											name: 'Occurred Before',
+											name: '早于',
 											value: 'before',
 										},
 									],
 									default: 'after',
-									description: 'Operation to decide where the data should be mapped to',
+									description: '决定数据路由到哪里的操作',
 								},
 								{
-									displayName: 'Value 2',
+									displayName: '值 2',
 									name: 'value2',
 									type: 'dateTime',
 									default: 0,
-									description: 'The value to compare with the first one',
+									description: '要与第一个值进行比较的值',
 								},
 								{
-									displayName: 'Output Key',
+									displayName: '输出键',
 									name: 'outputKey',
 									type: 'string',
 									default: '',
-									description: 'The label of output to which to send data to if rule matches',
+									description: '规则匹配时发送数据的输出标签',
 								},
 							],
 						},
@@ -282,7 +282,7 @@ export class SwitchV2 implements INodeType {
 				//         dataType:number
 				// ----------------------------------
 				{
-					displayName: 'Value 1',
+					displayName: '值 1',
 					name: 'value1',
 					type: 'number',
 					displayOptions: {
@@ -292,12 +292,12 @@ export class SwitchV2 implements INodeType {
 						},
 					},
 					default: 0,
-					description: 'The value to compare with the second one',
+					description: '要与第二个值进行比较的值',
 				},
 				{
-					displayName: 'Routing Rules',
+					displayName: '路由规则',
 					name: 'rules',
-					placeholder: 'Add Routing Rule',
+					placeholder: '添加路由规则',
 					type: 'fixedCollection',
 					typeOptions: {
 						multipleValues: true,
@@ -313,56 +313,56 @@ export class SwitchV2 implements INodeType {
 					options: [
 						{
 							name: 'rules',
-							displayName: 'Numbers',
+							displayName: '数字',
 							values: [
 								// eslint-disable-next-line n8n-nodes-base/node-param-operation-without-no-data-expression
 								{
-									displayName: 'Operation',
+									displayName: '操作',
 									name: 'operation',
 									type: 'options',
 									// eslint-disable-next-line n8n-nodes-base/node-param-options-type-unsorted-items
 									options: [
 										{
-											name: 'Smaller',
+											name: '小于',
 											value: 'smaller',
 										},
 										{
-											name: 'Smaller Equal',
+											name: '小于等于',
 											value: 'smallerEqual',
 										},
 										{
-											name: 'Equal',
+											name: '等于',
 											value: 'equal',
 										},
 										{
-											name: 'Not Equal',
+											name: '不等于',
 											value: 'notEqual',
 										},
 										{
-											name: 'Larger',
+											name: '大于',
 											value: 'larger',
 										},
 										{
-											name: 'Larger Equal',
+											name: '大于等于',
 											value: 'largerEqual',
 										},
 									],
 									default: 'smaller',
-									description: 'Operation to decide where the data should be mapped to',
+									description: '决定数据路由到哪里的操作',
 								},
 								{
-									displayName: 'Value 2',
+									displayName: '值 2',
 									name: 'value2',
 									type: 'number',
 									default: 0,
-									description: 'The value to compare with the first one',
+									description: '要与第一个值进行比较的值',
 								},
 								{
-									displayName: 'Output Key',
+									displayName: '输出键',
 									name: 'outputKey',
 									type: 'string',
 									default: '',
-									description: 'The label of output to which to send data to if rule matches',
+									description: '规则匹配时发送数据的输出标签',
 								},
 							],
 						},
@@ -373,7 +373,7 @@ export class SwitchV2 implements INodeType {
 				//         dataType:string
 				// ----------------------------------
 				{
-					displayName: 'Value 1',
+					displayName: '值 1',
 					name: 'value1',
 					type: 'string',
 					displayOptions: {
@@ -383,12 +383,12 @@ export class SwitchV2 implements INodeType {
 						},
 					},
 					default: '',
-					description: 'The value to compare with the second one',
+					description: '要与第二个值进行比较的值',
 				},
 				{
-					displayName: 'Routing Rules',
+					displayName: '路由规则',
 					name: 'rules',
-					placeholder: 'Add Routing Rule',
+					placeholder: '添加路由规则',
 					type: 'fixedCollection',
 					typeOptions: {
 						multipleValues: true,
@@ -404,61 +404,61 @@ export class SwitchV2 implements INodeType {
 					options: [
 						{
 							name: 'rules',
-							displayName: 'Strings',
+							displayName: '字符串',
 							values: [
 								// eslint-disable-next-line n8n-nodes-base/node-param-operation-without-no-data-expression
 								{
-									displayName: 'Operation',
+									displayName: '操作',
 									name: 'operation',
 									type: 'options',
 									// eslint-disable-next-line n8n-nodes-base/node-param-options-type-unsorted-items
 									options: [
 										{
-											name: 'Contains',
+											name: '包含',
 											value: 'contains',
 										},
 										{
-											name: 'Not Contains',
+											name: '不包含',
 											value: 'notContains',
 										},
 										{
-											name: 'Ends With',
+											name: '结尾是',
 											value: 'endsWith',
 										},
 										{
-											name: 'Not Ends With',
+											name: '结尾不是',
 											value: 'notEndsWith',
 										},
 										{
-											name: 'Equal',
+											name: '等于',
 											value: 'equal',
 										},
 										{
-											name: 'Not Equal',
+											name: '不等于',
 											value: 'notEqual',
 										},
 										{
-											name: 'Regex Match',
+											name: '正则匹配',
 											value: 'regex',
 										},
 										{
-											name: 'Regex Not Match',
+											name: '正则不匹配',
 											value: 'notRegex',
 										},
 										{
-											name: 'Starts With',
+											name: '开头是',
 											value: 'startsWith',
 										},
 										{
-											name: 'Not Starts With',
+											name: '开头不是',
 											value: 'notStartsWith',
 										},
 									],
 									default: 'equal',
-									description: 'Operation to decide where the data should be mapped to',
+									description: '决定数据路由到哪里的操作',
 								},
 								{
-									displayName: 'Value 2',
+									displayName: '值 2',
 									name: 'value2',
 									type: 'string',
 									displayOptions: {
@@ -467,10 +467,10 @@ export class SwitchV2 implements INodeType {
 										},
 									},
 									default: '',
-									description: 'The value to compare with the first one',
+									description: '要与第一个值进行比较的值',
 								},
 								{
-									displayName: 'Regex',
+									displayName: '正则表达式',
 									name: 'value2',
 									type: 'string',
 									displayOptions: {
@@ -480,14 +480,14 @@ export class SwitchV2 implements INodeType {
 									},
 									default: '',
 									placeholder: '/text/i',
-									description: 'The regex which has to match',
+									description: '要匹配的正则表达式',
 								},
 								{
-									displayName: 'Output Key',
+									displayName: '输出键',
 									name: 'outputKey',
 									type: 'string',
 									default: '',
-									description: 'The label of output to which to send data to if rule matches',
+									description: '规则匹配时发送数据的输出标签',
 								},
 							],
 						},
@@ -495,7 +495,7 @@ export class SwitchV2 implements INodeType {
 				},
 
 				{
-					displayName: 'Fallback Output Name or ID',
+					displayName: '备用输出名称或 ID',
 					name: 'fallbackOutput',
 					type: 'options',
 					displayOptions: {
@@ -510,7 +510,7 @@ export class SwitchV2 implements INodeType {
 					},
 					default: -1,
 					description:
-						'The output to which to route all items which do not match any of the rules. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+						'用于路由所有不匹配任何规则的项目的输出。从列表中选择，或使用<a href="https://docs.n8n.io/code/expressions/">表达式</a>指定 ID。',
 				},
 			],
 		};
@@ -526,7 +526,7 @@ export class SwitchV2 implements INodeType {
 				}));
 
 				options.unshift({
-					name: 'None',
+					name: '无',
 					value: -1,
 				});
 
@@ -619,10 +619,7 @@ export class SwitchV2 implements INodeType {
 			}
 
 			if (returnValue === undefined || isNaN(returnValue)) {
-				throw new NodeOperationError(
-					this.getNode(),
-					`The value "${value}" is not a valid DateTime.`,
-				);
+				throw new NodeOperationError(this.getNode(), `值 "${value}" 不是有效的日期时间格式。`);
 			}
 
 			return returnValue;
@@ -632,7 +629,7 @@ export class SwitchV2 implements INodeType {
 			if (index < 0 || index >= returnData.length) {
 				throw new NodeOperationError(
 					this.getNode(),
-					`The ouput ${index} is not allowed. It has to be between 0 and ${returnData.length - 1}!`,
+					`不允许使用输出 ${index}。必须在 0 到 ${returnData.length - 1} 之间！`,
 				);
 			}
 		};

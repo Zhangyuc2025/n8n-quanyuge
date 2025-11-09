@@ -12,48 +12,61 @@ type DataToSave = {
 
 export class ExecutionData implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Execution Data',
+		displayName: '执行数据',
 		name: 'executionData',
 		icon: 'fa:tasks',
 		group: ['input'],
 		iconColor: 'light-green',
 		version: [1, 1.1],
-		description: 'Add execution data for search',
+		description: '添加执行数据以供搜索',
 		defaults: {
-			name: 'Execution Data',
+			name: '执行数据',
 			color: '#29A568',
 		},
 		inputs: [NodeConnectionTypes.Main],
 		outputs: [NodeConnectionTypes.Main],
+		codex: {
+			categories: ['Core Nodes'],
+			resources: {
+				primaryDocumentation: [
+					{
+						url: 'https://n8n.io/pricing/',
+					},
+				],
+				tutorialLinks: {
+					pricing: 'https://n8n.io/pricing/',
+				},
+			},
+		},
 		properties: [
 			{
 				displayName:
-					"Save important data using this node. It will be displayed on each execution for easy reference and you can filter by it.<br />Filtering is available on Pro and Enterprise plans. <a href='https://n8n.io/pricing/' target='_blank'>More Info</a>",
+					"使用此节点保存重要数据。它将在每次执行时显示以便参考，您可以按其进行过滤。<br />过滤功能在专业版和企业版计划中可用。<a href='{{pricing}}' target='_blank'>了解更多</a>",
 				name: 'notice',
 				type: 'notice',
 				default: '',
 			},
 			{
-				displayName: 'Operation',
+				displayName: '操作',
 				name: 'operation',
 				type: 'options',
 				default: 'save',
 				noDataExpression: true,
 				options: [
 					{
-						name: 'Save Highlight Data (for Search/review)',
+						name: '保存高亮数据（用于搜索/审查）',
 						value: 'save',
-						action: 'Save Highlight Data (for search/review)',
+						action: '保存高亮数据（用于搜索/审查）',
 					},
 				],
 			},
 			{
-				displayName: 'Data to Save',
+				displayName: '要保存的数据',
 				name: 'dataToSave',
-				placeholder: 'Add Saved Field',
+				placeholder: '添加保存的字段',
 				type: 'fixedCollection',
 				typeOptions: {
-					multipleValueButtonText: 'Add Saved Field',
+					multipleValueButtonText: '添加保存的字段',
 					multipleValues: true,
 				},
 				displayOptions: {
@@ -64,23 +77,23 @@ export class ExecutionData implements INodeType {
 				default: {},
 				options: [
 					{
-						displayName: 'Values',
+						displayName: '值',
 						name: 'values',
 						values: [
 							{
-								displayName: 'Key',
+								displayName: '键',
 								name: 'key',
 								type: 'string',
 								default: '',
-								placeholder: 'e.g. myKey',
+								placeholder: '例如：myKey',
 								requiresDataPath: 'single',
 							},
 							{
-								displayName: 'Value',
+								displayName: '值',
 								name: 'value',
 								type: 'string',
 								default: '',
-								placeholder: 'e.g. myValue',
+								placeholder: '例如：myValue',
 							},
 						],
 					},
@@ -90,14 +103,14 @@ export class ExecutionData implements INodeType {
 		hints: [
 			{
 				type: 'warning',
-				message: 'Some keys are longer than 50 characters. They will be truncated.',
+				message: '某些键长度超过 50 个字符。它们将被截断。',
 				displayCondition: '={{ $parameter.dataToSave.values.some((x) => x.key.length > 50) }}',
 				whenToDisplay: 'beforeExecution',
 				location: 'outputPane',
 			},
 			{
 				type: 'warning',
-				message: 'Some values are longer than 512 characters. They will be truncated.',
+				message: '某些值长度超过 512 个字符。它们将被截断。',
 				displayCondition: '={{ $parameter.dataToSave.values.some((x) => x.value.length > 512) }}',
 				whenToDisplay: 'beforeExecution',
 				location: 'outputPane',

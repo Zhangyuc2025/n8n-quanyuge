@@ -24,7 +24,7 @@ export class MistralAi implements INodeType {
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{ $parameter["operation"] + ": " + $parameter["resource"] }}',
-		description: 'Consume Mistral AI API',
+		description: '使用 Mistral AI API',
 		defaults: {
 			name: 'Mistral AI',
 		},
@@ -39,13 +39,13 @@ export class MistralAi implements INodeType {
 		],
 		properties: [
 			{
-				displayName: 'Resource',
+				displayName: '资源',
 				name: 'resource',
 				type: 'options',
 				noDataExpression: true,
 				options: [
 					{
-						name: 'Document',
+						name: '文档',
 						value: 'document',
 					},
 				],

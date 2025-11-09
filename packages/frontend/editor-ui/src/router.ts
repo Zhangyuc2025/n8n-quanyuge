@@ -11,11 +11,7 @@ import { useSettingsStore } from '@/app/stores/settings.store';
 import { useTemplatesStore } from '@/features/workflows/templates/templates.store';
 import { useUIStore } from '@/app/stores/ui.store';
 import { useSSOStore } from '@/features/settings/sso/sso.store';
-import {
-	VIEWS,
-	EDITABLE_CANVAS_VIEWS,
-	SSO_JUST_IN_TIME_PROVSIONING_EXPERIMENT,
-} from '@/app/constants';
+import { VIEWS, EDITABLE_CANVAS_VIEWS } from '@/app/constants';
 import { useTelemetry } from '@/app/composables/useTelemetry';
 import { middleware } from '@/app/utils/rbac/middleware';
 import type { RouterMiddleware } from '@/app/types/router';

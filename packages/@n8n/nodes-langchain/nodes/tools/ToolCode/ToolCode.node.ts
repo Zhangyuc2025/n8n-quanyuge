@@ -131,7 +131,7 @@ function getTool(
 			response = await runFunction(query);
 		} catch (error: unknown) {
 			executionError = new NodeOperationError(ctx.getNode(), error as ExecutionError);
-			response = `There was an error: "${executionError.message}"`;
+			response = `发生错误: "${executionError.message}"`;
 		}
 
 		if (typeof response === 'number') {
@@ -140,10 +140,10 @@ function getTool(
 
 		if (typeof response !== 'string') {
 			// TODO: Do some more testing. Issues here should actually fail the workflow
-			executionError = new NodeOperationError(ctx.getNode(), 'Wrong output type returned', {
-				description: `The response property should be a string, but it is an ${typeof response}`,
+			executionError = new NodeOperationError(ctx.getNode(), '返回了错误的输出类型', {
+				description: `响应属性应该是字符串，但它是 ${typeof response}`,
 			});
-			response = `There was an error: "${executionError.message}"`;
+			response = `发生错误: "${executionError.message}"`;
 		}
 
 		if (executionError && log) {
@@ -184,10 +184,7 @@ function getTool(
 				...commonToolOptions,
 			});
 		} catch (error) {
-			throw new NodeOperationError(
-				ctx.getNode(),
-				'Error during parsing of JSON Schema. \n ' + error,
-			);
+			throw new NodeOperationError(ctx.getNode(), '解析 JSON 架构时出错。\n ' + error);
 		}
 	} else {
 		tool = new DynamicTool(commonToolOptions);
@@ -198,15 +195,15 @@ function getTool(
 
 export class ToolCode implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Code Tool',
+		displayName: '代码工具',
 		name: 'toolCode',
 		icon: 'fa:code',
 		iconColor: 'black',
 		group: ['transform'],
 		version: [1, 1.1, 1.2, 1.3],
-		description: 'Write a tool in JS or Python',
+		description: '用 JS 或 Python 编写工具',
 		defaults: {
-			name: 'Code Tool',
+			name: '代码工具',
 		},
 		codex: {
 			categories: ['AI'],
@@ -226,18 +223,18 @@ export class ToolCode implements INodeType {
 		inputs: [],
 
 		outputs: [NodeConnectionTypes.AiTool],
-		outputNames: ['Tool'],
+		outputNames: ['工具'],
 		properties: [
 			getConnectionHintNoticeField([NodeConnectionTypes.AiAgent]),
 			{
 				displayName:
-					'See an example of a conversational agent with custom tool written in JavaScript <a href="/templates/1963" target="_blank">here</a>.',
+					'在<a href="/templates/1963" target="_blank">这里</a>查看使用 JavaScript 编写自定义工具的对话智能体示例。',
 				name: 'noticeTemplateExample',
 				type: 'notice',
 				default: '',
 			},
 			{
-				displayName: 'Name',
+				displayName: '名称',
 				name: 'name',
 				type: 'string',
 				default: '',
@@ -249,14 +246,13 @@ export class ToolCode implements INodeType {
 				},
 			},
 			{
-				displayName: 'Name',
+				displayName: '名称',
 				name: 'name',
 				type: 'string',
 				default: '',
-				placeholder: 'e.g. My_Tool',
+				placeholder: '例如：My_Tool',
 				validateType: 'string-alphanumeric',
-				description:
-					'The name of the function to be called, could contain letters, numbers, and underscores only',
+				description: '要调用的函数名称，只能包含字母、数字和下划线',
 				displayOptions: {
 					show: {
 						'@version': [1.1],
@@ -264,19 +260,19 @@ export class ToolCode implements INodeType {
 				},
 			},
 			{
-				displayName: 'Description',
+				displayName: '描述',
 				name: 'description',
 				type: 'string',
 				default: '',
 				placeholder:
-					'Call this tool to get a random color. The input should be a string with comma separted names of colors to exclude.',
+					'调用此工具获取随机颜色。输入应该是一个字符串，包含要排除的颜色名称，用逗号分隔。',
 				typeOptions: {
 					rows: 3,
 				},
 			},
 
 			{
-				displayName: 'Language',
+				displayName: '语言',
 				name: 'language',
 				type: 'options',
 				noDataExpression: true,
@@ -304,12 +300,11 @@ export class ToolCode implements INodeType {
 				typeOptions: {
 					editor: 'jsEditor',
 				},
-				default:
-					'// Example: convert the incoming query to uppercase and return it\nreturn query.toUpperCase()',
+				default: '// 示例：将传入的查询转换为大写并返回\nreturn query.toUpperCase()',
 				// TODO: Add proper text here later
-				hint: 'You can access the input the tool receives via the input property "query". The returned value should be a single string.',
+				hint: '您可以通过输入属性 "query" 访问工具接收的输入。返回值应该是单个字符串。',
 				// eslint-disable-next-line n8n-nodes-base/node-param-description-missing-final-period
-				description: 'E.g. Converts any text to uppercase',
+				description: '例如：将任何文本转换为大写',
 				noDataExpression: true,
 			},
 			{
@@ -325,20 +320,18 @@ export class ToolCode implements INodeType {
 					editor: 'codeNodeEditor', // TODO: create a separate `pythonEditor` component
 					editorLanguage: 'python',
 				},
-				default:
-					'# Example: convert the incoming query to uppercase and return it\nreturn query.upper()',
+				default: '# 示例：将传入的查询转换为大写并返回\nreturn query.upper()',
 				// TODO: Add proper text here later
-				hint: 'You can access the input the tool receives via the input property "query". The returned value should be a single string.',
+				hint: '您可以通过输入属性 "query" 访问工具接收的输入。返回值应该是单个字符串。',
 				// eslint-disable-next-line n8n-nodes-base/node-param-description-missing-final-period
-				description: 'E.g. Converts any text to uppercase',
+				description: '例如：将任何文本转换为大写',
 				noDataExpression: true,
 			},
 			{
-				displayName: 'Specify Input Schema',
+				displayName: '指定输入架构',
 				name: 'specifyInputSchema',
 				type: 'boolean',
-				description:
-					'Whether to specify the schema for the function. This would require the LLM to provide the input in the correct format and would validate it against the schema.',
+				description: '是否为函数指定架构。这将要求 LLM 以正确的格式提供输入，并根据架构进行验证。',
 				noDataExpression: true,
 				default: false,
 			},

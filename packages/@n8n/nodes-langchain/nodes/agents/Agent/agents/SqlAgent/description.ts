@@ -155,7 +155,7 @@ export const sqlAgentAgentProperties: INodeProperties[] = [
 			},
 		},
 		default: {},
-		placeholder: 'Add Option',
+		placeholder: '添加选项',
 		options: [
 			{
 				displayName: 'Ignored Tables',

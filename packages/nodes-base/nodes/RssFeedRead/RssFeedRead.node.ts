@@ -24,15 +24,15 @@ function validateURL(url: string) {
 
 export class RssFeedRead implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'RSS Read',
+		displayName: 'RSS 读取',
 		name: 'rssFeedRead',
 		icon: 'fa:rss',
 		iconColor: 'orange-red',
 		group: ['input'],
 		version: [1, 1.1, 1.2],
-		description: 'Reads data from an RSS Feed',
+		description: '从 RSS 订阅源读取数据',
 		defaults: {
-			name: 'RSS Read',
+			name: 'RSS 读取',
 			color: '#b02020',
 		},
 		usableAsTool: true,
@@ -45,29 +45,29 @@ export class RssFeedRead implements INodeType {
 				type: 'string',
 				default: '',
 				required: true,
-				description: 'URL of the RSS feed',
+				description: 'RSS 订阅源的 URL 地址',
 			},
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
 				type: 'collection',
-				placeholder: 'Add option',
+				placeholder: '添加选项',
 				default: {},
 				options: [
 					{
-						displayName: 'Custom Fields',
+						displayName: '自定义字段',
 						name: 'customFields',
 						type: 'string',
 						default: '',
 						description:
-							'A comma-separated list of custom fields to include in the output. For example, "author, contentSnippet".',
+							'要在输出中包含的自定义字段列表，用逗号分隔。例如："author, contentSnippet"。',
 					},
 					{
-						displayName: 'Ignore SSL Issues (Insecure)',
+						displayName: '忽略 SSL 问题（不安全）',
 						name: 'ignoreSSL',
 						type: 'boolean',
 						default: false,
-						description: 'Whether to ignore SSL/TLS certificate issues or not',
+						description: '是否忽略 SSL/TLS 证书问题',
 					},
 				],
 			},
@@ -95,13 +95,13 @@ export class RssFeedRead implements INodeType {
 				const ignoreSSL = Boolean(options.ignoreSSL);
 
 				if (!url) {
-					throw new NodeOperationError(this.getNode(), 'The parameter "URL" has to be set!', {
+					throw new NodeOperationError(this.getNode(), '必须设置 URL 参数！', {
 						itemIndex: i,
 					});
 				}
 
 				if (!validateURL(url)) {
-					throw new NodeOperationError(this.getNode(), 'The provided "URL" is not valid!', {
+					throw new NodeOperationError(this.getNode(), '提供的 URL 无效！', {
 						itemIndex: i,
 					});
 				}
@@ -135,7 +135,7 @@ export class RssFeedRead implements INodeType {
 					if (error.code === 'ECONNREFUSED') {
 						throw new NodeOperationError(
 							this.getNode(),
-							`It was not possible to connect to the URL. Please make sure the URL "${url}" it is valid!`,
+							`无法连接到该 URL。请确保 URL "${url}" 是有效的！`,
 							{
 								itemIndex: i,
 							},

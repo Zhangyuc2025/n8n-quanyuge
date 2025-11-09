@@ -12,22 +12,22 @@ import { removeDuplicatesNodeFields } from './RemoveDuplicatesV2.description';
 import { removeDuplicateInputItems } from '../utils';
 
 const versionDescription: INodeTypeDescription = {
-	displayName: 'Remove Duplicates',
+	displayName: '去除重复项',
 	name: 'removeDuplicates',
 	icon: 'file:removeDuplicates.svg',
 	group: ['transform'],
 	subtitle: '',
 	version: [2],
-	description: 'Delete items with matching field values',
+	description: '删除具有相同字段值的项',
 	defaults: {
-		name: 'Remove Duplicates',
+		name: '去除重复项',
 	},
 	inputs: [NodeConnectionTypes.Main],
 	outputs: [NodeConnectionTypes.Main],
-	outputNames: ['Kept', 'Discarded'],
+	outputNames: ['保留', '丢弃'],
 	hints: [
 		{
-			message: 'The dedupe key set in “Value to Dedupe On” has no value',
+			message: '在"去重值"中设置的去重键没有值',
 			displayCondition:
 				'={{ $parameter["operation"] === "removeItemsSeenInPreviousExecutions" && ($parameter["logic"] === "removeItemsWithAlreadySeenKeyValues" && $parameter["dedupeValue"] === undefined) || ($parameter["logic"] === "removeItemsUpToStoredIncrementalKey" && $parameter["incrementalDedupeValue"] === undefined) || ($parameter["logic"] === "removeItemsUpToStoredDate" && $parameter["dateDedupeValue"] === undefined) }}',
 			whenToDisplay: 'beforeExecution',
@@ -64,7 +64,7 @@ export class RemoveDuplicatesV2 implements INodeType {
 						if (!['node', 'workflow'].includes(scope)) {
 							throw new NodeOperationError(
 								this.getNode(),
-								`The scope '${scope}' is not supported. Please select either "node" or "workflow".`,
+								`不支持作用域 '${scope}'。请选择 "node" 或 "workflow"`,
 							);
 						}
 
@@ -95,7 +95,7 @@ export class RemoveDuplicatesV2 implements INodeType {
 						if (currentProcessedDataCount + items.length > maxEntriesNum) {
 							throw new NodeOperationError(
 								this.getNode(),
-								'The number of items to be processed exceeds the maximum history size. Please increase the history size or reduce the number of items to be processed.',
+								'要处理的项数超过了最大历史大小。请增加历史大小或减少要处理的项数',
 							);
 						}
 						const itemsProcessed = await this.helpers.checkProcessedAndRecord(
@@ -122,7 +122,7 @@ export class RemoveDuplicatesV2 implements INodeType {
 
 						if (maxEntriesNum > 0 && processedDataCount / maxEntriesNum > 0.5) {
 							this.addExecutionHints({
-								message: `Some duplicates may be not be removed since you're approaching the maximum history size (${maxEntriesNum} items). You can raise this limit using the ‘history size’ option.`,
+								message: `由于您正在接近最大历史大小（${maxEntriesNum} 项），可能无法删除某些重复项。您可以使用"历史大小"选项提高此限制`,
 								location: 'outputPane',
 							});
 						}
@@ -131,7 +131,7 @@ export class RemoveDuplicatesV2 implements INodeType {
 						if (!['node', 'workflow'].includes(scope)) {
 							throw new NodeOperationError(
 								this.getNode(),
-								`The scope '${scope}' is not supported. Please select either "node" or "workflow".`,
+								`不支持作用域 '${scope}'。请选择 "node" 或 "workflow"`,
 							);
 						}
 
@@ -143,16 +143,13 @@ export class RemoveDuplicatesV2 implements INodeType {
 						for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
 							const incrementalKey = this.getNodeParameter('incrementalDedupeValue', itemIndex, '');
 							if (!incrementalKey?.toString()) {
-								throw new NodeOperationError(
-									this.getNode(),
-									'The `Value to Dedupe` On is empty. Please provide a value.',
-								);
+								throw new NodeOperationError(this.getNode(), '去重值为空。请提供一个值');
 							}
 							parsedIncrementalKey = Number(incrementalKey);
 							if (isNaN(parsedIncrementalKey)) {
 								throw new NodeOperationError(
 									this.getNode(),
-									`The value '${incrementalKey}' is not a number. Please provide a number.`,
+									`值 '${incrementalKey}' 不是数字。请提供一个数字`,
 								);
 							}
 							if (itemMapping[parsedIncrementalKey]) {
@@ -186,7 +183,7 @@ export class RemoveDuplicatesV2 implements INodeType {
 						if (!['node', 'workflow'].includes(scope)) {
 							throw new NodeOperationError(
 								this.getNode(),
-								`The scope '${scope}' is not supported. Please select either "node" or "workflow".`,
+								`不支持作用域 '${scope}'。请选择 "node" 或 "workflow"`,
 							);
 						}
 
@@ -199,17 +196,14 @@ export class RemoveDuplicatesV2 implements INodeType {
 							checkValue =
 								this.getNodeParameter('dateDedupeValue', itemIndex, '')?.toString() ?? '';
 							if (!checkValue) {
-								throw new NodeOperationError(
-									this.getNode(),
-									'The `Value to Dedupe` On is empty. Please provide a value.',
-								);
+								throw new NodeOperationError(this.getNode(), '去重值为空。请提供一个值');
 							}
 							try {
 								tryToParseDateTime(checkValue);
 							} catch (error) {
 								throw new NodeOperationError(
 									this.getNode(),
-									`The value '${checkValue}' is not a valid date. Please provide a valid date.`,
+									`值 '${checkValue}' 不是有效的日期。请提供一个有效的日期`,
 								);
 							}
 							if (itemMapping[checkValue]) {

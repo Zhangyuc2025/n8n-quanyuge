@@ -8,16 +8,16 @@ import { NodeConnectionTypes } from 'n8n-workflow';
 
 export class ManualTrigger implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Manual Trigger',
+		displayName: '手动触发',
 		name: 'manualTrigger',
 		icon: 'fa:mouse-pointer',
 		group: ['trigger'],
 		version: 1,
-		description: 'Runs the flow on clicking a button in n8n',
+		description: '在 n8n 中点击按钮时运行流程',
 		eventTriggerDescription: '',
 		maxNodes: 1,
 		defaults: {
-			name: 'When clicking ‘Execute workflow’',
+			name: '当点击"执行工作流"时',
 			color: '#909298',
 		},
 
@@ -26,7 +26,7 @@ export class ManualTrigger implements INodeType {
 		properties: [
 			{
 				displayName:
-					'This node is where the workflow execution starts (when you click the ‘test’ button on the canvas).<br><br> <a data-action="showNodeCreator">Explore other ways to trigger your workflow</a> (e.g on a schedule, or a webhook)',
+					'此节点是工作流执行的起点（当你点击画布上的"测试"按钮时）。<br><br> <a data-action="showNodeCreator">探索触发工作流的其他方式</a>（例如按计划或使用 webhook）',
 				name: 'notice',
 				type: 'notice',
 				default: '',

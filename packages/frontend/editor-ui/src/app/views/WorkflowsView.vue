@@ -24,7 +24,6 @@ import {
 	MODAL_CONFIRM,
 	VIEWS,
 } from '@/app/constants';
-import { COMMUNITY_PLUS_ENROLLMENT_MODAL } from '@/features/settings/usage/usage.constants';
 import { useAITemplatesStarterCollectionStore } from '@/experiments/aiTemplatesStarterCollection/stores/aiTemplatesStarterCollection.store';
 import SuggestedWorkflowCard from '@/experiments/personalizedTemplates/components/SuggestedWorkflowCard.vue';
 import SuggestedWorkflows from '@/experiments/personalizedTemplates/components/SuggestedWorkflows.vue';
@@ -434,16 +433,6 @@ const showArchivedOnlyHint = computed(() => {
 		foldersStore.totalWorkflowCount > 0
 	);
 });
-
-const isSelfHostedDeployment = computed(() => settingsStore.deploymentType === 'default');
-
-const canUserRegisterCommunityPlus = computed(
-	() => getResourcePermissions(usersStore.currentUser?.globalScopes).community.register,
-);
-
-const showRegisteredCommunityCTA = computed(
-	() => isSelfHostedDeployment.value && !foldersEnabled.value && canUserRegisterCommunityPlus.value,
-);
 
 const showAIStarterCollectionCallout = computed(() => {
 	return (
@@ -1434,14 +1423,6 @@ const renameFolder = async (folderId: string) => {
 };
 
 const createFolderInCurrent = async () => {
-	// Show the community plus enrollment modal if the user is self-hosted, and hasn't enabled folders
-	if (showRegisteredCommunityCTA.value) {
-		uiStore.openModalWithData({
-			name: COMMUNITY_PLUS_ENROLLMENT_MODAL,
-			data: { customHeading: i18n.baseText('folders.registeredCommunity.cta.heading') },
-		});
-		return;
-	}
 	if (!route.params.projectId) return;
 	const currentParent = currentFolder.value?.name || projectName.value;
 	if (!currentParent) return;
@@ -1619,13 +1600,6 @@ const moveWorkflowToFolder = async (payload: {
 	parentFolderId?: string;
 	sharedWithProjects?: ProjectSharingData[];
 }) => {
-	if (showRegisteredCommunityCTA.value) {
-		uiStore.openModalWithData({
-			name: COMMUNITY_PLUS_ENROLLMENT_MODAL,
-			data: { customHeading: i18n.baseText('folders.registeredCommunity.cta.heading') },
-		});
-		return;
-	}
 	uiStore.openMoveToFolderModal(
 		'workflow',
 		{
@@ -1860,7 +1834,7 @@ const onNameSubmit = async (name: string) => {
 				/>
 			</ProjectHeader>
 		</template>
-		<template v-if="foldersEnabled || showRegisteredCommunityCTA" #add-button>
+		<template v-if="foldersEnabled" #add-button>
 			<N8nTooltip
 				placement="top"
 				:disabled="
@@ -1872,12 +1846,7 @@ const onNameSubmit = async (name: string) => {
 				"
 			>
 				<template #content>
-					<span
-						v-if="
-							(projectPages.isOverviewSubPage || projectPages.isSharedSubPage) &&
-							!showRegisteredCommunityCTA
-						"
-					>
+					<span v-if="projectPages.isOverviewSubPage || projectPages.isSharedSubPage">
 						<span v-if="teamProjectsEnabled">
 							{{ i18n.baseText('folders.add.overview.withProjects.message') }}
 						</span>
@@ -1901,7 +1870,7 @@ const onNameSubmit = async (name: string) => {
 					type="tertiary"
 					data-test-id="add-folder-button"
 					:class="$style['add-folder-button']"
-					:disabled="!showRegisteredCommunityCTA && (readOnlyEnv || !hasPermissionToCreateFolders)"
+					:disabled="readOnlyEnv || !hasPermissionToCreateFolders"
 					@click="createFolderInCurrent"
 				/>
 			</N8nTooltip>

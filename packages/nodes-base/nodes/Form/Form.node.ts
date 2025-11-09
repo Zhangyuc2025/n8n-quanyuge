@@ -263,16 +263,16 @@ export class Form extends Node {
 	nodeInputData: INodeExecutionData[] = [];
 
 	description: INodeTypeDescription = {
-		displayName: 'n8n Form',
+		displayName: 'n8n 表单',
 		name: 'form',
 		icon: 'file:form.svg',
 		group: ['input'],
 		// since trigger and node are sharing descriptions and logic we need to sync the versions
 		// and keep them aligned in both nodes
 		version: [1, 2.3],
-		description: 'Generate webforms in n8n and pass their responses to the workflow',
+		description: '在 n8n 中生成 Web 表单并将其响应传递给工作流',
 		defaults: {
-			name: 'Form',
+			name: '表单',
 		},
 		inputs: [NodeConnectionTypes.Main],
 		outputs: [NodeConnectionTypes.Main],
@@ -300,24 +300,24 @@ export class Form extends Node {
 		],
 		properties: [
 			{
-				displayName: 'An n8n Form Trigger node must be set up before this node',
+				displayName: '必须在此节点之前设置 n8n 表单触发器节点',
 				name: 'triggerNotice',
 				type: 'notice',
 				default: '',
 			},
 			{
-				displayName: 'Page Type',
+				displayName: '页面类型',
 				name: 'operation',
 				type: 'options',
 				default: 'page',
 				noDataExpression: true,
 				options: [
 					{
-						name: 'Next Form Page',
+						name: '下一个表单页面',
 						value: 'page',
 					},
 					{
-						name: 'Form Ending',
+						name: '表单结束',
 						value: 'completion',
 					},
 				],

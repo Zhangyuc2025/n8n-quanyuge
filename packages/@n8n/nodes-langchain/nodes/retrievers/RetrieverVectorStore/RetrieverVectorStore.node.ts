@@ -13,15 +13,15 @@ import { logWrapper } from '@utils/logWrapper';
 
 export class RetrieverVectorStore implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Vector Store Retriever',
+		displayName: '向量存储检索器',
 		name: 'retrieverVectorStore',
 		icon: 'fa:box-open',
 		iconColor: 'black',
 		group: ['transform'],
 		version: 1,
-		description: 'Use a Vector Store as Retriever',
+		description: '将向量存储用作检索器',
 		defaults: {
-			name: 'Vector Store Retriever',
+			name: '向量存储检索器',
 		},
 		codex: {
 			categories: ['AI'],
@@ -39,7 +39,7 @@ export class RetrieverVectorStore implements INodeType {
 
 		inputs: [
 			{
-				displayName: 'Vector Store',
+				displayName: '向量存储',
 				maxConnections: 1,
 				type: NodeConnectionTypes.AiVectorStore,
 				required: true,
@@ -47,14 +47,14 @@ export class RetrieverVectorStore implements INodeType {
 		],
 
 		outputs: [NodeConnectionTypes.AiRetriever],
-		outputNames: ['Retriever'],
+		outputNames: ['检索器'],
 		properties: [
 			{
-				displayName: 'Limit',
+				displayName: '限制数量',
 				name: 'topK',
 				type: 'number',
 				default: 4,
-				description: 'The maximum number of results to return',
+				description: '返回结果的最大数量',
 			},
 		],
 	};

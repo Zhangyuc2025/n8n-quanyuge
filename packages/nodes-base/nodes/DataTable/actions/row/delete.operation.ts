@@ -23,11 +23,11 @@ const displayOptions: IDisplayOptions = {
 export const description: INodeProperties[] = [
 	...getSelectFields(displayOptions),
 	{
-		displayName: 'Options',
+		displayName: '选项',
 		name: 'options',
 		type: 'collection',
 		default: {},
-		placeholder: 'Add option',
+		placeholder: '添加选项',
 		options: [DRY_RUN],
 		displayOptions,
 	},
@@ -42,7 +42,7 @@ export async function execute(
 	const filter = await getSelectFilter(this, index);
 
 	if (filter.filters.length === 0) {
-		throw new NodeOperationError(this.getNode(), 'At least one condition is required');
+		throw new NodeOperationError(this.getNode(), '至少需要一个条件');
 	}
 
 	const result = await dataTableProxy.deleteRows({ filter, dryRun });

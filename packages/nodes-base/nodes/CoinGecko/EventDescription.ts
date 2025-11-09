@@ -2,7 +2,7 @@ import type { INodeProperties } from 'n8n-workflow';
 
 export const eventOperations: INodeProperties[] = [
 	{
-		displayName: 'Operation',
+		displayName: '操作',
 		name: 'operation',
 		type: 'options',
 		noDataExpression: true,
@@ -13,10 +13,10 @@ export const eventOperations: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Get Many',
+				name: '获取多个',
 				value: 'getAll',
-				description: 'Get many events',
-				action: 'Get many events',
+				description: '获取多个事件',
+				action: '获取多个事件',
 			},
 		],
 		default: 'getAll',
@@ -25,7 +25,7 @@ export const eventOperations: INodeProperties[] = [
 
 export const eventFields: INodeProperties[] = [
 	{
-		displayName: 'Return All',
+		displayName: '返回全部',
 		name: 'returnAll',
 		type: 'boolean',
 		displayOptions: {
@@ -35,10 +35,10 @@ export const eventFields: INodeProperties[] = [
 			},
 		},
 		default: false,
-		description: 'Whether to return all results or only up to a given limit',
+		description: '是否返回所有结果或仅返回到给定限制为止的结果',
 	},
 	{
-		displayName: 'Limit',
+		displayName: '限制',
 		name: 'limit',
 		type: 'number',
 		displayOptions: {
@@ -53,13 +53,13 @@ export const eventFields: INodeProperties[] = [
 			maxValue: 500,
 		},
 		default: 100,
-		description: 'Max number of results to return',
+		description: '返回结果的最大数量',
 	},
 	{
-		displayName: 'Options',
+		displayName: '选项',
 		name: 'options',
 		type: 'collection',
-		placeholder: 'Add option',
+		placeholder: '添加选项',
 		default: {},
 		displayOptions: {
 			show: {
@@ -70,7 +70,7 @@ export const eventFields: INodeProperties[] = [
 		options: [
 			{
 				// eslint-disable-next-line n8n-nodes-base/node-param-display-name-wrong-for-dynamic-options
-				displayName: 'Country Code',
+				displayName: '国家代码',
 				name: 'country_code',
 				type: 'options',
 				typeOptions: {
@@ -78,24 +78,24 @@ export const eventFields: INodeProperties[] = [
 				},
 				default: '',
 				description:
-					'Country code of event. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+					'事件的国家代码。从列表中选择，或使用<a href="https://docs.n8n.io/code/expressions/">表达式</a>指定 ID',
 			},
 			{
-				displayName: 'From Date',
+				displayName: '起始日期',
 				name: 'from_date',
 				type: 'dateTime',
 				default: '',
-				description: 'Lists events after this date',
+				description: '列出该日期之后的事件',
 			},
 			{
-				displayName: 'To Date',
+				displayName: '截止日期',
 				name: 'to_date',
 				type: 'dateTime',
 				default: '',
-				description: 'Lists events before this date',
+				description: '列出该日期之前的事件',
 			},
 			{
-				displayName: 'Type Name or ID',
+				displayName: '类型名称或 ID',
 				name: 'type',
 				type: 'options',
 				typeOptions: {
@@ -103,14 +103,14 @@ export const eventFields: INodeProperties[] = [
 				},
 				default: '',
 				description:
-					'Type of event. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+					'事件类型。从列表中选择，或使用<a href="https://docs.n8n.io/code/expressions/">表达式</a>指定 ID',
 			},
 			{
-				displayName: 'Upcoming Events Only',
+				displayName: '仅限即将发生的事件',
 				name: 'upcoming_events_only',
 				type: 'boolean',
 				default: true,
-				description: 'Whether to list only upcoming events',
+				description: '是否仅列出即将发生的事件',
 			},
 		],
 	},

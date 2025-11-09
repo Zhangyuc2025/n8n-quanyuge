@@ -13,15 +13,15 @@ import { TokenTextSplitter } from './TokenTextSplitter';
 
 export class TextSplitterTokenSplitter implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Token Splitter',
+		displayName: 'Token 分割器',
 		name: 'textSplitterTokenSplitter',
 		icon: 'fa:grip-lines-vertical',
 		iconColor: 'black',
 		group: ['transform'],
 		version: 1,
-		description: 'Split text into chunks by tokens',
+		description: '按 Token 将文本分割成块',
 		defaults: {
-			name: 'Token Splitter',
+			name: 'Token 分割器',
 		},
 		codex: {
 			categories: ['AI'],
@@ -40,22 +40,22 @@ export class TextSplitterTokenSplitter implements INodeType {
 		inputs: [],
 
 		outputs: [NodeConnectionTypes.AiTextSplitter],
-		outputNames: ['Text Splitter'],
+		outputNames: ['文本分割器'],
 		properties: [
 			getConnectionHintNoticeField([NodeConnectionTypes.AiDocument]),
 			{
-				displayName: 'Chunk Size',
+				displayName: '分块大小',
 				name: 'chunkSize',
 				type: 'number',
 				default: 1000,
-				description: 'Maximum number of tokens per chunk',
+				description: '每个块的最大 Token 数',
 			},
 			{
-				displayName: 'Chunk Overlap',
+				displayName: '分块重叠',
 				name: 'chunkOverlap',
 				type: 'number',
 				default: 0,
-				description: 'Number of tokens shared between consecutive chunks to preserve context',
+				description: '连续分块之间共享的 Token 数，用于保留上下文',
 			},
 		],
 	};

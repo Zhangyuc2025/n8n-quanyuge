@@ -16,16 +16,16 @@ interface PollData {
 
 export class RssFeedReadTrigger implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'RSS Feed Trigger',
+		displayName: 'RSS 订阅触发器',
 		name: 'rssFeedReadTrigger',
 		icon: 'fa:rss',
 		iconColor: 'orange-red',
 		group: ['trigger'],
 		version: 1,
-		description: 'Starts a workflow when an RSS feed is updated',
+		description: '当 RSS 订阅更新时启动工作流',
 		subtitle: '={{$parameter["event"]}}',
 		defaults: {
-			name: 'RSS Feed Trigger',
+			name: 'RSS 订阅触发器',
 			color: '#b02020',
 		},
 		polling: true,
@@ -33,12 +33,12 @@ export class RssFeedReadTrigger implements INodeType {
 		outputs: [NodeConnectionTypes.Main],
 		properties: [
 			{
-				displayName: 'Feed URL',
+				displayName: '订阅 URL',
 				name: 'feedUrl',
 				type: 'string',
 				default: 'https://blog.n8n.io/rss/',
 				required: true,
-				description: 'URL of the RSS feed to poll',
+				description: '要轮询的 RSS 订阅 URL',
 			},
 		],
 	};

@@ -15,15 +15,15 @@ const errorObjectPlaceholder = `{
 
 export class StopAndError implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Stop and Error',
+		displayName: '停止并报错',
 		name: 'stopAndError',
 		icon: 'fa:exclamation-triangle',
 		iconColor: 'red',
 		group: ['input'],
 		version: 1,
-		description: 'Throw an error in the workflow',
+		description: '在工作流中抛出错误',
 		defaults: {
-			name: 'Stop and Error',
+			name: '停止并报错',
 			color: '#ff0000',
 		},
 		inputs: [NodeConnectionTypes.Main],
@@ -31,27 +31,27 @@ export class StopAndError implements INodeType {
 		outputs: [],
 		properties: [
 			{
-				displayName: 'Error Type',
+				displayName: '错误类型',
 				name: 'errorType',
 				type: 'options',
 				options: [
 					{
-						name: 'Error Message',
+						name: '错误消息',
 						value: 'errorMessage',
 					},
 					{
-						name: 'Error Object',
+						name: '错误对象',
 						value: 'errorObject',
 					},
 				],
 				default: 'errorMessage',
-				description: 'Type of error to throw',
+				description: '要抛出的错误类型',
 			},
 			{
-				displayName: 'Error Message',
+				displayName: '错误消息',
 				name: 'errorMessage',
 				type: 'string',
-				placeholder: 'An error occurred!',
+				placeholder: '发生错误！',
 				default: '',
 				required: true,
 				displayOptions: {
@@ -61,10 +61,10 @@ export class StopAndError implements INodeType {
 				},
 			},
 			{
-				displayName: 'Error Object',
+				displayName: '错误对象',
 				name: 'errorObject',
 				type: 'json',
-				description: 'Object containing error properties',
+				description: '包含错误属性的对象',
 				default: '',
 				typeOptions: {
 					alwaysOpenEditWindow: true,

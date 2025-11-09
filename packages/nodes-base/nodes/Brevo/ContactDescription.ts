@@ -8,7 +8,7 @@ import type {
 
 export const contactOperations: INodeProperties[] = [
 	{
-		displayName: 'Operation',
+		displayName: '操作',
 		name: 'operation',
 		type: 'options',
 		noDataExpression: true,
@@ -19,9 +19,9 @@ export const contactOperations: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Create',
+				name: '创建',
 				value: 'create',
-				action: 'Create a contact',
+				action: '创建联系人',
 				routing: {
 					request: {
 						method: 'POST',
@@ -30,9 +30,9 @@ export const contactOperations: INodeProperties[] = [
 				},
 			},
 			{
-				name: 'Create or Update',
+				name: '创建或更新',
 				value: 'upsert',
-				action: 'Upsert a contact',
+				action: '创建或更新联系人',
 				routing: {
 					request: {
 						method: 'POST',
@@ -41,17 +41,17 @@ export const contactOperations: INodeProperties[] = [
 				},
 			},
 			{
-				name: 'Delete',
+				name: '删除',
 				value: 'delete',
-				action: 'Delete a contact',
+				action: '删除联系人',
 			},
 			{
-				name: 'Get',
+				name: '获取',
 				value: 'get',
-				action: 'Get a contact',
+				action: '获取联系人',
 			},
 			{
-				name: 'Get Many',
+				name: '获取多个',
 				value: 'getAll',
 				routing: {
 					request: {
@@ -80,10 +80,10 @@ export const contactOperations: INodeProperties[] = [
 						},
 					},
 				},
-				action: 'Get many contacts',
+				action: '获取多个联系人',
 			},
 			{
-				name: 'Update',
+				name: '更新',
 				value: 'update',
 				routing: {
 					output: {
@@ -97,7 +97,7 @@ export const contactOperations: INodeProperties[] = [
 						],
 					},
 				},
-				action: 'Update a contact',
+				action: '更新联系人',
 			},
 		],
 		default: 'create',
@@ -106,7 +106,7 @@ export const contactOperations: INodeProperties[] = [
 
 const createOperations: INodeProperties[] = [
 	{
-		displayName: 'Email',
+		displayName: '电子邮件',
 		name: 'email',
 		type: 'string',
 		placeholder: 'name@email.com',
@@ -125,10 +125,10 @@ const createOperations: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Contact Attributes',
+		displayName: '联系人属性',
 		name: 'createContactAttributes',
 		default: {},
-		description: 'Array of attributes to be added',
+		description: '要添加的属性数组',
 		displayOptions: {
 			show: {
 				resource: ['contact'],
@@ -138,10 +138,10 @@ const createOperations: INodeProperties[] = [
 		options: [
 			{
 				name: 'attributesValues',
-				displayName: 'Attribute',
+				displayName: '属性',
 				values: [
 					{
-						displayName: 'Field Name',
+						displayName: '字段名',
 						name: 'fieldName',
 						type: 'options',
 						typeOptions: {
@@ -180,7 +180,7 @@ const createOperations: INodeProperties[] = [
 						default: '',
 					},
 					{
-						displayName: 'Field Value',
+						displayName: '字段值',
 						name: 'fieldValue',
 						type: 'string',
 						default: '',
@@ -195,7 +195,7 @@ const createOperations: INodeProperties[] = [
 				],
 			},
 		],
-		placeholder: 'Add Attribute',
+		placeholder: '添加属性',
 		type: 'fixedCollection',
 		typeOptions: {
 			multipleValues: true,
@@ -205,7 +205,7 @@ const createOperations: INodeProperties[] = [
 
 const getAllOperations: INodeProperties[] = [
 	{
-		displayName: 'Return All',
+		displayName: '返回全部',
 		name: 'returnAll',
 		type: 'boolean',
 		routing: {
@@ -220,10 +220,10 @@ const getAllOperations: INodeProperties[] = [
 			},
 		},
 		default: false,
-		description: 'Whether to return all results or only up to a given limit',
+		description: '是否返回所有结果或仅返回至给定限制',
 	},
 	{
-		displayName: 'Limit',
+		displayName: '限制',
 		name: 'limit',
 		type: 'number',
 		displayOptions: {
@@ -244,13 +244,13 @@ const getAllOperations: INodeProperties[] = [
 			maxValue: 1000,
 		},
 		default: 50,
-		description: 'Max number of results to return',
+		description: '返回结果的最大数量',
 	},
 	{
-		displayName: 'Options',
+		displayName: '选项',
 		name: 'options',
 		type: 'collection',
-		placeholder: 'Add option',
+		placeholder: '添加选项',
 		displayOptions: {
 			show: {
 				resource: ['contact'],
@@ -260,12 +260,12 @@ const getAllOperations: INodeProperties[] = [
 		default: {},
 		options: [
 			{
-				displayName: 'Sort',
+				displayName: '排序',
 				name: 'sort',
 				type: 'options',
 				options: [
-					{ name: 'DESC', value: 'desc' },
-					{ name: 'ASC', value: 'asc' },
+					{ name: '降序', value: 'desc' },
+					{ name: '升序', value: 'asc' },
 				],
 				routing: {
 					send: {
@@ -275,15 +275,15 @@ const getAllOperations: INodeProperties[] = [
 					},
 				},
 				default: 'desc',
-				description: 'Sort the results in the ascending/descending order of record creation',
+				description: '按记录创建的升序/降序排列结果',
 			},
 		],
 	},
 	{
-		displayName: 'Filters',
+		displayName: '过滤器',
 		name: 'filters',
 		type: 'collection',
-		placeholder: 'Add Filter',
+		placeholder: '添加过滤器',
 		displayOptions: {
 			show: {
 				resource: ['contact'],
@@ -293,7 +293,7 @@ const getAllOperations: INodeProperties[] = [
 		default: {},
 		options: [
 			{
-				displayName: 'Modified Since',
+				displayName: '修改时间之后',
 				name: 'modifiedSince',
 				type: 'dateTime',
 				routing: {
@@ -303,8 +303,7 @@ const getAllOperations: INodeProperties[] = [
 					},
 				},
 				default: '',
-				description:
-					'Filter (urlencoded) the contacts modified after a given UTC date-time (YYYY-MM-DDTHH:mm:ss.SSSZ)',
+				description: '过滤（URL编码）在给定UTC日期时间之后修改的联系人 (YYYY-MM-DDTHH:mm:ss.SSSZ)',
 			},
 		],
 	},
@@ -312,7 +311,7 @@ const getAllOperations: INodeProperties[] = [
 
 const getOperations: INodeProperties[] = [
 	{
-		displayName: 'Contact Identifier',
+		displayName: '联系人标识符',
 		name: 'identifier',
 		type: 'string',
 		displayOptions: {
@@ -329,13 +328,13 @@ const getOperations: INodeProperties[] = [
 		},
 		required: true,
 		default: '',
-		description: 'Email (urlencoded) OR ID of the contact OR its SMS attribute value',
+		description: '电子邮件（URL编码）或联系人ID或其SMS属性值',
 	},
 ];
 
 const deleteOperations: INodeProperties[] = [
 	{
-		displayName: 'Contact Identifier',
+		displayName: '联系人标识符',
 		name: 'identifier',
 		type: 'string',
 		displayOptions: {
@@ -361,16 +360,16 @@ const deleteOperations: INodeProperties[] = [
 			},
 		},
 		default: '',
-		description: 'Email (urlencoded) OR ID of the contact OR its SMS attribute value',
+		description: '电子邮件（URL编码）或联系人ID或其SMS属性值',
 	},
 ];
 
 const updateOperations: INodeProperties[] = [
 	{
-		displayName: 'Contact Identifier',
+		displayName: '联系人标识符',
 		name: 'identifier',
 		default: '',
-		description: 'Email (urlencoded) OR ID of the contact OR its SMS attribute value',
+		description: '电子邮件（URL编码）或联系人ID或其SMS属性值',
 		displayOptions: {
 			show: {
 				resource: ['contact'],
@@ -381,10 +380,10 @@ const updateOperations: INodeProperties[] = [
 		required: true,
 	},
 	{
-		displayName: 'Attributes',
+		displayName: '属性',
 		name: 'updateAttributes',
 		default: {},
-		description: 'Array of attributes to be updated',
+		description: '要更新的属性数组',
 		displayOptions: {
 			show: {
 				resource: ['contact'],
@@ -393,11 +392,11 @@ const updateOperations: INodeProperties[] = [
 		},
 		options: [
 			{
-				displayName: 'Attribute',
+				displayName: '属性',
 				name: 'updateAttributesValues',
 				values: [
 					{
-						displayName: 'Field Name',
+						displayName: '字段名',
 						name: 'fieldName',
 						type: 'options',
 						typeOptions: {
@@ -436,7 +435,7 @@ const updateOperations: INodeProperties[] = [
 						default: '',
 					},
 					{
-						displayName: 'Field Value',
+						displayName: '字段值',
 						name: 'fieldValue',
 						type: 'string',
 						default: '',
@@ -451,7 +450,7 @@ const updateOperations: INodeProperties[] = [
 				],
 			},
 		],
-		placeholder: 'Add Attribute',
+		placeholder: '添加属性',
 		routing: {
 			request: {
 				method: 'PUT',
@@ -467,10 +466,10 @@ const updateOperations: INodeProperties[] = [
 
 const upsertOperations: INodeProperties[] = [
 	{
-		displayName: 'Email',
+		displayName: '电子邮件',
 		name: 'email',
 		default: '',
-		description: 'Email of the contact',
+		description: '联系人的电子邮件',
 		displayOptions: {
 			show: {
 				resource: ['contact'],
@@ -489,10 +488,10 @@ const upsertOperations: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Contact Attributes',
+		displayName: '联系人属性',
 		name: 'upsertAttributes',
 		default: {},
-		description: 'Array of attributes to be updated',
+		description: '要更新的属性数组',
 		displayOptions: {
 			show: {
 				resource: ['contact'],
@@ -502,10 +501,10 @@ const upsertOperations: INodeProperties[] = [
 		options: [
 			{
 				name: 'upsertAttributesValues',
-				displayName: 'Attribute',
+				displayName: '属性',
 				values: [
 					{
-						displayName: 'Field Name',
+						displayName: '字段名',
 						name: 'fieldName',
 						type: 'options',
 						typeOptions: {
@@ -544,7 +543,7 @@ const upsertOperations: INodeProperties[] = [
 						default: '',
 					},
 					{
-						displayName: 'Field Value',
+						displayName: '字段值',
 						name: 'fieldValue',
 						type: 'string',
 						default: '',
@@ -559,7 +558,7 @@ const upsertOperations: INodeProperties[] = [
 				],
 			},
 		],
-		placeholder: 'Add Attribute',
+		placeholder: '添加属性',
 		type: 'fixedCollection',
 		typeOptions: {
 			multipleValues: true,

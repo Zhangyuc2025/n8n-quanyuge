@@ -12,7 +12,7 @@ export class PostBin implements INodeType {
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{ $parameter["operation"] + ": " + $parameter["resource"] }}',
-		description: 'Consume PostBin API',
+		description: '使用 PostBin API',
 		defaults: {
 			name: 'PostBin',
 		},
@@ -25,7 +25,7 @@ export class PostBin implements INodeType {
 		},
 		properties: [
 			{
-				displayName: 'Resource',
+				displayName: '资源',
 				name: 'resource',
 				type: 'options',
 				noDataExpression: true,
@@ -35,7 +35,7 @@ export class PostBin implements INodeType {
 						value: 'bin',
 					},
 					{
-						name: 'Request',
+						name: '请求',
 						value: 'request',
 					},
 				],

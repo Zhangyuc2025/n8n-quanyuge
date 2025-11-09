@@ -49,33 +49,33 @@ export const credentialsProperty = (
 ];
 
 export const authenticationProperty = (propertyName = 'authentication'): INodeProperties => ({
-	displayName: 'Authentication',
+	displayName: '身份验证',
 	name: propertyName,
 	type: 'options',
 	options: [
 		{
-			name: 'Basic Auth',
+			name: '基本认证',
 			value: 'basicAuth',
 		},
 		{
-			name: 'Header Auth',
+			name: 'Header 认证',
 			value: 'headerAuth',
 		},
 		{
-			name: 'JWT Auth',
+			name: 'JWT 认证',
 			value: 'jwtAuth',
 		},
 		{
-			name: 'None',
+			name: '无',
 			value: 'none',
 		},
 	],
 	default: 'none',
-	description: 'The way to authenticate',
+	description: '身份验证方式',
 });
 
 export const httpMethodsProperty: INodeProperties = {
-	displayName: 'HTTP Method',
+	displayName: 'HTTP 方法',
 	name: 'httpMethod',
 	type: 'options',
 	options: [
@@ -105,11 +105,11 @@ export const httpMethodsProperty: INodeProperties = {
 		},
 	],
 	default: 'GET',
-	description: 'The HTTP method to listen to',
+	description: '要监听的 HTTP 方法',
 };
 
 export const responseCodeProperty: INodeProperties = {
-	displayName: 'Response Code',
+	displayName: '响应代码',
 	name: 'responseCode',
 	type: 'number',
 	displayOptions: {
@@ -122,34 +122,34 @@ export const responseCodeProperty: INodeProperties = {
 		maxValue: 599,
 	},
 	default: 200,
-	description: 'The HTTP Response code to return',
+	description: '要返回的 HTTP 响应代码',
 };
 
 const responseModeOptions = [
 	{
-		name: 'Immediately',
+		name: '立即响应',
 		value: 'onReceived',
-		description: 'As soon as this node executes',
+		description: '此节点执行后立即响应',
 	},
 	{
-		name: 'When Last Node Finishes',
+		name: '最后一个节点完成时',
 		value: 'lastNode',
-		description: 'Returns data of the last-executed node',
+		description: '返回最后执行的节点的数据',
 	},
 	{
-		name: "Using 'Respond to Webhook' Node",
+		name: '使用"响应 Webhook"节点',
 		value: 'responseNode',
-		description: 'Response defined in that node',
+		description: '在该节点中定义的响应',
 	},
 ];
 
 export const responseModeProperty: INodeProperties = {
-	displayName: 'Respond',
+	displayName: '响应方式',
 	name: 'responseMode',
 	type: 'options',
 	options: responseModeOptions,
 	default: 'onReceived',
-	description: 'When and how to respond to the webhook',
+	description: '何时以及如何响应 webhook',
 	displayOptions: {
 		show: {
 			'@version': [1, 1.1, 2],
@@ -158,19 +158,19 @@ export const responseModeProperty: INodeProperties = {
 };
 
 export const responseModePropertyStreaming: INodeProperties = {
-	displayName: 'Respond',
+	displayName: '响应方式',
 	name: 'responseMode',
 	type: 'options',
 	options: [
 		...responseModeOptions,
 		{
-			name: 'Streaming',
+			name: '流式传输',
 			value: 'streaming',
-			description: 'Returns data in real time from streaming enabled nodes',
+			description: '从启用流式传输的节点实时返回数据',
 		},
 	],
 	default: 'onReceived',
-	description: 'When and how to respond to the webhook',
+	description: '何时以及如何响应 webhook',
 	displayOptions: {
 		hide: {
 			'@version': [1, 1.1, 2],
@@ -179,7 +179,7 @@ export const responseModePropertyStreaming: INodeProperties = {
 };
 
 export const responseDataProperty: INodeProperties = {
-	displayName: 'Response Data',
+	displayName: '响应数据',
 	name: 'responseData',
 	type: 'options',
 	displayOptions: {
@@ -189,35 +189,32 @@ export const responseDataProperty: INodeProperties = {
 	},
 	options: [
 		{
-			name: 'All Entries',
+			name: '所有条目',
 			value: 'allEntries',
-			description: 'Returns all the entries of the last node. Always returns an array.',
+			description: '返回最后一个节点的所有条目。始终返回数组',
 		},
 		{
-			name: 'First Entry JSON',
+			name: '第一个条目的 JSON',
 			value: 'firstEntryJson',
-			description:
-				'Returns the JSON data of the first entry of the last node. Always returns a JSON object.',
+			description: '返回最后一个节点第一个条目的 JSON 数据。始终返回 JSON 对象',
 		},
 		{
-			name: 'First Entry Binary',
+			name: '第一个条目的二进制',
 			value: 'firstEntryBinary',
-			description:
-				'Returns the binary data of the first entry of the last node. Always returns a binary file.',
+			description: '返回最后一个节点第一个条目的二进制数据。始终返回二进制文件',
 		},
 		{
-			name: 'No Response Body',
+			name: '无响应主体',
 			value: 'noData',
-			description: 'Returns without a body',
+			description: '返回时不带主体',
 		},
 	],
 	default: 'firstEntryJson',
-	description:
-		'What data should be returned. If it should return all items as an array or only the first item as object.',
+	description: '应返回什么数据。是应将所有项作为数组返回，还是仅将第一项作为对象返回',
 };
 
 export const responseBinaryPropertyNameProperty: INodeProperties = {
-	displayName: 'Property Name',
+	displayName: '属性名称',
 	name: 'responseBinaryPropertyName',
 	type: 'string',
 	required: true,
@@ -227,14 +224,14 @@ export const responseBinaryPropertyNameProperty: INodeProperties = {
 			responseData: ['firstEntryBinary'],
 		},
 	},
-	description: 'Name of the binary property to return',
+	description: '要返回的二进制属性名称',
 };
 
 export const optionsProperty: INodeProperties = {
-	displayName: 'Options',
+	displayName: '选项',
 	name: 'options',
 	type: 'collection',
-	placeholder: 'Add option',
+	placeholder: '添加选项',
 	default: {},
 	options: [
 		{

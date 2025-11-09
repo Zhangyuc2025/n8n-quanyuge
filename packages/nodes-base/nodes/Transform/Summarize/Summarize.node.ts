@@ -21,24 +21,24 @@ import {
 
 export class Summarize implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Summarize',
+		displayName: '汇总',
 		name: 'summarize',
 		icon: 'file:summarize.svg',
 		group: ['transform'],
 		subtitle: '',
 		version: [1, 1.1],
-		description: 'Sum, count, max, etc. across items',
+		description: '对项目进行求和、计数、最大值等操作',
 		defaults: {
-			name: 'Summarize',
+			name: '汇总',
 		},
 		inputs: [NodeConnectionTypes.Main],
 		outputs: [NodeConnectionTypes.Main],
 		properties: [
 			{
-				displayName: 'Fields to Summarize',
+				displayName: '要汇总的字段',
 				name: 'fieldsToSummarize',
 				type: 'fixedCollection',
-				placeholder: 'Add Field',
+				placeholder: '添加字段',
 				default: { values: [{ aggregation: 'count', field: '' }] },
 				typeOptions: {
 					multipleValues: true,
@@ -49,55 +49,55 @@ export class Summarize implements INodeType {
 						name: 'values',
 						values: [
 							{
-								displayName: 'Aggregation',
+								displayName: '聚合方式',
 								name: 'aggregation',
 								type: 'options',
 								options: [
 									{
-										name: 'Append',
+										name: '追加',
 										value: 'append',
 									},
 									{
-										name: 'Average',
+										name: '平均值',
 										value: 'average',
 									},
 									{
-										name: 'Concatenate',
+										name: '连接',
 										value: 'concatenate',
 									},
 									{
-										name: 'Count',
+										name: '计数',
 										value: 'count',
 									},
 									{
-										name: 'Count Unique',
+										name: '唯一计数',
 										value: 'countUnique',
 									},
 									{
-										name: 'Max',
+										name: '最大值',
 										value: 'max',
 									},
 									{
-										name: 'Min',
+										name: '最小值',
 										value: 'min',
 									},
 									{
-										name: 'Sum',
+										name: '总和',
 										value: 'sum',
 									},
 								],
 								default: 'count',
-								description: 'How to combine the values of the field you want to summarize',
+								description: '如何组合要汇总的字段值',
 							},
 							//field repeated to have different descriptions for different aggregations --------------------------------
 							{
-								displayName: 'Field',
+								displayName: '字段',
 								name: 'field',
 								type: 'string',
 								default: '',
-								description: 'The name of an input field that you want to summarize',
-								placeholder: 'e.g. cost',
-								hint: ' Enter the field name as text',
+								description: '要汇总的输入字段名称',
+								placeholder: '例如：cost',
+								hint: '输入字段名作为文本',
 								displayOptions: {
 									hide: {
 										aggregation: [...NUMERICAL_AGGREGATIONS, 'countUnique', 'count', 'max', 'min'],
@@ -106,14 +106,14 @@ export class Summarize implements INodeType {
 								requiresDataPath: 'single',
 							},
 							{
-								displayName: 'Field',
+								displayName: '字段',
 								name: 'field',
 								type: 'string',
 								default: '',
 								description:
-									'The name of an input field that you want to summarize. The field should contain numerical values; null, undefined, empty strings would be ignored.',
-								placeholder: 'e.g. cost',
-								hint: ' Enter the field name as text',
+									'要汇总的输入字段名称。字段应包含数值；null、undefined、空字符串将被忽略',
+								placeholder: '例如：cost',
+								hint: '输入字段名作为文本',
 								displayOptions: {
 									show: {
 										aggregation: NUMERICAL_AGGREGATIONS,
@@ -122,14 +122,13 @@ export class Summarize implements INodeType {
 								requiresDataPath: 'single',
 							},
 							{
-								displayName: 'Field',
+								displayName: '字段',
 								name: 'field',
 								type: 'string',
 								default: '',
-								description:
-									'The name of an input field that you want to summarize; null, undefined, empty strings would be ignored',
-								placeholder: 'e.g. cost',
-								hint: ' Enter the field name as text',
+								description: '要汇总的输入字段名称；null、undefined、空字符串将被忽略',
+								placeholder: '例如：cost',
+								hint: '输入字段名作为文本',
 								displayOptions: {
 									show: {
 										aggregation: ['countUnique', 'count', 'max', 'min'],
@@ -139,7 +138,7 @@ export class Summarize implements INodeType {
 							},
 							// ----------------------------------------------------------------------------------------------------------
 							{
-								displayName: 'Include Empty Values',
+								displayName: '包含空值',
 								name: 'includeEmpty',
 								type: 'boolean',
 								default: false,
@@ -150,38 +149,38 @@ export class Summarize implements INodeType {
 								},
 							},
 							{
-								displayName: 'Separator',
+								displayName: '分隔符',
 								name: 'separateBy',
 								type: 'options',
 								default: ',',
 								// eslint-disable-next-line n8n-nodes-base/node-param-options-type-unsorted-items
 								options: [
 									{
-										name: 'Comma',
+										name: '逗号',
 										value: ',',
 									},
 									{
-										name: 'Comma and Space',
+										name: '逗号和空格',
 										value: ', ',
 									},
 									{
-										name: 'New Line',
+										name: '换行符',
 										value: '\n',
 									},
 									{
-										name: 'None',
+										name: '无',
 										value: '',
 									},
 									{
-										name: 'Space',
+										name: '空格',
 										value: ' ',
 									},
 									{
-										name: 'Other',
+										name: '其他',
 										value: 'other',
 									},
 								],
-								hint: 'What to insert between values',
+								hint: '在值之间插入什么',
 								displayOptions: {
 									show: {
 										aggregation: ['concatenate'],
@@ -189,7 +188,7 @@ export class Summarize implements INodeType {
 								},
 							},
 							{
-								displayName: 'Custom Separator',
+								displayName: '自定义分隔符',
 								name: 'customSeparator',
 								type: 'string',
 								default: '',
@@ -206,13 +205,13 @@ export class Summarize implements INodeType {
 			},
 			// fieldsToSplitBy repeated to have different displayName for singleItem and separateItems -----------------------------
 			{
-				displayName: 'Fields to Split By',
+				displayName: '拆分依据字段',
 				name: 'fieldsToSplitBy',
 				type: 'string',
-				placeholder: 'e.g. country, city',
+				placeholder: '例如：country, city',
 				default: '',
-				description: 'The name of the input fields that you want to split the summary by',
-				hint: 'Enter the name of the fields as text (separated by commas)',
+				description: '要按其拆分汇总的输入字段名称',
+				hint: '输入字段名作为文本（用逗号分隔）',
 				displayOptions: {
 					hide: {
 						'/options.outputFormat': ['singleItem'],
@@ -221,13 +220,13 @@ export class Summarize implements INodeType {
 				requiresDataPath: 'multiple',
 			},
 			{
-				displayName: 'Fields to Group By',
+				displayName: '分组依据字段',
 				name: 'fieldsToSplitBy',
 				type: 'string',
-				placeholder: 'e.g. country, city',
+				placeholder: '例如：country, city',
 				default: '',
-				description: 'The name of the input fields that you want to split the summary by',
-				hint: 'Enter the name of the fields as text (separated by commas)',
+				description: '要按其拆分汇总的输入字段名称',
+				hint: '输入字段名作为文本（用逗号分隔）',
 				displayOptions: {
 					show: {
 						'/options.outputFormat': ['singleItem'],
@@ -237,19 +236,19 @@ export class Summarize implements INodeType {
 			},
 			// ----------------------------------------------------------------------------------------------------------
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
 				type: 'collection',
-				placeholder: 'Add option',
+				placeholder: '添加选项',
 				default: {},
 				options: [
 					{
-						displayName: 'Continue if Field Not Found',
+						displayName: '找不到字段时继续',
 						name: 'continueIfFieldNotFound',
 						type: 'boolean',
 						default: false,
 						description:
-							"Whether to continue if field to summarize can't be found in any items and return single empty item, otherwise an error would be thrown",
+							'如果在任何项目中找不到要汇总的字段，是否继续并返回单个空项目，否则会抛出错误',
 						displayOptions: {
 							hide: {
 								'@version': [{ _cnd: { gte: 1.1 } }],
@@ -257,32 +256,31 @@ export class Summarize implements INodeType {
 						},
 					},
 					{
-						displayName: 'Disable Dot Notation',
+						displayName: '禁用点表示法',
 						name: 'disableDotNotation',
 						type: 'boolean',
 						default: false,
-						description:
-							'Whether to disallow referencing child fields using `parent.child` in the field name',
+						description: '是否禁止在字段名中使用 `parent.child` 引用子字段',
 					},
 					{
-						displayName: 'Output Format',
+						displayName: '输出格式',
 						name: 'outputFormat',
 						type: 'options',
 						default: 'separateItems',
 						options: [
 							{
-								name: 'Each Split in a Separate Item',
+								name: '每个拆分为单独项目',
 								value: 'separateItems',
 							},
 							{
-								name: 'All Splits in a Single Item',
+								name: '所有拆分在单个项目中',
 								value: 'singleItem',
 							},
 						],
 					},
 					{
 						// eslint-disable-next-line n8n-nodes-base/node-param-display-name-miscased
-						displayName: 'Ignore items without valid fields to group by',
+						displayName: '忽略没有有效分组字段的项目',
 						name: 'skipEmptySplitFields',
 						type: 'boolean',
 						default: false,

@@ -51,7 +51,7 @@ const data = [
 
 export class N8nTrainingCustomerDatastore implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Customer Datastore (n8n training)',
+		displayName: '客户数据存储 (n8n 培训)',
 		name: 'n8nTrainingCustomerDatastore',
 		icon: {
 			light: 'file:n8nTrainingCustomerDatastore.svg',
@@ -60,32 +60,32 @@ export class N8nTrainingCustomerDatastore implements INodeType {
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"]}}',
-		description: 'Dummy node used for n8n training',
+		description: '用于 n8n 培训的虚拟节点',
 		defaults: {
-			name: 'Customer Datastore (n8n training)',
+			name: '客户数据存储 (n8n 培训)',
 		},
 		inputs: [NodeConnectionTypes.Main],
 		outputs: [NodeConnectionTypes.Main],
 		properties: [
 			{
-				displayName: 'Operation',
+				displayName: '操作',
 				name: 'operation',
 				type: 'options',
 				noDataExpression: true,
 				options: [
 					{
-						name: 'Get One Person',
+						name: '获取单个人员',
 						value: 'getOnePerson',
 					},
 					{
-						name: 'Get All People',
+						name: '获取所有人员',
 						value: 'getAllPeople',
 					},
 				],
 				default: 'getOnePerson',
 			},
 			{
-				displayName: 'Return All',
+				displayName: '返回全部',
 				name: 'returnAll',
 				type: 'boolean',
 				displayOptions: {
@@ -94,10 +94,10 @@ export class N8nTrainingCustomerDatastore implements INodeType {
 					},
 				},
 				default: false,
-				description: 'Whether to return all results or only up to a given limit',
+				description: '是否返回所有结果或仅返回给定限制的结果',
 			},
 			{
-				displayName: 'Limit',
+				displayName: '限制',
 				name: 'limit',
 				type: 'number',
 				displayOptions: {
@@ -111,7 +111,7 @@ export class N8nTrainingCustomerDatastore implements INodeType {
 					maxValue: 10,
 				},
 				default: 5,
-				description: 'Max number of results to return',
+				description: '返回结果的最大数量',
 			},
 		],
 	};

@@ -22,11 +22,11 @@ import { updateDisplayOptions } from '../../../utils/utilities';
 
 const properties: INodeProperties[] = [
 	{
-		displayName: 'Fields to Set',
+		displayName: '要设置的字段',
 		name: 'fields',
-		placeholder: 'Add Field',
+		placeholder: '添加字段',
 		type: 'fixedCollection',
-		description: 'Edit existing fields or add new ones to modify the output data',
+		description: '编辑现有字段或添加新字段以修改输出数据',
 		displayOptions: {
 			show: {
 				'@version': [3, 3.1, 3.2],
@@ -40,50 +40,49 @@ const properties: INodeProperties[] = [
 		options: [
 			{
 				name: 'values',
-				displayName: 'Values',
+				displayName: '值',
 				values: [
 					{
-						displayName: 'Name',
+						displayName: '名称',
 						name: 'name',
 						type: 'string',
 						default: '',
-						placeholder: 'e.g. fieldName',
-						description:
-							'Name of the field to set the value of. Supports dot-notation. Example: data.person[0].name.',
+						placeholder: '例如：fieldName',
+						description: '要设置值的字段名称。支持点表示法。示例：data.person[0].name。',
 						requiresDataPath: 'single',
 					},
 					{
-						displayName: 'Type',
+						displayName: '类型',
 						name: 'type',
 						type: 'options',
-						description: 'The field value type',
+						description: '字段值类型',
 						// eslint-disable-next-line n8n-nodes-base/node-param-options-type-unsorted-items
 						options: [
 							{
-								name: 'String',
+								name: '字符串',
 								value: 'stringValue',
 							},
 							{
-								name: 'Number',
+								name: '数字',
 								value: 'numberValue',
 							},
 							{
-								name: 'Boolean',
+								name: '布尔值',
 								value: 'booleanValue',
 							},
 							{
-								name: 'Array',
+								name: '数组',
 								value: 'arrayValue',
 							},
 							{
-								name: 'Object',
+								name: '对象',
 								value: 'objectValue',
 							},
 						],
 						default: 'stringValue',
 					},
 					{
-						displayName: 'Value',
+						displayName: '值',
 						name: 'stringValue',
 						type: 'string',
 						default: '',
@@ -96,7 +95,7 @@ const properties: INodeProperties[] = [
 						ignoreValidationDuringExecution: true,
 					},
 					{
-						displayName: 'Value',
+						displayName: '值',
 						name: 'numberValue',
 						type: 'string',
 						default: '',
@@ -109,7 +108,7 @@ const properties: INodeProperties[] = [
 						ignoreValidationDuringExecution: true,
 					},
 					{
-						displayName: 'Value',
+						displayName: '值',
 						name: 'booleanValue',
 						type: 'options',
 						default: 'true',
@@ -132,11 +131,11 @@ const properties: INodeProperties[] = [
 						ignoreValidationDuringExecution: true,
 					},
 					{
-						displayName: 'Value',
+						displayName: '值',
 						name: 'arrayValue',
 						type: 'string',
 						default: '',
-						placeholder: 'e.g. [ arrayItem1, arrayItem2, arrayItem3 ]',
+						placeholder: '例如：[ arrayItem1, arrayItem2, arrayItem3 ]',
 						displayOptions: {
 							show: {
 								type: ['arrayValue'],
@@ -146,7 +145,7 @@ const properties: INodeProperties[] = [
 						ignoreValidationDuringExecution: true,
 					},
 					{
-						displayName: 'Value',
+						displayName: '值',
 						name: 'objectValue',
 						type: 'json',
 						default: '={}',
@@ -166,7 +165,7 @@ const properties: INodeProperties[] = [
 		],
 	},
 	{
-		displayName: 'Fields to Set',
+		displayName: '要设置的字段',
 		name: 'assignments',
 		type: 'assignmentCollection',
 		displayOptions: {

@@ -15,10 +15,9 @@ export class Cron implements INodeType {
 		group: ['trigger', 'schedule'],
 		version: 1,
 		hidden: true,
-		description: 'Triggers the workflow at a specific time',
+		description: '在特定时间触发工作流',
 		eventTriggerDescription: '',
-		activationMessage:
-			'Your cron trigger will now trigger executions on the schedule you have defined.',
+		activationMessage: '您的 cron 触发器现在将按照您定义的计划触发执行。',
 		defaults: {
 			name: 'Cron',
 			color: '#29a568',
@@ -29,22 +28,22 @@ export class Cron implements INodeType {
 		properties: [
 			{
 				displayName:
-					'This workflow will run on the schedule you define here once you <a data-key="activate">activate</a> it.<br><br>For testing, you can also trigger it manually: by going back to the canvas and clicking \'execute workflow\'',
+					'一旦您<a data-key="activate">激活</a>此工作流，它将按照您在此定义的计划运行。<br><br>为了测试，您也可以手动触发它：返回画布并点击"执行工作流"',
 				name: 'notice',
 				type: 'notice',
 				default: '',
 			},
 			{
-				displayName: 'Trigger Times',
+				displayName: '触发时间',
 				name: 'triggerTimes',
 				type: 'fixedCollection',
 				typeOptions: {
 					multipleValues: true,
-					multipleValueButtonText: 'Add Time',
+					multipleValueButtonText: '添加时间',
 				},
 				default: {},
-				description: 'Triggers for the workflow',
-				placeholder: 'Add Cron Time',
+				description: '工作流的触发器',
+				placeholder: '添加 Cron 时间',
 				options: NodeHelpers.cronNodeOptions,
 			},
 		],

@@ -21,15 +21,15 @@ const displayOptions: IDisplayOptions = {
 export const description: INodeProperties[] = [
 	...getSelectFields(displayOptions),
 	{
-		displayName: 'Return All',
+		displayName: '返回全部',
 		name: 'returnAll',
 		type: 'boolean',
 		displayOptions,
 		default: false,
-		description: 'Whether to return all results or only up to a given limit',
+		description: '是否返回所有结果或仅返回给定限制内的结果',
 	},
 	{
-		displayName: 'Limit',
+		displayName: '限制',
 		name: 'limit',
 		type: 'number',
 		displayOptions: {
@@ -43,7 +43,7 @@ export const description: INodeProperties[] = [
 			minValue: 1,
 		},
 		default: ROWS_LIMIT_DEFAULT,
-		description: 'Max number of results to return',
+		description: '返回结果的最大数量',
 	},
 ];
 

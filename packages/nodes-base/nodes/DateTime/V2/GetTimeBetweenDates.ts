@@ -4,7 +4,7 @@ import { includeInputFields } from './common.descriptions';
 
 export const GetTimeBetweenDatesDescription: INodeProperties[] = [
 	{
-		displayName: 'Start Date',
+		displayName: '开始日期',
 		name: 'startDate',
 		type: 'string',
 		default: '',
@@ -15,7 +15,7 @@ export const GetTimeBetweenDatesDescription: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'End Date',
+		displayName: '结束日期',
 		name: 'endDate',
 		type: 'string',
 		default: '',
@@ -26,41 +26,41 @@ export const GetTimeBetweenDatesDescription: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Units',
+		displayName: '单位',
 		name: 'units',
 		type: 'multiOptions',
 		// eslint-disable-next-line n8n-nodes-base/node-param-multi-options-type-unsorted-items
 		options: [
 			{
-				name: 'Year',
+				name: '年',
 				value: 'year',
 			},
 			{
-				name: 'Month',
+				name: '月',
 				value: 'month',
 			},
 			{
-				name: 'Week',
+				name: '周',
 				value: 'week',
 			},
 			{
-				name: 'Day',
+				name: '天',
 				value: 'day',
 			},
 			{
-				name: 'Hour',
+				name: '小时',
 				value: 'hour',
 			},
 			{
-				name: 'Minute',
+				name: '分钟',
 				value: 'minute',
 			},
 			{
-				name: 'Second',
+				name: '秒',
 				value: 'second',
 			},
 			{
-				name: 'Millisecond',
+				name: '毫秒',
 				value: 'millisecond',
 			},
 		],
@@ -72,11 +72,11 @@ export const GetTimeBetweenDatesDescription: INodeProperties[] = [
 		default: ['day'],
 	},
 	{
-		displayName: 'Output Field Name',
+		displayName: '输出字段名称',
 		name: 'outputFieldName',
 		type: 'string',
 		default: 'timeDifference',
-		description: 'Name of the field to put the output in',
+		description: '放置输出的字段名称',
 		displayOptions: {
 			show: {
 				operation: ['getTimeBetweenDates'],
@@ -84,10 +84,10 @@ export const GetTimeBetweenDatesDescription: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Options',
+		displayName: '选项',
 		name: 'options',
 		type: 'collection',
-		placeholder: 'Add option',
+		placeholder: '添加选项',
 		displayOptions: {
 			show: {
 				operation: ['getTimeBetweenDates'],
@@ -97,11 +97,11 @@ export const GetTimeBetweenDatesDescription: INodeProperties[] = [
 		options: [
 			includeInputFields,
 			{
-				displayName: 'Output as ISO String',
+				displayName: '输出为 ISO 字符串',
 				name: 'isoString',
 				type: 'boolean',
 				default: false,
-				description: 'Whether to output the date as ISO string or not',
+				description: '是否将日期输出为 ISO 字符串',
 			},
 		],
 	},

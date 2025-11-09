@@ -48,9 +48,9 @@ export class Webhook extends Node {
 		group: ['trigger'],
 		version: [1, 1.1, 2, 2.1],
 		defaultVersion: 2.1,
-		description: 'Starts the workflow when a webhook is called',
-		eventTriggerDescription: 'Waiting for you to call the Test URL',
-		activationMessage: 'You can now make calls to your production webhook URL.',
+		description: '当调用 webhook 时启动工作流',
+		eventTriggerDescription: '等待您调用测试 URL',
+		activationMessage: '现在您可以调用生产环境的 webhook URL',
 		defaults: {
 			name: 'Webhook',
 		},
@@ -59,12 +59,11 @@ export class Webhook extends Node {
 			header: '',
 			executionsHelp: {
 				inactive:
-					'Webhooks have two modes: test and production. <br /> <br /> <b>Use test mode while you build your workflow</b>. Click the \'listen\' button, then make a request to the test URL. The executions will show up in the editor.<br /> <br /> <b>Use production mode to run your workflow automatically</b>. <a data-key="activate">Activate</a> the workflow, then make requests to the production URL. These executions will show up in the executions list, but not in the editor.',
+					'Webhook 有两种模式：测试和生产。<br /> <br /> <b>在构建工作流时使用测试模式</b>。点击"监听"按钮，然后向测试 URL 发送请求。执行将显示在编辑器中。<br /> <br /> <b>使用生产模式自动运行工作流</b>。<a data-key="activate">激活</a>工作流，然后向生产 URL 发送请求。这些执行将显示在执行列表中，但不会显示在编辑器中。',
 				active:
-					'Webhooks have two modes: test and production. <br /> <br /> <b>Use test mode while you build your workflow</b>. Click the \'listen\' button, then make a request to the test URL. The executions will show up in the editor.<br /> <br /> <b>Use production mode to run your workflow automatically</b>. Since the workflow is activated, you can make requests to the production URL. These executions will show up in the <a data-key="executions">executions list</a>, but not in the editor.',
+					'Webhook 有两种模式：测试和生产。<br /> <br /> <b>在构建工作流时使用测试模式</b>。点击"监听"按钮，然后向测试 URL 发送请求。执行将显示在编辑器中。<br /> <br /> <b>使用生产模式自动运行工作流</b>。由于工作流已激活，您可以向生产 URL 发送请求。这些执行将显示在<a data-key="executions">执行列表</a>中，但不会显示在编辑器中。',
 			},
-			activationHint:
-				"Once you've finished building your workflow, run it without having to click this button by using the production webhook URL.",
+			activationHint: '完成工作流构建后，使用生产 webhook URL 即可运行它，无需点击此按钮',
 		},
 
 		inputs: [],
@@ -73,12 +72,12 @@ export class Webhook extends Node {
 		webhooks: [defaultWebhookDescription],
 		properties: [
 			{
-				displayName: 'Allow Multiple HTTP Methods',
+				displayName: '允许多种 HTTP 方法',
 				name: 'multipleMethods',
 				type: 'boolean',
 				default: false,
 				isNodeSetting: true,
-				description: 'Whether to allow the webhook to listen for multiple HTTP methods',
+				description: '是否允许 webhook 监听多种 HTTP 方法',
 			},
 			{
 				...httpMethodsProperty,
@@ -89,7 +88,7 @@ export class Webhook extends Node {
 				},
 			},
 			{
-				displayName: 'HTTP Methods',
+				displayName: 'HTTP 方法',
 				name: 'httpMethod',
 				type: 'multiOptions',
 				options: [
@@ -119,7 +118,7 @@ export class Webhook extends Node {
 					},
 				],
 				default: ['GET', 'POST'],
-				description: 'The HTTP methods to listen to',
+				description: '要监听的 HTTP 方法',
 				displayOptions: {
 					show: {
 						multipleMethods: [true],
@@ -127,20 +126,20 @@ export class Webhook extends Node {
 				},
 			},
 			{
-				displayName: 'Path',
+				displayName: '路径',
 				name: 'path',
 				type: 'string',
 				default: '',
 				placeholder: 'webhook',
 				description:
-					"The path to listen to, dynamic values could be specified by using ':', e.g. 'your-path/:dynamic-value'. If dynamic values are set 'webhookId' would be prepended to path.",
+					"要监听的路径，可以使用 ':' 指定动态值，例如 'your-path/:dynamic-value'。如果设置了动态值，'webhookId' 将作为路径前缀",
 			},
 			authenticationProperty(this.authPropertyName),
 			responseModeProperty,
 			responseModePropertyStreaming,
 			{
 				displayName:
-					'Insert a \'Respond to Webhook\' node to control when and how you respond. <a href="https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.respondtowebhook/" target="_blank">More details</a>',
+					'插入"响应 Webhook"节点以控制何时以及如何响应。<a href="https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.respondtowebhook/" target="_blank">更多详情</a>',
 				name: 'webhookNotice',
 				type: 'notice',
 				displayOptions: {
@@ -152,7 +151,7 @@ export class Webhook extends Node {
 			},
 			{
 				displayName:
-					'Insert a node that supports streaming (e.g. \'AI Agent\') and enable streaming to stream directly to the response while the workflow is executed. <a href="https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.respondtowebhook/" target="_blank">More details</a>',
+					'插入支持流式传输的节点（例如"AI 智能体"）并启用流式传输，在工作流执行时直接流式传输到响应。<a href="https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.respondtowebhook/" target="_blank">更多详情</a>',
 				name: 'webhookStreamingNotice',
 				type: 'notice',
 				displayOptions: {
@@ -176,8 +175,7 @@ export class Webhook extends Node {
 			responseDataProperty,
 			responseBinaryPropertyNameProperty,
 			{
-				displayName:
-					'If you are sending back a response, add a "Content-Type" response header with the appropriate value to avoid unexpected behavior',
+				displayName: '如果您要发送响应，请添加具有适当值的"Content-Type"响应头以避免意外行为',
 				name: 'contentTypeNotice',
 				type: 'notice',
 				default: '',

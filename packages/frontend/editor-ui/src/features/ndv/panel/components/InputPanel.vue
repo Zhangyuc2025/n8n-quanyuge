@@ -5,7 +5,6 @@ import {
 	CRON_NODE_TYPE,
 	INTERVAL_NODE_TYPE,
 	MANUAL_TRIGGER_NODE_TYPE,
-	NDV_UI_OVERHAUL_EXPERIMENT,
 	START_NODE_TYPE,
 } from '@/app/constants';
 import { useNodeTypesStore } from '@/app/stores/nodeTypes.store';

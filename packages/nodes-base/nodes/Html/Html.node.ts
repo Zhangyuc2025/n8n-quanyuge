@@ -26,9 +26,9 @@ export const capitalizeHeader = (header: string, capitalize?: boolean) => {
 };
 
 const extractionValuesCollection: INodeProperties = {
-	displayName: 'Extraction Values',
+	displayName: '提取值',
 	name: 'extractionValues',
-	placeholder: 'Add Value',
+	placeholder: '添加值',
 	type: 'fixedCollection',
 	typeOptions: {
 		multipleValues: true,
@@ -37,54 +37,54 @@ const extractionValuesCollection: INodeProperties = {
 	options: [
 		{
 			name: 'values',
-			displayName: 'Values',
+			displayName: '值',
 			values: [
 				{
-					displayName: 'Key',
+					displayName: '键',
 					name: 'key',
 					type: 'string',
 					default: '',
-					description: 'The key under which the extracted value should be saved',
+					description: '保存提取值的键名',
 				},
 				{
-					displayName: 'CSS Selector',
+					displayName: 'CSS 选择器',
 					name: 'cssSelector',
 					type: 'string',
 					default: '',
 					placeholder: '.price',
-					description: 'The CSS selector to use',
+					description: '要使用的 CSS 选择器',
 				},
 				{
-					displayName: 'Return Value',
+					displayName: '返回值类型',
 					name: 'returnValue',
 					type: 'options',
 					options: [
 						{
-							name: 'Attribute',
+							name: '属性',
 							value: 'attribute',
-							description: 'Get an attribute value like "class" from an element',
+							description: '获取元素的属性值，如 "class"',
 						},
 						{
 							name: 'HTML',
 							value: 'html',
-							description: 'Get the HTML the element contains',
+							description: '获取元素包含的 HTML',
 						},
 						{
-							name: 'Text',
+							name: '文本',
 							value: 'text',
-							description: 'Get only the text content of the element',
+							description: '仅获取元素的文本内容',
 						},
 						{
-							name: 'Value',
+							name: '值',
 							value: 'value',
-							description: 'Get value of an input, select or textarea',
+							description: '获取 input、select 或 textarea 的值',
 						},
 					],
 					default: 'text',
-					description: 'What kind of data should be returned',
+					description: '应该返回什么类型的数据',
 				},
 				{
-					displayName: 'Attribute',
+					displayName: '属性名',
 					name: 'attribute',
 					type: 'string',
 					displayOptions: {
@@ -94,10 +94,10 @@ const extractionValuesCollection: INodeProperties = {
 					},
 					default: '',
 					placeholder: 'class',
-					description: 'The name of the attribute to return the value off',
+					description: '要返回值的属性名称',
 				},
 				{
-					displayName: 'Skip Selectors',
+					displayName: '跳过的选择器',
 					name: 'skipSelectors',
 					type: 'string',
 					displayOptions: {
@@ -107,16 +107,16 @@ const extractionValuesCollection: INodeProperties = {
 						},
 					},
 					default: '',
-					placeholder: 'e.g. img, .className, #ItemId',
-					description: 'Comma-separated list of selectors to skip in the text extraction',
+					placeholder: '例如：img, .className, #ItemId',
+					description: '在文本提取中要跳过的选择器列表，以逗号分隔',
 				},
 				{
-					displayName: 'Return Array',
+					displayName: '返回数组',
 					name: 'returnArray',
 					type: 'boolean',
 					default: false,
 					description:
-						'Whether to return the values as an array so if multiple ones get found they also get returned separately. If not set all will be returned as a single string.',
+						'是否将值作为数组返回，以便找到的多个值也可以单独返回。如果未设置，所有值将作为单个字符串返回',
 				},
 			],
 		},
@@ -131,7 +131,7 @@ export class Html implements INodeType {
 		group: ['transform'],
 		version: [1, 1.1, 1.2],
 		subtitle: '={{ $parameter["operation"] }}',
-		description: 'Work with HTML',
+		description: '处理 HTML',
 		defaults: {
 			name: 'HTML',
 		},
@@ -140,31 +140,31 @@ export class Html implements INodeType {
 		parameterPane: 'wide',
 		properties: [
 			{
-				displayName: 'Operation',
+				displayName: '操作',
 				name: 'operation',
 				type: 'options',
 				noDataExpression: true,
 				options: [
 					{
-						name: 'Generate HTML Template',
+						name: '生成 HTML 模板',
 						value: 'generateHtmlTemplate',
-						action: 'Generate HTML template',
+						action: '生成 HTML 模板',
 					},
 					{
-						name: 'Extract HTML Content',
+						name: '提取 HTML 内容',
 						value: 'extractHtmlContent',
-						action: 'Extract HTML Content',
+						action: '提取 HTML 内容',
 					},
 					{
-						name: 'Convert to HTML Table',
+						name: '转换为 HTML 表格',
 						value: 'convertToHtmlTable',
-						action: 'Convert to HTML Table',
+						action: '转换为 HTML 表格',
 					},
 				],
 				default: 'generateHtmlTemplate',
 			},
 			{
-				displayName: 'HTML Template',
+				displayName: 'HTML 模板',
 				name: 'html',
 				typeOptions: {
 					editor: 'htmlEditor',
@@ -172,7 +172,7 @@ export class Html implements INodeType {
 				type: 'string',
 				default: placeholder,
 				noDataExpression: true,
-				description: 'HTML template to render',
+				description: '要渲染的 HTML 模板',
 				displayOptions: {
 					show: {
 						operation: ['generateHtmlTemplate'],
@@ -181,7 +181,7 @@ export class Html implements INodeType {
 			},
 			{
 				displayName:
-					'<b>Tips</b>: Type ctrl+space for completions. Use <code>{{ }}</code> for expressions and <code>&lt;style&gt;</code> tags for CSS. JS in <code>&lt;script&gt;</code> tags is included but not executed in n8n.',
+					'<b>提示</b>：按 Ctrl+空格键可获得自动完成。使用 <code>{{ }}</code> 编写表达式，使用 <code>&lt;style&gt;</code> 标签添加 CSS。<code>&lt;script&gt;</code> 标签中的 JS 会被包含但不会在 n8n 中执行',
 				name: 'notice',
 				type: 'notice',
 				default: '',
@@ -192,12 +192,12 @@ export class Html implements INodeType {
 				},
 			},
 			{
-				displayName: 'Source Data',
+				displayName: '源数据',
 				name: 'sourceData',
 				type: 'options',
 				options: [
 					{
-						name: 'Binary',
+						name: '二进制',
 						value: 'binary',
 					},
 					{
@@ -206,7 +206,7 @@ export class Html implements INodeType {
 					},
 				],
 				default: 'json',
-				description: 'If HTML should be read from binary or JSON data',
+				description: 'HTML 应该从二进制数据还是 JSON 数据中读取',
 				displayOptions: {
 					show: {
 						operation: ['extractHtmlContent'],
@@ -214,7 +214,7 @@ export class Html implements INodeType {
 				},
 			},
 			{
-				displayName: 'Input Binary Field',
+				displayName: '输入二进制字段',
 				name: 'dataPropertyName',
 				type: 'string',
 				requiresDataPath: 'single',
@@ -226,10 +226,10 @@ export class Html implements INodeType {
 				},
 				default: 'data',
 				required: true,
-				hint: 'The name of the input binary field containing the file to be extracted',
+				hint: '包含要提取文件的输入二进制字段名称',
 			},
 			{
-				displayName: 'JSON Property',
+				displayName: 'JSON 属性',
 				name: 'dataPropertyName',
 				type: 'string',
 				requiresDataPath: 'single',
@@ -241,8 +241,7 @@ export class Html implements INodeType {
 				},
 				default: 'data',
 				required: true,
-				description:
-					'Name of the JSON property in which the HTML to extract the data from can be found. The property can either contain a string or an array of strings.',
+				description: '包含要提取数据的 HTML 的 JSON 属性名称。该属性可以包含字符串或字符串数组',
 			},
 			{
 				...extractionValuesCollection,
@@ -273,10 +272,10 @@ export class Html implements INodeType {
 				},
 			},
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
 				type: 'collection',
-				placeholder: 'Add option',
+				placeholder: '添加选项',
 				default: {},
 				displayOptions: {
 					show: {
@@ -285,20 +284,18 @@ export class Html implements INodeType {
 				},
 				options: [
 					{
-						displayName: 'Trim Values',
+						displayName: '修剪值',
 						name: 'trimValues',
 						type: 'boolean',
 						default: true,
-						description:
-							'Whether to remove automatically all spaces and newlines from the beginning and end of the values',
+						description: '是否自动删除值开头和结尾的所有空格和换行符',
 					},
 					{
-						displayName: 'Clean Up Text',
+						displayName: '清理文本',
 						name: 'cleanUpText',
 						type: 'boolean',
 						default: true,
-						description:
-							'Whether to remove leading and trailing whitespaces, line breaks (newlines) and condense multiple consecutive whitespaces into a single space',
+						description: '是否删除前导和尾随空格、换行符，并将多个连续空格压缩为单个空格',
 					},
 				],
 			},
@@ -306,10 +303,10 @@ export class Html implements INodeType {
 			//       convertToHtmlTable
 			// ----------------------------------
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
 				type: 'collection',
-				placeholder: 'Add option',
+				placeholder: '添加选项',
 				default: {},
 				displayOptions: {
 					show: {
@@ -318,57 +315,57 @@ export class Html implements INodeType {
 				},
 				options: [
 					{
-						displayName: 'Capitalize Headers',
+						displayName: '首字母大写标题',
 						name: 'capitalize',
 						type: 'boolean',
 						default: false,
-						description: 'Whether to capitalize the headers',
+						description: '是否将标题首字母大写',
 					},
 					{
-						displayName: 'Custom Styling',
+						displayName: '自定义样式',
 						name: 'customStyling',
 						type: 'boolean',
 						default: false,
-						description: 'Whether to use custom styling',
+						description: '是否使用自定义样式',
 					},
 					{
-						displayName: 'Caption',
+						displayName: '标题',
 						name: 'caption',
 						type: 'string',
 						default: '',
-						description: 'Caption to add to the table',
+						description: '要添加到表格的标题',
 					},
 					{
-						displayName: 'Table Attributes',
+						displayName: '表格属性',
 						name: 'tableAttributes',
 						type: 'string',
 						default: '',
-						description: 'Attributes to attach to the table',
-						placeholder: 'e.g. style="padding:10px"',
+						description: '要附加到表格的属性',
+						placeholder: '例如：style="padding:10px"',
 					},
 					{
-						displayName: 'Header Attributes',
+						displayName: '表头属性',
 						name: 'headerAttributes',
 						type: 'string',
 						default: '',
-						description: 'Attributes to attach to the table header',
-						placeholder: 'e.g. style="padding:10px"',
+						description: '要附加到表头的属性',
+						placeholder: '例如：style="padding:10px"',
 					},
 					{
-						displayName: 'Row Attributes',
+						displayName: '行属性',
 						name: 'rowAttributes',
 						type: 'string',
 						default: '',
-						description: 'Attributes to attach to the table row',
-						placeholder: 'e.g. style="padding:10px"',
+						description: '要附加到表格行的属性',
+						placeholder: '例如：style="padding:10px"',
 					},
 					{
-						displayName: 'Cell Attributes',
+						displayName: '单元格属性',
 						name: 'cellAttributes',
 						type: 'string',
 						default: '',
-						description: 'Attributes to attach to the table cell',
-						placeholder: 'e.g. style="padding:10px"',
+						description: '要附加到表格单元格的属性',
+						placeholder: '例如：style="padding:10px"',
 					},
 				],
 			},

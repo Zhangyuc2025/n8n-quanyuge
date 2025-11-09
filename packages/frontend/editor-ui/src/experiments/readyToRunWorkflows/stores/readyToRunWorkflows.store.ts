@@ -1,5 +1,4 @@
 import { useTelemetry } from '@/app/composables/useTelemetry';
-import { BATCH_11AUG_EXPERIMENT } from '@/app/constants';
 import { useFoldersStore } from '@/features/core/folders/folders.store';
 import { useWorkflowsStore } from '@/app/stores/workflows.store';
 import { useI18n } from '@n8n/i18n';

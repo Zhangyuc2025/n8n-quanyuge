@@ -35,19 +35,19 @@ async function getTool(
 // A thinking tool, see https://www.anthropic.com/engineering/claude-think-tool
 
 const defaultToolDescription =
-	'Use the tool to think about something. It will not obtain new information or change the database, but just append the thought to the log. Use it when complex reasoning or some cache memory is needed.';
+	'使用该工具思考某事。它不会获取新信息或更改数据库，只是将想法附加到日志中。当需要复杂推理或一些缓存记忆时使用它。';
 
 export class ToolThink implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Think Tool',
+		displayName: '思考工具',
 		name: 'toolThink',
 		icon: 'fa:brain',
 		iconColor: 'black',
 		group: ['transform'],
 		version: [1, 1.1],
-		description: 'Invite the AI agent to do some thinking',
+		description: '邀请 AI 智能体进行思考',
 		defaults: {
-			name: 'Think',
+			name: '思考',
 		},
 		codex: {
 			categories: ['AI'],

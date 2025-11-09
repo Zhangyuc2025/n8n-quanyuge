@@ -7,13 +7,13 @@ import { DateTimeV2 } from './V2/DateTimeV2.node';
 export class DateTime extends VersionedNodeType {
 	constructor() {
 		const baseDescription: INodeTypeBaseDescription = {
-			displayName: 'Date & Time',
+			displayName: '日期和时间',
 			name: 'dateTime',
 			icon: 'fa:clock',
 			iconColor: 'green',
 			group: ['transform'],
 			defaultVersion: 2,
-			description: 'Allows you to manipulate date and time values',
+			description: '允许您操作日期和时间值',
 			subtitle: '={{$parameter["action"]}}',
 		};
 

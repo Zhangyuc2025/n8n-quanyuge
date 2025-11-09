@@ -17,70 +17,70 @@ import { file } from 'tmp-promise';
 
 const nodeOperations: INodePropertyOptions[] = [
 	{
-		name: 'Blur',
+		name: '模糊',
 		value: 'blur',
-		description: 'Adds a blur to the image and so makes it less sharp',
-		action: 'Blur Image',
+		description: '为图像添加模糊效果，使其不那么清晰',
+		action: '模糊图像',
 	},
 	{
-		name: 'Border',
+		name: '边框',
 		value: 'border',
-		description: 'Adds a border to the image',
-		action: 'Border Image',
+		description: '为图像添加边框',
+		action: '添加图像边框',
 	},
 	{
-		name: 'Composite',
+		name: '合成',
 		value: 'composite',
-		description: 'Composite image on top of another one',
-		action: 'Composite Image',
+		description: '在另一张图像上合成图像',
+		action: '合成图像',
 	},
 	{
-		name: 'Create',
+		name: '创建',
 		value: 'create',
-		description: 'Create a new image',
-		action: 'Create Image',
+		description: '创建新图像',
+		action: '创建图像',
 	},
 	{
-		name: 'Crop',
+		name: '裁剪',
 		value: 'crop',
-		description: 'Crops the image',
-		action: 'Crop Image',
+		description: '裁剪图像',
+		action: '裁剪图像',
 	},
 	{
-		name: 'Draw',
+		name: '绘制',
 		value: 'draw',
-		description: 'Draw on image',
-		action: 'Draw Image',
+		description: '在图像上绘制',
+		action: '绘制图像',
 	},
 	{
-		name: 'Rotate',
+		name: '旋转',
 		value: 'rotate',
-		description: 'Rotate image',
-		action: 'Rotate Image',
+		description: '旋转图像',
+		action: '旋转图像',
 	},
 	{
-		name: 'Resize',
+		name: '调整大小',
 		value: 'resize',
-		description: 'Change the size of image',
-		action: 'Resize Image',
+		description: '更改图像大小',
+		action: '调整图像大小',
 	},
 	{
-		name: 'Shear',
+		name: '倾斜',
 		value: 'shear',
-		description: 'Shear image along the X or Y axis',
-		action: 'Shear Image',
+		description: '沿 X 或 Y 轴倾斜图像',
+		action: '倾斜图像',
 	},
 	{
-		name: 'Text',
+		name: '文本',
 		value: 'text',
-		description: 'Adds text to image',
-		action: 'Apply Text to Image',
+		description: '为图像添加文本',
+		action: '应用文本到图像',
 	},
 	{
-		name: 'Transparent',
+		name: '透明',
 		value: 'transparent',
-		description: 'Make a color in image transparent',
-		action: 'Add Transparency to Image',
+		description: '使图像中的某个颜色透明',
+		action: '添加透明度到图像',
 	},
 ];
 
@@ -89,7 +89,7 @@ const nodeOperationOptions: INodeProperties[] = [
 	//         create
 	// ----------------------------------
 	{
-		displayName: 'Background Color',
+		displayName: '背景颜色',
 		name: 'backgroundColor',
 		type: 'color',
 		default: '#ffffff00',
@@ -101,10 +101,10 @@ const nodeOperationOptions: INodeProperties[] = [
 				operation: ['create'],
 			},
 		},
-		description: 'The background color of the image to create',
+		description: '要创建的图像的背景颜色',
 	},
 	{
-		displayName: 'Image Width',
+		displayName: '图像宽度',
 		name: 'width',
 		type: 'number',
 		default: 50,
@@ -116,10 +116,10 @@ const nodeOperationOptions: INodeProperties[] = [
 				operation: ['create'],
 			},
 		},
-		description: 'The width of the image to create',
+		description: '要创建的图像的宽度',
 	},
 	{
-		displayName: 'Image Height',
+		displayName: '图像高度',
 		name: 'height',
 		type: 'number',
 		default: 50,
@@ -131,14 +131,14 @@ const nodeOperationOptions: INodeProperties[] = [
 				operation: ['create'],
 			},
 		},
-		description: 'The height of the image to create',
+		description: '要创建的图像的高度',
 	},
 
 	// ----------------------------------
 	//         draw
 	// ----------------------------------
 	{
-		displayName: 'Primitive',
+		displayName: '图元',
 		name: 'primitive',
 		type: 'options',
 		displayOptions: {
@@ -148,23 +148,23 @@ const nodeOperationOptions: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Circle',
+				name: '圆形',
 				value: 'circle',
 			},
 			{
-				name: 'Line',
+				name: '直线',
 				value: 'line',
 			},
 			{
-				name: 'Rectangle',
+				name: '矩形',
 				value: 'rectangle',
 			},
 		],
 		default: 'rectangle',
-		description: 'The primitive to draw',
+		description: '要绘制的图元',
 	},
 	{
-		displayName: 'Color',
+		displayName: '颜色',
 		name: 'color',
 		type: 'color',
 		default: '#ff000000',
@@ -176,10 +176,10 @@ const nodeOperationOptions: INodeProperties[] = [
 				operation: ['draw'],
 			},
 		},
-		description: 'The color of the primitive to draw',
+		description: '要绘制的图元的颜色',
 	},
 	{
-		displayName: 'Start Position X',
+		displayName: '起始位置 X',
 		name: 'startPositionX',
 		type: 'number',
 		default: 50,
@@ -189,10 +189,10 @@ const nodeOperationOptions: INodeProperties[] = [
 				primitive: ['circle', 'line', 'rectangle'],
 			},
 		},
-		description: 'X (horizontal) start position of the primitive',
+		description: '图元的 X（水平）起始位置',
 	},
 	{
-		displayName: 'Start Position Y',
+		displayName: '起始位置 Y',
 		name: 'startPositionY',
 		type: 'number',
 		default: 50,
@@ -202,10 +202,10 @@ const nodeOperationOptions: INodeProperties[] = [
 				primitive: ['circle', 'line', 'rectangle'],
 			},
 		},
-		description: 'Y (horizontal) start position of the primitive',
+		description: '图元的 Y（垂直）起始位置',
 	},
 	{
-		displayName: 'End Position X',
+		displayName: '结束位置 X',
 		name: 'endPositionX',
 		type: 'number',
 		default: 250,
@@ -215,10 +215,10 @@ const nodeOperationOptions: INodeProperties[] = [
 				primitive: ['circle', 'line', 'rectangle'],
 			},
 		},
-		description: 'X (horizontal) end position of the primitive',
+		description: '图元的 X（水平）结束位置',
 	},
 	{
-		displayName: 'End Position Y',
+		displayName: '结束位置 Y',
 		name: 'endPositionY',
 		type: 'number',
 		default: 250,
@@ -228,10 +228,10 @@ const nodeOperationOptions: INodeProperties[] = [
 				primitive: ['circle', 'line', 'rectangle'],
 			},
 		},
-		description: 'Y (horizontal) end position of the primitive',
+		description: '图元的 Y（垂直）结束位置',
 	},
 	{
-		displayName: 'Corner Radius',
+		displayName: '圆角半径',
 		name: 'cornerRadius',
 		type: 'number',
 		default: 0,
@@ -241,30 +241,30 @@ const nodeOperationOptions: INodeProperties[] = [
 				primitive: ['rectangle'],
 			},
 		},
-		description: 'The radius of the corner to create round corners',
+		description: '创建圆角的半径',
 	},
 
 	// ----------------------------------
 	//         text
 	// ----------------------------------
 	{
-		displayName: 'Text',
+		displayName: '文本',
 		name: 'text',
 		typeOptions: {
 			rows: 5,
 		},
 		type: 'string',
 		default: '',
-		placeholder: 'Text to render',
+		placeholder: '要渲染的文本',
 		displayOptions: {
 			show: {
 				operation: ['text'],
 			},
 		},
-		description: 'Text to write on the image',
+		description: '要写在图像上的文本',
 	},
 	{
-		displayName: 'Font Size',
+		displayName: '字体大小',
 		name: 'fontSize',
 		type: 'number',
 		default: 18,
@@ -273,10 +273,10 @@ const nodeOperationOptions: INodeProperties[] = [
 				operation: ['text'],
 			},
 		},
-		description: 'Size of the text',
+		description: '文本的大小',
 	},
 	{
-		displayName: 'Font Color',
+		displayName: '字体颜色',
 		name: 'fontColor',
 		type: 'color',
 		default: '#000000',
@@ -285,10 +285,10 @@ const nodeOperationOptions: INodeProperties[] = [
 				operation: ['text'],
 			},
 		},
-		description: 'Color of the text',
+		description: '文本的颜色',
 	},
 	{
-		displayName: 'Position X',
+		displayName: '位置 X',
 		name: 'positionX',
 		type: 'number',
 		default: 50,
@@ -297,10 +297,10 @@ const nodeOperationOptions: INodeProperties[] = [
 				operation: ['text'],
 			},
 		},
-		description: 'X (horizontal) position of the text',
+		description: '文本的 X（水平）位置',
 	},
 	{
-		displayName: 'Position Y',
+		displayName: '位置 Y',
 		name: 'positionY',
 		type: 'number',
 		default: 50,
@@ -309,10 +309,10 @@ const nodeOperationOptions: INodeProperties[] = [
 				operation: ['text'],
 			},
 		},
-		description: 'Y (vertical) position of the text',
+		description: '文本的 Y（垂直）位置',
 	},
 	{
-		displayName: 'Max Line Length',
+		displayName: '最大行长度',
 		name: 'lineLength',
 		type: 'number',
 		typeOptions: {
@@ -324,14 +324,14 @@ const nodeOperationOptions: INodeProperties[] = [
 				operation: ['text'],
 			},
 		},
-		description: 'Max amount of characters in a line before a line-break should get added',
+		description: '在添加换行符之前一行中的最大字符数',
 	},
 
 	// ----------------------------------
 	//         blur
 	// ----------------------------------
 	{
-		displayName: 'Blur',
+		displayName: '模糊',
 		name: 'blur',
 		type: 'number',
 		typeOptions: {
@@ -344,7 +344,7 @@ const nodeOperationOptions: INodeProperties[] = [
 				operation: ['blur'],
 			},
 		},
-		description: 'How strong the blur should be',
+		description: '模糊的强度',
 	},
 	{
 		displayName: 'Sigma',
@@ -360,14 +360,14 @@ const nodeOperationOptions: INodeProperties[] = [
 				operation: ['blur'],
 			},
 		},
-		description: 'The sigma of the blur',
+		description: '模糊的 sigma 值',
 	},
 
 	// ----------------------------------
 	//         border
 	// ----------------------------------
 	{
-		displayName: 'Border Width',
+		displayName: '边框宽度',
 		name: 'borderWidth',
 		type: 'number',
 		default: 10,
@@ -376,10 +376,10 @@ const nodeOperationOptions: INodeProperties[] = [
 				operation: ['border'],
 			},
 		},
-		description: 'The width of the border',
+		description: '边框的宽度',
 	},
 	{
-		displayName: 'Border Height',
+		displayName: '边框高度',
 		name: 'borderHeight',
 		type: 'number',
 		default: 10,
@@ -388,10 +388,10 @@ const nodeOperationOptions: INodeProperties[] = [
 				operation: ['border'],
 			},
 		},
-		description: 'The height of the border',
+		description: '边框的高度',
 	},
 	{
-		displayName: 'Border Color',
+		displayName: '边框颜色',
 		name: 'borderColor',
 		type: 'color',
 		default: '#000000',
@@ -400,14 +400,14 @@ const nodeOperationOptions: INodeProperties[] = [
 				operation: ['border'],
 			},
 		},
-		description: 'Color of the border',
+		description: '边框的颜色',
 	},
 
 	// ----------------------------------
 	//         composite
 	// ----------------------------------
 	{
-		displayName: 'Composite Image Property',
+		displayName: '合成图像属性',
 		name: 'dataPropertyNameComposite',
 		type: 'string',
 		default: '',
@@ -417,11 +417,10 @@ const nodeOperationOptions: INodeProperties[] = [
 				operation: ['composite'],
 			},
 		},
-		description:
-			'The name of the binary property which contains the data of the image to composite on top of image which is found in Property Name',
+		description: '包含要合成到属性名称中找到的图像上的图像数据的二进制属性名称',
 	},
 	{
-		displayName: 'Operator',
+		displayName: '操作符',
 		name: 'operator',
 		type: 'options',
 		displayOptions: {
@@ -431,99 +430,99 @@ const nodeOperationOptions: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Add',
+				name: '加法',
 				value: 'Add',
 			},
 			{
-				name: 'Atop',
+				name: '顶部覆盖',
 				value: 'Atop',
 			},
 			{
-				name: 'Bumpmap',
+				name: '凹凸贴图',
 				value: 'Bumpmap',
 			},
 			{
-				name: 'Copy',
+				name: '复制',
 				value: 'Copy',
 			},
 			{
-				name: 'Copy Black',
+				name: '复制黑色',
 				value: 'CopyBlack',
 			},
 			{
-				name: 'Copy Blue',
+				name: '复制蓝色',
 				value: 'CopyBlue',
 			},
 			{
-				name: 'Copy Cyan',
+				name: '复制青色',
 				value: 'CopyCyan',
 			},
 			{
-				name: 'Copy Green',
+				name: '复制绿色',
 				value: 'CopyGreen',
 			},
 			{
-				name: 'Copy Magenta',
+				name: '复制品红',
 				value: 'CopyMagenta',
 			},
 			{
-				name: 'Copy Opacity',
+				name: '复制不透明度',
 				value: 'CopyOpacity',
 			},
 			{
-				name: 'Copy Red',
+				name: '复制红色',
 				value: 'CopyRed',
 			},
 			{
-				name: 'Copy Yellow',
+				name: '复制黄色',
 				value: 'CopyYellow',
 			},
 			{
-				name: 'Difference',
+				name: '差异',
 				value: 'Difference',
 			},
 			{
-				name: 'Divide',
+				name: '除法',
 				value: 'Divide',
 			},
 			{
-				name: 'In',
+				name: '内部',
 				value: 'In',
 			},
 			{
-				name: 'Minus',
+				name: '减法',
 				value: 'Minus',
 			},
 			{
-				name: 'Multiply',
+				name: '乘法',
 				value: 'Multiply',
 			},
 			{
-				name: 'Out',
+				name: '外部',
 				value: 'Out',
 			},
 			{
-				name: 'Over',
+				name: '覆盖',
 				value: 'Over',
 			},
 			{
-				name: 'Plus',
+				name: '加法',
 				value: 'Plus',
 			},
 			{
-				name: 'Subtract',
+				name: '减法',
 				value: 'Subtract',
 			},
 			{
-				name: 'Xor',
+				name: '异或',
 				value: 'Xor',
 			},
 		],
 		default: 'Over',
-		description: 'The operator to use to combine the images',
+		description: '用于组合图像的操作符',
 	},
 	{
-		displayName: 'Position X',
+		displayName: '位置 X',
 		name: 'positionX',
 		type: 'number',
 		default: 0,
@@ -532,10 +531,10 @@ const nodeOperationOptions: INodeProperties[] = [
 				operation: ['composite'],
 			},
 		},
-		description: 'X (horizontal) position of composite image',
+		description: '合成图像的 X（水平）位置',
 	},
 	{
-		displayName: 'Position Y',
+		displayName: '位置 Y',
 		name: 'positionY',
 		type: 'number',
 		default: 0,
@@ -544,14 +543,14 @@ const nodeOperationOptions: INodeProperties[] = [
 				operation: ['composite'],
 			},
 		},
-		description: 'Y (vertical) position of composite image',
+		description: '合成图像的 Y（垂直）位置',
 	},
 
 	// ----------------------------------
 	//         crop
 	// ----------------------------------
 	{
-		displayName: 'Width',
+		displayName: '宽度',
 		name: 'width',
 		type: 'number',
 		default: 500,
@@ -560,10 +559,10 @@ const nodeOperationOptions: INodeProperties[] = [
 				operation: ['crop'],
 			},
 		},
-		description: 'Crop width',
+		description: '裁剪宽度',
 	},
 	{
-		displayName: 'Height',
+		displayName: '高度',
 		name: 'height',
 		type: 'number',
 		default: 500,
@@ -572,10 +571,10 @@ const nodeOperationOptions: INodeProperties[] = [
 				operation: ['crop'],
 			},
 		},
-		description: 'Crop height',
+		description: '裁剪高度',
 	},
 	{
-		displayName: 'Position X',
+		displayName: '位置 X',
 		name: 'positionX',
 		type: 'number',
 		default: 0,
@@ -584,10 +583,10 @@ const nodeOperationOptions: INodeProperties[] = [
 				operation: ['crop'],
 			},
 		},
-		description: 'X (horizontal) position to crop from',
+		description: '裁剪的 X（水平）起始位置',
 	},
 	{
-		displayName: 'Position Y',
+		displayName: '位置 Y',
 		name: 'positionY',
 		type: 'number',
 		default: 0,
@@ -596,14 +595,14 @@ const nodeOperationOptions: INodeProperties[] = [
 				operation: ['crop'],
 			},
 		},
-		description: 'Y (vertical) position to crop from',
+		description: '裁剪的 Y（垂直）起始位置',
 	},
 
 	// ----------------------------------
 	//         resize
 	// ----------------------------------
 	{
-		displayName: 'Width',
+		displayName: '宽度',
 		name: 'width',
 		type: 'number',
 		default: 500,
@@ -612,10 +611,10 @@ const nodeOperationOptions: INodeProperties[] = [
 				operation: ['resize'],
 			},
 		},
-		description: 'New width of the image',
+		description: '图像的新宽度',
 	},
 	{
-		displayName: 'Height',
+		displayName: '高度',
 		name: 'height',
 		type: 'number',
 		default: 500,
@@ -624,42 +623,42 @@ const nodeOperationOptions: INodeProperties[] = [
 				operation: ['resize'],
 			},
 		},
-		description: 'New height of the image',
+		description: '图像的新高度',
 	},
 	{
-		displayName: 'Option',
+		displayName: '选项',
 		name: 'resizeOption',
 		type: 'options',
 		options: [
 			{
-				name: 'Ignore Aspect Ratio',
+				name: '忽略纵横比',
 				value: 'ignoreAspectRatio',
-				description: 'Ignore aspect ratio and resize exactly to specified values',
+				description: '忽略纵横比，精确调整到指定值',
 			},
 			{
-				name: 'Maximum Area',
+				name: '最大区域',
 				value: 'maximumArea',
-				description: 'Specified values are maximum area',
+				description: '指定值为最大区域',
 			},
 			{
-				name: 'Minimum Area',
+				name: '最小区域',
 				value: 'minimumArea',
-				description: 'Specified values are minimum area',
+				description: '指定值为最小区域',
 			},
 			{
-				name: 'Only if Larger',
+				name: '仅当更大时',
 				value: 'onlyIfLarger',
-				description: 'Resize only if image is larger than width or height',
+				description: '仅当图像大于宽度或高度时才调整大小',
 			},
 			{
-				name: 'Only if Smaller',
+				name: '仅当更小时',
 				value: 'onlyIfSmaller',
-				description: 'Resize only if image is smaller than width or height',
+				description: '仅当图像小于宽度或高度时才调整大小',
 			},
 			{
-				name: 'Percent',
+				name: '百分比',
 				value: 'percent',
-				description: 'Width and height are specified in percents',
+				description: '宽度和高度以百分比指定',
 			},
 		],
 		default: 'maximumArea',
@@ -668,14 +667,14 @@ const nodeOperationOptions: INodeProperties[] = [
 				operation: ['resize'],
 			},
 		},
-		description: 'How to resize the image',
+		description: '如何调整图像大小',
 	},
 
 	// ----------------------------------
 	//         rotate
 	// ----------------------------------
 	{
-		displayName: 'Rotate',
+		displayName: '旋转',
 		name: 'rotate',
 		type: 'number',
 		typeOptions: {
@@ -688,10 +687,10 @@ const nodeOperationOptions: INodeProperties[] = [
 				operation: ['rotate'],
 			},
 		},
-		description: 'How much the image should be rotated',
+		description: '图像应旋转的角度',
 	},
 	{
-		displayName: 'Background Color',
+		displayName: '背景颜色',
 		name: 'backgroundColor',
 		type: 'color',
 		default: '#ffffffff',
@@ -703,15 +702,14 @@ const nodeOperationOptions: INodeProperties[] = [
 				operation: ['rotate'],
 			},
 		},
-		description:
-			'The color to use for the background when image gets rotated by anything which is not a multiple of 90',
+		description: '当图像旋转的角度不是 90 的倍数时用于背景的颜色',
 	},
 
 	// ----------------------------------
 	//         shear
 	// ----------------------------------
 	{
-		displayName: 'Degrees X',
+		displayName: '角度 X',
 		name: 'degreesX',
 		type: 'number',
 		default: 0,
@@ -720,10 +718,10 @@ const nodeOperationOptions: INodeProperties[] = [
 				operation: ['shear'],
 			},
 		},
-		description: 'X (horizontal) shear degrees',
+		description: 'X（水平）倾斜角度',
 	},
 	{
-		displayName: 'Degrees Y',
+		displayName: '角度 Y',
 		name: 'degreesY',
 		type: 'number',
 		default: 0,
@@ -732,14 +730,14 @@ const nodeOperationOptions: INodeProperties[] = [
 				operation: ['shear'],
 			},
 		},
-		description: 'Y (vertical) shear degrees',
+		description: 'Y（垂直）倾斜角度',
 	},
 
 	// ----------------------------------
 	//         transparent
 	// ----------------------------------
 	{
-		displayName: 'Color',
+		displayName: '颜色',
 		name: 'color',
 		type: 'color',
 		default: '#ff0000',
@@ -748,41 +746,41 @@ const nodeOperationOptions: INodeProperties[] = [
 				operation: ['transparent'],
 			},
 		},
-		description: 'The color to make transparent',
+		description: '要使其透明的颜色',
 	},
 ];
 
 export class EditImage implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Edit Image',
+		displayName: '编辑图像',
 		name: 'editImage',
 		icon: 'fa:image',
 		iconColor: 'purple',
 		group: ['transform'],
 		version: 1,
-		description: 'Edits an image like blur, resize or adding border and text',
+		description: '编辑图像，如模糊、调整大小或添加边框和文本',
 		defaults: {
-			name: 'Edit Image',
+			name: '编辑图像',
 			color: '#553399',
 		},
 		inputs: [NodeConnectionTypes.Main],
 		outputs: [NodeConnectionTypes.Main],
 		properties: [
 			{
-				displayName: 'Operation',
+				displayName: '操作',
 				name: 'operation',
 				type: 'options',
 				noDataExpression: true,
 				options: [
 					{
-						name: 'Get Information',
+						name: '获取信息',
 						value: 'information',
-						description: 'Returns image information like resolution',
+						description: '返回图像信息，如分辨率',
 					},
 					{
-						name: 'Multi Step',
+						name: '多步骤',
 						value: 'multiStep',
-						description: 'Perform multiple operations',
+						description: '执行多个操作',
 					},
 					...nodeOperations,
 				].sort((a, b) => {
@@ -797,20 +795,20 @@ export class EditImage implements INodeType {
 				default: 'border',
 			},
 			{
-				displayName: 'Property Name',
+				displayName: '属性名称',
 				name: 'dataPropertyName',
 				type: 'string',
 				default: 'data',
-				description: 'Name of the binary property in which the image data can be found',
+				description: '可以找到图像数据的二进制属性名称',
 			},
 
 			// ----------------------------------
 			//         multiStep
 			// ----------------------------------
 			{
-				displayName: 'Operations',
+				displayName: '操作',
 				name: 'operations',
-				placeholder: 'Add Operation',
+				placeholder: '添加操作',
 				type: 'fixedCollection',
 				typeOptions: {
 					multipleValues: true,
@@ -821,15 +819,15 @@ export class EditImage implements INodeType {
 						operation: ['multiStep'],
 					},
 				},
-				description: 'The operations to perform',
+				description: '要执行的操作',
 				default: {},
 				options: [
 					{
 						name: 'operations',
-						displayName: 'Operations',
+						displayName: '操作',
 						values: [
 							{
-								displayName: 'Operation',
+								displayName: '操作',
 								name: 'operation',
 								type: 'options',
 								noDataExpression: true,
@@ -838,7 +836,7 @@ export class EditImage implements INodeType {
 							},
 							...nodeOperationOptions,
 							{
-								displayName: 'Font Name or ID',
+								displayName: '字体名称或 ID',
 								name: 'font',
 								type: 'options',
 								displayOptions: {
@@ -851,7 +849,7 @@ export class EditImage implements INodeType {
 								},
 								default: '',
 								description:
-									'The font to use. Defaults to Arial. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+									'要使用的字体。默认为 Arial。从列表中选择，或使用<a href="https://docs.n8n.io/code/expressions/">表达式</a>指定 ID。',
 							},
 						],
 					},
@@ -860,10 +858,10 @@ export class EditImage implements INodeType {
 
 			...nodeOperationOptions,
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
 				type: 'collection',
-				placeholder: 'Add option',
+				placeholder: '添加选项',
 				default: {},
 				displayOptions: {
 					hide: {
@@ -872,14 +870,14 @@ export class EditImage implements INodeType {
 				},
 				options: [
 					{
-						displayName: 'File Name',
+						displayName: '文件名',
 						name: 'fileName',
 						type: 'string',
 						default: '',
-						description: 'File name to set in binary data',
+						description: '在二进制数据中设置的文件名',
 					},
 					{
-						displayName: 'Font Name or ID',
+						displayName: '字体名称或 ID',
 						name: 'font',
 						type: 'options',
 						displayOptions: {
@@ -892,10 +890,10 @@ export class EditImage implements INodeType {
 						},
 						default: '',
 						description:
-							'The font to use. Defaults to Arial. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+							'要使用的字体。默认为 Arial。从列表中选择，或使用<a href="https://docs.n8n.io/code/expressions/">表达式</a>指定 ID。',
 					},
 					{
-						displayName: 'Format',
+						displayName: '格式',
 						name: 'format',
 						type: 'options',
 						options: [
@@ -925,10 +923,10 @@ export class EditImage implements INodeType {
 							},
 						],
 						default: 'jpeg',
-						description: 'Set the output image format',
+						description: '设置输出图像格式',
 					},
 					{
-						displayName: 'Quality',
+						displayName: '质量',
 						name: 'quality',
 						type: 'number',
 						typeOptions: {
@@ -941,7 +939,7 @@ export class EditImage implements INodeType {
 								format: ['jpeg', 'png', 'tiff'],
 							},
 						},
-						description: 'Sets the jpeg|png|tiff compression level from 0 to 100 (best)',
+						description: '设置 jpeg|png|tiff 压缩级别，范围从 0 到 100（最佳）',
 					},
 				],
 			},
@@ -1237,7 +1235,7 @@ export class EditImage implements INodeType {
 						if (!font) {
 							throw new NodeOperationError(
 								this.getNode(),
-								'Default font not found. Select a font from the options.',
+								'未找到默认字体。请从选项中选择一个字体。',
 							);
 						}
 

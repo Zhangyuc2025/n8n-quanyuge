@@ -5,7 +5,7 @@ import { buildBinTestURL, buildRequestURL } from './GenericFunctions';
 // Operations for the `Request` resource
 export const requestOperations: INodeProperties[] = [
 	{
-		displayName: 'Operation',
+		displayName: '操作',
 		name: 'operation',
 		type: 'options',
 		noDataExpression: true,
@@ -16,9 +16,9 @@ export const requestOperations: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Get',
+				name: '获取',
 				value: 'get',
-				description: 'Get a request',
+				description: '获取请求',
 				routing: {
 					request: {
 						method: 'GET',
@@ -31,12 +31,12 @@ export const requestOperations: INodeProperties[] = [
 						],
 					},
 				},
-				action: 'Get a request',
+				action: '获取请求',
 			},
 			{
-				name: 'Remove First',
+				name: '移除第一个',
 				value: 'removeFirst',
-				description: 'Remove the first request from bin',
+				description: '从 bin 中移除第一个请求',
 				routing: {
 					request: {
 						method: 'GET',
@@ -49,12 +49,12 @@ export const requestOperations: INodeProperties[] = [
 						],
 					},
 				},
-				action: 'Remove First a request',
+				action: '移除第一个请求',
 			},
 			{
-				name: 'Send',
+				name: '发送',
 				value: 'send',
-				description: 'Send a test request to the bin',
+				description: '向 bin 发送测试请求',
 				routing: {
 					request: {
 						method: 'POST',
@@ -76,7 +76,7 @@ export const requestOperations: INodeProperties[] = [
 						],
 					},
 				},
-				action: 'Send a request',
+				action: '发送请求',
 			},
 		],
 		default: 'get',
@@ -97,10 +97,10 @@ export const requestFields: INodeProperties[] = [
 				operation: ['get', 'removeFirst', 'send'],
 			},
 		},
-		description: 'Unique identifier for each bin',
+		description: '每个 bin 的唯一标识符',
 	},
 	{
-		displayName: 'Bin Content',
+		displayName: 'Bin 内容',
 		name: 'binContent',
 		type: 'string',
 		default: '',
@@ -122,7 +122,7 @@ export const requestFields: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Request ID',
+		displayName: '请求 ID',
 		name: 'requestId',
 		type: 'string',
 		default: '',
@@ -133,6 +133,6 @@ export const requestFields: INodeProperties[] = [
 				operation: ['get'],
 			},
 		},
-		description: 'Unique identifier for each request',
+		description: '每个请求的唯一标识符',
 	},
 ];

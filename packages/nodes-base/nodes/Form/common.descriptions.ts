@@ -9,42 +9,41 @@ export const placeholder: string = `
 `.trimStart();
 
 export const webhookPath: INodeProperties = {
-	displayName: 'Form Path',
+	displayName: '表单路径',
 	name: 'path',
 	type: 'string',
 	default: '',
 	placeholder: 'webhook',
 	required: true,
-	description: "The final segment of the form's URL, both for test and production",
+	description: '表单 URL 的最后一段，用于测试和生产环境',
 };
 
 export const formTitle: INodeProperties = {
-	displayName: 'Form Title',
+	displayName: '表单标题',
 	name: 'formTitle',
 	type: 'string',
 	default: '',
-	placeholder: 'e.g. Contact us',
+	placeholder: '例如：联系我们',
 	required: true,
-	description: 'Shown at the top of the form',
+	description: '显示在表单顶部',
 };
 
 export const formDescription: INodeProperties = {
-	displayName: 'Form Description',
+	displayName: '表单描述',
 	name: 'formDescription',
 	type: 'string',
 	default: '',
-	placeholder: "e.g. We'll get back to you soon",
-	description:
-		'Shown underneath the Form Title. Can be used to prompt the user on how to complete the form. Accepts HTML.',
+	placeholder: '例如：我们会尽快回复您',
+	description: '显示在表单标题下方。可用于提示用户如何填写表单。支持 HTML。',
 	typeOptions: {
 		rows: 2,
 	},
 };
 
 export const formFields: INodeProperties = {
-	displayName: 'Form Elements',
+	displayName: '表单元素',
 	name: 'formFields',
-	placeholder: 'Add Form Element',
+	placeholder: '添加表单元素',
 	type: 'fixedCollection',
 	default: {},
 	typeOptions: {
@@ -53,16 +52,16 @@ export const formFields: INodeProperties = {
 	},
 	options: [
 		{
-			displayName: 'Values',
+			displayName: '值',
 			name: 'values',
 			values: [
 				{
-					displayName: 'Field Name',
+					displayName: '字段名称',
 					name: 'fieldLabel',
 					type: 'string',
 					default: '',
-					placeholder: 'e.g. What is your name?',
-					description: 'Label that appears above the input field',
+					placeholder: '例如：您的姓名是什么？',
+					description: '显示在输入字段上方的标签',
 					required: true,
 					displayOptions: {
 						hide: {
@@ -71,10 +70,9 @@ export const formFields: INodeProperties = {
 					},
 				},
 				{
-					displayName: 'Field Name',
+					displayName: '字段名称',
 					name: 'fieldName',
-					description:
-						'The name of the field, used in input attributes and referenced by the workflow',
+					description: '字段的名称，用于输入属性并由工作流引用',
 					type: 'string',
 					default: '',
 					displayOptions: {
@@ -84,71 +82,71 @@ export const formFields: INodeProperties = {
 					},
 				},
 				{
-					displayName: 'Element Type',
+					displayName: '元素类型',
 					name: 'fieldType',
 					type: 'options',
 					default: 'text',
-					description: 'The type of field to add to the form',
+					description: '要添加到表单的字段类型',
 					// Update ALLOWED_FIELD_TYPES in packages/workflow/src/type-validation.ts when adding new field types
 					options: [
 						{
-							name: 'Checkboxes',
+							name: '复选框',
 							value: 'checkbox',
 						},
 						{
-							name: 'Custom HTML',
+							name: '自定义 HTML',
 							value: 'html',
 						},
 						{
-							name: 'Date',
+							name: '日期',
 							value: 'date',
 						},
 						{
-							name: 'Dropdown',
+							name: '下拉列表',
 							value: 'dropdown',
 						},
 						{
-							name: 'Email',
+							name: '电子邮件',
 							value: 'email',
 						},
 						{
-							name: 'File',
+							name: '文件',
 							value: 'file',
 						},
 						{
-							name: 'Hidden Field',
+							name: '隐藏字段',
 							value: 'hiddenField',
 						},
 						{
-							name: 'Number',
+							name: '数值',
 							value: 'number',
 						},
 						{
-							name: 'Password',
+							name: '密码',
 							value: 'password',
 						},
 						{
-							name: 'Radio Buttons',
+							name: '单选按钮',
 							value: 'radio',
 						},
 						{
-							name: 'Text',
+							name: '文本',
 							value: 'text',
 						},
 						{
-							name: 'Textarea',
+							name: '文本域',
 							value: 'textarea',
 						},
 					],
 					required: true,
 				},
 				{
-					displayName: 'Element Name',
+					displayName: '元素名称',
 					name: 'elementName',
 					type: 'string',
 					default: '',
-					placeholder: 'e.g. content-section',
-					description: 'Optional field. It can be used to include the html in the output.',
+					placeholder: '例如：content-section',
+					description: '可选字段。可用于在输出中包含 html。',
 					displayOptions: {
 						show: {
 							fieldType: ['html'],
@@ -156,9 +154,9 @@ export const formFields: INodeProperties = {
 					},
 				},
 				{
-					displayName: 'Placeholder',
+					displayName: '占位符',
 					name: 'placeholder',
-					description: 'Sample text to display inside the field',
+					description: '在字段内显示的示例文本',
 					type: 'string',
 					default: '',
 					displayOptions: {
@@ -168,10 +166,9 @@ export const formFields: INodeProperties = {
 					},
 				},
 				{
-					displayName: 'Field Value',
+					displayName: '字段值',
 					name: 'fieldValue',
-					description:
-						'Input value can be set here or will be passed as a query parameter via Field Name if no value is set',
+					description: '可以在此处设置输入值，如果未设置值，则将通过字段名称作为查询参数传递',
 					type: 'string',
 					default: '',
 					displayOptions: {
@@ -182,10 +179,10 @@ export const formFields: INodeProperties = {
 				},
 
 				{
-					displayName: 'Field Options',
+					displayName: '字段选项',
 					name: 'fieldOptions',
-					placeholder: 'Add Field Option',
-					description: 'List of options that can be selected from the dropdown',
+					placeholder: '添加字段选项',
+					description: '可以从下拉列表中选择的选项列表',
 					type: 'fixedCollection',
 					default: { values: [{ option: '' }] },
 					required: true,
@@ -200,11 +197,11 @@ export const formFields: INodeProperties = {
 					},
 					options: [
 						{
-							displayName: 'Values',
+							displayName: '值',
 							name: 'values',
 							values: [
 								{
-									displayName: 'Option',
+									displayName: '选项',
 									name: 'option',
 									type: 'string',
 									default: '',
@@ -214,9 +211,9 @@ export const formFields: INodeProperties = {
 					],
 				},
 				{
-					displayName: 'Checkboxes',
+					displayName: '复选框',
 					name: 'fieldOptions',
-					placeholder: 'Add Checkbox',
+					placeholder: '添加复选框',
 					type: 'fixedCollection',
 					default: { values: [{ option: '' }] },
 					required: true,
@@ -231,11 +228,11 @@ export const formFields: INodeProperties = {
 					},
 					options: [
 						{
-							displayName: 'Values',
+							displayName: '值',
 							name: 'values',
 							values: [
 								{
-									displayName: 'Checkbox Label',
+									displayName: '复选框标签',
 									name: 'option',
 									type: 'string',
 									default: '',
@@ -245,9 +242,9 @@ export const formFields: INodeProperties = {
 					],
 				},
 				{
-					displayName: 'Radio Buttons',
+					displayName: '单选按钮',
 					name: 'fieldOptions',
-					placeholder: 'Add Radio Button',
+					placeholder: '添加单选按钮',
 					type: 'fixedCollection',
 					default: { values: [{ option: '' }] },
 					required: true,
@@ -262,11 +259,11 @@ export const formFields: INodeProperties = {
 					},
 					options: [
 						{
-							displayName: 'Values',
+							displayName: '值',
 							name: 'values',
 							values: [
 								{
-									displayName: 'Radio Button Label',
+									displayName: '单选按钮标签',
 									name: 'option',
 									type: 'string',
 									default: '',
@@ -276,8 +273,7 @@ export const formFields: INodeProperties = {
 					],
 				},
 				{
-					displayName:
-						'Multiple Choice is a legacy option, please use Checkboxes or Radio Buttons field type instead',
+					displayName: '多选是一个旧选项，请改用复选框或单选按钮字段类型',
 					name: 'multiselectLegacyNotice',
 					type: 'notice',
 					default: '',
@@ -290,12 +286,11 @@ export const formFields: INodeProperties = {
 					},
 				},
 				{
-					displayName: 'Multiple Choice',
+					displayName: '多选',
 					name: 'multiselect',
 					type: 'boolean',
 					default: false,
-					description:
-						'Whether to allow the user to select multiple options from the dropdown list',
+					description: '是否允许用户从下拉列表中选择多个选项',
 					displayOptions: {
 						show: {
 							fieldType: ['dropdown'],
@@ -304,21 +299,21 @@ export const formFields: INodeProperties = {
 					},
 				},
 				{
-					displayName: 'Limit Selection',
+					displayName: '限制选择',
 					name: 'limitSelection',
 					type: 'options',
 					default: 'unlimited',
 					options: [
 						{
-							name: 'Exact Number',
+							name: '精确数量',
 							value: 'exact',
 						},
 						{
-							name: 'Range',
+							name: '范围',
 							value: 'range',
 						},
 						{
-							name: 'Unlimited',
+							name: '无限制',
 							value: 'unlimited',
 						},
 					],
@@ -329,7 +324,7 @@ export const formFields: INodeProperties = {
 					},
 				},
 				{
-					displayName: 'Number of Selections',
+					displayName: '选择数量',
 					name: 'numberOfSelections',
 					type: 'number',
 					default: 1,
@@ -345,7 +340,7 @@ export const formFields: INodeProperties = {
 					},
 				},
 				{
-					displayName: 'Minimum Selections',
+					displayName: '最少选择数',
 					name: 'minSelections',
 					type: 'number',
 					default: 0,
@@ -361,7 +356,7 @@ export const formFields: INodeProperties = {
 					},
 				},
 				{
-					displayName: 'Maximum Selections',
+					displayName: '最多选择数',
 					name: 'maxSelections',
 					type: 'number',
 					default: 1,
@@ -385,8 +380,8 @@ export const formFields: INodeProperties = {
 					type: 'string',
 					noDataExpression: true,
 					default: placeholder,
-					description: 'HTML elements to display on the form page',
-					hint: 'Does not accept <code>&lt;script&gt;</code>, <code>&lt;style&gt;</code> or <code>&lt;input&gt;</code> tags',
+					description: '要在表单页面上显示的 HTML 元素',
+					hint: '不接受 <code>&lt;script&gt;</code>、<code>&lt;style&gt;</code> 或 <code>&lt;input&gt;</code> 标签',
 					displayOptions: {
 						show: {
 							fieldType: ['html'],
@@ -394,12 +389,11 @@ export const formFields: INodeProperties = {
 					},
 				},
 				{
-					displayName: 'Multiple Files',
+					displayName: '多个文件',
 					name: 'multipleFiles',
 					type: 'boolean',
 					default: true,
-					description:
-						'Whether to allow the user to select multiple files from the file input or just one',
+					description: '是否允许用户从文件输入中选择多个文件或仅选择一个',
 					displayOptions: {
 						show: {
 							fieldType: ['file'],
@@ -407,13 +401,13 @@ export const formFields: INodeProperties = {
 					},
 				},
 				{
-					displayName: 'Accepted File Types',
+					displayName: '接受的文件类型',
 					name: 'acceptFileTypes',
 					type: 'string',
 					default: '',
-					description: 'Comma-separated list of allowed file extensions',
-					hint: 'Leave empty to allow all file types',
-					placeholder: 'e.g. .jpg, .png',
+					description: '允许的文件扩展名的逗号分隔列表',
+					hint: '留空以允许所有文件类型',
+					placeholder: '例如：.jpg, .png',
 					displayOptions: {
 						show: {
 							fieldType: ['file'],
@@ -421,7 +415,7 @@ export const formFields: INodeProperties = {
 					},
 				},
 				{
-					displayName: "The displayed date is formatted based on the locale of the user's browser",
+					displayName: '显示的日期根据用户浏览器的区域设置进行格式化',
 					name: 'formatDate',
 					type: 'notice',
 					default: '',
@@ -432,12 +426,11 @@ export const formFields: INodeProperties = {
 					},
 				},
 				{
-					displayName: 'Required Field',
+					displayName: '必填字段',
 					name: 'requiredField',
 					type: 'boolean',
 					default: false,
-					description:
-						'Whether to require the user to enter a value for this field before submitting the form',
+					description: '是否要求用户在提交表单前为此字段输入值',
 					displayOptions: {
 						hide: {
 							fieldType: ['html', 'hiddenField'],
@@ -450,28 +443,28 @@ export const formFields: INodeProperties = {
 };
 
 export const formRespondMode: INodeProperties = {
-	displayName: 'Respond When',
+	displayName: '响应时机',
 	name: 'responseMode',
 	type: 'options',
 	options: [
 		{
-			name: 'Form Is Submitted',
+			name: '表单提交时',
 			value: 'onReceived',
-			description: 'As soon as this node receives the form submission',
+			description: '此节点接收到表单提交时立即响应',
 		},
 		{
-			name: 'Workflow Finishes',
+			name: '工作流完成时',
 			value: 'lastNode',
-			description: 'When the last node of the workflow is executed',
+			description: '工作流的最后一个节点执行时响应',
 		},
 		{
-			name: "Using 'Respond to Webhook' Node",
+			name: '使用"响应 Webhook"节点',
 			value: 'responseNode',
-			description: "When the 'Respond to Webhook' node is executed",
+			description: '执行"响应 Webhook"节点时响应',
 		},
 	],
 	default: 'onReceived',
-	description: 'When to respond to the form submission',
+	description: '何时响应表单提交',
 };
 
 export const formTriggerPanel = {
@@ -491,41 +484,40 @@ export const formTriggerPanel = {
 };
 
 export const respondWithOptions: INodeProperties = {
-	displayName: 'Form Response',
+	displayName: '表单响应',
 	name: 'respondWithOptions',
 	type: 'fixedCollection',
-	placeholder: 'Add option',
+	placeholder: '添加选项',
 	default: { values: { respondWith: 'text' } },
 	options: [
 		{
-			displayName: 'Values',
+			displayName: '值',
 			name: 'values',
 			values: [
 				{
-					displayName: 'Respond With',
+					displayName: '响应方式',
 					name: 'respondWith',
 					type: 'options',
 					default: 'text',
 					options: [
 						{
-							name: 'Form Submitted Text',
+							name: '表单提交文本',
 							value: 'text',
-							description: 'Show a response text to the user',
+							description: '向用户显示响应文本',
 						},
 						{
-							name: 'Redirect URL',
+							name: '重定向 URL',
 							value: 'redirect',
-							description: 'Redirect the user to a URL',
+							description: '将用户重定向到 URL',
 						},
 					],
 				},
 				{
-					displayName: 'Text to Show',
+					displayName: '要显示的文本',
 					name: 'formSubmittedText',
-					description:
-						"The text displayed to users after they fill the form. Leave it empty if don't want to show any additional text.",
+					description: '用户填写表单后显示的文本。如果不想显示任何附加文本，请留空。',
 					type: 'string',
-					default: 'Your response has been recorded',
+					default: '您的回复已记录',
 					displayOptions: {
 						show: {
 							respondWith: ['text'],
@@ -534,14 +526,13 @@ export const respondWithOptions: INodeProperties = {
 				},
 				{
 					// eslint-disable-next-line n8n-nodes-base/node-param-display-name-miscased
-					displayName: 'URL to Redirect to',
+					displayName: '重定向到的 URL',
 					name: 'redirectUrl',
-					description:
-						'The URL to redirect users to after they fill the form. Must be a valid URL.',
+					description: '用户填写表单后重定向到的 URL。必须是有效的 URL。',
 					type: 'string',
 					default: '',
 					validateType: 'url',
-					placeholder: 'e.g. http://www.n8n.io',
+					placeholder: '例如：http://www.n8n.io',
 					displayOptions: {
 						show: {
 							respondWith: ['redirect'],
@@ -555,5 +546,5 @@ export const respondWithOptions: INodeProperties = {
 
 export const appendAttributionToForm: INodeProperties = {
 	...appendAttributionOption,
-	description: 'Whether to include the link “Form automated with n8n” at the bottom of the form',
+	description: '是否在表单底部包含"使用 n8n 自动化表单"链接',
 };

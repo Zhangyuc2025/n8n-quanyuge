@@ -44,28 +44,28 @@ function getValue($: Cheerio, valueData: IValueData, options: IDataObject) {
 
 export class HtmlExtract implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'HTML Extract',
+		displayName: 'HTML 提取',
 		name: 'htmlExtract',
 		icon: 'fa:cut',
 		group: ['transform'],
 		version: 1,
 		hidden: true,
 		subtitle: '={{$parameter["sourceData"] + ": " + $parameter["dataPropertyName"]}}',
-		description: 'Extracts data from HTML',
+		description: '从 HTML 中提取数据',
 		defaults: {
-			name: 'HTML Extract',
+			name: 'HTML 提取',
 			color: '#333377',
 		},
 		inputs: [NodeConnectionTypes.Main],
 		outputs: [NodeConnectionTypes.Main],
 		properties: [
 			{
-				displayName: 'Source Data',
+				displayName: '数据源',
 				name: 'sourceData',
 				type: 'options',
 				options: [
 					{
-						name: 'Binary',
+						name: '二进制',
 						value: 'binary',
 					},
 					{
@@ -74,10 +74,10 @@ export class HtmlExtract implements INodeType {
 					},
 				],
 				default: 'json',
-				description: 'If HTML should be read from binary or JSON data',
+				description: 'HTML 应该从二进制数据还是 JSON 数据中读取',
 			},
 			{
-				displayName: 'Input Binary Field',
+				displayName: '输入二进制字段',
 				name: 'dataPropertyName',
 				type: 'string',
 				displayOptions: {
@@ -87,10 +87,10 @@ export class HtmlExtract implements INodeType {
 				},
 				default: 'data',
 				required: true,
-				hint: 'The name of the input binary field containing the file to be extracted',
+				hint: '包含要提取的文件的输入二进制字段名称',
 			},
 			{
-				displayName: 'JSON Property',
+				displayName: 'JSON 属性',
 				name: 'dataPropertyName',
 				type: 'string',
 				displayOptions: {
@@ -100,13 +100,12 @@ export class HtmlExtract implements INodeType {
 				},
 				default: 'data',
 				required: true,
-				description:
-					'Name of the JSON property in which the HTML to extract the data from can be found. The property can either contain a string or an array of strings.',
+				description: '包含要提取数据的 HTML 的 JSON 属性名称。该属性可以包含字符串或字符串数组',
 			},
 			{
-				displayName: 'Extraction Values',
+				displayName: '提取值',
 				name: 'extractionValues',
-				placeholder: 'Add Value',
+				placeholder: '添加值',
 				type: 'fixedCollection',
 				typeOptions: {
 					multipleValues: true,
@@ -115,54 +114,54 @@ export class HtmlExtract implements INodeType {
 				options: [
 					{
 						name: 'values',
-						displayName: 'Values',
+						displayName: '值',
 						values: [
 							{
-								displayName: 'Key',
+								displayName: '键名',
 								name: 'key',
 								type: 'string',
 								default: '',
-								description: 'The key under which the extracted value should be saved',
+								description: '保存提取值的键名',
 							},
 							{
-								displayName: 'CSS Selector',
+								displayName: 'CSS 选择器',
 								name: 'cssSelector',
 								type: 'string',
 								default: '',
 								placeholder: '.price',
-								description: 'The CSS selector to use',
+								description: '要使用的 CSS 选择器',
 							},
 							{
-								displayName: 'Return Value',
+								displayName: '返回值类型',
 								name: 'returnValue',
 								type: 'options',
 								options: [
 									{
-										name: 'Attribute',
+										name: '属性',
 										value: 'attribute',
-										description: 'Get an attribute value like "class" from an element',
+										description: '获取元素的属性值，如"class"',
 									},
 									{
 										name: 'HTML',
 										value: 'html',
-										description: 'Get the HTML the element contains',
+										description: '获取元素包含的 HTML',
 									},
 									{
-										name: 'Text',
+										name: '文本',
 										value: 'text',
-										description: 'Get only the text content of the element',
+										description: '仅获取元素的文本内容',
 									},
 									{
-										name: 'Value',
+										name: '值',
 										value: 'value',
-										description: 'Get value of an input, select or textarea',
+										description: '获取 input、select 或 textarea 的值',
 									},
 								],
 								default: 'text',
-								description: 'What kind of data should be returned',
+								description: '应该返回什么类型的数据',
 							},
 							{
-								displayName: 'Attribute',
+								displayName: '属性名',
 								name: 'attribute',
 								type: 'string',
 								displayOptions: {
@@ -172,15 +171,15 @@ export class HtmlExtract implements INodeType {
 								},
 								default: '',
 								placeholder: 'class',
-								description: 'The name of the attribute to return the value off',
+								description: '要返回其值的属性名称',
 							},
 							{
-								displayName: 'Return Array',
+								displayName: '返回数组',
 								name: 'returnArray',
 								type: 'boolean',
 								default: false,
 								description:
-									'Whether to return the values as an array so if multiple ones get found they also get returned separately. If not set all will be returned as a single string.',
+									'是否将值作为数组返回，以便找到多个值时分别返回。如果不设置，所有值将作为单个字符串返回',
 							},
 						],
 					},
@@ -188,19 +187,18 @@ export class HtmlExtract implements INodeType {
 			},
 
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
 				type: 'collection',
-				placeholder: 'Add option',
+				placeholder: '添加选项',
 				default: {},
 				options: [
 					{
-						displayName: 'Trim Values',
+						displayName: '修剪值',
 						name: 'trimValues',
 						type: 'boolean',
 						default: true,
-						description:
-							'Whether to remove automatically all spaces and newlines from the beginning and end of the values',
+						description: '是否自动删除值开头和结尾的所有空格和换行符',
 					},
 				],
 			},

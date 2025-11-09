@@ -8,15 +8,15 @@ import { NodeConnectionTypes } from 'n8n-workflow';
 
 export class NoOp implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'No Operation, do nothing',
+		displayName: '无操作，什么都不做',
 		name: 'noOp',
 		icon: 'fa:arrow-right',
 		iconColor: 'gray',
 		group: ['organization'],
 		version: 1,
-		description: 'No Operation',
+		description: '无操作',
 		defaults: {
-			name: 'No Operation, do nothing',
+			name: '无操作',
 			color: '#b0b0b0',
 		},
 		inputs: [NodeConnectionTypes.Main],

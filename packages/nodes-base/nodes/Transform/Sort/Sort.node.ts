@@ -17,87 +17,87 @@ import { sortByCode } from './utils';
 
 export class Sort implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Sort',
+		displayName: '排序',
 		name: 'sort',
 		icon: 'file:sort.svg',
 		group: ['transform'],
 		subtitle: '',
 		version: 1,
-		description: 'Change items order',
+		description: '更改项目顺序',
 		defaults: {
-			name: 'Sort',
+			name: '排序',
 		},
 		inputs: [NodeConnectionTypes.Main],
 		outputs: [NodeConnectionTypes.Main],
 		properties: [
 			{
-				displayName: 'Type',
+				displayName: '类型',
 				name: 'type',
 				type: 'options',
 				options: [
 					{
-						name: 'Simple',
+						name: '简单',
 						value: 'simple',
 					},
 					{
-						name: 'Random',
+						name: '随机',
 						value: 'random',
 					},
 					{
-						name: 'Code',
+						name: '代码',
 						value: 'code',
 					},
 				],
 				default: 'simple',
-				description: 'The type of sorting to perform',
+				description: '要执行的排序类型',
 			},
 			{
-				displayName: 'Fields To Sort By',
+				displayName: '排序字段',
 				name: 'sortFieldsUi',
 				type: 'fixedCollection',
 				typeOptions: {
 					multipleValues: true,
 				},
-				placeholder: 'Add Field To Sort By',
+				placeholder: '添加排序字段',
 				options: [
 					{
 						displayName: '',
 						name: 'sortField',
 						values: [
 							{
-								displayName: 'Field Name',
+								displayName: '字段名',
 								name: 'fieldName',
 								type: 'string',
 								required: true,
 								default: '',
-								description: 'The field to sort by',
+								description: '用于排序的字段',
 								// eslint-disable-next-line n8n-nodes-base/node-param-placeholder-miscased-id
-								placeholder: 'e.g. id',
-								hint: ' Enter the field name as text',
+								placeholder: '例如：id',
+								hint: '输入字段名作为文本',
 								requiresDataPath: 'single',
 							},
 							{
-								displayName: 'Order',
+								displayName: '顺序',
 								name: 'order',
 								type: 'options',
 								options: [
 									{
-										name: 'Ascending',
+										name: '升序',
 										value: 'ascending',
 									},
 									{
-										name: 'Descending',
+										name: '降序',
 										value: 'descending',
 									},
 								],
 								default: 'ascending',
-								description: 'The order to sort by',
+								description: '排序顺序',
 							},
 						],
 					},
 				],
 				default: {},
-				description: 'The fields of the input items to sort by',
+				description: '输入项目中用于排序的字段',
 				displayOptions: {
 					show: {
 						type: ['simple'],
@@ -105,7 +105,7 @@ export class Sort implements INodeType {
 				},
 			},
 			{
-				displayName: 'Code',
+				displayName: '代码',
 				name: 'code',
 				type: 'string',
 				typeOptions: {
@@ -113,11 +113,11 @@ export class Sort implements INodeType {
 					editor: 'jsEditor',
 					rows: 10,
 				},
-				default: `// The two items to compare are in the variables a and b
-	// Access the fields in a.json and b.json
-	// Return -1 if a should go before b
-	// Return 1 if b should go before a
-	// Return 0 if there's no difference
+				default: `// 要比较的两个项目在变量 a 和 b 中
+	// 访问 a.json 和 b.json 中的字段
+	// 如果 a 应该排在 b 前面则返回 -1
+	// 如果 b 应该排在 a 前面则返回 1
+	// 如果没有区别则返回 0
 
 	fieldName = 'myField';
 
@@ -128,7 +128,7 @@ export class Sort implements INodeType {
 	return 1;
 	}
 	return 0;`,
-				description: 'Javascript code to determine the order of any two items',
+				description: '用于确定任意两个项目顺序的 JavaScript 代码',
 				displayOptions: {
 					show: {
 						type: ['code'],
@@ -136,10 +136,10 @@ export class Sort implements INodeType {
 				},
 			},
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
 				type: 'collection',
-				placeholder: 'Add Field',
+				placeholder: '添加字段',
 				default: {},
 				displayOptions: {
 					show: {
@@ -148,12 +148,11 @@ export class Sort implements INodeType {
 				},
 				options: [
 					{
-						displayName: 'Disable Dot Notation',
+						displayName: '禁用点表示法',
 						name: 'disableDotNotation',
 						type: 'boolean',
 						default: false,
-						description:
-							'Whether to disallow referencing child fields using `parent.child` in the field name',
+						description: '是否禁止在字段名中使用 `parent.child` 引用子字段',
 					},
 				],
 			},

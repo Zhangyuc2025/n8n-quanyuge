@@ -9,53 +9,67 @@ import { NodeConnectionTypes, deepCopy } from 'n8n-workflow';
 
 export class SplitInBatchesV3 implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Loop Over Items (Split in Batches)',
+		displayName: '循环项目 (分批拆分)',
 		name: 'splitInBatches',
 		icon: 'fa:sync',
 		iconColor: 'dark-green',
 		group: ['organization'],
 		version: 3,
-		description: 'Split data into batches and iterate over each batch',
+		description: '将数据拆分成批次并迭代每个批次',
 		defaults: {
-			name: 'Loop Over Items',
+			name: '循环项目',
 			color: '#007755',
 		},
 		inputs: [NodeConnectionTypes.Main],
 
 		outputs: [NodeConnectionTypes.Main, NodeConnectionTypes.Main],
-		outputNames: ['done', 'loop'],
+		outputNames: ['完成', '循环'],
+		codex: {
+			categories: ['Core Nodes'],
+			resources: {
+				primaryDocumentation: [
+					{
+						url: 'https://docs.n8n.io/getting-started/key-concepts/looping.html#using-loops-in-n8n',
+					},
+				],
+				tutorialLinks: {
+					loopingGuide:
+						'https://docs.n8n.io/getting-started/key-concepts/looping.html#using-loops-in-n8n',
+				},
+			},
+		},
 		properties: [
 			{
 				displayName:
-					'You may not need this node — n8n nodes automatically run once for each input item. <a href="https://docs.n8n.io/getting-started/key-concepts/looping.html#using-loops-in-n8n" target="_blank">More info</a>',
+					'您可能不需要此节点 — n8n 节点会自动为每个输入项目运行一次。<a href="{{loopingGuide}}" target="_blank">了解更多</a>',
 				name: 'splitInBatchesNotice',
 				type: 'notice',
 				default: '',
 			},
 			{
-				displayName: 'Batch Size',
+				displayName: '批次大小',
 				name: 'batchSize',
 				type: 'number',
 				typeOptions: {
 					minValue: 1,
 				},
 				default: 1,
-				description: 'The number of items to return with each call',
+				description: '每次调用返回的项目数量',
 			},
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
 				type: 'collection',
-				placeholder: 'Add option',
+				placeholder: '添加选项',
 				default: {},
 				options: [
 					{
-						displayName: 'Reset',
+						displayName: '重置',
 						name: 'reset',
 						type: 'boolean',
 						default: false,
 						description:
-							'Whether the node starts again from the beginning of the input items. This will treat incoming data as a new set rather than continuing with the previous items.',
+							'是否从输入项目的开头重新开始节点。这将把传入的数据视为新集合，而不是继续处理之前的项目。',
 					},
 				],
 			},

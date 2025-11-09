@@ -8,18 +8,17 @@ import { NodeConnectionTypes, NodeOperationError } from 'n8n-workflow';
 
 export class Interval implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Interval',
+		displayName: '定时触发',
 		name: 'interval',
 		icon: 'fa:hourglass',
 		group: ['trigger', 'schedule'],
 		version: 1,
 		hidden: true,
-		description: 'Triggers the workflow in a given interval',
+		description: '按给定间隔触发工作流',
 		eventTriggerDescription: '',
-		activationMessage:
-			'Your interval trigger will now trigger executions on the schedule you have defined.',
+		activationMessage: '你的定时触发器现在将按你定义的计划触发执行',
 		defaults: {
-			name: 'Interval',
+			name: '定时触发',
 			color: '#00FF00',
 		},
 
@@ -28,41 +27,41 @@ export class Interval implements INodeType {
 		properties: [
 			{
 				displayName:
-					'This workflow will run on the schedule you define here once you <a data-key="activate">activate</a> it.<br><br>For testing, you can also trigger it manually: by going back to the canvas and clicking \'execute workflow\'',
+					'一旦<a data-key="activate">激活</a>，此工作流将按你在此定义的计划运行。<br><br>用于测试时，你也可以手动触发：返回画布并点击"执行工作流"',
 				name: 'notice',
 				type: 'notice',
 				default: '',
 			},
 			{
-				displayName: 'Interval',
+				displayName: '间隔',
 				name: 'interval',
 				type: 'number',
 				typeOptions: {
 					minValue: 1,
 				},
 				default: 1,
-				description: 'Interval value',
+				description: '间隔值',
 			},
 			{
-				displayName: 'Unit',
+				displayName: '单位',
 				name: 'unit',
 				type: 'options',
 				options: [
 					{
-						name: 'Seconds',
+						name: '秒',
 						value: 'seconds',
 					},
 					{
-						name: 'Minutes',
+						name: '分钟',
 						value: 'minutes',
 					},
 					{
-						name: 'Hours',
+						name: '小时',
 						value: 'hours',
 					},
 				],
 				default: 'seconds',
-				description: 'Unit of the interval value',
+				description: '间隔值的单位',
 			},
 		],
 	};
@@ -72,10 +71,7 @@ export class Interval implements INodeType {
 		const unit = this.getNodeParameter('unit') as string;
 
 		if (interval <= 0) {
-			throw new NodeOperationError(
-				this.getNode(),
-				'The interval has to be set to at least 1 or higher!',
-			);
+			throw new NodeOperationError(this.getNode(), '间隔必须设置为至少 1 或更高！');
 		}
 
 		let intervalValue = interval;
@@ -94,7 +90,7 @@ export class Interval implements INodeType {
 
 		// Reference: https://nodejs.org/api/timers.html#timers_setinterval_callback_delay_args
 		if (intervalValue > 2147483647) {
-			throw new NodeOperationError(this.getNode(), 'The interval value is too large.');
+			throw new NodeOperationError(this.getNode(), '间隔值太大');
 		}
 
 		const intervalObj = setInterval(executeTrigger, intervalValue);

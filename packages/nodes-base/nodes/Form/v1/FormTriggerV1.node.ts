@@ -18,14 +18,14 @@ import {
 import { formWebhook } from '../utils/utils';
 
 const descriptionV1: INodeTypeDescription = {
-	displayName: 'n8n Form Trigger',
+	displayName: 'n8n 表单触发器',
 	name: 'formTrigger',
 	icon: 'file:form.svg',
 	group: ['trigger'],
 	version: 1,
-	description: 'Generate webforms in n8n and pass their responses to the workflow',
+	description: '在 n8n 中生成 Web 表单并将其响应传递给工作流',
 	defaults: {
-		name: 'n8n Form Trigger',
+		name: 'n8n 表单触发器',
 	},
 
 	inputs: [],
@@ -59,10 +59,10 @@ const descriptionV1: INodeTypeDescription = {
 		formFields,
 		formRespondMode,
 		{
-			displayName: 'Options',
+			displayName: '选项',
 			name: 'options',
 			type: 'collection',
-			placeholder: 'Add option',
+			placeholder: '添加选项',
 			default: {},
 			displayOptions: {
 				hide: {
@@ -71,11 +71,11 @@ const descriptionV1: INodeTypeDescription = {
 			},
 			options: [
 				{
-					displayName: 'Form Submitted Text',
+					displayName: '表单提交文本',
 					name: 'formSubmittedText',
-					description: 'The text displayed to users after they filled the form',
+					description: '用户填写表单后显示的文本',
 					type: 'string',
-					default: 'Your response has been recorded',
+					default: '您的回复已记录',
 				},
 			],
 		},

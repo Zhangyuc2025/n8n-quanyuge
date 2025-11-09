@@ -5,7 +5,7 @@ import { buildBinAPIURL, transformBinResponse } from './GenericFunctions';
 // Operations for the `Bin` resource:
 export const binOperations: INodeProperties[] = [
 	{
-		displayName: 'Operation',
+		displayName: '操作',
 		name: 'operation',
 		type: 'options',
 		noDataExpression: true,
@@ -16,9 +16,9 @@ export const binOperations: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Create',
+				name: '创建',
 				value: 'create',
-				description: 'Create bin',
+				description: '创建 bin',
 				routing: {
 					request: {
 						method: 'POST',
@@ -28,12 +28,12 @@ export const binOperations: INodeProperties[] = [
 						postReceive: [transformBinResponse],
 					},
 				},
-				action: 'Create a bin',
+				action: '创建 bin',
 			},
 			{
-				name: 'Get',
+				name: '获取',
 				value: 'get',
-				description: 'Get a bin',
+				description: '获取 bin',
 				routing: {
 					request: {
 						method: 'GET',
@@ -48,12 +48,12 @@ export const binOperations: INodeProperties[] = [
 						],
 					},
 				},
-				action: 'Get a bin',
+				action: '获取 bin',
 			},
 			{
-				name: 'Delete',
+				name: '删除',
 				value: 'delete',
-				description: 'Delete a bin',
+				description: '删除 bin',
 				routing: {
 					request: {
 						method: 'DELETE',
@@ -65,7 +65,7 @@ export const binOperations: INodeProperties[] = [
 						],
 					},
 				},
-				action: 'Delete a bin',
+				action: '删除 bin',
 			},
 		],
 		default: 'create',
@@ -86,6 +86,6 @@ export const binFields: INodeProperties[] = [
 				operation: ['get', 'delete'],
 			},
 		},
-		description: 'Unique identifier for each bin',
+		description: '每个 bin 的唯一标识符',
 	},
 ];

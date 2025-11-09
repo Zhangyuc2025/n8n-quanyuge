@@ -31,9 +31,9 @@ export class IfV2 implements INodeType {
 			parameterPane: 'wide',
 			properties: [
 				{
-					displayName: 'Conditions',
+					displayName: '条件',
 					name: 'conditions',
-					placeholder: 'Add Condition',
+					placeholder: '添加条件',
 					type: 'filter',
 					default: {},
 					typeOptions: {
@@ -54,15 +54,15 @@ export class IfV2 implements INodeType {
 					},
 				},
 				{
-					displayName: 'Options',
+					displayName: '选项',
 					name: 'options',
 					type: 'collection',
-					placeholder: 'Add option',
+					placeholder: '添加选项',
 					default: {},
 					options: [
 						{
-							displayName: 'Ignore Case',
-							description: 'Whether to ignore letter case when evaluating conditions',
+							displayName: '忽略大小写',
+							description: '在评估条件时是否忽略字母大小写',
 							name: 'ignoreCase',
 							type: 'boolean',
 							default: true,

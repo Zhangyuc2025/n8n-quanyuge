@@ -10,7 +10,7 @@ const commonDescription: INodeProperties = {
 	},
 	default: '',
 	description:
-		'JavaScript code to execute.<br><br>Tip: You can use luxon vars like <code>$today</code> for dates and <code>$jmespath</code> for querying JSON structures. <a href="https://docs.n8n.io/nodes/n8n-nodes-base.function">Learn more</a>.',
+		'要执行的 JavaScript 代码。<br><br>提示：您可以使用 luxon 变量（如 <code>$today</code>）处理日期，使用 <code>$jmespath</code> 查询 JSON 结构。<a href="{{javaScriptReference}}">了解更多</a>。',
 	noDataExpression: true,
 };
 
@@ -63,7 +63,7 @@ export const javascriptCodeDescription: INodeProperties[] = [
 	...v2Properties,
 	{
 		displayName:
-			'Type <code>$</code> for a list of <a target="_blank" href="https://docs.n8n.io/code-examples/methods-variables-reference/">special vars/methods</a>. Debug by using <code>console.log()</code> statements and viewing their output in the browser console.',
+			'输入 <code>$</code> 可查看<a target="_blank" href="{{javaScriptMethods}}">特殊变量/方法</a>列表。使用 <code>console.log()</code> 语句调试，并在浏览器控制台中查看输出。',
 		name: 'notice',
 		type: 'notice',
 		displayOptions: {

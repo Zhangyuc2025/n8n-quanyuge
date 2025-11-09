@@ -52,7 +52,7 @@ export const conversationalAgentProperties: INodeProperties[] = [
 			},
 		},
 		default: {},
-		placeholder: 'Add Option',
+		placeholder: '添加选项',
 		options: [
 			{
 				displayName: 'Human Message',

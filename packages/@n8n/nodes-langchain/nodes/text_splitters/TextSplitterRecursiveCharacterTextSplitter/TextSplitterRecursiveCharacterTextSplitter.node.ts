@@ -33,15 +33,15 @@ const supportedLanguages: SupportedTextSplitterLanguage[] = [
 ];
 export class TextSplitterRecursiveCharacterTextSplitter implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Recursive Character Text Splitter',
+		displayName: '递归字符文本分割器',
 		name: 'textSplitterRecursiveCharacterTextSplitter',
 		icon: 'fa:grip-lines-vertical',
 		iconColor: 'black',
 		group: ['transform'],
 		version: 1,
-		description: 'Split text into chunks by characters recursively, recommended for most use cases',
+		description: '递归地按字符将文本分割成块，推荐用于大多数使用场景',
 		defaults: {
-			name: 'Recursive Character Text Splitter',
+			name: '递归字符文本分割器',
 		},
 		codex: {
 			categories: ['AI'],
@@ -60,31 +60,31 @@ export class TextSplitterRecursiveCharacterTextSplitter implements INodeType {
 		inputs: [],
 
 		outputs: [NodeConnectionTypes.AiTextSplitter],
-		outputNames: ['Text Splitter'],
+		outputNames: ['文本分割器'],
 		properties: [
 			getConnectionHintNoticeField([NodeConnectionTypes.AiDocument]),
 			{
-				displayName: 'Chunk Size',
+				displayName: '分块大小',
 				name: 'chunkSize',
 				type: 'number',
 				default: 1000,
 			},
 			{
-				displayName: 'Chunk Overlap',
+				displayName: '分块重叠',
 				name: 'chunkOverlap',
 				type: 'number',
 				default: 0,
 			},
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
-				placeholder: 'Add Option',
-				description: 'Additional options to add',
+				placeholder: '添加选项',
+				description: '要添加的额外选项',
 				type: 'collection',
 				default: {},
 				options: [
 					{
-						displayName: 'Split Code',
+						displayName: '分割代码',
 						name: 'splitCode',
 						default: 'markdown',
 						type: 'options',

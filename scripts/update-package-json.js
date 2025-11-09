@@ -77,16 +77,22 @@ pkg.n8n.credentials = actualCreds;
 fs.writeFileSync(PACKAGE_JSON, JSON.stringify(pkg, null, 2) + '\n');
 
 console.log('📊 更新统计:');
-console.log(`   节点: ${oldNodesCount} → ${actualNodes.length} (移除 ${oldNodesCount - actualNodes.length})`);
-console.log(`   凭证: ${oldCredsCount} → ${actualCreds.length} (移除 ${oldCredsCount - actualCreds.length})`);
+console.log(
+	`   节点: ${oldNodesCount} → ${actualNodes.length} (移除 ${oldNodesCount - actualNodes.length})`,
+);
+console.log(
+	`   凭证: ${oldCredsCount} → ${actualCreds.length} (移除 ${oldCredsCount - actualCreds.length})`,
+);
 console.log('\n✅ package.json 更新完成！\n');
 
 // 显示部分被移除的节点
 const oldNodes = new Set(pkg.n8n.nodes);
-const removedNodes = Array.from(oldNodes).filter(n => !actualNodes.includes(n)).slice(0, 10);
+const removedNodes = Array.from(oldNodes)
+	.filter((n) => !actualNodes.includes(n))
+	.slice(0, 10);
 if (removedNodes.length > 0) {
 	console.log('📝 部分移除的节点示例:');
-	removedNodes.forEach(n => console.log(`   - ${n}`));
+	removedNodes.forEach((n) => console.log(`   - ${n}`));
 	if (oldNodesCount - actualNodes.length > 10) {
 		console.log(`   ... 还有 ${oldNodesCount - actualNodes.length - 10} 个\n`);
 	}

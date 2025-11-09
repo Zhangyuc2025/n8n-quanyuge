@@ -12,23 +12,23 @@ import {
 
 export class DataTable implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Data table',
+		displayName: '数据表',
 		name: 'dataTable',
 		icon: 'fa:table',
 		iconColor: 'orange-red',
 		group: ['input', 'transform'],
 		version: 1,
 		subtitle: '={{$parameter["action"]}}',
-		description: 'Permanently save data across workflow executions in a table',
+		description: '在工作流执行中跨越表格永久保存数据',
 		defaults: {
-			name: 'Data table',
+			name: '数据表',
 		},
 		usableAsTool: true,
 		inputs: [NodeConnectionTypes.Main],
 		outputs: [NodeConnectionTypes.Main],
 		hints: [
 			{
-				message: 'The selected data table has no columns.',
+				message: '选定的数据表没有列。',
 				displayCondition:
 					'={{ $parameter.dataTableId !== "" && $parameter?.columns?.mappingMode === "defineBelow" && !$parameter?.columns?.schema?.length }}',
 				whenToDisplay: 'beforeExecution',
@@ -38,13 +38,13 @@ export class DataTable implements INodeType {
 		],
 		properties: [
 			{
-				displayName: 'Resource',
+				displayName: '资源',
 				name: 'resource',
 				type: 'options',
 				noDataExpression: true,
 				options: [
 					{
-						name: 'Row',
+						name: '行',
 						value: 'row',
 					},
 				],

@@ -47,45 +47,45 @@ encodeDecodeOptions.sort((a, b) => {
 export class MoveBinaryData implements INodeType {
 	description: INodeTypeDescription = {
 		hidden: true,
-		displayName: 'Convert to/from binary data',
+		displayName: '二进制数据转换',
 		name: 'moveBinaryData',
 		icon: 'fa:exchange-alt',
 		group: ['transform'],
 		version: [1, 1.1],
-		subtitle: '={{$parameter["mode"]==="binaryToJson" ? "Binary to JSON" : "JSON to Binary"}}',
-		description: 'Move data between binary and JSON properties',
+		subtitle: '={{$parameter["mode"]==="binaryToJson" ? "二进制转 JSON" : "JSON 转二进制"}}',
+		description: '在二进制和 JSON 属性之间移动数据',
 		defaults: {
-			name: 'Convert to/from binary data',
+			name: '二进制数据转换',
 			color: '#7722CC',
 		},
 		inputs: [NodeConnectionTypes.Main],
 		outputs: [NodeConnectionTypes.Main],
 		properties: [
 			{
-				displayName: 'Mode',
+				displayName: '模式',
 				name: 'mode',
 				type: 'options',
 				options: [
 					{
-						name: 'Binary to JSON',
+						name: '二进制转 JSON',
 						value: 'binaryToJson',
-						description: 'Move data from Binary to JSON',
+						description: '将数据从二进制移动到 JSON',
 					},
 					{
-						name: 'JSON to Binary',
+						name: 'JSON 转二进制',
 						value: 'jsonToBinary',
-						description: 'Move data from JSON to Binary',
+						description: '将数据从 JSON 移动到二进制',
 					},
 				],
 				default: 'binaryToJson',
-				description: 'From and to where data should be moved',
+				description: '数据应该从哪里移动到哪里',
 			},
 
 			// ----------------------------------
 			//         binaryToJson
 			// ----------------------------------
 			{
-				displayName: 'Set All Data',
+				displayName: '设置所有数据',
 				name: 'setAllData',
 				type: 'boolean',
 				displayOptions: {
@@ -94,11 +94,10 @@ export class MoveBinaryData implements INodeType {
 					},
 				},
 				default: true,
-				description:
-					'Whether all JSON data should be replaced with the data retrieved from binary key. Else the data will be written to a single key.',
+				description: '是否用从二进制键检索的数据替换所有 JSON 数据。否则数据将写入单个键。',
 			},
 			{
-				displayName: 'Source Key',
+				displayName: '源键',
 				name: 'sourceKey',
 				type: 'string',
 				displayOptions: {
@@ -110,10 +109,10 @@ export class MoveBinaryData implements INodeType {
 				required: true,
 				placeholder: 'data',
 				description:
-					'The name of the binary key to get data from. It is also possible to define deep keys by using dot-notation like for example: "level1.level2.currentKey".',
+					'要从中获取数据的二进制键名称。也可以使用点表示法定义深层键，例如："level1.level2.currentKey"。',
 			},
 			{
-				displayName: 'Destination Key',
+				displayName: '目标键',
 				name: 'destinationKey',
 				type: 'string',
 				displayOptions: {
@@ -126,14 +125,14 @@ export class MoveBinaryData implements INodeType {
 				required: true,
 				placeholder: '',
 				description:
-					'The name the JSON key to copy data to. It is also possible to define deep keys by using dot-notation like for example: "level1.level2.newKey".',
+					'要复制数据到的 JSON 键名称。也可以使用点表示法定义深层键，例如："level1.level2.newKey"。',
 			},
 
 			// ----------------------------------
 			//         jsonToBinary
 			// ----------------------------------
 			{
-				displayName: 'Convert All Data',
+				displayName: '转换所有数据',
 				name: 'convertAllData',
 				type: 'boolean',
 				displayOptions: {
@@ -142,11 +141,10 @@ export class MoveBinaryData implements INodeType {
 					},
 				},
 				default: true,
-				description:
-					'Whether all JSON data should be converted to binary. Else only the data of one key will be converted.',
+				description: '是否将所有 JSON 数据转换为二进制。否则仅转换一个键的数据。',
 			},
 			{
-				displayName: 'Source Key',
+				displayName: '源键',
 				name: 'sourceKey',
 				type: 'string',
 				displayOptions: {
@@ -159,10 +157,10 @@ export class MoveBinaryData implements INodeType {
 				required: true,
 				placeholder: 'data',
 				description:
-					'The name of the JSON key to get data from. It is also possible to define deep keys by using dot-notation like for example: "level1.level2.currentKey".',
+					'要从中获取数据的 JSON 键名称。也可以使用点表示法定义深层键，例如："level1.level2.currentKey"。',
 			},
 			{
-				displayName: 'Destination Key',
+				displayName: '目标键',
 				name: 'destinationKey',
 				type: 'string',
 				displayOptions: {
@@ -174,21 +172,20 @@ export class MoveBinaryData implements INodeType {
 				required: true,
 				placeholder: 'data',
 				description:
-					'The name the binary key to copy data to. It is also possible to define deep keys by using dot-notation like for example: "level1.level2.newKey".',
+					'要复制数据到的二进制键名称。也可以使用点表示法定义深层键，例如："level1.level2.newKey"。',
 			},
 
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
 				type: 'collection',
-				placeholder: 'Add option',
+				placeholder: '添加选项',
 				default: {},
 				options: [
 					{
-						displayName: 'Add Byte Order Mark (BOM)',
+						displayName: '添加字节顺序标记（BOM）',
 						name: 'addBOM',
-						description:
-							'Whether to add special marker at the start of your text file. This marker helps some programs understand how to read the file correctly.',
+						description: '是否在文本文件开头添加特殊标记。此标记帮助某些程序正确理解如何读取文件。',
 						displayOptions: {
 							show: {
 								'/mode': ['jsonToBinary'],
@@ -199,7 +196,7 @@ export class MoveBinaryData implements INodeType {
 						default: false,
 					},
 					{
-						displayName: 'Data Is Base64',
+						displayName: '数据为 Base64',
 						name: 'dataIsBase64',
 						type: 'boolean',
 						displayOptions: {
@@ -212,10 +209,10 @@ export class MoveBinaryData implements INodeType {
 							},
 						},
 						default: false,
-						description: 'Whether to keep the binary data as base64 string',
+						description: '是否将二进制数据保持为 base64 字符串',
 					},
 					{
-						displayName: 'Encoding',
+						displayName: '编码',
 						name: 'encoding',
 						type: 'options',
 						options: encodeDecodeOptions,
@@ -225,10 +222,10 @@ export class MoveBinaryData implements INodeType {
 							},
 						},
 						default: 'utf8',
-						description: 'Choose the character set to use to encode the data',
+						description: '选择用于编码数据的字符集',
 					},
 					{
-						displayName: 'Strip BOM',
+						displayName: '移除 BOM',
 						name: 'stripBOM',
 						displayOptions: {
 							show: {
@@ -240,7 +237,7 @@ export class MoveBinaryData implements INodeType {
 						default: true,
 					},
 					{
-						displayName: 'File Name',
+						displayName: '文件名',
 						name: 'fileName',
 						type: 'string',
 						displayOptions: {
@@ -250,10 +247,10 @@ export class MoveBinaryData implements INodeType {
 						},
 						default: '',
 						placeholder: 'example.json',
-						description: 'The file name to set',
+						description: '要设置的文件名',
 					},
 					{
-						displayName: 'JSON Parse',
+						displayName: 'JSON 解析',
 						name: 'jsonParse',
 						type: 'boolean',
 						displayOptions: {
@@ -266,17 +263,17 @@ export class MoveBinaryData implements INodeType {
 							},
 						},
 						default: false,
-						description: 'Whether to run JSON parse on the data to get proper object data',
+						description: '是否对数据运行 JSON 解析以获取正确的对象数据',
 					},
 					{
-						displayName: 'Keep Source',
+						displayName: '保留源',
 						name: 'keepSource',
 						type: 'boolean',
 						default: false,
-						description: 'Whether the source key should be kept. By default it will be deleted.',
+						description: '是否保留源键。默认情况下将被删除。',
 					},
 					{
-						displayName: 'Keep As Base64',
+						displayName: '保持为 Base64',
 						name: 'keepAsBase64',
 						type: 'boolean',
 						displayOptions: {
@@ -289,10 +286,10 @@ export class MoveBinaryData implements INodeType {
 							},
 						},
 						default: false,
-						description: 'Whether to keep the binary data as base64 string',
+						description: '是否将二进制数据保持为 base64 字符串',
 					},
 					{
-						displayName: 'MIME Type',
+						displayName: 'MIME 类型',
 						name: 'mimeType',
 						type: 'string',
 						displayOptions: {
@@ -302,10 +299,10 @@ export class MoveBinaryData implements INodeType {
 						},
 						default: 'application/json',
 						placeholder: 'application/json',
-						description: 'The mime-type to set. By default will the mime-type for JSON be set.',
+						description: '要设置的 MIME 类型。默认情况下将设置 JSON 的 MIME 类型。',
 					},
 					{
-						displayName: 'Use Raw Data',
+						displayName: '使用原始数据',
 						name: 'useRawData',
 						type: 'boolean',
 						displayOptions: {
@@ -317,7 +314,7 @@ export class MoveBinaryData implements INodeType {
 							},
 						},
 						default: false,
-						description: 'Whether to use data as is and do not JSON.stringify it',
+						description: '是否按原样使用数据而不进行 JSON.stringify',
 					},
 				],
 			},

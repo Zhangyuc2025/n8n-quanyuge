@@ -7,11 +7,11 @@ import { SetV2 } from './v2/SetV2.node';
 export class Set extends VersionedNodeType {
 	constructor() {
 		const baseDescription: INodeTypeBaseDescription = {
-			displayName: 'Set',
+			displayName: '设置',
 			name: 'set',
 			icon: 'fa:pen',
 			group: ['input'],
-			description: 'Add or edit fields on an input item and optionally remove other fields',
+			description: '添加或编辑输入项的字段，并可选择删除其他字段',
 			defaultVersion: 3.4,
 		};
 

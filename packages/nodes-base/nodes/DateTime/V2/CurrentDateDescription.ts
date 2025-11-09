@@ -5,7 +5,7 @@ import { includeInputFields } from './common.descriptions';
 export const CurrentDateDescription: INodeProperties[] = [
 	{
 		displayName:
-			'You can also refer to the current date in n8n expressions by using <code>{{$now}}</code> or <code>{{$today}}</code>. <a target="_blank" href="https://docs.n8n.io/code/cookbook/luxon/">More info</a>',
+			'您也可以在 n8n 表达式中使用 <code>{{$now}}</code> 或 <code>{{$today}}</code> 来引用当前日期。<a target="_blank" href="https://docs.n8n.io/code/cookbook/luxon/">了解更多</a>',
 		name: 'notice',
 		type: 'notice',
 		default: '',
@@ -16,12 +16,12 @@ export const CurrentDateDescription: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Include Current Time',
+		displayName: '包含当前时间',
 		name: 'includeTime',
 		type: 'boolean',
 		default: true,
 		// eslint-disable-next-line n8n-nodes-base/node-param-description-boolean-without-whether
-		description: 'When deactivated, the time will be set to midnight',
+		description: '禁用时，时间将设置为午夜',
 		displayOptions: {
 			show: {
 				operation: ['getCurrentDate'],
@@ -29,11 +29,11 @@ export const CurrentDateDescription: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Output Field Name',
+		displayName: '输出字段名称',
 		name: 'outputFieldName',
 		type: 'string',
 		default: 'currentDate',
-		description: 'Name of the field to put the output in',
+		description: '放置输出的字段名称',
 		displayOptions: {
 			show: {
 				operation: ['getCurrentDate'],
@@ -41,10 +41,10 @@ export const CurrentDateDescription: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Options',
+		displayName: '选项',
 		name: 'options',
 		type: 'collection',
-		placeholder: 'Add option',
+		placeholder: '添加选项',
 		displayOptions: {
 			show: {
 				operation: ['getCurrentDate'],
@@ -54,13 +54,13 @@ export const CurrentDateDescription: INodeProperties[] = [
 		options: [
 			includeInputFields,
 			{
-				displayName: 'Timezone',
+				displayName: '时区',
 				name: 'timezone',
 				type: 'string',
 				placeholder: 'America/New_York',
 				default: '',
 				description:
-					'The timezone to use. If not set, the timezone of the n8n instance will be used. Use ‘GMT’ for +00:00 timezone.',
+					'要使用的时区。如果未设置，将使用 n8n 实例的时区。使用 "GMT" 表示 +00:00 时区。',
 			},
 		],
 	},

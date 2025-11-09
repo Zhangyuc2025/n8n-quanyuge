@@ -14,15 +14,15 @@ import { MemoryVectorStoreManager } from '../shared/MemoryManager/MemoryVectorSt
 // This node is deprecated. Use VectorStoreInMemory instead.
 export class VectorStoreInMemoryLoad implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'In Memory Vector Store Load',
+		displayName: '内存向量存储加载',
 		name: 'vectorStoreInMemoryLoad',
 		icon: 'fa:database',
 		group: ['transform'],
 		version: 1,
 		hidden: true,
-		description: 'Load embedded data from an in-memory vector store',
+		description: '从内存向量存储加载嵌入数据',
 		defaults: {
-			name: 'In Memory Vector Store Load',
+			name: '内存向量存储加载',
 		},
 		codex: {
 			categories: ['AI'],
@@ -40,22 +40,21 @@ export class VectorStoreInMemoryLoad implements INodeType {
 
 		inputs: [
 			{
-				displayName: 'Embedding',
+				displayName: '嵌入',
 				maxConnections: 1,
 				type: NodeConnectionTypes.AiEmbedding,
 				required: true,
 			},
 		],
 		outputs: [NodeConnectionTypes.AiVectorStore],
-		outputNames: ['Vector Store'],
+		outputNames: ['向量存储'],
 		properties: [
 			{
-				displayName: 'Memory Key',
+				displayName: '内存键',
 				name: 'memoryKey',
 				type: 'string',
 				default: 'vector_store_key',
-				description:
-					'The key to use to store the vector memory in the workflow data. The key will be prefixed with the workflow ID to avoid collisions.',
+				description: '用于在工作流数据中存储向量内存的键。该键将以工作流 ID 为前缀，以避免冲突。',
 			},
 		],
 	};

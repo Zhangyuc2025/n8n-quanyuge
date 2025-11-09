@@ -28,7 +28,7 @@ export class AgentV3 implements INodeType {
 			...baseDescription,
 			version: [3],
 			defaults: {
-				name: 'AI Agent',
+				name: 'AI 智能体',
 				color: '#404040',
 			},
 			inputs: `={{
@@ -40,11 +40,17 @@ export class AgentV3 implements INodeType {
 			outputs: [NodeConnectionTypes.Main],
 			properties: [
 				{
+					// 注意：链接URL将从数据库 documentationConfig 中读取（可后台管理修改）
 					displayName:
-						'Tip: Get a feel for agents with our quick <a href="https://docs.n8n.io/advanced-ai/intro-tutorial/" target="_blank">tutorial</a> or see an <a href="/workflows/templates/1954" target="_blank">example</a> of how this node works',
+						'提示：通过我们的快速<a href="{{tutorialUrl}}" target="_blank">教程</a>了解智能体，或查看此节点的<a href="{{exampleUrl}}" target="_blank">示例</a>',
 					name: 'aiAgentStarterCallout',
 					type: 'callout',
 					default: '',
+					// 默认链接（如果数据库中没有配置，则使用这些）
+					placeholder: {
+						tutorialUrl: 'https://docs.n8n.io/advanced-ai/intro-tutorial/',
+						exampleUrl: '/workflows/templates/1954',
+					},
 				},
 				promptTypeOptions,
 				{
@@ -72,14 +78,14 @@ export class AgentV3 implements INodeType {
 					},
 				},
 				{
-					displayName: 'Require Specific Output Format',
+					displayName: '要求特定输出格式',
 					name: 'hasOutputParser',
 					type: 'boolean',
 					default: false,
 					noDataExpression: true,
 				},
 				{
-					displayName: `Connect an <a data-action='openSelectiveNodeCreator' data-action-parameter-connectiontype='${NodeConnectionTypes.AiOutputParser}'>output parser</a> on the canvas to specify the output format you require`,
+					displayName: `在画布上连接一个<a data-action='openSelectiveNodeCreator' data-action-parameter-connectiontype='${NodeConnectionTypes.AiOutputParser}'>输出解析器</a>以指定所需的输出格式`,
 					name: 'notice',
 					type: 'notice',
 					default: '',
@@ -90,15 +96,14 @@ export class AgentV3 implements INodeType {
 					},
 				},
 				{
-					displayName: 'Enable Fallback Model',
+					displayName: '启用备用模型',
 					name: 'needsFallback',
 					type: 'boolean',
 					default: false,
 					noDataExpression: true,
 				},
 				{
-					displayName:
-						'Connect an additional language model on the canvas to use it as a fallback if the main model fails',
+					displayName: '在画布上连接一个额外的语言模型，当主模型失败时作为备用',
 					name: 'fallbackNotice',
 					type: 'notice',
 					default: '',
@@ -112,8 +117,7 @@ export class AgentV3 implements INodeType {
 			],
 			hints: [
 				{
-					message:
-						'You are using streaming responses. Make sure to set the response mode to "Streaming Response" on the connected trigger node.',
+					message: '您正在使用流式响应。请确保在连接的触发器节点上将响应模式设置为"流式响应"。',
 					type: 'warning',
 					location: 'outputPane',
 					whenToDisplay: 'afterExecution',

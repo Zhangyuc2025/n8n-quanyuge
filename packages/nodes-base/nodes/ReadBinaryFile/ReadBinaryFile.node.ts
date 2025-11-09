@@ -8,36 +8,36 @@ import {
 
 export class ReadBinaryFile implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Read Binary File',
+		displayName: '读取二进制文件',
 		name: 'readBinaryFile',
 		icon: 'fa:file-import',
 		group: ['input'],
 		version: 1,
 		hidden: true,
-		description: 'Reads a binary file from disk',
+		description: '从磁盘读取二进制文件',
 		defaults: {
-			name: 'Read Binary File',
+			name: '读取二进制文件',
 			color: '#449922',
 		},
 		inputs: [NodeConnectionTypes.Main],
 		outputs: [NodeConnectionTypes.Main],
 		properties: [
 			{
-				displayName: 'File Path',
+				displayName: '文件路径',
 				name: 'filePath',
 				type: 'string',
 				default: '',
 				required: true,
 				placeholder: '/data/example.jpg',
-				description: 'Path of the file to read',
+				description: '要读取的文件路径',
 			},
 			{
-				displayName: 'Property Name',
+				displayName: '属性名称',
 				name: 'dataPropertyName',
 				type: 'string',
 				default: 'data',
 				required: true,
-				description: 'Name of the binary property to which to write the data of the read file',
+				description: '要写入读取文件数据的二进制属性名称',
 			},
 		],
 	};

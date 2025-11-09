@@ -16,7 +16,7 @@ export class Brevo implements INodeType {
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
-		description: 'Consume Brevo API',
+		description: '调用 Brevo API',
 		defaults: {
 			name: 'Brevo',
 		},
@@ -34,25 +34,25 @@ export class Brevo implements INodeType {
 		},
 		properties: [
 			{
-				displayName: 'Resource',
+				displayName: '资源',
 				name: 'resource',
 				type: 'options',
 				noDataExpression: true,
 				options: [
 					{
-						name: 'Contact',
+						name: '联系人',
 						value: 'contact',
 					},
 					{
-						name: 'Contact Attribute',
+						name: '联系人属性',
 						value: 'attribute',
 					},
 					{
-						name: 'Email',
+						name: '电子邮件',
 						value: 'email',
 					},
 					{
-						name: 'Sender',
+						name: '发件人',
 						value: 'sender',
 					},
 				],

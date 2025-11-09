@@ -5,7 +5,6 @@ import { useWorkflowsStore } from '@/app/stores/workflows.store';
 import { computed, onMounted, onBeforeUnmount } from 'vue';
 import NodeIcon from '@/app/components/NodeIcon.vue';
 import { NodeConnectionTypes, type INodeTypeDescription } from 'n8n-workflow';
-import { NDV_UI_OVERHAUL_EXPERIMENT } from '@/app/constants';
 
 import { N8nTooltip } from '@n8n/design-system';
 interface Props {

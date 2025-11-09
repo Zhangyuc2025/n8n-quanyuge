@@ -2,20 +2,20 @@ import type { INodeProperties } from 'n8n-workflow';
 
 export const certificateDescription: INodeProperties[] = [
 	{
-		displayName: 'Operation',
+		displayName: '操作',
 		name: 'operation',
 		type: 'options',
 		noDataExpression: true,
 		options: [
 			{
-				name: 'Create',
+				name: '创建',
 				value: 'create',
-				action: 'Create a certificate',
+				action: '创建证书',
 			},
 			{
-				name: 'Install',
+				name: '安装',
 				value: 'install',
-				action: 'Install a certificate',
+				action: '安装证书',
 			},
 		],
 		default: 'create',
@@ -29,7 +29,7 @@ export const certificateDescription: INodeProperties[] = [
 	/*                                certificate:create                          */
 	/* -------------------------------------------------------------------------- */
 	{
-		displayName: 'Certificate File Name',
+		displayName: '证书文件名',
 		name: 'certificateFileName',
 		type: 'string',
 		required: true,
@@ -40,11 +40,10 @@ export const certificateDescription: INodeProperties[] = [
 			},
 		},
 		default: '',
-		description:
-			'Name for and, optionally, path to the generated certificate file. /nsconfig/ssl/ is the default path.',
+		description: '生成的证书文件的名称和可选路径。默认路径为 /nsconfig/ssl/。',
 	},
 	{
-		displayName: 'Certificate Format',
+		displayName: '证书格式',
 		name: 'certificateFormat',
 		type: 'options',
 		options: [
@@ -65,33 +64,33 @@ export const certificateDescription: INodeProperties[] = [
 			},
 		},
 		default: 'PEM',
-		description: 'Format in which the certificate is stored on the appliance',
+		description: '证书在设备上存储的格式',
 	},
 	{
-		displayName: 'Certificate Type',
+		displayName: '证书类型',
 		name: 'certificateType',
 		type: 'options',
 		options: [
 			{
-				name: 'Root-CA',
+				name: '根证书颁发机构',
 				value: 'ROOT_CERT',
 				description:
-					'You must specify the key file name. The generated Root-CA certificate can be used for signing end-user client or server certificates or to create Intermediate-CA certificates.',
+					'您必须指定密钥文件名。生成的根 CA 证书可用于签署最终用户客户端或服务器证书，或创建中间 CA 证书。',
 			},
 			{
-				name: 'Intermediate-CA',
+				name: '中间证书颁发机构',
 				value: 'INTM_CERT',
-				description: 'Intermediate-CA certificate',
+				description: '中间 CA 证书',
 			},
 			{
-				name: 'Server',
+				name: '服务器证书',
 				value: 'SRVR_CERT',
-				description: 'SSL server certificate used on SSL servers for end-to-end encryption',
+				description: '在 SSL 服务器上用于端到端加密的 SSL 服务器证书',
 			},
 			{
-				name: 'Client',
+				name: '客户端证书',
 				value: 'CLNT_CERT',
-				description: 'End-user client certificate used for client authentication',
+				description: '用于客户端身份验证的最终用户客户端证书',
 			},
 		],
 		required: true,
@@ -104,7 +103,7 @@ export const certificateDescription: INodeProperties[] = [
 		default: 'ROOT_CERT',
 	},
 	{
-		displayName: 'Certificate Request File Name',
+		displayName: '证书请求文件名',
 		name: 'certificateRequestFileName',
 		type: 'string',
 		default: '',
@@ -115,11 +114,10 @@ export const certificateDescription: INodeProperties[] = [
 				resource: ['certificate'],
 			},
 		},
-		description:
-			'Name for and, optionally, path to the certificate-signing request (CSR). /nsconfig/ssl/ is the default path.',
+		description: '证书签名请求 (CSR) 的名称和可选路径。默认路径为 /nsconfig/ssl/。',
 	},
 	{
-		displayName: 'CA Certificate File Name',
+		displayName: 'CA 证书文件名',
 		name: 'caCertificateFileName',
 		type: 'string',
 		required: true,
@@ -131,11 +129,10 @@ export const certificateDescription: INodeProperties[] = [
 			},
 		},
 		default: '',
-		description:
-			'Name of the CA certificate file that issues and signs the Intermediate-CA certificate or the end-user client and server certificates',
+		description: '签发和签署中间 CA 证书或最终用户客户端和服务器证书的 CA 证书文件名称',
 	},
 	{
-		displayName: 'CA Certificate File Format',
+		displayName: 'CA 证书文件格式',
 		name: 'caCertificateFileFormat',
 		type: 'options',
 		options: [
@@ -157,10 +154,10 @@ export const certificateDescription: INodeProperties[] = [
 			},
 		},
 		default: 'PEM',
-		description: 'Format of the CA certificate',
+		description: 'CA 证书的格式',
 	},
 	{
-		displayName: 'CA Private Key File Name',
+		displayName: 'CA 私钥文件名',
 		name: 'caPrivateKeyFileName',
 		type: 'string',
 		required: true,
@@ -173,10 +170,10 @@ export const certificateDescription: INodeProperties[] = [
 		},
 		default: '',
 		description:
-			'Private key, associated with the CA certificate that is used to sign the Intermediate-CA certificate or the end-user client and server certificate. If the CA key file is password protected, the user is prompted to enter the pass phrase that was used to encrypt the key.',
+			'与用于签署中间 CA 证书或最终用户客户端和服务器证书的 CA 证书关联的私钥。如果 CA 密钥文件受密码保护，将提示用户输入用于加密密钥的密码。',
 	},
 	{
-		displayName: 'CA Private Key File Format',
+		displayName: 'CA 私钥文件格式',
 		name: 'caPrivateKeyFileFormat',
 		type: 'options',
 		options: [
@@ -198,10 +195,10 @@ export const certificateDescription: INodeProperties[] = [
 			},
 		},
 		default: 'PEM',
-		description: 'Format of the CA certificate',
+		description: 'CA 证书的格式',
 	},
 	{
-		displayName: 'Private Key File Name',
+		displayName: '私钥文件名',
 		name: 'privateKeyFileName',
 		type: 'string',
 		default: '',
@@ -214,10 +211,10 @@ export const certificateDescription: INodeProperties[] = [
 			},
 		},
 		description:
-			'Name for and, optionally, path to the private key. You can either use an existing RSA or DSA key that you own or create a new private key on the Netscaler ADC. This file is required only when creating a self-signed Root-CA certificate. The key file is stored in the /nsconfig/ssl directory by default.',
+			'私钥的名称和可选路径。您可以使用您拥有的现有 RSA 或 DSA 密钥，也可以在 Netscaler ADC 上创建新的私钥。仅在创建自签名根 CA 证书时才需要此文件。密钥文件默认存储在 /nsconfig/ssl 目录中。',
 	},
 	{
-		displayName: 'CA Serial File Number',
+		displayName: 'CA 序列号文件',
 		name: 'caSerialFileNumber',
 		type: 'string',
 		required: true,
@@ -229,11 +226,10 @@ export const certificateDescription: INodeProperties[] = [
 			},
 		},
 		default: '',
-		description:
-			'Serial number file maintained for the CA certificate. This file contains the serial number of the next certificate to be issued or signed by the CA.',
+		description: '为 CA 证书维护的序列号文件。此文件包含 CA 要签发或签署的下一个证书的序列号。',
 	},
 	{
-		displayName: 'Private Key Format',
+		displayName: '私钥格式',
 		name: 'privateKeyFormat',
 		type: 'options',
 		options: [
@@ -255,13 +251,13 @@ export const certificateDescription: INodeProperties[] = [
 			},
 		},
 		default: 'PEM',
-		description: 'Format in which the key is stored on the appliance',
+		description: '密钥在设备上存储的格式',
 	},
 	{
-		displayName: 'Additional Fields',
+		displayName: '附加字段',
 		name: 'additionalFields',
 		type: 'collection',
-		placeholder: 'Add Field',
+		placeholder: '添加字段',
 		default: {},
 		displayOptions: {
 			show: {
@@ -271,7 +267,7 @@ export const certificateDescription: INodeProperties[] = [
 		},
 		options: [
 			{
-				displayName: 'PEM Passphrase (For Encrypted Key)',
+				displayName: 'PEM 密码（用于加密密钥）',
 				name: 'pempassphrase',
 				type: 'string',
 				displayOptions: {
@@ -281,10 +277,10 @@ export const certificateDescription: INodeProperties[] = [
 				},
 				default: '',
 				description:
-					'Name for and, optionally, path to the private key. You can either use an existing RSA or DSA key that you own or create a new private key on the Netscaler ADC. This file is required only when creating a self-signed Root-CA certificate. The key file is stored in the /nsconfig/ssl directory by default.',
+					'私钥的名称和可选路径。您可以使用您拥有的现有 RSA 或 DSA 密钥，也可以在 Netscaler ADC 上创建新的私钥。仅在创建自签名根 CA 证书时才需要此文件。密钥文件默认存储在 /nsconfig/ssl 目录中。',
 			},
 			{
-				displayName: 'PEM Passphrase (For Encrypted CA Key)',
+				displayName: 'PEM 密码（用于加密 CA 密钥）',
 				name: 'pempassphrase',
 				type: 'string',
 				displayOptions: {
@@ -294,23 +290,22 @@ export const certificateDescription: INodeProperties[] = [
 				},
 				default: '',
 				description:
-					'Name for and, optionally, path to the private key. You can either use an existing RSA or DSA key that you own or create a new private key on the Netscaler ADC. This file is required only when creating a self-signed Root-CA certificate. The key file is stored in the /nsconfig/ssl directory by default.',
+					'私钥的名称和可选路径。您可以使用您拥有的现有 RSA 或 DSA 密钥，也可以在 Netscaler ADC 上创建新的私钥。仅在创建自签名根 CA 证书时才需要此文件。密钥文件默认存储在 /nsconfig/ssl 目录中。',
 			},
 			{
-				displayName: 'Subject Alternative Name',
+				displayName: '主体备用名称',
 				name: 'subjectaltname',
 				type: 'string',
 				default: '',
 				description:
-					'Subject Alternative Name (SAN) is an extension to X.509 that allows various values to be associated with a security certificate using a subjectAltName field',
+					'主体备用名称 (SAN) 是 X.509 的扩展，允许使用 subjectAltName 字段将各种值与安全证书关联',
 			},
 			{
-				displayName: 'Validity Period (Number of Days)',
+				displayName: '有效期（天数）',
 				name: 'days',
 				type: 'string',
 				default: '',
-				description:
-					'Number of days for which the certificate will be valid, beginning with the time and day (system time) of creation',
+				description: '证书有效的天数，从创建时间和日期（系统时间）开始计算',
 			},
 		],
 	},
@@ -318,7 +313,7 @@ export const certificateDescription: INodeProperties[] = [
 	/*                                certificate:install                          */
 	/* -------------------------------------------------------------------------- */
 	{
-		displayName: 'Certificate-Key Pair Name',
+		displayName: '证书密钥对名称',
 		name: 'certificateKeyPairName',
 		type: 'string',
 		required: true,
@@ -329,10 +324,10 @@ export const certificateDescription: INodeProperties[] = [
 			},
 		},
 		default: '',
-		description: 'Name for the certificate and private-key pair',
+		description: '证书和私钥对的名称',
 	},
 	{
-		displayName: 'Certificate File Name',
+		displayName: '证书文件名',
 		name: 'certificateFileName',
 		type: 'string',
 		required: true,
@@ -343,11 +338,10 @@ export const certificateDescription: INodeProperties[] = [
 			},
 		},
 		default: '',
-		description:
-			'Name of and, optionally, path to the X509 certificate file that is used to form the certificate-key pair. /nsconfig/ssl/ is the default path.',
+		description: '用于形成证书密钥对的 X509 证书文件的名称和可选路径。默认路径为 /nsconfig/ssl/。',
 	},
 	{
-		displayName: 'Private Key File Name',
+		displayName: '私钥文件名',
 		name: 'privateKeyFileName',
 		type: 'string',
 		default: '',
@@ -358,11 +352,10 @@ export const certificateDescription: INodeProperties[] = [
 				operation: ['install'],
 			},
 		},
-		description:
-			'Name of and, optionally, path to the X509 certificate file that is used to form the certificate-key pair. /nsconfig/ssl/ is the default path.',
+		description: '用于形成证书密钥对的 X509 证书文件的名称和可选路径。默认路径为 /nsconfig/ssl/。',
 	},
 	{
-		displayName: 'Certificate Format',
+		displayName: '证书格式',
 		name: 'certificateFormat',
 		type: 'options',
 		options: [
@@ -384,10 +377,10 @@ export const certificateDescription: INodeProperties[] = [
 		},
 		default: 'PEM',
 		description:
-			'Input format of the certificate and the private-key files. The three formats supported by the appliance are: PEM - Privacy Enhanced Mail DER - Distinguished Encoding Rule PFX - Personal Information Exchange.',
+			'证书和私钥文件的输入格式。设备支持的三种格式为：PEM - 增强隐私邮件，DER - 可分辨编码规则，PFX - 个人信息交换。',
 	},
 	{
-		displayName: 'Password',
+		displayName: '密码',
 		name: 'password',
 		type: 'string',
 		typeOptions: {
@@ -403,10 +396,10 @@ export const certificateDescription: INodeProperties[] = [
 		},
 		default: '',
 		description:
-			'Input format of the certificate and the private-key files. The three formats supported by the appliance are: PEM - Privacy Enhanced Mail DER - Distinguished Encoding Rule PFX - Personal Information Exchange.',
+			'证书和私钥文件的输入格式。设备支持的三种格式为：PEM - 增强隐私邮件，DER - 可分辨编码规则，PFX - 个人信息交换。',
 	},
 	{
-		displayName: 'Notify When Expires',
+		displayName: '到期时通知',
 		name: 'notifyExpiration',
 		type: 'boolean',
 		required: true,
@@ -417,10 +410,10 @@ export const certificateDescription: INodeProperties[] = [
 			},
 		},
 		default: false,
-		description: 'Whether to alert when the certificate is about to expire',
+		description: '证书即将到期时是否发出警报',
 	},
 	{
-		displayName: 'Notification Period (Days)',
+		displayName: '通知期限（天数）',
 		name: 'notificationPeriod',
 		type: 'number',
 		default: 10,
@@ -436,11 +429,10 @@ export const certificateDescription: INodeProperties[] = [
 				notifyExpiration: [true],
 			},
 		},
-		description:
-			'Time, in number of days, before certificate expiration, at which to generate an alert that the certificate is about to expire',
+		description: '在证书到期前多少天生成证书即将到期的警报',
 	},
 	{
-		displayName: 'Certificate Bundle',
+		displayName: '证书捆绑包',
 		name: 'certificateBundle',
 		type: 'boolean',
 		default: false,
@@ -451,7 +443,6 @@ export const certificateDescription: INodeProperties[] = [
 				certificateFormat: ['PEM'],
 			},
 		},
-		description:
-			"Whether to parse the certificate chain as a single file after linking the server certificate to its issuer's certificate within the file",
+		description: '是否在将服务器证书链接到文件中的颁发者证书后，将证书链解析为单个文件',
 	},
 ];

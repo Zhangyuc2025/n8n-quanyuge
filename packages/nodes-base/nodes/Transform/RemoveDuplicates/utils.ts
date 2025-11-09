@@ -19,26 +19,25 @@ export const validateInputData = (
 		let type: any = undefined;
 		for (const [i, item] of items.entries()) {
 			if (key === '') {
-				throw new NodeOperationError(node, 'Name of field to compare is blank');
+				throw new NodeOperationError(node, '要比较的字段名称为空');
 			}
 			const value = !disableDotNotation ? get(item.json, key) : item.json[key];
 			if (value === null && node.typeVersion > 1) continue;
 
 			if (value === undefined && disableDotNotation && key.includes('.')) {
-				throw new NodeOperationError(node, `'${key}' field is missing from some input items`, {
-					description:
-						"If you're trying to use a nested field, make sure you turn off 'disable dot notation' in the node options",
+				throw new NodeOperationError(node, `某些输入项缺少 '${key}' 字段`, {
+					description: '如果您尝试使用嵌套字段，请确保在节点选项中关闭"禁用点符号"',
 				});
 			} else if (value === undefined) {
-				throw new NodeOperationError(node, `'${key}' field is missing from some input items`);
+				throw new NodeOperationError(node, `某些输入项缺少 '${key}' 字段`);
 			}
 			if (type !== undefined && value !== undefined && type !== typeof value) {
 				const description =
-					'The type of this field varies between items' +
+					'此字段在项之间的类型不一致' +
 					(node.typeVersion > 1
-						? `, in item [${i - 1}] it's a ${type} and in item [${i}] it's a ${typeof value} `
+						? `，在项 [${i - 1}] 中是 ${type}，在项 [${i}] 中是 ${typeof value} `
 						: '');
-				throw new NodeOperationError(node, `'${key}' isn't always the same type`, {
+				throw new NodeOperationError(node, `'${key}' 并非始终是相同的类型`, {
 					description,
 				});
 			} else {
@@ -79,14 +78,11 @@ export function removeDuplicateInputItems(context: IExecuteFunctions, items: INo
 	if (compare === 'allFieldsExcept') {
 		const fieldsToExclude = prepareFieldsArray(
 			context.getNodeParameter('fieldsToExclude', 0, '') as string,
-			'Fields To Exclude',
+			'要排除的字段',
 		);
 
 		if (!fieldsToExclude.length) {
-			throw new NodeOperationError(
-				context.getNode(),
-				'No fields specified. Please add a field to exclude from comparison',
-			);
+			throw new NodeOperationError(context.getNode(), '未指定字段。请添加要从比较中排除的字段');
 		}
 		if (!disableDotNotation) {
 			keys = Object.keys(flattenKeys(items[0].json));
@@ -96,13 +92,10 @@ export function removeDuplicateInputItems(context: IExecuteFunctions, items: INo
 	if (compare === 'selectedFields') {
 		const fieldsToCompare = prepareFieldsArray(
 			context.getNodeParameter('fieldsToCompare', 0, '') as string,
-			'Fields To Compare',
+			'要比较的字段',
 		);
 		if (!fieldsToCompare.length) {
-			throw new NodeOperationError(
-				context.getNode(),
-				'No fields specified. Please add a field to compare on',
-			);
+			throw new NodeOperationError(context.getNode(), '未指定字段。请添加要比较的字段');
 		}
 		if (!disableDotNotation) {
 			keys = Object.keys(flattenKeys(items[0].json));

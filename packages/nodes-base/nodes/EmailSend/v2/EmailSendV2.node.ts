@@ -17,14 +17,14 @@ import {
 } from '../../../utils/sendAndWait/utils';
 
 export const versionDescription: INodeTypeDescription = {
-	displayName: 'Send Email',
+	displayName: '发送邮件',
 	name: 'emailSend',
 	icon: 'fa:envelope',
 	group: ['output'],
 	version: [2, 2.1],
-	description: 'Sends an email using SMTP protocol',
+	description: '使用 SMTP 协议发送电子邮件',
 	defaults: {
-		name: 'Send Email',
+		name: '发送邮件',
 		color: '#00bb88',
 	},
 	inputs: [NodeConnectionTypes.Main],
@@ -41,34 +41,34 @@ export const versionDescription: INodeTypeDescription = {
 	webhooks: sendAndWaitWebhooksDescription,
 	properties: [
 		{
-			displayName: 'Resource',
+			displayName: '资源',
 			name: 'resource',
 			type: 'hidden',
 			noDataExpression: true,
 			default: 'email',
 			options: [
 				{
-					name: 'Email',
+					name: '电子邮件',
 					value: 'email',
 				},
 			],
 		},
 		{
-			displayName: 'Operation',
+			displayName: '操作',
 			name: 'operation',
 			type: 'options',
 			noDataExpression: true,
 			default: 'send',
 			options: [
 				{
-					name: 'Send',
+					name: '发送',
 					value: 'send',
-					action: 'Send an Email',
+					action: '发送邮件',
 				},
 				{
-					name: 'Send and Wait for Response',
+					name: '发送并等待响应',
 					value: SEND_AND_WAIT_OPERATION,
-					action: 'Send message and wait for response',
+					action: '发送邮件并等待响应',
 				},
 			],
 		},

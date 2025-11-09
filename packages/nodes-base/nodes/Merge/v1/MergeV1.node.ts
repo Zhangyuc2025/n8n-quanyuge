@@ -23,72 +23,70 @@ export class MergeV1 implements INodeType {
 			icon: 'fa:code-branch',
 			version: 1,
 			defaults: {
-				name: 'Merge',
+				name: '合并',
 				color: '#00bbcc',
 			},
 
 			inputs: [NodeConnectionTypes.Main, NodeConnectionTypes.Main],
 			outputs: [NodeConnectionTypes.Main],
-			inputNames: ['Input 1', 'Input 2'],
+			inputNames: ['输入 1', '输入 2'],
 			properties: [
 				oldVersionNotice,
 				{
-					displayName: 'Mode',
+					displayName: '模式',
 					name: 'mode',
 					type: 'options',
 					options: [
 						{
-							name: 'Append',
+							name: '追加',
 							value: 'append',
-							description:
-								'Combines data of both inputs. The output will contain items of input 1 and input 2.',
+							description: '合并两个输入的数据。输出将包含输入 1 和输入 2 的项。',
 						},
 						{
-							name: 'Keep Key Matches',
+							name: '保留键匹配',
 							value: 'keepKeyMatches',
-							description: 'Keeps data of input 1 if it does find a match with data of input 2',
+							description: '如果发现与输入 2 数据匹配，则保留输入 1 的数据',
 						},
 						{
-							name: 'Merge By Index',
+							name: '按索引合并',
 							value: 'mergeByIndex',
 							description:
-								'Merges data of both inputs. The output will contain items of input 1 merged with data of input 2. Merge happens depending on the index of the items. So first item of input 1 will be merged with first item of input 2 and so on.',
+								'合并两个输入的数据。输出将包含输入 1 与输入 2 合并后的项。合并根据项的索引进行。因此输入 1 的第一项将与输入 2 的第一项合并，以此类推。',
 						},
 						{
-							name: 'Merge By Key',
+							name: '按键合并',
 							value: 'mergeByKey',
 							description:
-								'Merges data of both inputs. The output will contain items of input 1 merged with data of input 2. Merge happens depending on a defined key.',
+								'合并两个输入的数据。输出将包含输入 1 与输入 2 合并后的项。合并根据定义的键进行。',
 						},
 						{
-							name: 'Multiplex',
+							name: '多路复用',
 							value: 'multiplex',
 							description:
-								'Merges each value of one input with each value of the other input. The output will contain (m * n) items where (m) and (n) are lengths of the inputs.',
+								'将一个输入的每个值与另一个输入的每个值合并。输出将包含 (m * n) 项，其中 (m) 和 (n) 是输入的长度。',
 						},
 						{
-							name: 'Pass-Through',
+							name: '直通',
 							value: 'passThrough',
-							description:
-								'Passes through data of one input. The output will contain only items of the defined input.',
+							description: '通过一个输入的数据。输出将仅包含定义的输入的项。',
 						},
 						{
-							name: 'Remove Key Matches',
+							name: '删除键匹配',
 							value: 'removeKeyMatches',
-							description: 'Keeps data of input 1 if it does NOT find match with data of input 2',
+							description: '如果未找到与输入 2 数据的匹配，则保留输入 1 的数据',
 						},
 						{
-							name: 'Wait',
+							name: '等待',
 							value: 'wait',
 							description:
-								'Waits till data of both inputs is available and will then output a single empty item. Source Nodes must connect to both Input 1 and 2. This node only supports 2 Sources, if you need more Sources, connect multiple Merge nodes in series. This node will not output any data.',
+								'等待两个输入的数据都可用，然后输出一个空项。源节点必须同时连接到输入 1 和 2。此节点仅支持 2 个源，如果需要更多源，请连接多个合并节点串行。此节点不会输出任何数据。',
 						},
 					],
 					default: 'append',
-					description: 'How data of branches should be merged',
+					description: '分支数据应该如何合并',
 				},
 				{
-					displayName: 'Join',
+					displayName: '连接方式',
 					name: 'join',
 					type: 'options',
 					displayOptions: {
@@ -98,58 +96,57 @@ export class MergeV1 implements INodeType {
 					},
 					options: [
 						{
-							name: 'Inner Join',
+							name: '内连接',
 							value: 'inner',
 							description:
-								'Merges as many items as both inputs contain. (Example: Input1 = 5 items, Input2 = 3 items | Output will contain 3 items).',
+								'合并两个输入都包含的项数。(示例: 输入1 = 5 项, 输入2 = 3 项 | 输出将包含 3 项)。',
 						},
 						{
-							name: 'Left Join',
+							name: '左连接',
 							value: 'left',
 							description:
-								'Merges as many items as first input contains. (Example: Input1 = 3 items, Input2 = 5 items | Output will contain 3 items).',
+								'合并第一个输入包含的项数。(示例: 输入1 = 3 项, 输入2 = 5 项 | 输出将包含 3 项)。',
 						},
 						{
-							name: 'Outer Join',
+							name: '外连接',
 							value: 'outer',
 							description:
-								'Merges as many items as input contains with most items. (Example: Input1 = 3 items, Input2 = 5 items | Output will contain 5 items).',
+								'合并包含最多项的输入的项数。(示例: 输入1 = 3 项, 输入2 = 5 项 | 输出将包含 5 项)。',
 						},
 					],
 					default: 'left',
-					description:
-						'How many items the output will contain if inputs contain different amount of items',
+					description: '如果输入包含不同数量的项，输出将包含多少项',
 				},
 				{
-					displayName: 'Property Input 1',
+					displayName: '输入 1 的属性',
 					name: 'propertyName1',
 					type: 'string',
 					default: '',
-					hint: 'The name of the field as text (e.g. “id”)',
+					hint: '字段的名称，文本形式 (例如 "id")',
 					required: true,
 					displayOptions: {
 						show: {
 							mode: ['keepKeyMatches', 'mergeByKey', 'removeKeyMatches'],
 						},
 					},
-					description: 'Name of property which decides which items to merge of input 1',
+					description: '决定输入 1 的哪些项要合并的属性名称',
 				},
 				{
-					displayName: 'Property Input 2',
+					displayName: '输入 2 的属性',
 					name: 'propertyName2',
 					type: 'string',
 					default: '',
-					hint: 'The name of the field as text (e.g. “id”)',
+					hint: '字段的名称，文本形式 (例如 "id")',
 					required: true,
 					displayOptions: {
 						show: {
 							mode: ['keepKeyMatches', 'mergeByKey', 'removeKeyMatches'],
 						},
 					},
-					description: 'Name of property which decides which items to merge of input 2',
+					description: '决定输入 2 的哪些项要合并的属性名称',
 				},
 				{
-					displayName: 'Output Data',
+					displayName: '输出数据',
 					name: 'output',
 					type: 'options',
 					displayOptions: {
@@ -159,19 +156,19 @@ export class MergeV1 implements INodeType {
 					},
 					options: [
 						{
-							name: 'Input 1',
+							name: '输入 1',
 							value: 'input1',
 						},
 						{
-							name: 'Input 2',
+							name: '输入 2',
 							value: 'input2',
 						},
 					],
 					default: 'input1',
-					description: 'Defines of which input the data should be used as output of node',
+					description: '定义应将哪个输入的数据用作节点的输出',
 				},
 				{
-					displayName: 'Overwrite',
+					displayName: '覆盖方式',
 					name: 'overwrite',
 					type: 'options',
 					displayOptions: {
@@ -181,23 +178,23 @@ export class MergeV1 implements INodeType {
 					},
 					options: [
 						{
-							name: 'Always',
+							name: '始终',
 							value: 'always',
-							description: 'Always overwrites everything',
+							description: '始终覆盖所有内容',
 						},
 						{
-							name: 'If Blank',
+							name: '如果为空',
 							value: 'blank',
-							description: 'Overwrites only values of "null", "undefined" or empty string',
+							description: '仅覆盖 "null"、"undefined" 或空字符串的值',
 						},
 						{
-							name: 'If Missing',
+							name: '如果缺失',
 							value: 'undefined',
-							description: 'Only adds values which do not exist yet',
+							description: '仅添加尚不存在的值',
 						},
 					],
 					default: 'always',
-					description: 'Select when to overwrite the values from Input1 with values from Input 2',
+					description: '选择何时用输入 2 的值覆盖输入 1 的值',
 				},
 			],
 		};

@@ -15,59 +15,59 @@ import { FieldsTracker } from './utils';
 
 export class SplitOut implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Split Out',
+		displayName: '拆分',
 		name: 'splitOut',
 		icon: 'file:splitOut.svg',
 		group: ['transform'],
 		subtitle: '',
 		version: 1,
-		description: 'Turn a list inside item(s) into separate items',
+		description: '将项目内的列表拆分为单独的项目',
 		defaults: {
-			name: 'Split Out',
+			name: '拆分',
 		},
 		inputs: [NodeConnectionTypes.Main],
 		outputs: [NodeConnectionTypes.Main],
 		properties: [
 			{
-				displayName: 'Fields To Split Out',
+				displayName: '要拆分的字段',
 				name: 'fieldToSplitOut',
 				type: 'string',
 				default: '',
 				required: true,
-				placeholder: 'Drag fields from the left or type their names',
+				placeholder: '从左侧拖动字段或输入字段名',
 				description:
-					'The name of the input fields to break out into separate items. Separate multiple field names by commas. For binary data, use $binary.',
+					'要拆分为单独项目的输入字段名称。多个字段名用逗号分隔。对于二进制数据，使用 $binary',
 				requiresDataPath: 'multiple',
-				hint: 'Use $binary to split out the input item by binary data',
+				hint: '使用 $binary 按二进制数据拆分输入项目',
 			},
 			{
-				displayName: 'Include',
+				displayName: '包含',
 				name: 'include',
 				type: 'options',
 				options: [
 					{
-						name: 'No Other Fields',
+						name: '不包含其他字段',
 						value: 'noOtherFields',
 					},
 					{
-						name: 'All Other Fields',
+						name: '所有其他字段',
 						value: 'allOtherFields',
 					},
 					{
-						name: 'Selected Other Fields',
+						name: '选定的其他字段',
 						value: 'selectedOtherFields',
 					},
 				],
 				default: 'noOtherFields',
-				description: 'Whether to copy any other fields into the new items',
+				description: '是否将其他字段复制到新项目中',
 			},
 			{
-				displayName: 'Fields To Include',
+				displayName: '要包含的字段',
 				name: 'fieldsToInclude',
 				type: 'string',
-				placeholder: 'e.g. email, name',
+				placeholder: '例如：email, name',
 				requiresDataPath: 'multiple',
-				description: 'Fields in the input items to aggregate together',
+				description: '输入项目中要一起聚合的字段',
 				default: '',
 				displayOptions: {
 					show: {
@@ -76,34 +76,33 @@ export class SplitOut implements INodeType {
 				},
 			},
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
 				type: 'collection',
-				placeholder: 'Add Field',
+				placeholder: '添加字段',
 				default: {},
 				options: [
 					{
-						displayName: 'Disable Dot Notation',
+						displayName: '禁用点表示法',
 						name: 'disableDotNotation',
 						type: 'boolean',
 						default: false,
-						description:
-							'Whether to disallow referencing child fields using `parent.child` in the field name',
+						description: '是否禁止在字段名中使用 `parent.child` 引用子字段',
 					},
 					{
-						displayName: 'Destination Field Name',
+						displayName: '目标字段名',
 						name: 'destinationFieldName',
 						type: 'string',
 						requiresDataPath: 'multiple',
 						default: '',
-						description: 'The field in the output under which to put the split field contents',
+						description: '输出中放置拆分字段内容的字段',
 					},
 					{
-						displayName: 'Include Binary',
+						displayName: '包含二进制数据',
 						name: 'includeBinary',
 						type: 'boolean',
 						default: false,
-						description: 'Whether to include the binary data in the new items',
+						description: '是否在新项目中包含二进制数据',
 					},
 				],
 			},

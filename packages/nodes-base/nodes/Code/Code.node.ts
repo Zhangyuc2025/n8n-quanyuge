@@ -49,41 +49,57 @@ function iconForLanguage(lang: CodeNodeLanguageOption): string {
 
 export class Code implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Code',
+		displayName: '代码',
 		name: 'code',
 		icon: `={{(${iconForLanguage})($parameter.language)}}`,
 		group: ['transform'],
 		version: [1, 2],
 		defaultVersion: 2,
-		description: 'Run custom JavaScript or Python code',
+		description: '运行自定义 JavaScript 或 Python 代码',
 		defaults: {
-			name: 'Code',
+			name: '代码',
 		},
 		inputs: [NodeConnectionTypes.Main],
 		outputs: [NodeConnectionTypes.Main],
 		parameterPane: 'wide',
+		codex: {
+			categories: ['Core Nodes'],
+			resources: {
+				primaryDocumentation: [
+					{
+						url: 'https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.code/',
+					},
+				],
+				// 教学链接（将同步到数据库 documentationConfig）
+				tutorialLinks: {
+					javaScriptReference: 'https://docs.n8n.io/nodes/n8n-nodes-base.function',
+					javaScriptMethods: 'https://docs.n8n.io/code-examples/methods-variables-reference/',
+					pythonBuiltin: 'https://docs.n8n.io/code/builtin/',
+				},
+			},
+		},
 		properties: [
 			{
-				displayName: 'Mode',
+				displayName: '模式',
 				name: 'mode',
 				type: 'options',
 				noDataExpression: true,
 				options: [
 					{
-						name: 'Run Once for All Items',
+						name: '所有项目运行一次',
 						value: 'runOnceForAllItems',
-						description: 'Run this code only once, no matter how many input items there are',
+						description: '无论输入项目数量多少，此代码仅运行一次',
 					},
 					{
-						name: 'Run Once for Each Item',
+						name: '每个项目运行一次',
 						value: 'runOnceForEachItem',
-						description: 'Run this code as many times as there are input items',
+						description: '此代码将根据输入项目的数量运行相应次数',
 					},
 				],
 				default: 'runOnceForAllItems',
 			},
 			{
-				displayName: 'Language',
+				displayName: '语言',
 				name: 'language',
 				type: 'options',
 				noDataExpression: true,
@@ -96,17 +112,17 @@ export class Code implements INodeType {
 					{
 						name: 'JavaScript',
 						value: 'javaScript',
-						action: 'Code in JavaScript',
+						action: '使用 JavaScript 编写代码',
 					},
 					{
-						name: 'Python (Beta)',
+						name: 'Python (测试版)',
 						value: 'python',
-						action: 'Code in Python (Beta)',
+						action: '使用 Python 编写代码（测试版）',
 					},
 					{
-						name: 'Python (Native) (Beta)',
+						name: 'Python 原生（测试版）',
 						value: 'pythonNative',
-						action: 'Code in Python (Native) (Beta)',
+						action: '使用 Python 原生编写代码（测试版）',
 					},
 				],
 				default: 'javaScript',

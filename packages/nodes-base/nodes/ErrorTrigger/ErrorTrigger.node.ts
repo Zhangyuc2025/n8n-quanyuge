@@ -8,26 +8,39 @@ import { NodeConnectionTypes } from 'n8n-workflow';
 
 export class ErrorTrigger implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Error Trigger',
+		displayName: '错误触发器',
 		name: 'errorTrigger',
 		icon: 'fa:bug',
 		iconColor: 'blue',
 		group: ['trigger'],
 		version: 1,
-		description: 'Triggers the workflow when another workflow has an error',
+		description: '当其他工作流发生错误时触发该工作流',
 		eventTriggerDescription: '',
 		mockManualExecution: true,
 		maxNodes: 1,
 		defaults: {
-			name: 'Error Trigger',
+			name: '错误触发器',
 			color: '#0000FF',
 		},
 		inputs: [],
 		outputs: [NodeConnectionTypes.Main],
+		codex: {
+			categories: ['Core Nodes'],
+			resources: {
+				primaryDocumentation: [
+					{
+						url: 'https://docs.n8n.io/integrations/core-nodes/n8n-nodes-base.errortrigger',
+					},
+				],
+				tutorialLinks: {
+					moreInfo: 'https://docs.n8n.io/integrations/core-nodes/n8n-nodes-base.errortrigger',
+				},
+			},
+		},
 		properties: [
 			{
 				displayName:
-					'This node will trigger when there is an error in another workflow, as long as that workflow is set up to do so. <a href="https://docs.n8n.io/integrations/core-nodes/n8n-nodes-base.errortrigger" target="_blank">More info</a>',
+					'当其他工作流发生错误时，此节点将被触发，前提是该工作流已设置为这样做。<a href="{{moreInfo}}" target="_blank">了解更多</a>',
 				name: 'notice',
 				type: 'notice',
 				default: '',

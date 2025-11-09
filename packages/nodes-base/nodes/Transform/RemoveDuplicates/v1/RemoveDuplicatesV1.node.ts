@@ -10,47 +10,47 @@ import type {
 import { removeDuplicateInputItems } from '../utils';
 
 const versionDescription: INodeTypeDescription = {
-	displayName: 'Remove Duplicates',
+	displayName: '去除重复项',
 	name: 'removeDuplicates',
 	icon: 'file:removeDuplicates.svg',
 	group: ['transform'],
 	subtitle: '',
 	version: [1, 1.1],
-	description: 'Delete items with matching field values',
+	description: '删除具有相同字段值的项',
 	defaults: {
-		name: 'Remove Duplicates',
+		name: '去除重复项',
 	},
 	inputs: [NodeConnectionTypes.Main],
 	outputs: [NodeConnectionTypes.Main],
 	properties: [
 		{
-			displayName: 'Compare',
+			displayName: '比较方式',
 			name: 'compare',
 			type: 'options',
 			options: [
 				{
-					name: 'All Fields',
+					name: '所有字段',
 					value: 'allFields',
 				},
 				{
-					name: 'All Fields Except',
+					name: '排除指定字段',
 					value: 'allFieldsExcept',
 				},
 				{
-					name: 'Selected Fields',
+					name: '选定字段',
 					value: 'selectedFields',
 				},
 			],
 			default: 'allFields',
-			description: 'The fields of the input items to compare to see if they are the same',
+			description: '用于比较输入项的字段，以确定它们是否相同',
 		},
 		{
-			displayName: 'Fields To Exclude',
+			displayName: '要排除的字段',
 			name: 'fieldsToExclude',
 			type: 'string',
-			placeholder: 'e.g. email, name',
+			placeholder: '例如：email, name',
 			requiresDataPath: 'multiple',
-			description: 'Fields in the input to exclude from the comparison',
+			description: '从比较中排除的输入字段',
 			default: '',
 			displayOptions: {
 				show: {
@@ -59,12 +59,12 @@ const versionDescription: INodeTypeDescription = {
 			},
 		},
 		{
-			displayName: 'Fields To Compare',
+			displayName: '要比较的字段',
 			name: 'fieldsToCompare',
 			type: 'string',
-			placeholder: 'e.g. email, name',
+			placeholder: '例如：email, name',
 			requiresDataPath: 'multiple',
-			description: 'Fields in the input to add to the comparison',
+			description: '添加到比较中的输入字段',
 			default: '',
 			displayOptions: {
 				show: {
@@ -73,10 +73,10 @@ const versionDescription: INodeTypeDescription = {
 			},
 		},
 		{
-			displayName: 'Options',
+			displayName: '选项',
 			name: 'options',
 			type: 'collection',
-			placeholder: 'Add Field',
+			placeholder: '添加字段',
 			default: {},
 			displayOptions: {
 				show: {
@@ -85,20 +85,18 @@ const versionDescription: INodeTypeDescription = {
 			},
 			options: [
 				{
-					displayName: 'Disable Dot Notation',
+					displayName: '禁用点符号',
 					name: 'disableDotNotation',
 					type: 'boolean',
 					default: false,
-					description:
-						'Whether to disallow referencing child fields using `parent.child` in the field name',
+					description: '是否禁止使用 `parent.child` 格式引用子字段',
 				},
 				{
-					displayName: 'Remove Other Fields',
+					displayName: '删除其他字段',
 					name: 'removeOtherFields',
 					type: 'boolean',
 					default: false,
-					description:
-						'Whether to remove any fields that are not being compared. If disabled, will keep the values from the first of the duplicates.',
+					description: '是否删除未参与比较的字段。如果禁用，将保留重复项中第一项的字段值',
 				},
 			],
 		},

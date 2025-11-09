@@ -20,16 +20,16 @@ export function getSelectFields(
 ): INodeProperties[] {
 	return [
 		{
-			displayName: 'Must Match',
+			displayName: '必须匹配',
 			name: 'matchType',
 			type: 'options',
 			options: [
 				{
-					name: 'Any Condition',
+					name: '任一条件',
 					value: ANY_CONDITION,
 				},
 				{
-					name: 'All Conditions',
+					name: '所有条件',
 					value: ALL_CONDITIONS,
 				},
 			] satisfies Array<{ value: FilterType; name: string }>,
@@ -37,7 +37,7 @@ export function getSelectFields(
 			default: ANY_CONDITION,
 		},
 		{
-			displayName: 'Conditions',
+			displayName: '条件',
 			name: 'filters',
 			type: 'fixedCollection',
 			typeOptions: {
@@ -46,20 +46,20 @@ export function getSelectFields(
 			},
 			displayOptions,
 			default: {},
-			placeholder: 'Add Condition',
+			placeholder: '添加条件',
 			options: [
 				{
-					displayName: 'Conditions',
+					displayName: '条件',
 					name: 'conditions',
 					values: [
 						{
 							// eslint-disable-next-line n8n-nodes-base/node-param-display-name-wrong-for-dynamic-options
-							displayName: 'Column',
+							displayName: '列',
 							name: 'keyName',
 							type: 'options',
 							// eslint-disable-next-line n8n-nodes-base/node-param-description-wrong-for-dynamic-options
 							description:
-								'Choose from the list, or specify using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
+								'从列表中选择，或使用<a href="https://docs.n8n.io/code/expressions/">表达式</a>指定',
 							typeOptions: {
 								loadOptionsDependsOn: [`${DATA_TABLE_ID_FIELD}.value`],
 								loadOptionsMethod: 'getDataTableColumns',
@@ -68,7 +68,7 @@ export function getSelectFields(
 						},
 						{
 							// eslint-disable-next-line n8n-nodes-base/node-param-display-name-wrong-for-dynamic-options
-							displayName: 'Condition',
+							displayName: '条件',
 							name: 'condition',
 							// eslint-disable-next-line n8n-nodes-base/node-param-description-missing-from-dynamic-options
 							type: 'options',
@@ -84,7 +84,7 @@ export function getSelectFields(
 								: undefined,
 						},
 						{
-							displayName: 'Value',
+							displayName: '值',
 							name: 'keyValue',
 							type: 'string',
 							default: '',
@@ -97,7 +97,7 @@ export function getSelectFields(
 					],
 				},
 			],
-			description: 'Filter to decide which rows get',
+			description: '过滤器以决定哪些行',
 		},
 	];
 }
@@ -111,10 +111,10 @@ export async function getSelectFilter(
 	const node = ctx.getNode();
 
 	if (!isMatchType(matchType)) {
-		throw new NodeOperationError(node, 'unexpected match type');
+		throw new NodeOperationError(node, '意外的匹配类型');
 	}
 	if (!isFieldArray(fields)) {
-		throw new NodeOperationError(node, 'unexpected fields input');
+		throw new NodeOperationError(node, '意外的字段输入');
 	}
 
 	// Validate filter conditions against current table schema
@@ -136,9 +136,9 @@ export async function getSelectFilter(
 			const invalidColumnNames = invalidConditions.map((c) => c.keyName).join(', ');
 			throw new NodeOperationError(
 				node,
-				`Filter validation failed: Column(s) "${invalidColumnNames}" do not exist in the selected table. ` +
-					'This often happens when switching between tables with different schemas. ' +
-					'Please update your filter conditions.',
+				`过滤器验证失败：列"${invalidColumnNames}"在选定的表中不存在。` +
+					'这通常在在具有不同架构的表之间切换时发生。' +
+					'请更新您的过滤条件。',
 			);
 		}
 	}
@@ -156,7 +156,7 @@ export async function executeSelectMany(
 	const filter = await getSelectFilter(ctx, index);
 
 	if (rejectEmpty && filter.filters.length === 0) {
-		throw new NodeOperationError(ctx.getNode(), 'At least one condition is required');
+		throw new NodeOperationError(ctx.getNode(), '至少需要一个条件');
 	}
 
 	const PAGE_SIZE = 1000;
@@ -184,10 +184,7 @@ export async function executeSelectMany(
 
 		// Ensure the total doesn't change mid-pagination
 		if (expectedTotal !== undefined && count !== expectedTotal) {
-			throw new NodeOperationError(
-				ctx.getNode(),
-				'synchronization error: result count changed during pagination',
-			);
+			throw new NodeOperationError(ctx.getNode(), '同步错误：分页期间结果计数已更改');
 		}
 		expectedTotal = count;
 

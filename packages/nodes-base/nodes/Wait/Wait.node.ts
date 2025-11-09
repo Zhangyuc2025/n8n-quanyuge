@@ -39,7 +39,7 @@ import {
 import { Webhook } from '../Webhook/Webhook.node';
 
 const toWaitAmount: INodeProperties = {
-	displayName: 'Wait Amount',
+	displayName: '等待时长',
 	name: 'amount',
 	type: 'number',
 	typeOptions: {
@@ -47,44 +47,43 @@ const toWaitAmount: INodeProperties = {
 		numberPrecision: 2,
 	},
 	default: 1,
-	description: 'The time to wait',
+	description: '要等待的时间',
 	validateType: 'number',
 };
 
 const unitSelector: INodeProperties = {
-	displayName: 'Wait Unit',
+	displayName: '时间单位',
 	name: 'unit',
 	type: 'options',
 	options: [
 		{
-			name: 'Seconds',
+			name: '秒',
 			value: 'seconds',
 		},
 		{
-			name: 'Minutes',
+			name: '分钟',
 			value: 'minutes',
 		},
 		{
-			name: 'Hours',
+			name: '小时',
 			value: 'hours',
 		},
 		{
-			name: 'Days',
+			name: '天',
 			value: 'days',
 		},
 	],
 	default: 'hours',
-	description: 'The time unit of the Wait Amount value',
+	description: '等待时长值的时间单位',
 };
 
 const waitTimeProperties: INodeProperties[] = [
 	{
-		displayName: 'Limit Wait Time',
+		displayName: '限制等待时间',
 		name: 'limitWaitTime',
 		type: 'boolean',
 		default: false,
-		description:
-			'Whether to limit the time this node should wait for a user response before execution resumes',
+		description: '是否限制此节点在恢复执行之前等待用户响应的时间',
 		displayOptions: {
 			show: {
 				resume: ['webhook', 'form'],
@@ -92,12 +91,11 @@ const waitTimeProperties: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Limit Type',
+		displayName: '限制类型',
 		name: 'limitType',
 		type: 'options',
 		default: 'afterTimeInterval',
-		description:
-			'Sets the condition for the execution to resume. Can be a specified date or after some time.',
+		description: '设置恢复执行的条件。可以是指定的日期或一段时间后',
 		displayOptions: {
 			show: {
 				limitWaitTime: [true],
@@ -106,19 +104,19 @@ const waitTimeProperties: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'After Time Interval',
-				description: 'Waits for a certain amount of time',
+				name: '等待时间间隔后',
+				description: '等待一定的时间',
 				value: 'afterTimeInterval',
 			},
 			{
-				name: 'At Specified Time',
-				description: 'Waits until the set date and time to continue',
+				name: '在指定时间',
+				description: '等待到设定的日期和时间后继续',
 				value: 'atSpecifiedTime',
 			},
 		],
 	},
 	{
-		displayName: 'Amount',
+		displayName: '时长',
 		name: 'resumeAmount',
 		type: 'number',
 		displayOptions: {
@@ -133,10 +131,10 @@ const waitTimeProperties: INodeProperties[] = [
 			numberPrecision: 2,
 		},
 		default: 1,
-		description: 'The time to wait',
+		description: '要等待的时间',
 	},
 	{
-		displayName: 'Unit',
+		displayName: '单位',
 		name: 'resumeUnit',
 		type: 'options',
 		displayOptions: {
@@ -148,27 +146,27 @@ const waitTimeProperties: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Seconds',
+				name: '秒',
 				value: 'seconds',
 			},
 			{
-				name: 'Minutes',
+				name: '分钟',
 				value: 'minutes',
 			},
 			{
-				name: 'Hours',
+				name: '小时',
 				value: 'hours',
 			},
 			{
-				name: 'Days',
+				name: '天',
 				value: 'days',
 			},
 		],
 		default: 'hours',
-		description: 'Unit of the interval value',
+		description: '间隔值的单位',
 	},
 	{
-		displayName: 'Max Date and Time',
+		displayName: '最大日期和时间',
 		name: 'maxDateAndTime',
 		type: 'dateTime',
 		displayOptions: {
@@ -179,19 +177,18 @@ const waitTimeProperties: INodeProperties[] = [
 			},
 		},
 		default: '',
-		description: 'Continue execution after the specified date and time',
+		description: '在指定的日期和时间后继续执行',
 	},
 ];
 
 const webhookSuffix: INodeProperties = {
-	displayName: 'Webhook Suffix',
+	displayName: 'Webhook 后缀',
 	name: 'webhookSuffix',
 	type: 'string',
 	default: '',
 	placeholder: 'webhook',
 	noDataExpression: true,
-	description:
-		'This suffix path will be appended to the restart URL. Helpful when using multiple wait nodes.',
+	description: '此后缀路径将附加到重启 URL。在使用多个等待节点时很有用',
 };
 
 const displayOnWebhook: IDisplayOptions = {
@@ -241,32 +238,32 @@ const waitingTooltip = (
 		const url = `${resume === 'form' ? formResumeUrl : resumeUrl}${suffix}`;
 
 		if (resume === 'form') {
-			message = 'Execution will continue when form is submitted on ';
+			message = '当在以下地址提交表单时将继续执行：';
 		}
 
 		if (resume === 'webhook') {
-			message = 'Execution will continue when webhook is received on ';
+			message = '当在以下地址收到 webhook 时将继续执行：';
 		}
 
 		return `${message}<a href="${url}" target="_blank">${url}</a>`;
 	}
 
-	return 'Execution will continue when wait time is over';
+	return '等待时间结束后将继续执行';
 };
 
 export class Wait extends Webhook {
 	authPropertyName = 'incomingAuthentication';
 
 	description: INodeTypeDescription = {
-		displayName: 'Wait',
+		displayName: '等待',
 		name: 'wait',
 		icon: 'fa:pause-circle',
 		iconColor: 'crimson',
 		group: ['organization'],
 		version: [1, 1.1],
-		description: 'Wait before continue with execution',
+		description: '等待一段时间后再继续执行',
 		defaults: {
-			name: 'Wait',
+			name: '等待',
 			color: '#804050',
 		},
 		inputs: [NodeConnectionTypes.Main],
@@ -302,51 +299,51 @@ export class Wait extends Webhook {
 		],
 		properties: [
 			{
-				displayName: 'Resume',
+				displayName: '恢复方式',
 				name: 'resume',
 				type: 'options',
 				options: [
 					{
-						name: 'After Time Interval',
+						name: '等待时间间隔后',
 						value: 'timeInterval',
-						description: 'Waits for a certain amount of time',
+						description: '等待一段时间',
 					},
 					{
-						name: 'At Specified Time',
+						name: '在指定时间',
 						value: 'specificTime',
-						description: 'Waits until a specific date and time to continue',
+						description: '等待到特定的日期和时间后继续',
 					},
 					{
-						name: 'On Webhook Call',
+						name: '收到 Webhook 调用时',
 						value: 'webhook',
-						description: 'Waits for a webhook call before continuing',
+						description: '等待 webhook 调用后继续',
 					},
 					{
-						name: 'On Form Submitted',
+						name: '提交表单时',
 						value: 'form',
-						description: 'Waits for a form submission before continuing',
+						description: '等待表单提交后继续',
 					},
 				],
 				default: 'timeInterval',
-				description: 'Determines the waiting mode to use before the workflow continues',
+				description: '确定工作流继续之前使用的等待模式',
 			},
 			{
-				displayName: 'Authentication',
+				displayName: '身份验证',
 				name: 'incomingAuthentication',
 				type: 'options',
 				options: [
 					{
-						name: 'Basic Auth',
+						name: '基本认证',
 						value: 'basicAuth',
 					},
 					{
-						name: 'None',
+						name: '无',
 						value: 'none',
 					},
 				],
 				default: 'none',
 				description:
-					'If and how incoming resume-webhook-requests to $execution.resumeFormUrl should be authenticated for additional security',
+					'是否以及如何对发送到 $execution.resumeFormUrl 的恢复 webhook 请求进行身份验证以提供额外的安全性',
 				displayOptions: {
 					show: {
 						resume: ['form'],
@@ -356,7 +353,7 @@ export class Wait extends Webhook {
 			{
 				...authenticationProperty(this.authPropertyName),
 				description:
-					'If and how incoming resume-webhook-requests to $execution.resumeUrl should be authenticated for additional security',
+					'是否以及如何对发送到 $execution.resumeUrl 的恢复 webhook 请求进行身份验证以提供额外的安全性',
 				displayOptions: displayOnWebhook,
 			},
 
@@ -364,7 +361,7 @@ export class Wait extends Webhook {
 			//         resume:specificTime
 			// ----------------------------------
 			{
-				displayName: 'Date and Time',
+				displayName: '日期和时间',
 				name: 'dateTime',
 				type: 'dateTime',
 				displayOptions: {
@@ -373,7 +370,7 @@ export class Wait extends Webhook {
 					},
 				},
 				default: '',
-				description: 'The date and time to wait for before continuing',
+				description: '继续之前要等待的日期和时间',
 				required: true,
 			},
 
@@ -428,7 +425,7 @@ export class Wait extends Webhook {
 			// ----------------------------------
 			{
 				displayName:
-					'The webhook URL will be generated at run time. It can be referenced with the <strong>$execution.resumeUrl</strong> variable. Send it somewhere before getting to this node. <a href="https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.wait/?utm_source=n8n_app&utm_medium=node_settings_modal-credential_link&utm_campaign=n8n-nodes-base.wait" target="_blank">More info</a>',
+					'Webhook URL 将在运行时生成。可以使用 <strong>$execution.resumeUrl</strong> 变量引用它。在到达此节点之前将其发送到某处。<a href="https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.wait/?utm_source=n8n_app&utm_medium=node_settings_modal-credential_link&utm_campaign=n8n-nodes-base.wait" target="_blank">更多信息</a>',
 				name: 'webhookNotice',
 				type: 'notice',
 				displayOptions: displayOnWebhook,
@@ -436,7 +433,7 @@ export class Wait extends Webhook {
 			},
 			{
 				displayName:
-					'The form url will be generated at run time. It can be referenced with the <strong>$execution.resumeFormUrl</strong> variable. Send it somewhere before getting to this node. <a href="https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.wait/?utm_source=n8n_app&utm_medium=node_settings_modal-credential_link&utm_campaign=n8n-nodes-base.wait" target="_blank">More info</a>',
+					'表单 URL 将在运行时生成。可以使用 <strong>$execution.resumeFormUrl</strong> 变量引用它。在到达此节点之前将其发送到某处。<a href="https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.wait/?utm_source=n8n_app&utm_medium=node_settings_modal-credential_link&utm_campaign=n8n-nodes-base.wait" target="_blank">更多信息</a>',
 				name: 'formNotice',
 				type: 'notice',
 				displayOptions: displayOnFormSubmission,
@@ -451,10 +448,10 @@ export class Wait extends Webhook {
 				options: [...(optionsProperty.options as INodeProperties[]), webhookSuffix],
 			},
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
 				type: 'collection',
-				placeholder: 'Add option',
+				placeholder: '添加选项',
 				default: {},
 				displayOptions: {
 					show: {
@@ -467,10 +464,10 @@ export class Wait extends Webhook {
 				options: [appendAttributionToForm, respondWithOptions, webhookSuffix],
 			},
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
 				type: 'collection',
-				placeholder: 'Add option',
+				placeholder: '添加选项',
 				default: {},
 				displayOptions: {
 					show: {
@@ -523,7 +520,7 @@ export class Wait extends Webhook {
 			if (!validateWaitUnit(unit)) {
 				throw new NodeOperationError(
 					context.getNode(),
-					"Invalid wait unit. Valid units are 'seconds', 'minutes', 'hours', or 'days'.",
+					"无效的等待单位。有效单位为 'seconds'、'minutes'、'hours' 或 'days'",
 				);
 			}
 
@@ -532,7 +529,7 @@ export class Wait extends Webhook {
 			if (!validateWaitAmount(waitAmount)) {
 				throw new NodeOperationError(
 					context.getNode(),
-					'Invalid wait amount. Please enter a number that is 0 or greater.',
+					'无效的等待时长。请输入大于或等于 0 的数字',
 				);
 			}
 
@@ -560,7 +557,7 @@ export class Wait extends Webhook {
 			} catch (e) {
 				throw new NodeOperationError(
 					context.getNode(),
-					'Cannot put execution to wait because `dateTime` parameter is not a valid date. Please pick a specific date and time to wait until.',
+					'无法将执行置于等待状态，因为 `dateTime` 参数不是有效的日期。请选择一个具体的日期和时间以等待到',
 				);
 			}
 		}

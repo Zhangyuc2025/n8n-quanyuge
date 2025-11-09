@@ -8,13 +8,13 @@ import { ItemListsV3 } from './V3/ItemListsV3.node';
 export class ItemLists extends VersionedNodeType {
 	constructor() {
 		const baseDescription: INodeTypeBaseDescription = {
-			displayName: 'Item Lists',
+			displayName: '项目列表',
 			name: 'itemLists',
 			icon: 'file:itemLists.svg',
 			group: ['input'],
 			hidden: true,
 			subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
-			description: 'Helper for working with lists of items and transforming arrays',
+			description: '用于处理项目列表和转换数组的辅助工具',
 			defaultVersion: 3.1,
 		};
 

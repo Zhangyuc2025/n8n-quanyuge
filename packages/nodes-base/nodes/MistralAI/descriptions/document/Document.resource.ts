@@ -4,7 +4,7 @@ import * as extractText from './extractText.operation';
 
 export const description: INodeProperties[] = [
 	{
-		displayName: 'Operation',
+		displayName: '操作',
 		name: 'operation',
 		type: 'options',
 		noDataExpression: true,
@@ -15,10 +15,10 @@ export const description: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Extract Text',
+				name: '提取文本',
 				value: 'extractText',
-				description: 'Extract text from document using OCR',
-				action: 'Extract text',
+				description: '使用 OCR 从文档中提取文本',
+				action: '提取文本',
 			},
 		],
 		default: 'extractText',

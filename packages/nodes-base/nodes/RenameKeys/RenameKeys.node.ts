@@ -16,25 +16,33 @@ interface IRenameKey {
 
 export class RenameKeys implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Rename Keys',
+		displayName: '重命名键',
 		name: 'renameKeys',
 		icon: 'fa:edit',
 		iconColor: 'crimson',
 		group: ['transform'],
 		version: 1,
-		description: 'Update item field names',
+		description: '更新数据项的字段名称',
 		defaults: {
-			name: 'Rename Keys',
+			name: '重命名键',
 			color: '#772244',
 		},
 		inputs: [NodeConnectionTypes.Main],
 		outputs: [NodeConnectionTypes.Main],
+		codex: {
+			categories: ['Core Nodes'],
+			resources: {
+				tutorialLinks: {
+					regexTester: 'https://regex101.com/',
+				},
+			},
+		},
 		properties: [
 			{
-				displayName: 'Keys',
+				displayName: '键',
 				name: 'keys',
-				placeholder: 'Add new key',
-				description: 'Adds a key which should be renamed',
+				placeholder: '添加新键',
+				description: '添加需要重命名的键',
 				type: 'fixedCollection',
 				typeOptions: {
 					multipleValues: true,
@@ -43,44 +51,44 @@ export class RenameKeys implements INodeType {
 				default: {},
 				options: [
 					{
-						displayName: 'Key',
+						displayName: '键',
 						name: 'key',
 						values: [
 							{
-								displayName: 'Current Key Name',
+								displayName: '当前键名',
 								name: 'currentKey',
 								type: 'string',
 								default: '',
 								placeholder: 'currentKey',
 								requiresDataPath: 'single',
 								description:
-									'The current name of the key. It is also possible to define deep keys by using dot-notation like for example: "level1.level2.currentKey".',
+									'键的当前名称。也可以使用点符号定义深层键，例如："level1.level2.currentKey"。',
 							},
 							{
-								displayName: 'New Key Name',
+								displayName: '新键名',
 								name: 'newKey',
 								type: 'string',
 								default: '',
 								placeholder: 'newKey',
 								description:
-									'The name the key should be renamed to. It is also possible to define deep keys by using dot-notation like for example: "level1.level2.newKey".',
+									'键应重命名为的新名称。也可以使用点符号定义深层键，例如："level1.level2.newKey"。',
 							},
 						],
 					},
 				],
 			},
 			{
-				displayName: 'Additional Options',
+				displayName: '附加选项',
 				name: 'additionalOptions',
 				type: 'collection',
 				default: {},
-				placeholder: 'Add option',
+				placeholder: '添加选项',
 				options: [
 					{
-						displayName: 'Regex',
+						displayName: '正则表达式',
 						name: 'regexReplacement',
-						placeholder: 'Add new regular expression',
-						description: 'Adds a regular expression',
+						placeholder: '添加新正则表达式',
+						description: '添加正则表达式规则',
 						type: 'fixedCollection',
 						typeOptions: {
 							multipleValues: true,
@@ -89,55 +97,53 @@ export class RenameKeys implements INodeType {
 						default: {},
 						options: [
 							{
-								displayName: 'Replacement',
+								displayName: '替换规则',
 								name: 'replacements',
 								values: [
 									{
-										displayName:
-											'Be aware that by using regular expression previously renamed keys can be affected',
+										displayName: '注意：使用正则表达式可能会影响之前已重命名的键',
 										name: 'regExNotice',
 										type: 'notice',
 										default: '',
 									},
 									{
-										displayName: 'Regular Expression',
+										displayName: '正则表达式',
 										name: 'searchRegex',
 										type: 'string',
 										default: '',
-										placeholder: 'e.g. [N-n]ame',
-										description: 'Regex to match the key name',
-										hint: 'Learn more and test RegEx <a href="https://regex101.com/">here</a>',
+										placeholder: '例如：[N-n]ame',
+										description: '用于匹配键名的正则表达式',
+										hint: '在<a href="{{regexTester}}">这里</a>学习和测试正则表达式',
 									},
 									{
-										displayName: 'Replace With',
+										displayName: '替换为',
 										name: 'replaceRegex',
 										type: 'string',
 										default: '',
 										placeholder: 'replacedName',
-										description:
-											"The name the key/s should be renamed to. It's possible to use regex captures e.g. $1, $2, ...",
+										description: '键应重命名为的新名称。可以使用正则捕获组，例如 $1、$2 等。',
 									},
 									{
-										displayName: 'Options',
+										displayName: '选项',
 										name: 'options',
 										type: 'collection',
 										default: {},
-										placeholder: 'Add Regex Option',
+										placeholder: '添加正则选项',
 										options: [
 											{
-												displayName: 'Case Insensitive',
+												displayName: '忽略大小写',
 												name: 'caseInsensitive',
 												type: 'boolean',
-												description: 'Whether to use case insensitive match',
+												description: '是否使用不区分大小写的匹配',
 												default: false,
 											},
 											{
-												displayName: 'Max Depth',
+												displayName: '最大深度',
 												name: 'depth',
 												type: 'number',
 												default: -1,
-												description: 'Maximum depth to replace keys',
-												hint: 'Specify number for depth level (-1 for unlimited, 0 for top level only)',
+												description: '替换键的最大深度',
+												hint: '指定深度级别数字（-1 为无限制，0 仅顶层）',
 											},
 										],
 									},
@@ -152,7 +158,7 @@ export class RenameKeys implements INodeType {
 			{
 				type: 'warning',
 				message:
-					'Complex regex patterns like nested quantifiers .*+, ()*+, or multiple wildcards may cause performance issues. Consider using simpler patterns like [a-z]+ or \\w+ for better performance.',
+					'复杂的正则表达式模式（如嵌套量词 .*+、()*+ 或多个通配符）可能导致性能问题。建议使用更简单的模式，如 [a-z]+ 或 \\w+ 以获得更好的性能。',
 				displayCondition:
 					'={{ $parameter.additionalOptions.regexReplacement.replacements && $parameter.additionalOptions.regexReplacement.replacements.some(r => r.searchRegex && /(\\.\\*\\+|\\)\\*\\+|\\+\\*|\\*.*\\*|\\+.*\\+|\\?.*\\?|\\{[0-9]+,\\}|\\*{2,}|\\+{2,}|\\?{2,}|[a-zA-Z0-9]{4,}[\\*\\+]|\\([^)]*\\|[^)]*\\)[\\*\\+])/.test(r.searchRegex)) }}',
 				whenToDisplay: 'always',

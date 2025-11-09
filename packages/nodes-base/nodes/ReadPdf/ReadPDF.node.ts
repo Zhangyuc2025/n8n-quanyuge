@@ -12,42 +12,42 @@ import { extractDataFromPDF } from '@utils/binary';
 export class ReadPDF implements INodeType {
 	description: INodeTypeDescription = {
 		hidden: true,
-		displayName: 'Read PDF',
+		displayName: '读取 PDF',
 		// eslint-disable-next-line n8n-nodes-base/node-class-description-name-miscased
 		name: 'readPDF',
 		icon: 'fa:file-pdf',
 		group: ['input'],
 		version: 1,
-		description: 'Reads a PDF and extracts its content',
+		description: '读取 PDF 文件并提取其中的文本内容',
 		defaults: {
-			name: 'Read PDF',
+			name: '读取 PDF',
 			color: '#003355',
 		},
 		inputs: [NodeConnectionTypes.Main],
 		outputs: [NodeConnectionTypes.Main],
 		properties: [
 			{
-				displayName: 'Input Binary Field',
+				displayName: '输入二进制字段',
 				name: 'binaryPropertyName',
 				type: 'string',
 				default: 'data',
 				required: true,
-				description: 'Name of the binary property from which to read the PDF file',
+				description: '包含 PDF 文件的二进制属性名称',
 			},
 			{
-				displayName: 'Encrypted',
+				displayName: '加密文件',
 				name: 'encrypted',
 				type: 'boolean',
 				default: false,
 				required: true,
 			},
 			{
-				displayName: 'Password',
+				displayName: '密码',
 				name: 'password',
 				type: 'string',
 				typeOptions: { password: true },
 				default: '',
-				description: 'Password to decrypt the PDF file with',
+				description: '用于解密 PDF 文件的密码',
 				displayOptions: {
 					show: {
 						encrypted: [true],

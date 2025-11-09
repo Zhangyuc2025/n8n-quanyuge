@@ -26,46 +26,46 @@ export class DateTimeV2 implements INodeType {
 			...baseDescription,
 			version: 2,
 			defaults: {
-				name: 'Date & Time',
+				name: '日期和时间',
 				color: '#408000',
 			},
 			usableAsTool: true,
 			inputs: [NodeConnectionTypes.Main],
 			outputs: [NodeConnectionTypes.Main],
-			description: 'Manipulate date and time values',
+			description: '操作日期和时间值',
 			properties: [
 				{
-					displayName: 'Operation',
+					displayName: '操作',
 					name: 'operation',
 					type: 'options',
 					noDataExpression: true,
 					options: [
 						{
-							name: 'Add to a Date',
+							name: '向日期添加时间',
 							value: 'addToDate',
 						},
 						{
-							name: 'Extract Part of a Date',
+							name: '提取日期的部分',
 							value: 'extractDate',
 						},
 						{
-							name: 'Format a Date',
+							name: '格式化日期',
 							value: 'formatDate',
 						},
 						{
-							name: 'Get Current Date',
+							name: '获取当前日期',
 							value: 'getCurrentDate',
 						},
 						{
-							name: 'Get Time Between Dates',
+							name: '获取两个日期之间的时间',
 							value: 'getTimeBetweenDates',
 						},
 						{
-							name: 'Round a Date',
+							name: '四舍五入日期',
 							value: 'roundDate',
 						},
 						{
-							name: 'Subtract From a Date',
+							name: '从日期中减去时间',
 							value: 'subtractFromDate',
 						},
 					],

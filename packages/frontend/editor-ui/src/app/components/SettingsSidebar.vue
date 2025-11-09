@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useUserHelpers } from '@/app/composables/useUserHelpers';
-import { ABOUT_MODAL_KEY, SSO_JUST_IN_TIME_PROVSIONING_EXPERIMENT, VIEWS } from '@/app/constants';
+import { ABOUT_MODAL_KEY, VIEWS } from '@/app/constants';
 import { useSettingsStore } from '@/app/stores/settings.store';
 import { useUIStore } from '@/app/stores/ui.store';
 import { hasPermission } from '@/app/utils/rbac/permissions';

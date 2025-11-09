@@ -62,13 +62,7 @@ import {
 } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-import {
-	N8nActionDropdown,
-	N8nBadge,
-	N8nButton,
-	N8nInlineTextEdit,
-	N8nTooltip,
-} from '@n8n/design-system';
+import { N8nActionDropdown, N8nBadge, N8nButton, N8nInlineTextEdit } from '@n8n/design-system';
 import WorkflowDescriptionPopover from './WorkflowDescriptionPopover.vue';
 const WORKFLOW_NAME_BP_TO_WIDTH: { [key: string]: number } = {
 	XS: 150,

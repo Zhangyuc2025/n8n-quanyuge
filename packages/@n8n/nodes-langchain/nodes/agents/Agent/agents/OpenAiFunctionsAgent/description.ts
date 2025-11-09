@@ -52,7 +52,7 @@ export const openAiFunctionsAgentProperties: INodeProperties[] = [
 			},
 		},
 		default: {},
-		placeholder: 'Add Option',
+		placeholder: '添加选项',
 		options: [
 			{
 				displayName: 'System Message',

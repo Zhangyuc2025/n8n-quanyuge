@@ -15,7 +15,6 @@ import { useI18n } from '@n8n/i18n';
 import { waitingNodeTooltip } from '@/features/execution/executions/executions.utils';
 import { useNodeDirtiness } from '@/app/composables/useNodeDirtiness';
 import { CanvasNodeDirtiness } from '@/features/workflows/canvas/canvas.types';
-import { NDV_UI_OVERHAUL_EXPERIMENT } from '@/app/constants';
 
 import { type IRunDataDisplayMode } from '@/Interface';
 import { I18nT } from 'vue-i18n';

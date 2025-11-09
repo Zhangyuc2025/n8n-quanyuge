@@ -11,42 +11,42 @@ import * as write from './actions/write.operation';
 
 export class ReadWriteFile implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Read/Write Files from Disk',
+		displayName: '读写磁盘文件',
 		name: 'readWriteFile',
 		icon: 'file:readWriteFile.svg',
 		group: ['input'],
 		version: 1,
-		description: 'Read or write files from the computer that runs n8n',
+		description: '从运行 n8n 的计算机读取或写入文件',
 		defaults: {
-			name: 'Read/Write Files from Disk',
+			name: '读写磁盘文件',
 		},
 		inputs: [NodeConnectionTypes.Main],
 		outputs: [NodeConnectionTypes.Main],
 		properties: [
 			{
 				displayName:
-					'Use this node to read and write files on the same computer running n8n. To handle files between different computers please use other nodes (e.g. FTP, HTTP Request, AWS).',
+					'使用此节点在运行 n8n 的同一台计算机上读取和写入文件。要处理不同计算机之间的文件，请使用其他节点（例如 FTP、HTTP Request、AWS）',
 				name: 'info',
 				type: 'notice',
 				default: '',
 			},
 			{
-				displayName: 'Operation',
+				displayName: '操作',
 				name: 'operation',
 				type: 'options',
 				noDataExpression: true,
 				options: [
 					{
-						name: 'Read File(s) From Disk',
+						name: '从磁盘读取文件',
 						value: 'read',
-						description: 'Retrieve one or more files from the computer that runs n8n',
-						action: 'Read File(s) From Disk',
+						description: '从运行 n8n 的计算机检索一个或多个文件',
+						action: '从磁盘读取文件',
 					},
 					{
-						name: 'Write File to Disk',
+						name: '将文件写入磁盘',
 						value: 'write',
-						description: 'Create a binary file on the computer that runs n8n',
-						action: 'Write File to Disk',
+						description: '在运行 n8n 的计算机上创建二进制文件',
+						action: '将文件写入磁盘',
 					},
 				],
 				default: 'read',

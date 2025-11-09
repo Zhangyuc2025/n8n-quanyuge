@@ -14,29 +14,28 @@ import { vmResolver } from '../Code/JavaScriptSandbox';
 
 export class Function implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Function',
+		displayName: '函数',
 		name: 'function',
 		hidden: true,
 		icon: 'fa:code',
 		group: ['transform'],
 		version: 1,
-		description:
-			'Run custom function code which gets executed once and allows you to add, remove, change and replace items',
+		description: '运行自定义函数代码，只执行一次，允许你添加、删除、修改和替换数据项',
 		defaults: {
-			name: 'Function',
+			name: '函数',
 			color: '#FF9922',
 		},
 		inputs: [NodeConnectionTypes.Main],
 		outputs: [NodeConnectionTypes.Main],
 		properties: [
 			{
-				displayName: 'A newer version of this node type is available, called the ‘Code’ node',
+				displayName: '此节点类型有更新的版本，称为"代码"节点',
 				name: 'notice',
 				type: 'notice',
 				default: '',
 			},
 			{
-				displayName: 'JavaScript Code',
+				displayName: 'JavaScript 代码',
 				name: 'functionCode',
 				typeOptions: {
 					alwaysOpenEditWindow: true,
@@ -45,20 +44,20 @@ export class Function implements INodeType {
 					rows: 10,
 				},
 				type: 'string',
-				default: `// Code here will run only once, no matter how many input items there are.
-// More info and help:https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.function/
-// Tip: You can use luxon for dates and $jmespath for querying JSON structures
+				default: `// 此处的代码只会运行一次，无论有多少个输入数据项
+// 更多信息和帮助：https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.function/
+// 提示：你可以使用 luxon 处理日期，使用 $jmespath 查询 JSON 结构
 
-// Loop over inputs and add a new field called 'myNewField' to the JSON of each one
+// 循环遍历输入并在每个数据项的 JSON 中添加一个名为 'myNewField' 的新字段
 for (item of items) {
   item.json.myNewField = 1;
 }
 
-// You can write logs to the browser console
-console.log('Done!');
+// 你可以在浏览器控制台中写入日志
+console.log('完成！');
 
 return items;`,
-				description: 'The JavaScript code to execute',
+				description: '要执行的 JavaScript 代码',
 				noDataExpression: true,
 			},
 		],
@@ -171,36 +170,27 @@ return items;`,
 
 			// Do very basic validation of the data
 			if (items === undefined) {
-				throw new NodeOperationError(
-					this.getNode(),
-					'No data got returned. Always return an Array of items!',
-				);
+				throw new NodeOperationError(this.getNode(), '未返回任何数据。始终要返回一个数据项数组！');
 			}
 			if (!Array.isArray(items)) {
-				throw new NodeOperationError(
-					this.getNode(),
-					'Always an Array of items has to be returned!',
-				);
+				throw new NodeOperationError(this.getNode(), '始终要返回一个数据项数组！');
 			}
 			for (const item of items) {
 				if (item.json === undefined) {
 					throw new NodeOperationError(
 						this.getNode(),
-						'All returned items have to contain a property named "json"!',
+						'所有返回的数据项都必须包含一个名为"json"的属性！',
 					);
 				}
 				if (typeof item.json !== 'object') {
-					throw new NodeOperationError(this.getNode(), 'The json-property has to be an object!');
+					throw new NodeOperationError(this.getNode(), 'json 属性必须是一个对象！');
 				}
 
 				item.json = cleanupData(item.json);
 
 				if (item.binary !== undefined) {
 					if (Array.isArray(item.binary) || typeof item.binary !== 'object') {
-						throw new NodeOperationError(
-							this.getNode(),
-							'The binary-property has to be an object!',
-						);
+						throw new NodeOperationError(this.getNode(), 'binary 属性必须是一个对象！');
 					}
 				}
 			}

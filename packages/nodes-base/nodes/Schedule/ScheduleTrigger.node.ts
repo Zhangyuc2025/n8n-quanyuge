@@ -14,17 +14,16 @@ import type { IRecurrenceRule, Rule } from './SchedulerInterface';
 
 export class ScheduleTrigger implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Schedule Trigger',
+		displayName: '定时触发器',
 		name: 'scheduleTrigger',
 		icon: 'fa:clock',
 		group: ['trigger', 'schedule'],
 		version: [1, 1.1, 1.2],
-		description: 'Triggers the workflow on a given schedule',
+		description: '按照设定的时间计划触发工作流',
 		eventTriggerDescription: '',
-		activationMessage:
-			'Your schedule trigger will now trigger executions on the schedule you have defined.',
+		activationMessage: '定时触发器现在将按照您定义的时间计划触发工作流执行',
 		defaults: {
-			name: 'Schedule Trigger',
+			name: '定时触发器',
 			color: '#31C49F',
 		},
 
@@ -33,15 +32,15 @@ export class ScheduleTrigger implements INodeType {
 		properties: [
 			{
 				displayName:
-					'This workflow will run on the schedule you define here once you <a data-key="activate">activate</a> it.<br><br>For testing, you can also trigger it manually: by going back to the canvas and clicking \'execute workflow\'',
+					'一旦<a data-key="activate">激活</a>此工作流，它将按照您在此处定义的时间计划运行。<br><br>要进行测试，您也可以手动触发：返回画布并点击"执行工作流"',
 				name: 'notice',
 				type: 'notice',
 				default: '',
 			},
 			{
-				displayName: 'Trigger Rules',
+				displayName: '触发规则',
 				name: 'rule',
-				placeholder: 'Add Rule',
+				placeholder: '添加规则',
 				type: 'fixedCollection',
 				typeOptions: {
 					multipleValues: true,
@@ -56,47 +55,47 @@ export class ScheduleTrigger implements INodeType {
 				options: [
 					{
 						name: 'interval',
-						displayName: 'Trigger Interval',
+						displayName: '触发间隔',
 						values: [
 							{
-								displayName: 'Trigger Interval',
+								displayName: '触发间隔',
 								name: 'field',
 								type: 'options',
 								default: 'days',
 								// eslint-disable-next-line n8n-nodes-base/node-param-options-type-unsorted-items
 								options: [
 									{
-										name: 'Seconds',
+										name: '秒',
 										value: 'seconds',
 									},
 									{
-										name: 'Minutes',
+										name: '分钟',
 										value: 'minutes',
 									},
 									{
-										name: 'Hours',
+										name: '小时',
 										value: 'hours',
 									},
 									{
-										name: 'Days',
+										name: '天',
 										value: 'days',
 									},
 									{
-										name: 'Weeks',
+										name: '周',
 										value: 'weeks',
 									},
 									{
-										name: 'Months',
+										name: '月',
 										value: 'months',
 									},
 									{
-										name: 'Custom (Cron)',
+										name: '自定义 (Cron)',
 										value: 'cronExpression',
 									},
 								],
 							},
 							{
-								displayName: 'Seconds Between Triggers',
+								displayName: '触发间隔（秒）',
 								name: 'secondsInterval',
 								type: 'number',
 								default: 30,
@@ -105,10 +104,10 @@ export class ScheduleTrigger implements INodeType {
 										field: ['seconds'],
 									},
 								},
-								description: 'Number of seconds between each workflow trigger',
+								description: '每次工作流触发之间的秒数',
 							},
 							{
-								displayName: 'Minutes Between Triggers',
+								displayName: '触发间隔（分钟）',
 								name: 'minutesInterval',
 								type: 'number',
 								default: 5,
@@ -117,10 +116,10 @@ export class ScheduleTrigger implements INodeType {
 										field: ['minutes'],
 									},
 								},
-								description: 'Number of minutes between each workflow trigger',
+								description: '每次工作流触发之间的分钟数',
 							},
 							{
-								displayName: 'Hours Between Triggers',
+								displayName: '触发间隔（小时）',
 								name: 'hoursInterval',
 								type: 'number',
 								displayOptions: {
@@ -129,10 +128,10 @@ export class ScheduleTrigger implements INodeType {
 									},
 								},
 								default: 1,
-								description: 'Number of hours between each workflow trigger',
+								description: '每次工作流触发之间的小时数',
 							},
 							{
-								displayName: 'Days Between Triggers',
+								displayName: '触发间隔（天）',
 								name: 'daysInterval',
 								type: 'number',
 								displayOptions: {
@@ -141,10 +140,10 @@ export class ScheduleTrigger implements INodeType {
 									},
 								},
 								default: 1,
-								description: 'Number of days between each workflow trigger',
+								description: '每次工作流触发之间的天数',
 							},
 							{
-								displayName: 'Weeks Between Triggers',
+								displayName: '触发间隔（周）',
 								name: 'weeksInterval',
 								type: 'number',
 								displayOptions: {
@@ -153,10 +152,10 @@ export class ScheduleTrigger implements INodeType {
 									},
 								},
 								default: 1,
-								description: 'Would run every week unless specified otherwise',
+								description: '除非另有指定，否则每周运行一次',
 							},
 							{
-								displayName: 'Months Between Triggers',
+								displayName: '触发间隔（月）',
 								name: 'monthsInterval',
 								type: 'number',
 								displayOptions: {
@@ -165,10 +164,10 @@ export class ScheduleTrigger implements INodeType {
 									},
 								},
 								default: 1,
-								description: 'Would run every month unless specified otherwise',
+								description: '除非另有指定，否则每月运行一次',
 							},
 							{
-								displayName: 'Trigger at Day of Month',
+								displayName: '在每月的第几天触发',
 								name: 'triggerAtDayOfMonth',
 								type: 'number',
 								displayOptions: {
@@ -181,11 +180,11 @@ export class ScheduleTrigger implements INodeType {
 									maxValue: 31,
 								},
 								default: 1,
-								description: 'The day of the month to trigger (1-31)',
-								hint: 'If a month doesn’t have this day, the node won’t trigger',
+								description: '触发的月份中的哪一天（1-31）',
+								hint: '如果某个月没有该日期，节点将不会触发',
 							},
 							{
-								displayName: 'Trigger on Weekdays',
+								displayName: '在工作日触发',
 								name: 'triggerAtDay',
 								type: 'multiOptions',
 								displayOptions: {
@@ -198,39 +197,39 @@ export class ScheduleTrigger implements INodeType {
 								},
 								options: [
 									{
-										name: 'Monday',
+										name: '星期一',
 										value: 1,
 									},
 									{
-										name: 'Tuesday',
+										name: '星期二',
 										value: 2,
 									},
 									{
-										name: 'Wednesday',
+										name: '星期三',
 										value: 3,
 									},
 									{
-										name: 'Thursday',
+										name: '星期四',
 										value: 4,
 									},
 									{
-										name: 'Friday',
+										name: '星期五',
 										value: 5,
 									},
 
 									{
-										name: 'Saturday',
+										name: '星期六',
 										value: 6,
 									},
 									{
-										name: 'Sunday',
+										name: '星期日',
 										value: 0,
 									},
 								],
 								default: [0],
 							},
 							{
-								displayName: 'Trigger at Hour',
+								displayName: '在哪个小时触发',
 								name: 'triggerAtHour',
 								type: 'options',
 								default: 0,
@@ -241,8 +240,8 @@ export class ScheduleTrigger implements INodeType {
 								},
 								options: [
 									{
-										name: 'Midnight',
-										displayName: 'Midnight',
+										name: '午夜',
+										displayName: '午夜',
 										value: 0,
 									},
 									{
@@ -361,10 +360,10 @@ export class ScheduleTrigger implements INodeType {
 										value: 23,
 									},
 								],
-								description: 'The hour of the day to trigger',
+								description: '一天中触发的小时',
 							},
 							{
-								displayName: 'Trigger at Minute',
+								displayName: '在哪一分钟触发',
 								name: 'triggerAtMinute',
 								type: 'number',
 								default: 0,
@@ -377,11 +376,11 @@ export class ScheduleTrigger implements INodeType {
 									minValue: 0,
 									maxValue: 59,
 								},
-								description: 'The minute past the hour to trigger (0-59)',
+								description: '超过小时的分钟数以触发（0-59）',
 							},
 							{
 								displayName:
-									'You can find help generating your cron expression <a href="https://crontab.guru/examples.html" target="_blank">here</a>',
+									'您可以在<a href="https://crontab.guru/examples.html" target="_blank">这里</a>找到生成 cron 表达式的帮助',
 								name: 'notice',
 								type: 'notice',
 								displayOptions: {
@@ -392,17 +391,17 @@ export class ScheduleTrigger implements INodeType {
 								default: '',
 							},
 							{
-								displayName: 'Expression',
+								displayName: '表达式',
 								name: 'expression',
 								type: 'string',
 								default: '',
-								placeholder: 'eg. 0 15 * 1 sun',
+								placeholder: '例如：0 15 * 1 sun',
 								displayOptions: {
 									show: {
 										field: ['cronExpression'],
 									},
 								},
-								hint: 'Format: [Second] [Minute] [Hour] [Day of Month] [Month] [Day of Week]',
+								hint: '格式：[秒] [分] [时] [日] [月] [周]',
 							},
 						],
 					},
@@ -459,8 +458,8 @@ export class ScheduleTrigger implements INodeType {
 					this.helpers.registerCron(cron, () => executeTrigger(recurrence));
 				} catch (error) {
 					if (interval.field === 'cronExpression') {
-						throw new NodeOperationError(this.getNode(), 'Invalid cron expression', {
-							description: 'More information on how to build them at https://crontab.guru/',
+						throw new NodeOperationError(this.getNode(), '无效的 cron 表达式', {
+							description: '有关如何构建它们的更多信息，请访问 https://crontab.guru/',
 						});
 					} else {
 						throw error;
@@ -475,8 +474,8 @@ export class ScheduleTrigger implements INodeType {
 					try {
 						sendAt(cronExpression);
 					} catch (error) {
-						throw new NodeOperationError(this.getNode(), 'Invalid cron expression', {
-							description: 'More information on how to build them at https://crontab.guru/',
+						throw new NodeOperationError(this.getNode(), '无效的 cron 表达式', {
+							description: '有关如何构建它们的更多信息，请访问 https://crontab.guru/',
 						});
 					}
 				}

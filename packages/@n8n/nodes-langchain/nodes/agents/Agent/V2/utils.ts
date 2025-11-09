@@ -43,7 +43,7 @@ export function getInputs(
 	let specialInputs: SpecialInput[] = [
 		{
 			type: 'ai_languageModel',
-			displayName: 'Chat Model',
+			displayName: '聊天模型',
 			required: true,
 			filter: {
 				excludedNodes: [
@@ -56,7 +56,7 @@ export function getInputs(
 		},
 		{
 			type: 'ai_languageModel',
-			displayName: 'Fallback Model',
+			displayName: '备用模型',
 			required: true,
 			filter: {
 				excludedNodes: [
@@ -68,15 +68,15 @@ export function getInputs(
 			},
 		},
 		{
-			displayName: 'Memory',
+			displayName: '记忆',
 			type: 'ai_memory',
 		},
 		{
-			displayName: 'Tool',
+			displayName: '工具',
 			type: 'ai_tool',
 		},
 		{
-			displayName: 'Output Parser',
+			displayName: '输出解析器',
 			type: 'ai_outputParser',
 		},
 	];
@@ -85,7 +85,7 @@ export function getInputs(
 		specialInputs = specialInputs.filter((input) => input.type !== 'ai_outputParser');
 	}
 	if (needsFallback === false) {
-		specialInputs = specialInputs.filter((input) => input.displayName !== 'Fallback Model');
+		specialInputs = specialInputs.filter((input) => input.displayName !== '备用模型');
 	}
 
 	// Note cannot use NodeConnectionType.Main

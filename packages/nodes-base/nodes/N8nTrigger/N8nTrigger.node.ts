@@ -10,47 +10,47 @@ type eventType = 'Instance started' | 'Workflow activated' | 'Workflow updated' 
 
 export class N8nTrigger implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'n8n Trigger',
+		displayName: 'n8n 触发器',
 		name: 'n8nTrigger',
 		icon: 'file:n8nTrigger.svg',
 		group: ['trigger'],
 		version: 1,
-		description: 'Handle events and perform actions on your n8n instance',
+		description: '处理事件并在 n8n 实例上执行操作',
 		eventTriggerDescription: '',
 		mockManualExecution: true,
 		defaults: {
-			name: 'n8n Trigger',
+			name: 'n8n 触发器',
 		},
 		inputs: [],
 		outputs: [NodeConnectionTypes.Main],
 		properties: [
 			{
-				displayName: 'Events',
+				displayName: '事件',
 				name: 'events',
 				type: 'multiOptions',
 				required: true,
 				default: [],
-				description: `Specifies under which conditions an execution should happen:
+				description: `指定在哪些条件下执行：
 				<ul>
-					<li><b>Active Workflow Updated</b>: Triggers when this workflow is updated</li>
-					<li><b>Instance Started</b>:  Triggers when this n8n instance is started or re-started</li>
-					<li><b>Workflow Activated</b>: Triggers when this workflow is activated</li>
+					<li><b>活动工作流已更新</b>：当此工作流更新时触发</li>
+					<li><b>实例已启动</b>：当此 n8n 实例启动或重新启动时触发</li>
+					<li><b>工作流已激活</b>：当此工作流激活时触发</li>
 				</ul>`,
 				options: [
 					{
-						name: 'Active Workflow Updated',
+						name: '活动工作流已更新',
 						value: 'update',
-						description: 'Triggers when this workflow is updated',
+						description: '当此工作流更新时触发',
 					},
 					{
-						name: 'Instance Started',
+						name: '实例已启动',
 						value: 'init',
-						description: 'Triggers when this n8n instance is started or re-started',
+						description: '当此 n8n 实例启动或重新启动时触发',
 					},
 					{
-						name: 'Workflow Activated',
+						name: '工作流已激活',
 						value: 'activate',
-						description: 'Triggers when this workflow is activated',
+						description: '当此工作流激活时触发',
 					},
 				],
 			},

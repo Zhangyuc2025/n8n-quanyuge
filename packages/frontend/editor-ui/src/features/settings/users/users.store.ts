@@ -11,7 +11,6 @@ import {
 import type { UpdateGlobalRolePayload } from '@n8n/rest-api-client/api/users';
 import * as usersApi from '@n8n/rest-api-client/api/users';
 import { BROWSER_ID_STORAGE_KEY } from '@n8n/constants';
-import { PERSONALIZATION_MODAL_KEY } from './users.constants';
 import { STORES } from '@n8n/stores';
 import type { InvitableRoleName } from './users.types';
 import type { IUserResponse } from '@n8n/rest-api-client/api/users';

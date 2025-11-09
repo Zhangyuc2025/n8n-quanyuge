@@ -18,7 +18,7 @@ export class HackerNews implements INodeType {
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
-		description: 'Consume Hacker News API',
+		description: '使用 Hacker News API',
 		defaults: {
 			name: 'Hacker News',
 		},
@@ -30,21 +30,21 @@ export class HackerNews implements INodeType {
 			//         Resources
 			// ----------------------------------
 			{
-				displayName: 'Resource',
+				displayName: '资源',
 				name: 'resource',
 				type: 'options',
 				noDataExpression: true,
 				options: [
 					{
-						name: 'All',
+						name: '全部',
 						value: 'all',
 					},
 					{
-						name: 'Article',
+						name: '文章',
 						value: 'article',
 					},
 					{
-						name: 'User',
+						name: '用户',
 						value: 'user',
 					},
 				],
@@ -55,7 +55,7 @@ export class HackerNews implements INodeType {
 			//         Operations
 			// ----------------------------------
 			{
-				displayName: 'Operation',
+				displayName: '操作',
 				name: 'operation',
 				type: 'options',
 				noDataExpression: true,
@@ -66,16 +66,16 @@ export class HackerNews implements INodeType {
 				},
 				options: [
 					{
-						name: 'Get Many',
+						name: '获取多个',
 						value: 'getAll',
-						description: 'Get many items',
-						action: 'Get many items',
+						description: '获取多个项目',
+						action: '获取多个项目',
 					},
 				],
 				default: 'getAll',
 			},
 			{
-				displayName: 'Operation',
+				displayName: '操作',
 				name: 'operation',
 				type: 'options',
 				noDataExpression: true,
@@ -86,16 +86,16 @@ export class HackerNews implements INodeType {
 				},
 				options: [
 					{
-						name: 'Get',
+						name: '获取',
 						value: 'get',
-						description: 'Get a Hacker News article',
-						action: 'Get an article',
+						description: '获取 Hacker News 文章',
+						action: '获取文章',
 					},
 				],
 				default: 'get',
 			},
 			{
-				displayName: 'Operation',
+				displayName: '操作',
 				name: 'operation',
 				type: 'options',
 				noDataExpression: true,
@@ -106,10 +106,10 @@ export class HackerNews implements INodeType {
 				},
 				options: [
 					{
-						name: 'Get',
+						name: '获取',
 						value: 'get',
-						description: 'Get a Hacker News user',
-						action: 'Get a user',
+						description: '获取 Hacker News 用户',
+						action: '获取用户',
 					},
 				],
 				default: 'get',
@@ -118,12 +118,12 @@ export class HackerNews implements INodeType {
 			//         Fields
 			// ----------------------------------
 			{
-				displayName: 'Article ID',
+				displayName: '文章 ID',
 				name: 'articleId',
 				type: 'string',
 				required: true,
 				default: '',
-				description: 'The ID of the Hacker News article to be returned',
+				description: '要返回的 Hacker News 文章 ID',
 				displayOptions: {
 					show: {
 						resource: ['article'],
@@ -132,12 +132,12 @@ export class HackerNews implements INodeType {
 				},
 			},
 			{
-				displayName: 'Username',
+				displayName: '用户名',
 				name: 'username',
 				type: 'string',
 				required: true,
 				default: '',
-				description: 'The Hacker News user to be returned',
+				description: '要返回的 Hacker News 用户',
 				displayOptions: {
 					show: {
 						resource: ['user'],
@@ -146,11 +146,11 @@ export class HackerNews implements INodeType {
 				},
 			},
 			{
-				displayName: 'Return All',
+				displayName: '返回全部',
 				name: 'returnAll',
 				type: 'boolean',
 				default: false,
-				description: 'Whether to return all results or only up to a given limit',
+				description: '是否返回所有结果或仅返回指定数量',
 				displayOptions: {
 					show: {
 						resource: ['all'],
@@ -159,14 +159,14 @@ export class HackerNews implements INodeType {
 				},
 			},
 			{
-				displayName: 'Limit',
+				displayName: '限制',
 				name: 'limit',
 				type: 'number',
 				typeOptions: {
 					minValue: 1,
 				},
 				default: 100,
-				description: 'Max number of results to return',
+				description: '要返回的最大结果数',
 				displayOptions: {
 					show: {
 						resource: ['all'],
@@ -176,10 +176,10 @@ export class HackerNews implements INodeType {
 				},
 			},
 			{
-				displayName: 'Additional Fields',
+				displayName: '附加字段',
 				name: 'additionalFields',
 				type: 'collection',
-				placeholder: 'Add Field',
+				placeholder: '添加字段',
 				default: {},
 				displayOptions: {
 					show: {
@@ -189,19 +189,19 @@ export class HackerNews implements INodeType {
 				},
 				options: [
 					{
-						displayName: 'Include Comments',
+						displayName: '包含评论',
 						name: 'includeComments',
 						type: 'boolean',
 						default: false,
-						description: 'Whether to include all the comments in a Hacker News article',
+						description: '是否包含 Hacker News 文章的所有评论',
 					},
 				],
 			},
 			{
-				displayName: 'Additional Fields',
+				displayName: '附加字段',
 				name: 'additionalFields',
 				type: 'collection',
-				placeholder: 'Add Field',
+				placeholder: '添加字段',
 				default: {},
 				displayOptions: {
 					show: {
@@ -211,50 +211,50 @@ export class HackerNews implements INodeType {
 				},
 				options: [
 					{
-						displayName: 'Keyword',
+						displayName: '关键词',
 						name: 'keyword',
 						type: 'string',
 						default: '',
-						description: 'The keyword for filtering the results of the query',
+						description: '用于过滤查询结果的关键词',
 					},
 					{
-						displayName: 'Tags',
+						displayName: '标签',
 						name: 'tags',
 						type: 'multiOptions',
 						options: [
 							{
 								name: 'Ask HN',
 								value: 'ask_hn', // snake case per HN tags
-								description: 'Returns query results filtered by Ask HN tag',
+								description: '返回按 Ask HN 标签过滤的查询结果',
 							},
 							{
-								name: 'Comment',
+								name: '评论',
 								value: 'comment',
-								description: 'Returns query results filtered by comment tag',
+								description: '返回按评论标签过滤的查询结果',
 							},
 							{
-								name: 'Front Page',
+								name: '首页',
 								value: 'front_page', // snake case per HN tags
-								description: 'Returns query results filtered by Front Page tag',
+								description: '返回按首页标签过滤的查询结果',
 							},
 							{
-								name: 'Poll',
+								name: '投票',
 								value: 'poll',
-								description: 'Returns query results filtered by poll tag',
+								description: '返回按投票标签过滤的查询结果',
 							},
 							{
 								name: 'Show HN',
 								value: 'show_hn', // snake case per HN tags
-								description: 'Returns query results filtered by Show HN tag',
+								description: '返回按 Show HN 标签过滤的查询结果',
 							},
 							{
-								name: 'Story',
+								name: '故事',
 								value: 'story',
-								description: 'Returns query results filtered by story tag',
+								description: '返回按故事标签过滤的查询结果',
 							},
 						],
 						default: [],
-						description: 'Tags for filtering the results of the query',
+						description: '用于过滤查询结果的标签',
 					},
 				],
 			},

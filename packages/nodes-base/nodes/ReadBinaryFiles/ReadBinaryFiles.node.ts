@@ -12,35 +12,35 @@ import { generatePairedItemData } from '../../utils/utilities';
 export class ReadBinaryFiles implements INodeType {
 	description: INodeTypeDescription = {
 		hidden: true,
-		displayName: 'Read Binary Files',
+		displayName: '读取二进制文件',
 		name: 'readBinaryFiles',
 		icon: 'fa:file-import',
 		group: ['input'],
 		version: 1,
-		description: 'Reads binary files from disk',
+		description: '从磁盘读取二进制文件',
 		defaults: {
-			name: 'Read Binary Files',
+			name: '读取二进制文件',
 			color: '#44AA44',
 		},
 		inputs: [NodeConnectionTypes.Main],
 		outputs: [NodeConnectionTypes.Main],
 		properties: [
 			{
-				displayName: 'File Selector',
+				displayName: '文件选择器',
 				name: 'fileSelector',
 				type: 'string',
 				default: '',
 				required: true,
 				placeholder: '*.jpg',
-				description: 'Pattern for files to read',
+				description: '要读取的文件模式',
 			},
 			{
-				displayName: 'Property Name',
+				displayName: '属性名称',
 				name: 'dataPropertyName',
 				type: 'string',
 				default: 'data',
 				required: true,
-				description: 'Name of the binary property to which to write the data of the read files',
+				description: '要写入读取文件数据的二进制属性名称',
 			},
 		],
 	};

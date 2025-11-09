@@ -6,12 +6,12 @@ import { RemoveDuplicatesV2 } from './v2/RemoveDuplicatesV2.node';
 export class RemoveDuplicates extends VersionedNodeType {
 	constructor() {
 		const baseDescription: INodeTypeBaseDescription = {
-			displayName: 'Remove Duplicates',
+			displayName: '去除重复项',
 			name: 'removeDuplicates',
 			icon: 'file:removeDuplicates.svg',
 			group: ['transform'],
 			defaultVersion: 2,
-			description: 'Delete items with matching field values',
+			description: '删除具有相同字段值的项',
 		};
 
 		const nodeVersions: IVersionedNodeType['nodeVersions'] = {

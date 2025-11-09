@@ -11,7 +11,7 @@ export { concatenateItems, limit, removeDuplicates, sort, splitOutItems, summari
 
 export const description: INodeProperties[] = [
 	{
-		displayName: 'Operation',
+		displayName: '操作',
 		name: 'operation',
 		type: 'options',
 		noDataExpression: true,
@@ -22,41 +22,40 @@ export const description: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Concatenate Items',
+				name: '合并项目',
 				value: 'concatenateItems',
-				description: 'Combine fields into a list in a single new item',
-				action: 'Concatenate Items',
+				description: '将字段合并到单个新项中的列表',
+				action: '合并项目',
 			},
 			{
-				name: 'Limit',
+				name: '限制',
 				value: 'limit',
-				description: 'Remove items if there are too many',
-				action: 'Limit',
+				description: '如果项目过多则删除',
+				action: '限制',
 			},
 			{
-				name: 'Remove Duplicates',
+				name: '删除重复项',
 				value: 'removeDuplicates',
-				description: 'Remove extra items that are similar',
-				action: 'Remove Duplicates',
+				description: '删除相似的额外项目',
+				action: '删除重复项',
 			},
 			{
-				name: 'Sort',
+				name: '排序',
 				value: 'sort',
-				description: 'Change the item order',
-				action: 'Sort',
+				description: '更改项目顺序',
+				action: '排序',
 			},
 			{
-				name: 'Split Out Items',
+				name: '拆分项目',
 				value: 'splitOutItems',
-				description:
-					"Turn a list or values of object's properties inside item(s) into separate items",
-				action: 'Split Out Items',
+				description: '将项目中对象属性的列表或值转换为单独的项目',
+				action: '拆分项目',
 			},
 			{
-				name: 'Summarize',
+				name: '汇总',
 				value: 'summarize',
-				description: 'Aggregate items together (pivot table)',
-				action: 'Summarize',
+				description: '将项目聚合在一起（数据透视表）',
+				action: '汇总',
 			},
 		],
 		default: 'splitOutItems',

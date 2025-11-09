@@ -29,73 +29,72 @@ export class ItemListsV2 implements INodeType {
 			...baseDescription,
 			version: [2, 2.1, 2.2],
 			defaults: {
-				name: 'Item Lists',
+				name: '项目列表',
 			},
 			inputs: [NodeConnectionTypes.Main],
 			outputs: [NodeConnectionTypes.Main],
 			credentials: [],
 			properties: [
 				{
-					displayName: 'Resource',
+					displayName: '资源',
 					name: 'resource',
 					type: 'hidden',
 					options: [
 						{
-							name: 'Item List',
+							name: '项目列表',
 							value: 'itemList',
 						},
 					],
 					default: 'itemList',
 				},
 				{
-					displayName: 'Operation',
+					displayName: '操作',
 					name: 'operation',
 					type: 'options',
 					noDataExpression: true,
 					options: [
 						{
-							name: 'Concatenate Items',
+							name: '合并项目',
 							value: 'aggregateItems',
-							description: 'Combine fields into a list in a single new item',
-							action: 'Concatenate Items',
+							description: '将字段组合成单个新项目中的列表',
+							action: '合并项目',
 						},
 						{
-							name: 'Limit',
+							name: '限制',
 							value: 'limit',
-							description: 'Remove items if there are too many',
-							action: 'Limit',
+							description: '如果项目过多则移除',
+							action: '限制',
 						},
 						{
-							name: 'Remove Duplicates',
+							name: '移除重复项',
 							value: 'removeDuplicates',
-							description: 'Remove extra items that are similar',
-							action: 'Remove Duplicates',
+							description: '移除相似的额外项目',
+							action: '移除重复项',
 						},
 						{
-							name: 'Sort',
+							name: '排序',
 							value: 'sort',
-							description: 'Change the item order',
-							action: 'Sort',
+							description: '更改项目顺序',
+							action: '排序',
 						},
 						{
-							name: 'Split Out Items',
+							name: '拆分项目',
 							value: 'splitOutItems',
-							description:
-								"Turn a list or values of object's properties inside item(s) into separate items",
-							action: 'Split Out Items',
+							description: '将项目内的列表或对象属性值拆分为独立项目',
+							action: '拆分项目',
 						},
 						{
-							name: 'Summarize',
+							name: '汇总',
 							value: 'summarize',
-							description: 'Aggregate items together (pivot table)',
-							action: 'Summarize',
+							description: '聚合项目（数据透视表）',
+							action: '汇总',
 						},
 					],
 					default: 'splitOutItems',
 				},
 				// Split out items - Fields
 				{
-					displayName: 'Fields To Split Out',
+					displayName: '要拆分的字段',
 					name: 'fieldToSplitOut',
 					type: 'string',
 					default: '',
@@ -106,24 +105,24 @@ export class ItemListsV2 implements INodeType {
 							operation: ['splitOutItems'],
 						},
 					},
-					description: 'The name of the input fields to break out into separate items',
+					description: '要拆分为独立项目的输入字段名称',
 					requiresDataPath: 'multiple',
 				},
 				{
-					displayName: 'Include',
+					displayName: '包含',
 					name: 'include',
 					type: 'options',
 					options: [
 						{
-							name: 'No Other Fields',
+							name: '不包含其他字段',
 							value: 'noOtherFields',
 						},
 						{
-							name: 'All Other Fields',
+							name: '所有其他字段',
 							value: 'allOtherFields',
 						},
 						{
-							name: 'Selected Other Fields',
+							name: '选定的其他字段',
 							value: 'selectedOtherFields',
 						},
 					],
@@ -137,13 +136,13 @@ export class ItemListsV2 implements INodeType {
 					},
 				},
 				{
-					displayName: 'Fields To Include',
+					displayName: '要包含的字段',
 					name: 'fieldsToInclude',
 					type: 'fixedCollection',
 					typeOptions: {
 						multipleValues: true,
 					},
-					placeholder: 'Add Field To Include',
+					placeholder: '添加要包含的字段',
 					default: {},
 					displayOptions: {
 						show: {
@@ -158,14 +157,14 @@ export class ItemListsV2 implements INodeType {
 							name: 'fields',
 							values: [
 								{
-									displayName: 'Field Name',
+									displayName: '字段名称',
 									name: 'fieldName',
 									type: 'string',
 									default: '',
 									description: 'A field in the input items to aggregate together',
 									// eslint-disable-next-line n8n-nodes-base/node-param-placeholder-miscased-id
-									placeholder: 'e.g. id',
-									hint: ' Enter the field name as text',
+									placeholder: '例如：id',
+									hint: ' 以文本形式输入字段名称',
 									requiresDataPath: 'single',
 								},
 							],
@@ -174,17 +173,17 @@ export class ItemListsV2 implements INodeType {
 				},
 				// Aggregate Items
 				{
-					displayName: 'Aggregate',
+					displayName: '聚合',
 					name: 'aggregate',
 					type: 'options',
 					default: 'aggregateIndividualFields',
 					options: [
 						{
-							name: 'Individual Fields',
+							name: '单个字段',
 							value: 'aggregateIndividualFields',
 						},
 						{
-							name: 'All Item Data (Into a Single List)',
+							name: '所有项目数据（合并到单个列表）',
 							value: 'aggregateAllItemData',
 						},
 					],
@@ -197,13 +196,13 @@ export class ItemListsV2 implements INodeType {
 				},
 				// Aggregate Individual Fields
 				{
-					displayName: 'Fields To Aggregate',
+					displayName: '要聚合的字段',
 					name: 'fieldsToAggregate',
 					type: 'fixedCollection',
 					typeOptions: {
 						multipleValues: true,
 					},
-					placeholder: 'Add Field To Aggregate',
+					placeholder: '添加要聚合的字段',
 					default: { fieldToAggregate: [{ fieldToAggregate: '', renameField: false }] },
 					displayOptions: {
 						show: {
@@ -218,25 +217,25 @@ export class ItemListsV2 implements INodeType {
 							name: 'fieldToAggregate',
 							values: [
 								{
-									displayName: 'Input Field Name',
+									displayName: '输入字段名称',
 									name: 'fieldToAggregate',
 									type: 'string',
 									default: '',
 									description: 'The name of a field in the input items to aggregate together',
 									// eslint-disable-next-line n8n-nodes-base/node-param-placeholder-miscased-id
-									placeholder: 'e.g. id',
-									hint: ' Enter the field name as text',
+									placeholder: '例如：id',
+									hint: ' 以文本形式输入字段名称',
 									requiresDataPath: 'single',
 								},
 								{
-									displayName: 'Rename Field',
+									displayName: '重命名字段',
 									name: 'renameField',
 									type: 'boolean',
 									default: false,
 									description: 'Whether to give the field a different name in the output',
 								},
 								{
-									displayName: 'Output Field Name',
+									displayName: '输出字段名称',
 									name: 'outputFieldName',
 									displayOptions: {
 										show: {
@@ -255,7 +254,7 @@ export class ItemListsV2 implements INodeType {
 				},
 				// Aggregate All Item Data
 				{
-					displayName: 'Put Output in Field',
+					displayName: '输出字段',
 					name: 'destinationFieldName',
 					type: 'string',
 					displayOptions: {
@@ -269,21 +268,21 @@ export class ItemListsV2 implements INodeType {
 					description: 'The name of the output field to put the data in',
 				},
 				{
-					displayName: 'Include',
+					displayName: '包含',
 					name: 'include',
 					type: 'options',
 					default: 'allFields',
 					options: [
 						{
-							name: 'All Fields',
+							name: '所有字段',
 							value: 'allFields',
 						},
 						{
-							name: 'Specified Fields',
+							name: '指定字段',
 							value: 'specifiedFields',
 						},
 						{
-							name: 'All Fields Except',
+							name: '除外所有字段',
 							value: 'allFieldsExcept',
 						},
 					],
@@ -296,13 +295,13 @@ export class ItemListsV2 implements INodeType {
 					},
 				},
 				{
-					displayName: 'Fields To Exclude',
+					displayName: '要排除的字段',
 					name: 'fieldsToExclude',
 					type: 'fixedCollection',
 					typeOptions: {
 						multipleValues: true,
 					},
-					placeholder: 'Add Field To Exclude',
+					placeholder: '添加要排除的字段',
 					default: {},
 					options: [
 						{
@@ -310,14 +309,14 @@ export class ItemListsV2 implements INodeType {
 							name: 'fields',
 							values: [
 								{
-									displayName: 'Field Name',
+									displayName: '字段名称',
 									name: 'fieldName',
 									type: 'string',
 									default: '',
 									description: 'A field in the input to exclude from the object in output array',
 									// eslint-disable-next-line n8n-nodes-base/node-param-placeholder-miscased-id
-									placeholder: 'e.g. id',
-									hint: ' Enter the field name as text',
+									placeholder: '例如：id',
+									hint: ' 以文本形式输入字段名称',
 									requiresDataPath: 'single',
 								},
 							],
@@ -333,13 +332,13 @@ export class ItemListsV2 implements INodeType {
 					},
 				},
 				{
-					displayName: 'Fields To Include',
+					displayName: '要包含的字段',
 					name: 'fieldsToInclude',
 					type: 'fixedCollection',
 					typeOptions: {
 						multipleValues: true,
 					},
-					placeholder: 'Add Field To Include',
+					placeholder: '添加要包含的字段',
 					default: {},
 					options: [
 						{
@@ -347,14 +346,14 @@ export class ItemListsV2 implements INodeType {
 							name: 'fields',
 							values: [
 								{
-									displayName: 'Field Name',
+									displayName: '字段名称',
 									name: 'fieldName',
 									type: 'string',
 									default: '',
 									description: 'Specify fields that will be included in output array',
 									// eslint-disable-next-line n8n-nodes-base/node-param-placeholder-miscased-id
-									placeholder: 'e.g. id',
-									hint: ' Enter the field name as text',
+									placeholder: '例如：id',
+									hint: ' 以文本形式输入字段名称',
 									requiresDataPath: 'single',
 								},
 							],
@@ -371,20 +370,20 @@ export class ItemListsV2 implements INodeType {
 				},
 				// Remove duplicates - Fields
 				{
-					displayName: 'Compare',
+					displayName: '比较',
 					name: 'compare',
 					type: 'options',
 					options: [
 						{
-							name: 'All Fields',
+							name: '所有字段',
 							value: 'allFields',
 						},
 						{
-							name: 'All Fields Except',
+							name: '除外所有字段',
 							value: 'allFieldsExcept',
 						},
 						{
-							name: 'Selected Fields',
+							name: '选定字段',
 							value: 'selectedFields',
 						},
 					],
@@ -398,13 +397,13 @@ export class ItemListsV2 implements INodeType {
 					},
 				},
 				{
-					displayName: 'Fields To Exclude',
+					displayName: '要排除的字段',
 					name: 'fieldsToExclude',
 					type: 'fixedCollection',
 					typeOptions: {
 						multipleValues: true,
 					},
-					placeholder: 'Add Field To Exclude',
+					placeholder: '添加要排除的字段',
 					default: {},
 					displayOptions: {
 						show: {
@@ -419,14 +418,14 @@ export class ItemListsV2 implements INodeType {
 							name: 'fields',
 							values: [
 								{
-									displayName: 'Field Name',
+									displayName: '字段名称',
 									name: 'fieldName',
 									type: 'string',
 									default: '',
 									description: 'A field in the input to exclude from the comparison',
 									// eslint-disable-next-line n8n-nodes-base/node-param-placeholder-miscased-id
-									placeholder: 'e.g. id',
-									hint: ' Enter the field name as text',
+									placeholder: '例如：id',
+									hint: ' 以文本形式输入字段名称',
 									requiresDataPath: 'single',
 								},
 							],
@@ -434,13 +433,13 @@ export class ItemListsV2 implements INodeType {
 					],
 				},
 				{
-					displayName: 'Fields To Compare',
+					displayName: '要比较的字段',
 					name: 'fieldsToCompare',
 					type: 'fixedCollection',
 					typeOptions: {
 						multipleValues: true,
 					},
-					placeholder: 'Add Field To Compare',
+					placeholder: '添加要比较的字段',
 					default: {},
 					displayOptions: {
 						show: {
@@ -455,14 +454,14 @@ export class ItemListsV2 implements INodeType {
 							name: 'fields',
 							values: [
 								{
-									displayName: 'Field Name',
+									displayName: '字段名称',
 									name: 'fieldName',
 									type: 'string',
 									default: '',
 									description: 'A field in the input to add to the comparison',
 									// eslint-disable-next-line n8n-nodes-base/node-param-placeholder-miscased-id
-									placeholder: 'e.g. id',
-									hint: ' Enter the field name as text',
+									placeholder: '例如：id',
+									hint: ' 以文本形式输入字段名称',
 									requiresDataPath: 'single',
 								},
 							],
@@ -471,20 +470,20 @@ export class ItemListsV2 implements INodeType {
 				},
 				// Sort - Fields
 				{
-					displayName: 'Type',
+					displayName: '类型',
 					name: 'type',
 					type: 'options',
 					options: [
 						{
-							name: 'Simple',
+							name: '简单',
 							value: 'simple',
 						},
 						{
-							name: 'Random',
+							name: '随机',
 							value: 'random',
 						},
 						{
-							name: 'Code',
+							name: '代码',
 							value: 'code',
 						},
 					],
@@ -498,41 +497,41 @@ export class ItemListsV2 implements INodeType {
 					},
 				},
 				{
-					displayName: 'Fields To Sort By',
+					displayName: '排序字段',
 					name: 'sortFieldsUi',
 					type: 'fixedCollection',
 					typeOptions: {
 						multipleValues: true,
 					},
-					placeholder: 'Add Field To Sort By',
+					placeholder: '添加排序字段',
 					options: [
 						{
 							displayName: '',
 							name: 'sortField',
 							values: [
 								{
-									displayName: 'Field Name',
+									displayName: '字段名称',
 									name: 'fieldName',
 									type: 'string',
 									required: true,
 									default: '',
 									description: 'The field to sort by',
 									// eslint-disable-next-line n8n-nodes-base/node-param-placeholder-miscased-id
-									placeholder: 'e.g. id',
-									hint: ' Enter the field name as text',
+									placeholder: '例如：id',
+									hint: ' 以文本形式输入字段名称',
 									requiresDataPath: 'single',
 								},
 								{
-									displayName: 'Order',
+									displayName: '顺序',
 									name: 'order',
 									type: 'options',
 									options: [
 										{
-											name: 'Ascending',
+											name: '升序',
 											value: 'ascending',
 										},
 										{
-											name: 'Descending',
+											name: '降序',
 											value: 'descending',
 										},
 									],
@@ -587,7 +586,7 @@ return 0;`,
 				},
 				// Limit - Fields
 				{
-					displayName: 'Max Items',
+					displayName: '最大项目数',
 					name: 'maxItems',
 					type: 'number',
 					typeOptions: {
@@ -603,16 +602,16 @@ return 0;`,
 					},
 				},
 				{
-					displayName: 'Keep',
+					displayName: '保留',
 					name: 'keep',
 					type: 'options',
 					options: [
 						{
-							name: 'First Items',
+							name: '开头的项目',
 							value: 'firstItems',
 						},
 						{
-							name: 'Last Items',
+							name: '末尾的项目',
 							value: 'lastItems',
 						},
 					],
@@ -626,10 +625,10 @@ return 0;`,
 					},
 				},
 				{
-					displayName: 'Options',
+					displayName: '选项',
 					name: 'options',
 					type: 'collection',
-					placeholder: 'Add Field',
+					placeholder: '添加字段',
 					default: {},
 					displayOptions: {
 						show: {
@@ -640,7 +639,7 @@ return 0;`,
 					},
 					options: [
 						{
-							displayName: 'Remove Other Fields',
+							displayName: '移除其他字段',
 							name: 'removeOtherFields',
 							type: 'boolean',
 							default: false,
@@ -648,7 +647,7 @@ return 0;`,
 								'Whether to remove any fields that are not being compared. If disabled, will keep the values from the first of the duplicates.',
 						},
 						{
-							displayName: 'Disable Dot Notation',
+							displayName: '禁用点表示法',
 							name: 'disableDotNotation',
 							type: 'boolean',
 							default: false,
@@ -658,10 +657,10 @@ return 0;`,
 					],
 				},
 				{
-					displayName: 'Options',
+					displayName: '选项',
 					name: 'options',
 					type: 'collection',
-					placeholder: 'Add Field',
+					placeholder: '添加字段',
 					default: {},
 					displayOptions: {
 						show: {
@@ -672,7 +671,7 @@ return 0;`,
 					},
 					options: [
 						{
-							displayName: 'Disable Dot Notation',
+							displayName: '禁用点表示法',
 							name: 'disableDotNotation',
 							type: 'boolean',
 							default: false,
@@ -682,10 +681,10 @@ return 0;`,
 					],
 				},
 				{
-					displayName: 'Options',
+					displayName: '选项',
 					name: 'options',
 					type: 'collection',
-					placeholder: 'Add Field',
+					placeholder: '添加字段',
 					default: {},
 					displayOptions: {
 						show: {
@@ -698,7 +697,7 @@ return 0;`,
 					},
 					options: [
 						{
-							displayName: 'Disable Dot Notation',
+							displayName: '禁用点表示法',
 							name: 'disableDotNotation',
 							type: 'boolean',
 							displayOptions: {
@@ -711,7 +710,7 @@ return 0;`,
 								'Whether to disallow referencing child fields using `parent.child` in the field name',
 						},
 						{
-							displayName: 'Destination Field Name',
+							displayName: '目标字段名称',
 							name: 'destinationFieldName',
 							type: 'string',
 							requiresDataPath: 'multiple',
@@ -724,7 +723,7 @@ return 0;`,
 							description: 'The field in the output under which to put the split field contents',
 						},
 						{
-							displayName: 'Merge Lists',
+							displayName: '合并列表',
 							name: 'mergeLists',
 							type: 'boolean',
 							displayOptions: {
@@ -737,7 +736,7 @@ return 0;`,
 								'Whether to merge the output into a single flat list (rather than a list of lists), if the field to aggregate is a list',
 						},
 						{
-							displayName: 'Keep Missing And Null Values',
+							displayName: '保留缺失和空值',
 							name: 'keepMissing',
 							type: 'boolean',
 							displayOptions: {

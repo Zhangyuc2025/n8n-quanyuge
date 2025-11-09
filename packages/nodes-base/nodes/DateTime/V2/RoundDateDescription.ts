@@ -5,7 +5,7 @@ import { includeInputFields } from './common.descriptions';
 export const RoundDateDescription: INodeProperties[] = [
 	{
 		displayName:
-			"You can also do this using an expression, e.g. <code>{{ your_date.beginningOf('month') }}</code> or <code>{{ your_date.endOfMonth() }}</code>. <a target='_blank' href='https://docs.n8n.io/code/cookbook/luxon/'>More info</a>",
+			"您也可以使用表达式完成此操作，例如 <code>{{ your_date.beginningOf('month') }}</code> 或 <code>{{ your_date.endOfMonth() }}</code>。<a target='_blank' href='https://docs.n8n.io/code/cookbook/luxon/'>了解更多</a>",
 		name: 'notice',
 		type: 'notice',
 		default: '',
@@ -16,10 +16,10 @@ export const RoundDateDescription: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Date',
+		displayName: '日期',
 		name: 'date',
 		type: 'string',
-		description: 'The date that you want to round',
+		description: '要舍入的日期',
 		default: '',
 		displayOptions: {
 			show: {
@@ -28,16 +28,16 @@ export const RoundDateDescription: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Mode',
+		displayName: '模式',
 		name: 'mode',
 		type: 'options',
 		options: [
 			{
-				name: 'Round Down',
+				name: '向下舍入',
 				value: 'roundDown',
 			},
 			{
-				name: 'Round Up',
+				name: '向上舍入',
 				value: 'roundUp',
 			},
 		],
@@ -49,37 +49,37 @@ export const RoundDateDescription: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'To Nearest',
+		displayName: '舍入到最近的',
 		name: 'toNearest',
 		type: 'options',
 		// eslint-disable-next-line n8n-nodes-base/node-param-options-type-unsorted-items
 		options: [
 			{
-				name: 'Year',
+				name: '年',
 				value: 'year',
 			},
 			{
-				name: 'Month',
+				name: '月',
 				value: 'month',
 			},
 			{
-				name: 'Week',
+				name: '周',
 				value: 'week',
 			},
 			{
-				name: 'Day',
+				name: '天',
 				value: 'day',
 			},
 			{
-				name: 'Hour',
+				name: '小时',
 				value: 'hour',
 			},
 			{
-				name: 'Minute',
+				name: '分钟',
 				value: 'minute',
 			},
 			{
-				name: 'Second',
+				name: '秒',
 				value: 'second',
 			},
 		],
@@ -92,12 +92,12 @@ export const RoundDateDescription: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'To',
+		displayName: '舍入到',
 		name: 'to',
 		type: 'options',
 		options: [
 			{
-				name: 'End of Month',
+				name: '月末',
 				value: 'month',
 			},
 		],
@@ -110,11 +110,11 @@ export const RoundDateDescription: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Output Field Name',
+		displayName: '输出字段名称',
 		name: 'outputFieldName',
 		type: 'string',
 		default: 'roundedDate',
-		description: 'Name of the field to put the output in',
+		description: '放置输出的字段名称',
 		displayOptions: {
 			show: {
 				operation: ['roundDate'],
@@ -122,10 +122,10 @@ export const RoundDateDescription: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Options',
+		displayName: '选项',
 		name: 'options',
 		type: 'collection',
-		placeholder: 'Add option',
+		placeholder: '添加选项',
 		displayOptions: {
 			show: {
 				operation: ['roundDate'],

@@ -9,50 +9,63 @@ import { NodeConnectionTypes, deepCopy } from 'n8n-workflow';
 
 export class SplitInBatchesV1 implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Split In Batches',
+		displayName: '分批拆分',
 		name: 'splitInBatches',
 		icon: 'fa:th-large',
 		group: ['organization'],
 		version: 1,
-		description: 'Split data into batches and iterate over each batch',
+		description: '将数据拆分成批次并迭代每个批次',
 		defaults: {
-			name: 'Split In Batches',
+			name: '分批拆分',
 			color: '#007755',
 		},
 		inputs: [NodeConnectionTypes.Main],
 		outputs: [NodeConnectionTypes.Main],
+		codex: {
+			categories: ['Core Nodes'],
+			resources: {
+				primaryDocumentation: [
+					{
+						url: 'https://docs.n8n.io/getting-started/key-concepts/looping.html#using-loops-in-n8n',
+					},
+				],
+				tutorialLinks: {
+					loopingGuide:
+						'https://docs.n8n.io/getting-started/key-concepts/looping.html#using-loops-in-n8n',
+				},
+			},
+		},
 		properties: [
 			{
 				displayName:
-					'You may not need this node — n8n nodes automatically run once for each input item. <a href="https://docs.n8n.io/getting-started/key-concepts/looping.html#using-loops-in-n8n" target="_blank">More info</a>',
+					'您可能不需要此节点 — n8n 节点会自动为每个输入项目运行一次。<a href="{{loopingGuide}}" target="_blank">了解更多</a>',
 				name: 'splitInBatchesNotice',
 				type: 'notice',
 				default: '',
 			},
 			{
-				displayName: 'Batch Size',
+				displayName: '批次大小',
 				name: 'batchSize',
 				type: 'number',
 				typeOptions: {
 					minValue: 1,
 				},
 				default: 10,
-				description: 'The number of items to return with each call',
+				description: '每次调用返回的项目数量',
 			},
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
 				type: 'collection',
-				placeholder: 'Add option',
+				placeholder: '添加选项',
 				default: {},
 				options: [
 					{
-						displayName: 'Reset',
+						displayName: '重置',
 						name: 'reset',
 						type: 'boolean',
 						default: false,
-						description:
-							'Whether the node will be reset and so with the current input-data newly initialized',
+						description: '是否重置节点并使用当前输入数据重新初始化',
 					},
 				],
 			},

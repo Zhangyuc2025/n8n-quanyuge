@@ -11,44 +11,44 @@ import {
 
 export class LocalFileTrigger implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Local File Trigger',
+		displayName: '本地文件触发器',
 		name: 'localFileTrigger',
 		icon: 'fa:folder-open',
 		iconColor: 'black',
 		group: ['trigger'],
 		version: 1,
-		subtitle: '=Path: {{$parameter["path"]}}',
-		description: 'Triggers a workflow on file system changes',
+		subtitle: '=路径：{{$parameter["path"]}}',
+		description: '在文件系统更改时触发工作流',
 		eventTriggerDescription: '',
 		defaults: {
-			name: 'Local File Trigger',
+			name: '本地文件触发器',
 			color: '#404040',
 		},
 		triggerPanel: {
 			header: '',
 			executionsHelp: {
 				inactive:
-					"<b>While building your workflow</b>, click the 'execute step' button, then make a change to your watched file or folder. This will trigger an execution, which will show up in this editor.<br /> <br /><b>Once you're happy with your workflow</b>, <a data-key='activate'>activate</a> it. Then every time a change is detected, the workflow will execute. These executions will show up in the <a data-key='executions'>executions list</a>, but not in the editor.",
+					"<b>构建工作流时</b>，点击「执行步骤」按钮，然后对监视的文件或文件夹进行更改。这将触发一次执行，并显示在此编辑器中。<br /> <br /><b>当你对工作流满意时</b>，<a data-key='activate'>激活</a>它。然后每次检测到更改时，工作流都会执行。这些执行将显示在<a data-key='executions'>执行列表</a>中，但不会显示在编辑器中",
 				active:
-					"<b>While building your workflow</b>, click the 'execute step' button, then make a change to your watched file or folder. This will trigger an execution, which will show up in this editor.<br /> <br /><b>Your workflow will also execute automatically</b>, since it's activated. Every time a change is detected, this node will trigger an execution. These executions will show up in the <a data-key='executions'>executions list</a>, but not in the editor.",
+					"<b>构建工作流时</b>，点击「执行步骤」按钮，然后对监视的文件或文件夹进行更改。这将触发一次执行，并显示在此编辑器中。<br /> <br /><b>你的工作流也会自动执行</b>，因为它已激活。每次检测到更改时，此节点都会触发一次执行。这些执行将显示在<a data-key='executions'>执行列表</a>中，但不会显示在编辑器中",
 			},
 			activationHint:
-				"Once you’ve finished building your workflow, <a data-key='activate'>activate</a> it to have it also listen continuously (you just won’t see those executions here).",
+				"完成工作流构建后，<a data-key='activate'>激活</a>它以使其持续监听（你只是看不到这些执行）",
 		},
 		inputs: [],
 		outputs: [NodeConnectionTypes.Main],
 		properties: [
 			{
-				displayName: 'Trigger On',
+				displayName: '触发条件',
 				name: 'triggerOn',
 				type: 'options',
 				options: [
 					{
-						name: 'Changes to a Specific File',
+						name: '特定文件的更改',
 						value: 'file',
 					},
 					{
-						name: 'Changes Involving a Specific Folder',
+						name: '特定文件夹的相关更改',
 						value: 'folder',
 					},
 				],
@@ -56,7 +56,7 @@ export class LocalFileTrigger implements INodeType {
 				default: '',
 			},
 			{
-				displayName: 'File to Watch',
+				displayName: '要监视的文件',
 				name: 'path',
 				type: 'string',
 				displayOptions: {
@@ -68,7 +68,7 @@ export class LocalFileTrigger implements INodeType {
 				placeholder: '/data/invoices/1.pdf',
 			},
 			{
-				displayName: 'Folder to Watch',
+				displayName: '要监视的文件夹',
 				name: 'path',
 				type: 'string',
 				displayOptions: {
@@ -80,7 +80,7 @@ export class LocalFileTrigger implements INodeType {
 				placeholder: '/data/invoices',
 			},
 			{
-				displayName: 'Watch for',
+				displayName: '监视事件',
 				name: 'events',
 				type: 'multiOptions',
 				displayOptions: {
@@ -90,41 +90,41 @@ export class LocalFileTrigger implements INodeType {
 				},
 				options: [
 					{
-						name: 'File Added',
+						name: '文件添加',
 						value: 'add',
-						description: 'Triggers whenever a new file was added',
+						description: '每当添加新文件时触发',
 					},
 					{
-						name: 'File Changed',
+						name: '文件更改',
 						value: 'change',
-						description: 'Triggers whenever a file was changed',
+						description: '每当文件更改时触发',
 					},
 					{
-						name: 'File Deleted',
+						name: '文件删除',
 						value: 'unlink',
-						description: 'Triggers whenever a file was deleted',
+						description: '每当文件被删除时触发',
 					},
 					{
-						name: 'Folder Added',
+						name: '文件夹添加',
 						value: 'addDir',
-						description: 'Triggers whenever a new folder was added',
+						description: '每当添加新文件夹时触发',
 					},
 					{
-						name: 'Folder Deleted',
+						name: '文件夹删除',
 						value: 'unlinkDir',
-						description: 'Triggers whenever a folder was deleted',
+						description: '每当文件夹被删除时触发',
 					},
 				],
 				required: true,
 				default: [],
-				description: 'The events to listen to',
+				description: '要监听的事件',
 			},
 
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
 				type: 'collection',
-				placeholder: 'Add option',
+				placeholder: '添加选项',
 				default: {},
 				options: [
 					{
@@ -159,70 +159,68 @@ export class LocalFileTrigger implements INodeType {
 						description: 'Whether to ignore existing files/folders to not trigger an event',
 					},
 					{
-						displayName: 'Max Folder Depth',
+						displayName: '最大文件夹深度',
 						name: 'depth',
 						type: 'options',
 						options: [
 							{
-								name: '1 Levels Down',
+								name: '向下 1 级',
 								value: 1,
 							},
 							{
-								name: '2 Levels Down',
+								name: '向下 2 级',
 								value: 2,
 							},
 							{
-								name: '3 Levels Down',
+								name: '向下 3 级',
 								value: 3,
 							},
 							{
-								name: '4 Levels Down',
+								name: '向下 4 级',
 								value: 4,
 							},
 							{
-								name: '5 Levels Down',
+								name: '向下 5 级',
 								value: 5,
 							},
 							{
-								name: 'Top Folder Only',
+								name: '仅顶层文件夹',
 								value: 0,
 							},
 							{
-								name: 'Unlimited',
+								name: '无限制',
 								value: -1,
 							},
 						],
 						default: -1,
-						description: 'How deep into the folder structure to watch for changes',
+						description: '监视文件夹结构的深度',
 					},
 					{
-						displayName: 'Use Polling',
+						displayName: '使用轮询',
 						name: 'usePolling',
 						type: 'boolean',
 						default: false,
-						description:
-							'Whether to use polling for watching. Typically necessary to successfully watch files over a network.',
+						description: '是否使用轮询进行监视。通常需要通过网络成功监视文件',
 					},
 					{
-						displayName: 'Ignore Mode',
+						displayName: '忽略模式',
 						name: 'ignoreMode',
 						type: 'options',
 						options: [
 							{
-								name: 'Match',
+								name: '匹配',
 								value: 'match',
-								description:
-									'Ignore files using regex patterns (e.g., **/*.txt), Not supported on macOS',
+								description: '使用正则表达式模式忽略文件（例如 **/*.txt），macOS 不支持',
 							},
 							{
-								name: 'Contain',
+								name: '包含',
 								value: 'contain',
-								description: 'Ignore files if their path contains the specified value',
+								description: '如果文件路径包含指定值，则忽略文件',
 							},
 						],
 						default: 'match',
 						description:
-							'Whether to ignore files using regex matching (Anymatch patterns) or by checking if the path contains a specified value',
+							'是使用正则匹配（Anymatch 模式）忽略文件，还是通过检查路径是否包含指定值来忽略文件',
 					},
 				],
 			},

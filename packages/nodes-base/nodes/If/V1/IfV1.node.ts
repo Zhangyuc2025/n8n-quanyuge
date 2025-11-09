@@ -27,151 +27,151 @@ export class IfV1 implements INodeType {
 			outputNames: ['true', 'false'],
 			properties: [
 				{
-					displayName: 'Conditions',
+					displayName: '条件',
 					name: 'conditions',
-					placeholder: 'Add Condition',
+					placeholder: '添加条件',
 					type: 'fixedCollection',
 					typeOptions: {
 						multipleValues: true,
 						sortable: true,
 					},
-					description: 'The type of values to compare',
+					description: '要比较的值类型',
 					default: {},
 					options: [
 						{
 							name: 'boolean',
-							displayName: 'Boolean',
+							displayName: '布尔值',
 							values: [
 								{
-									displayName: 'Value 1',
+									displayName: '值 1',
 									name: 'value1',
 									type: 'boolean',
 									default: false,
 									// eslint-disable-next-line n8n-nodes-base/node-param-description-boolean-without-whether
-									description: 'The value to compare with the second one',
+									description: '与第二个值比较的值',
 								},
 								// eslint-disable-next-line n8n-nodes-base/node-param-operation-without-no-data-expression
 								{
-									displayName: 'Operation',
+									displayName: '操作',
 									name: 'operation',
 									type: 'options',
 									options: [
 										{
-											name: 'Equal',
+											name: '等于',
 											value: 'equal',
 										},
 										{
-											name: 'Not Equal',
+											name: '不等于',
 											value: 'notEqual',
 										},
 									],
 									default: 'equal',
-									description: 'Operation to decide where the data should be mapped to',
+									description: '用于决定数据应映射到哪里的操作',
 								},
 								{
-									displayName: 'Value 2',
+									displayName: '值 2',
 									name: 'value2',
 									type: 'boolean',
 									default: false,
 									// eslint-disable-next-line n8n-nodes-base/node-param-description-boolean-without-whether
-									description: 'The value to compare with the first one',
+									description: '与第一个值比较的值',
 								},
 							],
 						},
 						{
 							name: 'dateTime',
-							displayName: 'Date & Time',
+							displayName: '日期和时间',
 							values: [
 								{
-									displayName: 'Value 1',
+									displayName: '值 1',
 									name: 'value1',
 									type: 'dateTime',
 									default: '',
-									description: 'The value to compare with the second one',
+									description: '与第二个值比较的值',
 								},
 								// eslint-disable-next-line n8n-nodes-base/node-param-operation-without-no-data-expression
 								{
-									displayName: 'Operation',
+									displayName: '操作',
 									name: 'operation',
 									type: 'options',
 									options: [
 										{
-											name: 'Occurred After',
+											name: '晚于',
 											value: 'after',
 										},
 										{
-											name: 'Occurred Before',
+											name: '早于',
 											value: 'before',
 										},
 									],
 									default: 'after',
-									description: 'Operation to decide where the data should be mapped to',
+									description: '用于决定数据应映射到哪里的操作',
 								},
 								{
-									displayName: 'Value 2',
+									displayName: '值 2',
 									name: 'value2',
 									type: 'dateTime',
 									default: '',
-									description: 'The value to compare with the first one',
+									description: '与第一个值比较的值',
 								},
 							],
 						},
 						{
 							name: 'number',
-							displayName: 'Number',
+							displayName: '数值',
 							values: [
 								{
-									displayName: 'Value 1',
+									displayName: '值 1',
 									name: 'value1',
 									type: 'number',
 									default: 0,
-									description: 'The value to compare with the second one',
+									description: '与第二个值比较的值',
 								},
 								{
-									displayName: 'Operation',
+									displayName: '操作',
 									name: 'operation',
 									type: 'options',
 									noDataExpression: true,
 									// eslint-disable-next-line n8n-nodes-base/node-param-options-type-unsorted-items
 									options: [
 										{
-											name: 'Smaller',
+											name: '小于',
 											value: 'smaller',
 										},
 										{
-											name: 'Smaller or Equal',
+											name: '小于或等于',
 											value: 'smallerEqual',
 										},
 										{
-											name: 'Equal',
+											name: '等于',
 											value: 'equal',
 										},
 										{
-											name: 'Not Equal',
+											name: '不等于',
 											value: 'notEqual',
 										},
 										{
-											name: 'Larger',
+											name: '大于',
 											value: 'larger',
 										},
 										{
-											name: 'Larger or Equal',
+											name: '大于或等于',
 											value: 'largerEqual',
 										},
 										{
-											name: 'Is Empty',
+											name: '为空',
 											value: 'isEmpty',
 										},
 										{
-											name: 'Is Not Empty',
+											name: '不为空',
 											value: 'isNotEmpty',
 										},
 									],
 									default: 'smaller',
-									description: 'Operation to decide where the data should be mapped to',
+									description: '用于决定数据应映射到哪里的操作',
 								},
 								{
-									displayName: 'Value 2',
+									displayName: '值 2',
 									name: 'value2',
 									type: 'number',
 									displayOptions: {
@@ -180,82 +180,82 @@ export class IfV1 implements INodeType {
 										},
 									},
 									default: 0,
-									description: 'The value to compare with the first one',
+									description: '与第一个值比较的值',
 								},
 							],
 						},
 						{
 							name: 'string',
-							displayName: 'String',
+							displayName: '字符串',
 							values: [
 								{
-									displayName: 'Value 1',
+									displayName: '值 1',
 									name: 'value1',
 									type: 'string',
 									default: '',
-									description: 'The value to compare with the second one',
+									description: '与第二个值比较的值',
 								},
 								{
-									displayName: 'Operation',
+									displayName: '操作',
 									name: 'operation',
 									type: 'options',
 									noDataExpression: true,
 									// eslint-disable-next-line n8n-nodes-base/node-param-options-type-unsorted-items
 									options: [
 										{
-											name: 'Contains',
+											name: '包含',
 											value: 'contains',
 										},
 										{
-											name: 'Not Contains',
+											name: '不包含',
 											value: 'notContains',
 										},
 										{
-											name: 'Ends With',
+											name: '结尾是',
 											value: 'endsWith',
 										},
 										{
-											name: 'Not Ends With',
+											name: '结尾不是',
 											value: 'notEndsWith',
 										},
 										{
-											name: 'Equal',
+											name: '等于',
 											value: 'equal',
 										},
 										{
-											name: 'Not Equal',
+											name: '不等于',
 											value: 'notEqual',
 										},
 										{
-											name: 'Regex Match',
+											name: '正则匹配',
 											value: 'regex',
 										},
 										{
-											name: 'Regex Not Match',
+											name: '正则不匹配',
 											value: 'notRegex',
 										},
 										{
-											name: 'Starts With',
+											name: '开头是',
 											value: 'startsWith',
 										},
 										{
-											name: 'Not Starts With',
+											name: '开头不是',
 											value: 'notStartsWith',
 										},
 										{
-											name: 'Is Empty',
+											name: '为空',
 											value: 'isEmpty',
 										},
 										{
-											name: 'Is Not Empty',
+											name: '不为空',
 											value: 'isNotEmpty',
 										},
 									],
 									default: 'equal',
-									description: 'Operation to decide where the data should be mapped to',
+									description: '用于决定数据应映射到哪里的操作',
 								},
 								{
-									displayName: 'Value 2',
+									displayName: '值 2',
 									name: 'value2',
 									type: 'string',
 									displayOptions: {
@@ -264,10 +264,10 @@ export class IfV1 implements INodeType {
 										},
 									},
 									default: '',
-									description: 'The value to compare with the first one',
+									description: '与第一个值比较的值',
 								},
 								{
-									displayName: 'Regex',
+									displayName: '正则表达式',
 									name: 'value2',
 									type: 'string',
 									displayOptions: {
@@ -276,32 +276,32 @@ export class IfV1 implements INodeType {
 										},
 									},
 									default: '',
-									placeholder: '/text/i',
-									description: 'The regex which has to match',
+									placeholder: '/文本/i',
+									description: '必须匹配的正则表达式',
 								},
 							],
 						},
 					],
 				},
 				{
-					displayName: 'Combine',
+					displayName: '合并方式',
 					name: 'combineOperation',
 					type: 'options',
 					options: [
 						{
-							name: 'ALL',
-							description: 'Only if all conditions are met it goes into "true" branch',
+							name: '全部满足（AND）',
+							description: '只有当所有条件都满足时才进入「true」分支',
 							value: 'all',
 						},
 						{
-							name: 'ANY',
-							description: 'If any of the conditions is met it goes into "true" branch',
+							name: '任一满足（OR）',
+							description: '当任何一个条件满足时就进入「true」分支',
 							value: 'any',
 						},
 					],
 					default: 'all',
 					description:
-						'If multiple rules got set this settings decides if it is true as soon as ANY condition matches or only if ALL get meet',
+						'当设置了多个规则时，此设置决定是在任一条件匹配时就为真，还是只有在全部条件都满足时才为真',
 				},
 			],
 		};

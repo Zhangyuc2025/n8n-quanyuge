@@ -40,7 +40,7 @@ export class SpreadsheetFileV1 implements INodeType {
 			...baseDescription,
 			version: 1,
 			defaults: {
-				name: 'Spreadsheet File',
+				name: '电子表格文件',
 				color: '#2244FF',
 			},
 			inputs: [NodeConnectionTypes.Main],

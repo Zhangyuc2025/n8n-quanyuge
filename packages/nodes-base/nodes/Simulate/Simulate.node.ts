@@ -17,16 +17,16 @@ import { loadOptions } from './methods';
 
 export class Simulate implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Simulate',
+		displayName: '模拟',
 		hidden: true,
 		name: 'simulate',
 		group: ['organization'],
 		version: 1,
-		description: 'Simulate a node',
+		description: '模拟节点',
 		subtitle: '={{$parameter.subtitle || undefined}}',
 		icon: 'fa:arrow-right',
 		defaults: {
-			name: 'Simulate',
+			name: '模拟',
 			color: '#b0b0b0',
 		},
 		inputs: [NodeConnectionTypes.Main],
@@ -35,7 +35,7 @@ export class Simulate implements INodeType {
 			iconSelector,
 			subtitleProperty,
 			{
-				displayName: 'Output',
+				displayName: '输出',
 				name: 'output',
 				type: 'options',
 				default: 'all',
@@ -43,28 +43,27 @@ export class Simulate implements INodeType {
 				options: [
 					{
 						// eslint-disable-next-line n8n-nodes-base/node-param-display-name-miscased
-						name: 'Returns all input items',
+						name: '返回所有输入项目',
 						value: 'all',
 					},
 					{
 						// eslint-disable-next-line n8n-nodes-base/node-param-display-name-miscased
-						name: 'Specify how many of input items to return',
+						name: '指定返回多少个输入项目',
 						value: 'specify',
 					},
 					{
 						// eslint-disable-next-line n8n-nodes-base/node-param-display-name-miscased
-						name: 'Specify output as JSON',
+						name: '以 JSON 指定输出',
 						value: 'custom',
 					},
 				],
 			},
 			{
-				displayName: 'Number of Items',
+				displayName: '项目数量',
 				name: 'numberOfItems',
 				type: 'number',
 				default: 1,
-				description:
-					'Number input of items to return, if greater then input length all items will be returned',
+				description: '要返回的项目数量，如果大于输入长度，将返回所有项目',
 				displayOptions: {
 					show: {
 						output: ['specify'],

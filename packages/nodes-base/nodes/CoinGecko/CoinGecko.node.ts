@@ -21,7 +21,7 @@ export class CoinGecko implements INodeType {
 		icon: 'file:coinGecko.svg',
 		group: ['output'],
 		version: 1,
-		description: 'Consume CoinGecko API',
+		description: '调用 CoinGecko API 获取加密货币数据',
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
 		defaults: {
 			name: 'CoinGecko',
@@ -31,17 +31,17 @@ export class CoinGecko implements INodeType {
 		outputs: [NodeConnectionTypes.Main],
 		properties: [
 			{
-				displayName: 'Resource',
+				displayName: '资源',
 				name: 'resource',
 				type: 'options',
 				noDataExpression: true,
 				options: [
 					{
-						name: 'Coin',
+						name: '加密货币',
 						value: 'coin',
 					},
 					{
-						name: 'Event',
+						name: '事件',
 						value: 'event',
 					},
 				],

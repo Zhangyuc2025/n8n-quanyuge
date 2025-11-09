@@ -20,7 +20,7 @@ export const getToolsAgentProperties = ({
 		name: 'options',
 		type: 'collection',
 		default: {},
-		placeholder: 'Add Option',
+		placeholder: '添加选项',
 		options: [
 			...commonOptions,
 			getBatchingOptionFields(undefined, 1),
@@ -37,7 +37,7 @@ export const getToolsAgentProperties = ({
 		name: 'options',
 		type: 'collection',
 		default: {},
-		placeholder: 'Add Option',
+		placeholder: '添加选项',
 		options: [...commonOptions, getBatchingOptionFields(undefined, 1)],
 		displayOptions: {
 			show: {

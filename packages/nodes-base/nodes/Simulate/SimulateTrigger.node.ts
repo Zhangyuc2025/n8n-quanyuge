@@ -19,15 +19,15 @@ import { loadOptions } from './methods';
 export class SimulateTrigger implements INodeType {
 	description: INodeTypeDescription = {
 		hidden: true,
-		displayName: 'Simulate Trigger',
+		displayName: '模拟触发器',
 		name: 'simulateTrigger',
 		subtitle: '={{$parameter.subtitle || undefined}}',
 		icon: 'fa:arrow-right',
 		group: ['trigger'],
 		version: 1,
-		description: 'Simulate a trigger node',
+		description: '模拟触发器节点',
 		defaults: {
-			name: 'Simulate Trigger',
+			name: '模拟触发器',
 			color: '#b0b0b0',
 		},
 		inputs: [],
@@ -35,7 +35,7 @@ export class SimulateTrigger implements INodeType {
 		properties: [
 			{ ...iconSelector, default: 'n8n-nodes-base.manualTrigger' },
 			subtitleProperty,
-			{ ...jsonOutputProperty, displayName: 'Output (JSON)' },
+			{ ...jsonOutputProperty, displayName: '输出 (JSON)' },
 			executionDurationProperty,
 		],
 	};

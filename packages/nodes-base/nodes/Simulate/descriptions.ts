@@ -2,11 +2,11 @@ import type { INodeProperties } from 'n8n-workflow';
 
 export const iconSelector: INodeProperties = {
 	// eslint-disable-next-line n8n-nodes-base/node-param-display-name-wrong-for-dynamic-options
-	displayName: 'Icon to Display on Canvas',
+	displayName: '在画布上显示的图标',
 	name: 'icon',
 	type: 'options',
 	// eslint-disable-next-line n8n-nodes-base/node-param-description-wrong-for-dynamic-options
-	description: 'Select a type of node to show corresponding icon',
+	description: '选择节点类型以显示相应的图标',
 	default: 'n8n-nodes-base.noOp',
 	typeOptions: {
 		loadOptionsMethod: 'getNodeTypes',
@@ -14,11 +14,11 @@ export const iconSelector: INodeProperties = {
 };
 
 export const subtitleProperty: INodeProperties = {
-	displayName: 'Subtitle',
+	displayName: '副标题',
 	name: 'subtitle',
 	type: 'string',
 	default: '',
-	placeholder: "e.g. 'record: read'",
+	placeholder: '例如："record: read"',
 };
 
 export const jsonOutputProperty: INodeProperties = {
@@ -33,11 +33,11 @@ export const jsonOutputProperty: INodeProperties = {
 };
 
 export const executionDurationProperty: INodeProperties = {
-	displayName: 'Execution Duration (MS)',
+	displayName: '执行持续时间 (毫秒)',
 	name: 'executionDuration',
 	type: 'number',
 	default: 150,
-	description: 'Execution duration in milliseconds',
+	description: '以毫秒为单位的执行持续时间',
 	typeOptions: {
 		minValue: 0,
 	},

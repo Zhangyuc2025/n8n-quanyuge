@@ -2,7 +2,7 @@ import type { INodeProperties } from 'n8n-workflow';
 
 export const coinOperations: INodeProperties[] = [
 	{
-		displayName: 'Operation',
+		displayName: '操作',
 		name: 'operation',
 		type: 'options',
 		noDataExpression: true,
@@ -13,55 +13,52 @@ export const coinOperations: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Candlestick',
+				name: '蜡烛图',
 				value: 'candlestick',
-				description: 'Get a candlestick open-high-low-close chart for the selected currency',
-				action: 'Get a candlestick for a coin',
+				description: '获取选定货币的蜡烛图（开盘价-最高价-最低价-收盘价）',
+				action: '获取币种蜡烛图',
 			},
 			{
-				name: 'Get',
+				name: '获取',
 				value: 'get',
-				description: 'Get current data for a coin',
-				action: 'Get a coin',
+				description: '获取币种的当前数据',
+				action: '获取币种数据',
 			},
 			{
-				name: 'Get Many',
+				name: '获取多个',
 				value: 'getAll',
-				description: 'Get many coins',
-				action: 'Get many coins',
+				description: '获取多个币种',
+				action: '获取多个币种',
 			},
 			{
-				name: 'History',
+				name: '历史数据',
 				value: 'history',
-				description: 'Get historical data (name, price, market, stats) at a given date for a coin',
-				action: 'Get history for a coin',
+				description: '获取指定日期的币种历史数据（名称、价格、市场、统计数据）',
+				action: '获取币种历史数据',
 			},
 			{
-				name: 'Market',
+				name: '市场数据',
 				value: 'market',
-				description:
-					'Get prices and market related data for all trading pairs that match the selected currency',
-				action: 'Get market prices for a coin',
+				description: '获取与所选货币匹配的所有交易对的价格和市场相关数据',
+				action: '获取币种市场价格',
 			},
 			{
-				name: 'Market Chart',
+				name: '市场图表',
 				value: 'marketChart',
-				description:
-					'Get historical market data include price, market cap, and 24h volume (granularity auto)',
-				action: 'Get market chart for a coin',
+				description: '获取历史市场数据，包括价格、市值和 24 小时成交量（粒度自动）',
+				action: '获取币种市场图表',
 			},
 			{
-				name: 'Price',
+				name: '价格',
 				value: 'price',
-				description:
-					'Get the current price of any cryptocurrencies in any other supported currencies that you need',
-				action: 'Get the price for a coin',
+				description: '获取任何加密货币在任何其他支持货币中的当前价格',
+				action: '获取币种价格',
 			},
 			{
-				name: 'Ticker',
+				name: '行情',
 				value: 'ticker',
-				description: 'Get coin tickers',
-				action: 'Get the ticker for a coin',
+				description: '获取币种行情数据',
+				action: '获取币种行情',
 			},
 		],
 		default: 'getAll',
@@ -70,17 +67,17 @@ export const coinOperations: INodeProperties[] = [
 
 export const coinFields: INodeProperties[] = [
 	{
-		displayName: 'Search By',
+		displayName: '搜索方式',
 		name: 'searchBy',
 		required: true,
 		type: 'options',
 		options: [
 			{
-				name: 'Coin ID',
+				name: '币种 ID',
 				value: 'coinId',
 			},
 			{
-				name: 'Contract Address',
+				name: '合约地址',
 				value: 'contractAddress',
 			},
 		],
@@ -91,15 +88,15 @@ export const coinFields: INodeProperties[] = [
 			},
 		},
 		default: 'coinId',
-		description: 'Search by coin ID or contract address',
+		description: '按币种 ID 或合约地址搜索',
 	},
 	{
-		displayName: 'Coin Name or ID',
+		displayName: '币种名称或 ID',
 		name: 'coinId',
 		required: true,
 		type: 'options',
 		description:
-			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
+			'从列表中选择，或使用<a href="https://docs.n8n.io/code/expressions/">表达式</a>指定 ID',
 		typeOptions: {
 			loadOptionsMethod: 'getCoins',
 		},
@@ -113,7 +110,7 @@ export const coinFields: INodeProperties[] = [
 		placeholder: 'bitcoin',
 	},
 	{
-		displayName: 'Base Currency Name or ID',
+		displayName: '基础货币名称或 ID',
 		name: 'baseCurrency',
 		required: true,
 		type: 'options',
@@ -128,10 +125,10 @@ export const coinFields: INodeProperties[] = [
 		},
 		default: '',
 		description:
-			'The first currency in the pair. For BTC:ETH this is BTC. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+			'交易对中的第一个货币。例如 BTC:ETH 中为 BTC。从列表中选择，或使用<a href="https://docs.n8n.io/code/expressions/">表达式</a>指定 ID',
 	},
 	{
-		displayName: 'Base Currency Name or ID',
+		displayName: '基础货币名称或 ID',
 		name: 'baseCurrency',
 		required: true,
 		type: 'options',
@@ -146,15 +143,15 @@ export const coinFields: INodeProperties[] = [
 		},
 		default: '',
 		description:
-			'The first currency in the pair. For BTC:ETH this is BTC. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+			'交易对中的第一个货币。例如 BTC:ETH 中为 BTC。从列表中选择，或使用<a href="https://docs.n8n.io/code/expressions/">表达式</a>指定 ID',
 	},
 	{
-		displayName: 'Coin Name or ID',
+		displayName: '币种名称或 ID',
 		name: 'coinId',
 		required: true,
 		type: 'options',
 		description:
-			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
+			'从列表中选择，或使用<a href="https://docs.n8n.io/code/expressions/">表达式</a>指定 ID',
 		typeOptions: {
 			loadOptionsMethod: 'getCoins',
 		},
@@ -168,7 +165,7 @@ export const coinFields: INodeProperties[] = [
 		placeholder: 'bitcoin',
 	},
 	{
-		displayName: 'Base Currency Names or IDs',
+		displayName: '基础货币名称或 ID',
 		name: 'baseCurrencies',
 		required: true,
 		type: 'multiOptions',
@@ -185,10 +182,10 @@ export const coinFields: INodeProperties[] = [
 		default: [],
 		placeholder: 'bitcoin',
 		description:
-			'The first currency in the pair. For BTC:ETH this is BTC. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+			'交易对中的第一个货币。例如 BTC:ETH 中为 BTC。从列表中选择，或使用<a href="https://docs.n8n.io/code/expressions/">表达式</a>指定 ID',
 	},
 	{
-		displayName: 'Platform ID',
+		displayName: '平台 ID',
 		name: 'platformId',
 		required: true,
 		displayOptions: {
@@ -206,10 +203,10 @@ export const coinFields: INodeProperties[] = [
 			},
 		],
 		default: 'ethereum',
-		description: 'The ID of the platform issuing tokens',
+		description: '发行代币的平台 ID',
 	},
 	{
-		displayName: 'Contract Address',
+		displayName: '合约地址',
 		name: 'contractAddress',
 		required: true,
 		type: 'string',
@@ -221,10 +218,10 @@ export const coinFields: INodeProperties[] = [
 				searchBy: ['contractAddress'],
 			},
 		},
-		description: "Token's contract address",
+		description: '代币的合约地址',
 	},
 	{
-		displayName: 'Contract Addresses',
+		displayName: '合约地址',
 		name: 'contractAddresses',
 		required: true,
 		type: 'string',
@@ -236,10 +233,10 @@ export const coinFields: INodeProperties[] = [
 				searchBy: ['contractAddress'],
 			},
 		},
-		description: 'The contract address of tokens, comma-separated',
+		description: '代币的合约地址，用逗号分隔',
 	},
 	{
-		displayName: 'Base Currency Name or ID',
+		displayName: '基础货币名称或 ID',
 		name: 'baseCurrency',
 		required: true,
 		type: 'options',
@@ -258,10 +255,10 @@ export const coinFields: INodeProperties[] = [
 		},
 		default: '',
 		description:
-			'The first currency in the pair. For BTC:ETH this is BTC. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+			'交易对中的第一个货币。例如 BTC:ETH 中为 BTC。从列表中选择，或使用<a href="https://docs.n8n.io/code/expressions/">表达式</a>指定 ID',
 	},
 	{
-		displayName: 'Quote Currency Name or ID',
+		displayName: '报价货币名称或 ID',
 		name: 'quoteCurrency',
 		required: true,
 		type: 'options',
@@ -276,10 +273,10 @@ export const coinFields: INodeProperties[] = [
 		},
 		default: '',
 		description:
-			'The second currency in the pair. For BTC:ETH this is ETH. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+			'交易对中的第二个货币。例如 BTC:ETH 中为 ETH。从列表中选择，或使用<a href="https://docs.n8n.io/code/expressions/">表达式</a>指定 ID',
 	},
 	{
-		displayName: 'Quote Currency Names or IDs',
+		displayName: '报价货币名称或 ID',
 		name: 'quoteCurrencies',
 		type: 'multiOptions',
 		typeOptions: {
@@ -294,10 +291,10 @@ export const coinFields: INodeProperties[] = [
 		},
 		default: [],
 		description:
-			'The second currency in the pair. For BTC:ETH this is ETH. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+			'交易对中的第二个货币。例如 BTC:ETH 中为 ETH。从列表中选择，或使用<a href="https://docs.n8n.io/code/expressions/">表达式</a>指定 ID',
 	},
 	{
-		displayName: 'Range (Days)',
+		displayName: '时间范围（天数）',
 		name: 'days',
 		required: true,
 		type: 'options',
@@ -332,7 +329,7 @@ export const coinFields: INodeProperties[] = [
 				value: '365',
 			},
 			{
-				name: 'Max',
+				name: '最大值',
 				value: 'max',
 			},
 		],
@@ -343,10 +340,10 @@ export const coinFields: INodeProperties[] = [
 			},
 		},
 		default: '',
-		description: 'Return data for this many days in the past from now',
+		description: '返回过去 N 天的数据',
 	},
 	{
-		displayName: 'Date',
+		displayName: '日期',
 		name: 'date',
 		required: true,
 		type: 'dateTime',
@@ -357,10 +354,10 @@ export const coinFields: INodeProperties[] = [
 			},
 		},
 		default: '',
-		description: 'The date of data snapshot',
+		description: '数据快照的日期',
 	},
 	{
-		displayName: 'Return All',
+		displayName: '返回全部',
 		name: 'returnAll',
 		type: 'boolean',
 		displayOptions: {
@@ -370,10 +367,10 @@ export const coinFields: INodeProperties[] = [
 			},
 		},
 		default: false,
-		description: 'Whether to return all results or only up to a given limit',
+		description: '是否返回所有结果或仅返回到给定限制为止的结果',
 	},
 	{
-		displayName: 'Limit',
+		displayName: '限制',
 		name: 'limit',
 		type: 'number',
 		displayOptions: {
@@ -388,13 +385,13 @@ export const coinFields: INodeProperties[] = [
 			maxValue: 500,
 		},
 		default: 100,
-		description: 'Max number of results to return',
+		description: '返回结果的最大数量',
 	},
 	{
-		displayName: 'Options',
+		displayName: '选项',
 		name: 'options',
 		type: 'collection',
-		placeholder: 'Add option',
+		placeholder: '添加选项',
 		default: {},
 		displayOptions: {
 			show: {
@@ -404,119 +401,119 @@ export const coinFields: INodeProperties[] = [
 		},
 		options: [
 			{
-				displayName: 'Coin IDs',
+				displayName: '币种 ID',
 				name: 'ids',
 				type: 'string',
 				placeholder: 'bitcoin',
 				default: '',
-				description: 'Filter results by comma-separated list of coin ID',
+				description: '按币种 ID 的逗号分隔列表筛选结果',
 			},
 			{
-				displayName: 'Category',
+				displayName: '分类',
 				name: 'category',
 				type: 'options',
 				options: [
 					{
-						name: 'Decentralized Finance Defi',
+						name: '分散金融 Defi',
 						value: 'decentralized_finance_defi',
 					},
 				],
 				default: 'decentralized_finance_defi',
-				description: 'Filter by coin category',
+				description: '按币种分类筛选',
 			},
 			{
-				displayName: 'Order',
+				displayName: '排序',
 				name: 'order',
 				type: 'options',
 				options: [
 					{
-						name: 'Gecko Asc',
+						name: 'Gecko 升序',
 						value: 'gecko_asc',
 					},
 					{
-						name: 'Gecko Desc',
+						name: 'Gecko 降序',
 						value: 'gecko_desc',
 					},
 					{
-						name: 'ID Asc',
+						name: 'ID 升序',
 						value: 'id_asc',
 					},
 					{
-						name: 'ID Desc',
+						name: 'ID 降序',
 						value: 'id_desc',
 					},
 					{
-						name: 'Market Cap Asc',
+						name: '市值升序',
 						value: 'market_cap_asc',
 					},
 					{
-						name: 'Market Cap Desc',
+						name: '市值降序',
 						value: 'market_cap_desc',
 					},
 					{
-						name: 'Volume Asc',
+						name: '成交量升序',
 						value: 'volume_asc',
 					},
 					{
-						name: 'Volume Desc',
+						name: '成交量降序',
 						value: 'volume_desc',
 					},
 				],
 				default: '',
-				description: 'Sort results by field',
+				description: '按字段排序结果',
 			},
 			{
-				displayName: 'Sparkline',
+				displayName: '走势图',
 				name: 'sparkline',
 				type: 'boolean',
 				default: false,
-				description: 'Whether to include sparkline 7 days data',
+				description: '是否包含 7 天走势图数据',
 			},
 			{
-				displayName: 'Price Change Percentage',
+				displayName: '价格涨跌幅',
 				name: 'price_change_percentage',
 				type: 'multiOptions',
 				// eslint-disable-next-line n8n-nodes-base/node-param-multi-options-type-unsorted-items
 				options: [
 					{
-						name: '1h',
+						name: '1 小时',
 						value: '1h',
 					},
 					{
-						name: '24h',
+						name: '24 小时',
 						value: '24h',
 					},
 					{
-						name: '7d',
+						name: '7 天',
 						value: '7d',
 					},
 					{
-						name: '14d',
+						name: '14 天',
 						value: '14d',
 					},
 					{
-						name: '30d',
+						name: '30 天',
 						value: '30d',
 					},
 					{
-						name: '200d',
+						name: '200 天',
 						value: '200d',
 					},
 					{
-						name: '1y',
+						name: '1 年',
 						value: '1y',
 					},
 				],
 				default: [],
-				description: 'Include price change percentage for specified times',
+				description: '包含指定时间的价格涨跌幅百分比',
 			},
 		],
 	},
 	{
-		displayName: 'Options',
+		displayName: '选项',
 		name: 'options',
 		type: 'collection',
-		placeholder: 'Add Field',
+		placeholder: '添加字段',
 		default: {},
 		displayOptions: {
 			show: {
@@ -526,25 +523,25 @@ export const coinFields: INodeProperties[] = [
 		},
 		options: [
 			{
-				displayName: 'Include 24hr Change',
+				displayName: '包含 24 小时涨幅',
 				name: 'include_24hr_change',
 				type: 'boolean',
 				default: false,
 			},
 			{
-				displayName: 'Include 24hr Vol',
+				displayName: '包含 24 小时成交量',
 				name: 'include_24hr_vol',
 				type: 'boolean',
 				default: false,
 			},
 			{
-				displayName: 'Include Last Updated At',
+				displayName: '包含最后更新时间',
 				name: 'include_last_updated_at',
 				type: 'boolean',
 				default: false,
 			},
 			{
-				displayName: 'Include Market Cap',
+				displayName: '包含市值',
 				name: 'include_market_cap',
 				type: 'boolean',
 				default: false,
@@ -552,10 +549,10 @@ export const coinFields: INodeProperties[] = [
 		],
 	},
 	{
-		displayName: 'Options',
+		displayName: '选项',
 		name: 'options',
 		type: 'collection',
-		placeholder: 'Add option',
+		placeholder: '添加选项',
 		default: {},
 		displayOptions: {
 			show: {
@@ -565,7 +562,7 @@ export const coinFields: INodeProperties[] = [
 		},
 		options: [
 			{
-				displayName: 'Exchange Names or IDs',
+				displayName: '交易所名称或 ID',
 				name: 'exchange_ids',
 				type: 'multiOptions',
 				typeOptions: {
@@ -573,42 +570,42 @@ export const coinFields: INodeProperties[] = [
 				},
 				default: [],
 				description:
-					'Filter results by exchange IDs. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+					'按交易所 ID 筛选结果。从列表中选择，或使用<a href="https://docs.n8n.io/code/expressions/">表达式</a>指定 ID',
 			},
 			{
-				displayName: 'Include Exchange Logo',
+				displayName: '包含交易所标志',
 				name: 'include_exchange_logo',
 				type: 'boolean',
 				default: false,
 			},
 			{
-				displayName: 'Order',
+				displayName: '排序',
 				name: 'order',
 				type: 'options',
 				options: [
 					{
-						name: 'Trust Score Desc',
+						name: '信任评分降序',
 						value: 'trust_score_desc',
 					},
 					{
-						name: 'Trust Score Asc',
+						name: '信任评分升序',
 						value: 'trust_score_asc',
 					},
 					{
-						name: 'Volume Desc',
+						name: '成交量降序',
 						value: 'volume_desc',
 					},
 				],
 				default: 'trust_score_desc',
-				description: 'Sorts results by the selected rule',
+				description: '按所选规则排序结果',
 			},
 		],
 	},
 	{
-		displayName: 'Options',
+		displayName: '选项',
 		name: 'options',
 		type: 'collection',
-		placeholder: 'Add option',
+		placeholder: '添加选项',
 		default: {},
 		displayOptions: {
 			show: {
@@ -618,19 +615,19 @@ export const coinFields: INodeProperties[] = [
 		},
 		options: [
 			{
-				displayName: 'Localization',
+				displayName: '本地化',
 				name: 'localization',
 				type: 'boolean',
 				default: true,
-				description: 'Whether to exclude localized languages in response',
+				description: '是否在响应中排除本地化的语言',
 			},
 		],
 	},
 	{
-		displayName: 'Options',
+		displayName: '选项',
 		name: 'options',
 		type: 'collection',
-		placeholder: 'Add Field',
+		placeholder: '添加字段',
 		default: {},
 		displayOptions: {
 			show: {
@@ -640,46 +637,46 @@ export const coinFields: INodeProperties[] = [
 		},
 		options: [
 			{
-				displayName: 'Community Data',
+				displayName: '社区数据',
 				name: 'community_data',
 				type: 'boolean',
 				default: false,
-				description: 'Whether to include community data',
+				description: '是否包含社区数据',
 			},
 			{
-				displayName: 'Developer Data',
+				displayName: '开发者数据',
 				name: 'developer_data',
 				type: 'boolean',
 				default: false,
-				description: 'Whether to include developer data',
+				description: '是否包含开发者数据',
 			},
 			{
-				displayName: 'Localization',
+				displayName: '本地化',
 				name: 'localization',
 				type: 'boolean',
 				default: false,
-				description: 'Whether to include all localized languages in response',
+				description: '是否在响应中包含所有本地化的语言',
 			},
 			{
-				displayName: 'Market Data',
+				displayName: '市场数据',
 				name: 'market_data',
 				type: 'boolean',
 				default: false,
-				description: 'Whether to include market data',
+				description: '是否包含市场数据',
 			},
 			{
-				displayName: 'Sparkline',
+				displayName: '走势图',
 				name: 'sparkline',
 				type: 'boolean',
 				default: false,
-				description: 'Whether to include sparkline 7 days data (eg. true, false).',
+				description: '是否包含 7 天走势图数据（例如：true、false）',
 			},
 			{
-				displayName: 'Tickers',
+				displayName: '行情',
 				name: 'tickers',
 				type: 'boolean',
 				default: false,
-				description: 'Whether to include tickers data',
+				description: '是否包含行情数据',
 			},
 		],
 	},

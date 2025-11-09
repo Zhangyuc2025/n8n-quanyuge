@@ -1,68 +1,66 @@
 import type { INodeProperties } from 'n8n-workflow';
 const operationOptions = [
 	{
-		name: 'Remove Items Repeated Within Current Input',
+		name: '删除当前输入中的重复项',
 		value: 'removeDuplicateInputItems',
-		description: 'Remove duplicates from incoming items',
-		action: 'Remove items repeated within current input',
+		description: '从传入项中删除重复项',
+		action: '删除当前输入中的重复项',
 	},
 	{
-		name: 'Remove Items Processed in Previous Executions',
+		name: '删除之前执行中处理过的项',
 		value: 'removeItemsSeenInPreviousExecutions',
-		description: 'Deduplicate items already seen in previous executions',
-		action: 'Remove items processed in previous executions',
+		description: '对在之前执行中已见过的项进行去重',
+		action: '删除之前执行中处理过的项',
 	},
 	{
-		name: 'Clear Deduplication History',
+		name: '清除去重历史',
 		value: 'clearDeduplicationHistory',
-		description: 'Wipe the store of previous items',
-		action: 'Clear deduplication history',
+		description: '清除之前项的存储',
+		action: '清除去重历史',
 	},
 ];
 const compareOptions = [
 	{
-		name: 'All Fields',
+		name: '所有字段',
 		value: 'allFields',
 	},
 	{
-		name: 'All Fields Except',
+		name: '排除指定字段',
 		value: 'allFieldsExcept',
 	},
 	{
-		name: 'Selected Fields',
+		name: '选定字段',
 		value: 'selectedFields',
 	},
 ];
 const logicOptions = [
 	{
-		name: 'Value Is New',
+		name: '值是新的',
 		value: 'removeItemsWithAlreadySeenKeyValues',
-		description: 'Remove all input items with values matching those already processed',
+		description: '删除与已处理项匹配的所有输入项',
 	},
 	{
-		name: 'Value Is Higher than Any Previous Value',
+		name: '值高于之前的任何值',
 		value: 'removeItemsUpToStoredIncrementalKey',
-		description:
-			'Works with incremental values, removes all input items with values up to the stored value',
+		description: '适用于递增值，删除所有值不大于存储值的输入项',
 	},
 	{
-		name: 'Value Is a Date Later than Any Previous Date',
+		name: '值是比之前任何日期都晚的日期',
 		value: 'removeItemsUpToStoredDate',
-		description:
-			'Works with date values, removes all input items with values up to the stored date',
+		description: '适用于日期值，删除所有日期不晚于存储日期的输入项',
 	},
 ];
 const manageDatabaseModeOptions = [
 	{
-		name: 'Clean Database',
+		name: '清理数据库',
 		value: 'cleanDatabase',
-		description: 'Clear all values stored for a key in the database',
+		description: '清除数据库中为键存储的所有值',
 	},
 ];
 
 export const removeDuplicatesNodeFields: INodeProperties[] = [
 	{
-		displayName: 'Operation',
+		displayName: '操作',
 		name: 'operation',
 		type: 'options',
 		noDataExpression: true,
@@ -70,12 +68,12 @@ export const removeDuplicatesNodeFields: INodeProperties[] = [
 		default: 'removeDuplicateInputItems',
 	},
 	{
-		displayName: 'Compare',
+		displayName: '比较方式',
 		name: 'compare',
 		type: 'options',
 		options: compareOptions,
 		default: 'allFields',
-		description: 'The fields of the input items to compare to see if they are the same',
+		description: '用于比较输入项的字段，以确定它们是否相同',
 		displayOptions: {
 			show: {
 				operation: ['removeDuplicateInputItems'],
@@ -83,12 +81,12 @@ export const removeDuplicatesNodeFields: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Fields To Exclude',
+		displayName: '要排除的字段',
 		name: 'fieldsToExclude',
 		type: 'string',
-		placeholder: 'e.g. email, name',
+		placeholder: '例如：email, name',
 		requiresDataPath: 'multiple',
-		description: 'Fields in the input to exclude from the comparison',
+		description: '从比较中排除的输入字段',
 		default: '',
 		displayOptions: {
 			show: {
@@ -97,12 +95,12 @@ export const removeDuplicatesNodeFields: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Fields To Compare',
+		displayName: '要比较的字段',
 		name: 'fieldsToCompare',
 		type: 'string',
-		placeholder: 'e.g. email, name',
+		placeholder: '例如：email, name',
 		requiresDataPath: 'multiple',
-		description: 'Fields in the input to add to the comparison',
+		description: '添加到比较中的输入字段',
 		default: '',
 		displayOptions: {
 			show: {
@@ -113,14 +111,13 @@ export const removeDuplicatesNodeFields: INodeProperties[] = [
 
 	// ----------------------------------
 	{
-		displayName: 'Keep Items Where',
+		displayName: '保留项的条件',
 		name: 'logic',
 		type: 'options',
 		noDataExpression: true,
 		options: logicOptions,
 		default: 'removeItemsWithAlreadySeenKeyValues',
-		description:
-			'How to select input items to remove by comparing them with key values previously processed',
+		description: '通过与之前处理的键值进行比较来选择要删除的输入项的方式',
 		displayOptions: {
 			show: {
 				operation: ['removeItemsSeenInPreviousExecutions'],
@@ -128,13 +125,13 @@ export const removeDuplicatesNodeFields: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Value to Dedupe On',
+		displayName: '去重值',
 		name: 'dedupeValue',
 		type: 'string',
 		default: '',
-		description: 'Use an input field (or a combination of fields) that has a unique ID value',
-		hint: 'The input field value to compare between items',
-		placeholder: 'e.g. ID',
+		description: '使用具有唯一 ID 值的输入字段（或字段组合）',
+		hint: '用于在项之间进行比较的输入字段值',
+		placeholder: '例如：ID',
 		required: true,
 		displayOptions: {
 			show: {
@@ -144,13 +141,13 @@ export const removeDuplicatesNodeFields: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Value to Dedupe On',
+		displayName: '去重值',
 		name: 'incrementalDedupeValue',
 		type: 'number',
 		default: '',
-		description: 'Use an input field (or a combination of fields) that has an incremental value',
-		hint: 'The input field value to compare between items, an incremental value is expected',
-		placeholder: 'e.g. ID',
+		description: '使用具有递增值的输入字段（或字段组合）',
+		hint: '用于在项之间进行比较的输入字段值，需要递增值',
+		placeholder: '例如：ID',
 		displayOptions: {
 			show: {
 				logic: ['removeItemsUpToStoredIncrementalKey'],
@@ -159,13 +156,13 @@ export const removeDuplicatesNodeFields: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Value to Dedupe On',
+		displayName: '去重值',
 		name: 'dateDedupeValue',
 		type: 'dateTime',
 		default: '',
-		description: 'Use an input field that has a date value in ISO format',
-		hint: 'The input field value to compare between items, a date is expected',
-		placeholder: ' e.g. 2024-08-09T13:44:16Z',
+		description: '使用具有 ISO 格式日期值的输入字段',
+		hint: '用于在项之间进行比较的输入字段值，需要日期值',
+		placeholder: '例如：2024-08-09T13:44:16Z',
 		displayOptions: {
 			show: {
 				logic: ['removeItemsUpToStoredDate'],
@@ -174,12 +171,11 @@ export const removeDuplicatesNodeFields: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Mode',
+		displayName: '模式',
 		name: 'mode',
 		type: 'options',
 		default: 'cleanDatabase',
-		description:
-			'How you want to modify the key values stored on the database. None of these modes removes input items.',
+		description: '您希望如何修改数据库中存储的键值。这些模式都不会删除输入项',
 		displayOptions: {
 			show: {
 				operation: ['clearDeduplicationHistory'],
@@ -188,10 +184,10 @@ export const removeDuplicatesNodeFields: INodeProperties[] = [
 		options: manageDatabaseModeOptions,
 	},
 	{
-		displayName: 'Options',
+		displayName: '选项',
 		name: 'options',
 		type: 'collection',
-		placeholder: 'Add Field',
+		placeholder: '添加字段',
 		default: {},
 		displayOptions: {
 			show: {
@@ -204,7 +200,7 @@ export const removeDuplicatesNodeFields: INodeProperties[] = [
 		},
 		options: [
 			{
-				displayName: 'Disable Dot Notation',
+				displayName: '禁用点符号',
 				name: 'disableDotNotation',
 				type: 'boolean',
 				default: false,
@@ -216,11 +212,10 @@ export const removeDuplicatesNodeFields: INodeProperties[] = [
 						'/compare': ['allFields'],
 					},
 				},
-				description:
-					'Whether to disallow referencing child fields using `parent.child` in the field name',
+				description: '是否禁止使用 `parent.child` 格式引用子字段',
 			},
 			{
-				displayName: 'Remove Other Fields',
+				displayName: '删除其他字段',
 				name: 'removeOtherFields',
 				type: 'boolean',
 				default: false,
@@ -232,11 +227,10 @@ export const removeDuplicatesNodeFields: INodeProperties[] = [
 						'/compare': ['allFields'],
 					},
 				},
-				description:
-					'Whether to remove any fields that are not being compared. If disabled, will keep the values from the first of the duplicates.',
+				description: '是否删除未参与比较的字段。如果禁用，将保留重复项中第一项的字段值',
 			},
 			{
-				displayName: 'Scope',
+				displayName: '作用域',
 				name: 'scope',
 				type: 'options',
 				default: 'node',
@@ -246,26 +240,26 @@ export const removeDuplicatesNodeFields: INodeProperties[] = [
 					},
 				},
 				description:
-					'If set to ‘workflow,’ key values will be shared across all nodes in the workflow. If set to ‘node,’ key values will be specific to this node.',
+					'如果设置为"工作流"，键值将在工作流中的所有节点之间共享。如果设置为"节点"，键值将特定于此节点',
 				options: [
 					{
-						name: 'Workflow',
+						name: '工作流',
 						value: 'workflow',
-						description: 'Deduplication info will be shared by all the nodes in the workflow',
+						description: '去重信息将由工作流中的所有节点共享',
 					},
 					{
-						name: 'Node',
+						name: '节点',
 						value: 'node',
-						description: 'Deduplication info will be stored only for this node',
+						description: '去重信息将仅为此节点存储',
 					},
 				],
 			},
 			{
-				displayName: 'History Size',
+				displayName: '历史大小',
 				name: 'historySize',
 				type: 'number',
 				default: 10000,
-				hint: 'The max number of past items to store for deduplication',
+				hint: '用于去重的最大存储项数',
 				displayOptions: {
 					show: {
 						'/logic': ['removeItemsWithAlreadySeenKeyValues'],

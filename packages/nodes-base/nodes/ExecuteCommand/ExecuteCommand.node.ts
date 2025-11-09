@@ -44,15 +44,15 @@ async function execPromise(command: string): Promise<IExecReturnData> {
 
 export class ExecuteCommand implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Execute Command',
+		displayName: '执行命令',
 		name: 'executeCommand',
 		icon: 'fa:terminal',
 		iconColor: 'crimson',
 		group: ['transform'],
 		version: 1,
-		description: 'Executes a command on the host',
+		description: '在主机上执行命令',
 		defaults: {
-			name: 'Execute Command',
+			name: '执行命令',
 			color: '#886644',
 		},
 		usableAsTool: true,
@@ -60,14 +60,14 @@ export class ExecuteCommand implements INodeType {
 		outputs: [NodeConnectionTypes.Main],
 		properties: [
 			{
-				displayName: 'Execute Once',
+				displayName: '仅执行一次',
 				name: 'executeOnce',
 				type: 'boolean',
 				default: true,
-				description: 'Whether to execute only once instead of once for each entry',
+				description: '是否只执行一次，而不是为每个条目执行一次',
 			},
 			{
-				displayName: 'Command',
+				displayName: '命令',
 				name: 'command',
 				typeOptions: {
 					rows: 5,
@@ -75,7 +75,7 @@ export class ExecuteCommand implements INodeType {
 				type: 'string',
 				default: '',
 				placeholder: 'echo "test"',
-				description: 'The command to execute',
+				description: '要执行的命令',
 				required: true,
 			},
 		],

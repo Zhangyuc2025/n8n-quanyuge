@@ -2,7 +2,7 @@ import type { INodeProperties } from 'n8n-workflow';
 
 export const senderOperations: INodeProperties[] = [
 	{
-		displayName: 'Operation',
+		displayName: '操作',
 		name: 'operation',
 		type: 'options',
 		noDataExpression: true,
@@ -13,12 +13,12 @@ export const senderOperations: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Create',
+				name: '创建',
 				value: 'create',
-				action: 'Create a sender',
+				action: '创建发件人',
 			},
 			{
-				name: 'Delete',
+				name: '删除',
 				value: 'delete',
 				routing: {
 					request: {
@@ -36,10 +36,10 @@ export const senderOperations: INodeProperties[] = [
 						],
 					},
 				},
-				action: 'Delete a sender',
+				action: '删除发件人',
 			},
 			{
-				name: 'Get Many',
+				name: '获取多个',
 				value: 'getAll',
 				routing: {
 					request: {
@@ -60,7 +60,7 @@ export const senderOperations: INodeProperties[] = [
 						],
 					},
 				},
-				action: 'Get many senders',
+				action: '获取多个发件人',
 			},
 		],
 		default: 'create',
@@ -69,7 +69,7 @@ export const senderOperations: INodeProperties[] = [
 
 const senderCreateOperation: INodeProperties[] = [
 	{
-		displayName: 'Name',
+		displayName: '名称',
 		name: 'name',
 		type: 'string',
 		default: '',
@@ -90,10 +90,10 @@ const senderCreateOperation: INodeProperties[] = [
 			},
 		},
 		required: true,
-		description: 'Name of the sender',
+		description: '发件人的名称',
 	},
 	{
-		displayName: 'Email',
+		displayName: '电子邮件',
 		name: 'email',
 		type: 'string',
 		placeholder: 'name@email.com',
@@ -111,13 +111,13 @@ const senderCreateOperation: INodeProperties[] = [
 			},
 		},
 		required: true,
-		description: 'Email of the sender',
+		description: '发件人的电子邮件',
 	},
 ];
 
 const senderDeleteOperation: INodeProperties[] = [
 	{
-		displayName: 'Sender ID',
+		displayName: '发件人ID',
 		name: 'id',
 		type: 'string',
 		default: '',
@@ -127,13 +127,13 @@ const senderDeleteOperation: INodeProperties[] = [
 				operation: ['delete'],
 			},
 		},
-		description: 'ID of the sender to delete',
+		description: '要删除的发件人的ID',
 	},
 ];
 
 const senderGetAllOperation: INodeProperties[] = [
 	{
-		displayName: 'Return All',
+		displayName: '返回全部',
 		name: 'returnAll',
 		type: 'boolean',
 		displayOptions: {
@@ -143,10 +143,10 @@ const senderGetAllOperation: INodeProperties[] = [
 			},
 		},
 		default: false,
-		description: 'Whether to return all results or only up to a given limit',
+		description: '是否返回所有结果或仅返回至给定限制',
 	},
 	{
-		displayName: 'Limit',
+		displayName: '限制',
 		name: 'limit',
 		type: 'number',
 		displayOptions: {
@@ -173,7 +173,7 @@ const senderGetAllOperation: INodeProperties[] = [
 			},
 		},
 		default: 10,
-		description: 'Max number of results to return',
+		description: '返回结果的最大数量',
 	},
 ];
 

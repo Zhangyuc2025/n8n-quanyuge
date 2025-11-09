@@ -203,9 +203,7 @@ export class TelemetryManagementService {
 		// Build CSV
 		const csvLines = [
 			headers.join(','),
-			...rows.map((row) =>
-				row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(','),
-			),
+			...rows.map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(',')),
 		];
 
 		return csvLines.join('\n');

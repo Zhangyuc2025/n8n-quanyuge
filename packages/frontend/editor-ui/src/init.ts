@@ -2,7 +2,6 @@ import SourceControlInitializationErrorMessage from '@/features/integrations/sou
 import { useExternalHooks } from '@/app/composables/useExternalHooks';
 import { useTelemetry } from '@/app/composables/useTelemetry';
 import { useToast } from '@/app/composables/useToast';
-import { VIEWS } from '@/app/constants';
 import { useInsightsStore } from '@/features/execution/insights/insights.store';
 import type { UserManagementAuthenticationMethod } from '@/Interface';
 import {

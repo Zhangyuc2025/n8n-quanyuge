@@ -15,89 +15,103 @@ import { getCurrentWorkflowInputData } from '../../../utils/workflowInputsResour
 
 export class ExecuteWorkflow implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Execute Sub-workflow',
+		displayName: '执行子工作流',
 		name: 'executeWorkflow',
 		icon: 'fa:sign-in-alt',
 		iconColor: 'orange-red',
 		group: ['transform'],
 		version: [1, 1.1, 1.2, 1.3],
-		subtitle: '={{"Workflow: " + $parameter["workflowId"]}}',
-		description: 'Execute another workflow',
+		subtitle: '={{"工作流: " + $parameter["workflowId"]}}',
+		description: '执行另一个工作流',
 		defaults: {
-			name: 'Execute Workflow',
+			name: '执行工作流',
 			color: '#ff6d5a',
 		},
 		inputs: [NodeConnectionTypes.Main],
 		outputs: [NodeConnectionTypes.Main],
+		codex: {
+			categories: ['Core Nodes'],
+			resources: {
+				primaryDocumentation: [
+					{
+						url: 'https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.executeworkflow/',
+					},
+				],
+				tutorialLinks: {
+					moreInfo:
+						'https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.executeworkflow/',
+				},
+			},
+		},
 		properties: [
 			{
-				displayName: 'Operation',
+				displayName: '操作',
 				name: 'operation',
 				type: 'hidden',
 				noDataExpression: true,
 				default: 'call_workflow',
 				options: [
 					{
-						name: 'Execute a Sub-Workflow',
+						name: '执行子工作流',
 						value: 'call_workflow',
 					},
 				],
 			},
 			{
-				displayName: 'This node is out of date. Please upgrade by removing it and adding a new one',
+				displayName: '此节点已过时。请通过删除它并添加新节点来升级',
 				name: 'outdatedVersionWarning',
 				type: 'notice',
 				displayOptions: { show: { '@version': [{ _cnd: { lte: 1.1 } }] } },
 				default: '',
 			},
 			{
-				displayName: 'Source',
+				displayName: '来源',
 				name: 'source',
 				type: 'options',
 				options: [
 					{
-						name: 'Database',
+						name: '数据库',
 						value: 'database',
-						description: 'Load the workflow from the database by ID',
+						description: '通过 ID 从数据库加载工作流',
 					},
 					{
-						name: 'Local File',
+						name: '本地文件',
 						value: 'localFile',
-						description: 'Load the workflow from a locally saved file',
+						description: '从本地保存的文件加载工作流',
 					},
 					{
-						name: 'Parameter',
+						name: '参数',
 						value: 'parameter',
-						description: 'Load the workflow from a parameter',
+						description: '从参数加载工作流',
 					},
 					{
 						name: 'URL',
 						value: 'url',
-						description: 'Load the workflow from an URL',
+						description: '从 URL 加载工作流',
 					},
 				],
 				default: 'database',
-				description: 'Where to get the workflow to execute from',
+				description: '从哪里获取要执行的工作流',
 				displayOptions: { show: { '@version': [{ _cnd: { lte: 1.1 } }] } },
 			},
 			{
-				displayName: 'Source',
+				displayName: '来源',
 				name: 'source',
 				type: 'options',
 				options: [
 					{
-						name: 'Database',
+						name: '数据库',
 						value: 'database',
-						description: 'Load the workflow from the database by ID',
+						description: '通过 ID 从数据库加载工作流',
 					},
 					{
-						name: 'Define Below',
+						name: '在下方定义',
 						value: 'parameter',
-						description: 'Pass the JSON code of a workflow',
+						description: '传递工作流的 JSON 代码',
 					},
 				],
 				default: 'database',
-				description: 'Where to get the workflow to execute from',
+				description: '从哪里获取要执行的工作流',
 				displayOptions: { show: { '@version': [{ _cnd: { gte: 1.2 } }] } },
 			},
 
@@ -105,7 +119,7 @@ export class ExecuteWorkflow implements INodeType {
 			//         source:database
 			// ----------------------------------
 			{
-				displayName: 'Workflow ID',
+				displayName: '工作流 ID',
 				name: 'workflowId',
 				type: 'string',
 				displayOptions: {
@@ -116,12 +130,12 @@ export class ExecuteWorkflow implements INodeType {
 				},
 				default: '',
 				required: true,
-				hint: 'Can be found in the URL of the workflow',
+				hint: '可以在工作流的 URL 中找到',
 				description:
-					"Note on using an expression here: if this node is set to run once with all items, they will all be sent to the <em>same</em> workflow. That workflow's ID will be calculated by evaluating the expression for the <strong>first input item</strong>.",
+					'关于在此处使用表达式的说明：如果此节点设置为与所有项目一起运行一次，它们将全部发送到<em>同一个</em>工作流。该工作流的 ID 将通过评估<strong>第一个输入项目</strong>的表达式来计算。',
 			},
 			{
-				displayName: 'Workflow',
+				displayName: '工作流',
 				name: 'workflowId',
 				type: 'workflowSelector',
 				displayOptions: {
@@ -137,7 +151,7 @@ export class ExecuteWorkflow implements INodeType {
 			//         source:localFile
 			// ----------------------------------
 			{
-				displayName: 'Workflow Path',
+				displayName: '工作流路径',
 				name: 'workflowPath',
 				type: 'string',
 				displayOptions: {
@@ -148,14 +162,14 @@ export class ExecuteWorkflow implements INodeType {
 				default: '',
 				placeholder: '/data/workflow.json',
 				required: true,
-				description: 'The path to local JSON workflow file to execute',
+				description: '要执行的本地 JSON 工作流文件的路径',
 			},
 
 			// ----------------------------------
 			//         source:parameter
 			// ----------------------------------
 			{
-				displayName: 'Workflow JSON',
+				displayName: '工作流 JSON',
 				name: 'workflowJson',
 				type: 'json',
 				typeOptions: {
@@ -168,14 +182,14 @@ export class ExecuteWorkflow implements INodeType {
 				},
 				default: '\n\n\n',
 				required: true,
-				description: 'The workflow JSON code to execute',
+				description: '要执行的工作流 JSON 代码',
 			},
 
 			// ----------------------------------
 			//         source:url
 			// ----------------------------------
 			{
-				displayName: 'Workflow URL',
+				displayName: '工作流 URL',
 				name: 'workflowUrl',
 				type: 'string',
 				displayOptions: {
@@ -186,18 +200,18 @@ export class ExecuteWorkflow implements INodeType {
 				default: '',
 				placeholder: 'https://example.com/workflow.json',
 				required: true,
-				description: 'The URL from which to load the workflow from',
+				description: '从中加载工作流的 URL',
 			},
 			{
 				displayName:
-					'Any data you pass into this node will be output by the Execute Workflow Trigger. <a href="https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.executeworkflow/" target="_blank">More info</a>',
+					'传递到此节点的任何数据都将由执行工作流触发器输出。<a href="{{moreInfo}}" target="_blank">了解更多</a>',
 				name: 'executeWorkflowNotice',
 				type: 'notice',
 				default: '',
 				displayOptions: { show: { '@version': [{ _cnd: { lte: 1.1 } }] } },
 			},
 			{
-				displayName: 'Workflow Inputs',
+				displayName: '工作流输入',
 				name: 'workflowInputs',
 				type: 'resourceMapper',
 				noDataExpression: true,
@@ -210,11 +224,11 @@ export class ExecuteWorkflow implements INodeType {
 					loadOptionsDependsOn: ['workflowId.value'],
 					resourceMapper: {
 						localResourceMapperMethod: 'loadSubWorkflowInputs',
-						valuesLabel: 'Workflow Inputs',
+						valuesLabel: '工作流输入',
 						mode: 'map',
 						fieldWords: {
-							singular: 'input',
-							plural: 'inputs',
+							singular: '输入',
+							plural: '输入',
 						},
 						addAllFields: true,
 						multiKeyMatch: false,
@@ -233,40 +247,39 @@ export class ExecuteWorkflow implements INodeType {
 				},
 			},
 			{
-				displayName: 'Mode',
+				displayName: '模式',
 				name: 'mode',
 				type: 'options',
 				noDataExpression: true,
 				options: [
 					{
 						// eslint-disable-next-line n8n-nodes-base/node-param-display-name-miscased
-						name: 'Run once with all items',
+						name: '与所有项目一起运行一次',
 						value: 'once',
-						description: 'Pass all items into a single execution of the sub-workflow',
+						description: '将所有项目传递到子工作流的单次执行中',
 					},
 					{
 						// eslint-disable-next-line n8n-nodes-base/node-param-display-name-miscased
-						name: 'Run once for each item',
+						name: '为每个项目运行一次',
 						value: 'each',
-						description: 'Call the sub-workflow individually for each item',
+						description: '为每个项目单独调用子工作流',
 					},
 				],
 				default: 'once',
 			},
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
 				type: 'collection',
 				default: {},
-				placeholder: 'Add option',
+				placeholder: '添加选项',
 				options: [
 					{
-						displayName: 'Wait For Sub-Workflow Completion',
+						displayName: '等待子工作流完成',
 						name: 'waitForSubWorkflow',
 						type: 'boolean',
 						default: true,
-						description:
-							'Whether the main workflow should wait for the sub-workflow to complete its execution before proceeding',
+						description: '主工作流是否应等待子工作流完成其执行后再继续',
 					},
 				],
 			},
@@ -275,7 +288,7 @@ export class ExecuteWorkflow implements INodeType {
 			{
 				type: 'info',
 				message:
-					"Note on using an expression for workflow ID: Since this node is set to run once with all items, they will all be sent to the <em>same</em> workflow. That workflow's ID will be calculated by evaluating the expression for the <strong>first input item</strong>.",
+					'关于为工作流 ID 使用表达式的说明：由于此节点设置为与所有项目一起运行一次，它们将全部发送到<em>同一个</em>工作流。该工作流的 ID 将通过评估<strong>第一个输入项目</strong>的表达式来计算。',
 				displayCondition:
 					'={{ $rawParameter.workflowId.startsWith("=") && $parameter.mode === "once" && $nodeVersion >= 1.2 }}',
 				whenToDisplay: 'always',
