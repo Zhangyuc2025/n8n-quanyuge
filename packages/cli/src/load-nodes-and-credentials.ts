@@ -32,6 +32,15 @@ import picocolors from 'picocolors';
 
 import { CUSTOM_API_CALL_KEY, CUSTOM_API_CALL_NAME, CLI_DIR, inE2ETests } from '@/constants';
 
+/**
+ * Interface for node metadata validation result
+ */
+interface NodeMetadataValidationResult {
+	isValid: boolean;
+	errors: string[];
+	normalized?: INodeTypeDescription;
+}
+
 @Service()
 export class LoadNodesAndCredentials {
 	private known: KnownNodesAndCredentials = { nodes: {}, credentials: {} };
@@ -411,6 +420,9 @@ export class LoadNodesAndCredentials {
 			}
 		}
 
+		// Load nodes from database (platform nodes)
+		await this.loadNodesFromDatabase();
+
 		this.createAiTools();
 
 		this.injectCustomApiCallOptions();
@@ -685,5 +697,229 @@ export class LoadNodesAndCredentials {
 			},
 		];
 		return [...properties, ...domainFields];
+	}
+
+	/**
+	 * Validate node metadata from database
+	 * Ensures all required fields are present and properly formatted
+	 */
+	private validateNodeMetadata(nodeDefinition: unknown): NodeMetadataValidationResult {
+		const errors: string[] = [];
+
+		// Basic type check
+		if (!nodeDefinition || typeof nodeDefinition !== 'object') {
+			return {
+				isValid: false,
+				errors: ['Node definition must be an object'],
+			};
+		}
+
+		const def = nodeDefinition as Record<string, unknown>;
+
+		// Validate required fields
+		if (!def.name || typeof def.name !== 'string') {
+			errors.push('Missing or invalid "name" field');
+		}
+
+		if (!def.displayName || typeof def.displayName !== 'string') {
+			errors.push('Missing or invalid "displayName" field');
+		}
+
+		if (!def.description || typeof def.description !== 'string') {
+			errors.push('Missing or invalid "description" field');
+		}
+
+		// Validate group field - must be non-empty array
+		if (!Array.isArray(def.group) || def.group.length === 0) {
+			errors.push('Missing or invalid "group" field (must be non-empty array)');
+		}
+
+		// Validate version field
+		if (
+			def.version === undefined ||
+			(typeof def.version !== 'number' && !Array.isArray(def.version))
+		) {
+			errors.push('Missing or invalid "version" field (must be number or number array)');
+		}
+
+		// Validate inputs/outputs
+		if (def.inputs === undefined) {
+			errors.push('Missing "inputs" field');
+		}
+
+		if (def.outputs === undefined) {
+			errors.push('Missing "outputs" field');
+		}
+
+		// Validate properties array
+		if (!Array.isArray(def.properties)) {
+			errors.push('Missing or invalid "properties" field (must be array)');
+		}
+
+		if (errors.length > 0) {
+			return {
+				isValid: false,
+				errors,
+			};
+		}
+
+		// Normalize and return
+		try {
+			const normalized = this.normalizeNodeDefinition(def);
+			return {
+				isValid: true,
+				errors: [],
+				normalized,
+			};
+		} catch (error) {
+			return {
+				isValid: false,
+				errors: [
+					`Failed to normalize node definition: ${error instanceof Error ? error.message : String(error)}`,
+				],
+			};
+		}
+	}
+
+	/**
+	 * Normalize node definition to INodeTypeDescription
+	 */
+	private normalizeNodeDefinition(def: Record<string, unknown>): INodeTypeDescription {
+		// Ensure defaults exist
+		const defaults = (def.defaults as Record<string, unknown>) || {};
+
+		return {
+			...def,
+			defaults: {
+				name: typeof defaults.name === 'string' ? defaults.name : (def.name as string),
+			},
+			properties: Array.isArray(def.properties) ? def.properties : [],
+		} as INodeTypeDescription;
+	}
+
+	/**
+	 * Convert database node to INodeTypeDescription
+	 * Transforms platform node entity to n8n node type description format
+	 */
+	private convertDbNodeToDescription(dbNode: {
+		nodeKey: string;
+		nodeName: string;
+		nodeDefinition: Record<string, unknown>;
+		category?: string | null;
+		description?: string | null;
+		iconUrl?: string | null;
+		version?: string | null;
+	}): INodeTypeDescription | null {
+		try {
+			// Validate node definition
+			const validation = this.validateNodeMetadata(dbNode.nodeDefinition);
+
+			if (!validation.isValid) {
+				this.logger.warn(`Invalid node metadata for ${dbNode.nodeKey}`, {
+					errors: validation.errors,
+				});
+				return null;
+			}
+
+			if (!validation.normalized) {
+				this.logger.warn(`Failed to normalize node definition for ${dbNode.nodeKey}`);
+				return null;
+			}
+
+			// Use validated and normalized definition
+			const nodeDefinition = validation.normalized;
+
+			// Override with database metadata where applicable
+			if (dbNode.description && !nodeDefinition.description) {
+				nodeDefinition.description = dbNode.description;
+			}
+
+			if (dbNode.iconUrl) {
+				nodeDefinition.iconUrl = dbNode.iconUrl;
+			}
+
+			// Add platform namespace to node name
+			const namespacedName = `platform.${dbNode.nodeKey}`;
+			nodeDefinition.name = namespacedName;
+
+			// Use database display name if available
+			if (dbNode.nodeName) {
+				nodeDefinition.displayName = dbNode.nodeName;
+			}
+
+			// Add category to codex if available
+			if (dbNode.category) {
+				nodeDefinition.codex = {
+					...nodeDefinition.codex,
+					categories: [dbNode.category as 'AI' | 'Analytics'],
+				};
+			}
+
+			return nodeDefinition;
+		} catch (error) {
+			this.logger.error(`Error converting database node ${dbNode.nodeKey}`, {
+				error: error instanceof Error ? error.message : String(error),
+			});
+			return null;
+		}
+	}
+
+	/**
+	 * Load nodes from database
+	 * Fetches active platform nodes and integrates them into the node registry
+	 */
+	private async loadNodesFromDatabase(): Promise<void> {
+		try {
+			// Get PlatformNodeService from container
+			const platformNodeService = Container.get(
+				await import('@/services/platform-node.service').then((m) => m.PlatformNodeService),
+			);
+
+			// Fetch active nodes from database
+			const dbNodes = await platformNodeService.getActiveNodes();
+
+			this.logger.info(`Loading ${dbNodes.length} platform nodes from database`);
+
+			let successCount = 0;
+			let failureCount = 0;
+
+			for (const dbNode of dbNodes) {
+				try {
+					// Convert database node to node description
+					const nodeDescription = this.convertDbNodeToDescription(dbNode);
+
+					if (!nodeDescription) {
+						failureCount++;
+						continue;
+					}
+
+					// Add to types array (for frontend)
+					this.types.nodes.push(nodeDescription);
+
+					// Add to known nodes registry
+					this.known.nodes[nodeDescription.name] = {
+						className: 'PlatformNode',
+						sourcePath: `database://${dbNode.nodeKey}`,
+					};
+
+					successCount++;
+
+					this.logger.debug(`Loaded platform node: ${nodeDescription.name}`);
+				} catch (error) {
+					failureCount++;
+					this.logger.error(`Failed to load platform node ${dbNode.nodeKey}`, {
+						error: error instanceof Error ? error.message : String(error),
+					});
+					// Continue with next node - single failure should not break the whole process
+				}
+			}
+
+			this.logger.info(`Platform nodes loaded: ${successCount} successful, ${failureCount} failed`);
+		} catch (error) {
+			// Log error but don't throw - database node loading should not break file system node loading
+			this.logger.error('Failed to load nodes from database', {
+				error: error instanceof Error ? error.message : String(error),
+			});
+		}
 	}
 }

@@ -35,6 +35,9 @@ import { useActionsGenerator } from '@/features/shared/nodeCreator/composables/u
 import { removePreviewToken } from '@/features/shared/nodeCreator/nodeCreator.utils';
 import { useSettingsStore } from '@/app/stores/settings.store';
 import { useDynamicAINodes } from '@/features/shared/nodeCreator/composables/useDynamicAINodes';
+import * as availableNodesApi from '@/app/api/available-nodes.api';
+import type { AvailableNode } from '@/app/api/available-nodes.api';
+import { useProjectsStore } from '@/features/collaboration/projects/projects.store';
 
 export type NodeTypesStore = ReturnType<typeof useNodeTypesStore>;
 
@@ -42,6 +45,11 @@ export const useNodeTypesStore = defineStore(STORES.NODE_TYPES, () => {
 	const nodeTypes = ref<NodeTypesByTypeNameAndVersion>({});
 
 	const vettedCommunityNodeTypes = ref<Map<string, CommunityNodeType>>(new Map());
+
+	// Available nodes state
+	const isLoadingAvailableNodes = ref(false);
+	const availableNodesError = ref<string | null>(null);
+	const nodesBySource = ref<Map<string, INodeTypeDescription[]>>(new Map());
 
 	const rootStore = useRootStore();
 
@@ -290,6 +298,59 @@ export const useNodeTypesStore = defineStore(STORES.NODE_TYPES, () => {
 	// #region Methods
 	// ---------------------------------------------------------------------------
 
+	/**
+	 * Convert AvailableNode from backend API to INodeTypeDescription format
+	 */
+	const convertAvailableNodeToDescription = (
+		availableNode: AvailableNode,
+	): INodeTypeDescription | null => {
+		try {
+			// For platform and custom nodes, we need to parse nodeDefinition
+			// For builtin nodes, they should already be loaded from filesystem
+			if (availableNode.source === 'builtin') {
+				// Builtin nodes are already loaded via nodeTypesApi.getNodeTypes()
+				// We don't need to convert them here
+				return null;
+			}
+
+			// For platform and custom nodes, create a basic INodeTypeDescription
+			// The actual node definition should be loaded separately when needed
+			const nodeDescription: Partial<INodeTypeDescription> = {
+				name: availableNode.nodeName,
+				displayName: availableNode.nodeName,
+				description: availableNode.description || '',
+				version: availableNode.version ? parseFloat(availableNode.version) : 1,
+				defaults: {
+					name: availableNode.nodeName,
+				},
+				inputs: [NodeConnectionTypes.Main],
+				outputs: [NodeConnectionTypes.Main],
+				properties: [],
+				group: ['transform'], // Default group
+				// Add metadata to identify the node source
+				codex: {
+					categories: [availableNode.category || 'Uncategorized'],
+					subcategories: {
+						[availableNode.category || 'Uncategorized']: [availableNode.source],
+					},
+				},
+			};
+
+			// Add icon if available (icon can be URL or icon name)
+			// Note: We're storing iconUrl as a custom property since the standard icon field
+			// has strict typing. This can be accessed by components that know to look for it.
+			if (availableNode.iconUrl) {
+				// TypeScript workaround: add iconUrl to the object
+				Object.assign(nodeDescription, { iconUrl: availableNode.iconUrl });
+			}
+
+			return nodeDescription as INodeTypeDescription;
+		} catch (error) {
+			console.error(`Failed to convert available node ${availableNode.nodeName}:`, error);
+			return null;
+		}
+	};
+
 	const setNodeTypes = (newNodeTypes: INodeTypeDescription[] = []) => {
 		const groupedNodeTypes = groupNodeTypesByNameAndType(newNodeTypes);
 		nodeTypes.value = {
@@ -338,13 +399,16 @@ export const useNodeTypesStore = defineStore(STORES.NODE_TYPES, () => {
 	};
 
 	const getNodeTypes = async () => {
+		// 1. 加载文件系统节点（内置节点，约142个）
 		const nodeTypes = await nodeTypesApi.getNodeTypes(rootStore.baseUrl);
 
 		if (nodeTypes.length) {
 			setNodeTypes(nodeTypes);
+			// Store builtin nodes by source
+			nodesBySource.value.set('builtin', nodeTypes);
 		}
 
-		// ✅ 加载动态 AI Chat Model 节点
+		// 2. 加载动态 AI Chat Model 节点
 		try {
 			const { loadDynamicAIChatModels } = useDynamicAINodes();
 			const dynamicAINodes = await loadDynamicAIChatModels();
@@ -352,10 +416,67 @@ export const useNodeTypesStore = defineStore(STORES.NODE_TYPES, () => {
 			if (dynamicAINodes.length) {
 				// 将动态节点转换为 INodeTypeDescription 格式并添加到 store
 				setNodeTypes(dynamicAINodes as INodeTypeDescription[]);
+				nodesBySource.value.set('dynamic-ai', dynamicAINodes as INodeTypeDescription[]);
 			}
 		} catch (error) {
 			console.warn('Failed to load dynamic AI nodes:', error);
 			// 不中断主流程，只记录警告
+		}
+
+		// 3. 加载可用节点（平台节点 + 自定义节点）
+		try {
+			const projectsStore = useProjectsStore();
+			const workspaceId = projectsStore.currentWorkspaceId;
+
+			if (workspaceId) {
+				isLoadingAvailableNodes.value = true;
+				availableNodesError.value = null;
+
+				const availableNodes = await availableNodesApi.getAvailableNodes(
+					rootStore.restApiContext,
+					workspaceId,
+				);
+
+				// Convert platform and custom nodes to INodeTypeDescription
+				const platformNodes: INodeTypeDescription[] = [];
+				const customNodes: INodeTypeDescription[] = [];
+
+				for (const node of availableNodes) {
+					// Skip builtin nodes as they're already loaded
+					if (node.source === 'builtin') {
+						continue;
+					}
+
+					const nodeDescription = convertAvailableNodeToDescription(node);
+					if (nodeDescription) {
+						if (node.source === 'platform') {
+							platformNodes.push(nodeDescription);
+						} else if (node.source === 'custom') {
+							customNodes.push(nodeDescription);
+						}
+					}
+				}
+
+				// Add platform nodes to store
+				if (platformNodes.length) {
+					setNodeTypes(platformNodes);
+					nodesBySource.value.set('platform', platformNodes);
+				}
+
+				// Add custom nodes to store
+				if (customNodes.length) {
+					setNodeTypes(customNodes);
+					nodesBySource.value.set('custom', customNodes);
+				}
+
+				isLoadingAvailableNodes.value = false;
+			}
+		} catch (error) {
+			console.error('Failed to load available nodes:', error);
+			availableNodesError.value =
+				error instanceof Error ? error.message : 'Unknown error loading available nodes';
+			isLoadingAvailableNodes.value = false;
+			// 不中断主流程，只记录错误
 		}
 	};
 
@@ -476,5 +597,10 @@ export const useNodeTypesStore = defineStore(STORES.NODE_TYPES, () => {
 		removeNodeTypes,
 		getCommunityNodeAttributes,
 		getIsNodeInstalled,
+		// Available nodes state
+		isLoadingAvailableNodes,
+		availableNodesError,
+		nodesBySource,
+		convertAvailableNodeToDescription,
 	};
 });

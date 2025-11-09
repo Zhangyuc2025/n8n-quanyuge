@@ -124,7 +124,11 @@ export type {
 	TelemetryTopEventsQueryDto,
 } from './telemetry';
 
-export { TelemetryEventsQuerySchema, TelemetryStatsQuerySchema, TelemetryTopEventsQuerySchema } from './telemetry';
+export {
+	TelemetryEventsQuerySchema,
+	TelemetryStatsQuerySchema,
+	TelemetryTopEventsQuerySchema,
+} from './telemetry';
 
 export type {
 	BreakingChangeRuleSeverity,

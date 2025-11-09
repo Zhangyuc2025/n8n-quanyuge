@@ -58,7 +58,15 @@ function findReferencedMethods(obj, refs = {}, latestName = '') {
 				const { __loadOptionsMethods, ...rest } = item.description;
 				return rest;
 			}),
-		);
+		)
+		.filter((nodeDesc) => {
+			// Filter out invalid node descriptions with missing required fields
+			if (!nodeDesc.name || !nodeDesc.displayName || !nodeDesc.group) {
+				console.warn(`Skipping invalid node description: ${JSON.stringify(nodeDesc.defaults)}`);
+				return false;
+			}
+			return true;
+		});
 
 	const knownCredentials = loader.known.credentials;
 	const credentialTypes = Object.values(loader.credentialTypes).map(({ type }) => type);

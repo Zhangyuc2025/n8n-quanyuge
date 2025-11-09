@@ -381,10 +381,97 @@ export class PlatformNodeService {
 		const lowerQuery = query.toLowerCase();
 
 		return allNodes.filter(
-			(node) =>
+			(node: { nodeName: string; nodeKey: string; description: string | null }) =>
 				node.nodeName.toLowerCase().includes(lowerQuery) ||
 				node.nodeKey.toLowerCase().includes(lowerQuery) ||
 				(node.description && node.description.toLowerCase().includes(lowerQuery)),
 		);
+	}
+
+	/**
+	 * 获取工作空间可见的平台节点
+	 * 考虑权限和可见性规则
+	 *
+	 * @param _workspaceId - 工作空间 ID（可选，保留用于未来扩展）
+	 * @returns 平台节点列表
+	 */
+	async getNodesForWorkspace(_workspaceId?: string) {
+		// 基础查询：活跃且启用的节点
+		const where: Record<string, unknown> = {
+			isActive: true,
+			enabled: true,
+		};
+
+		// 未来可扩展：根据工作空间订阅级别过滤节点
+		// if (_workspaceId) {
+		//   const workspace = await this.workspaceService.getWorkspace(_workspaceId);
+		//   if (workspace.subscriptionTier === 'free') {
+		//     where.isBillable = false; // 免费版只能用免费节点
+		//   }
+		// }
+
+		return await this.platformNodeRepository.find({
+			where,
+			order: { nodeName: 'ASC' },
+		});
+	}
+
+	/**
+	 * 批量创建平台节点（用于初始化或迁移）
+	 *
+	 * @param nodes - 节点数据数组
+	 * @returns 创建结果统计
+	 */
+	async bulkCreateNodes(
+		nodes: Array<{
+			nodeKey: string;
+			nodeName: string;
+			nodeType: NodeType;
+			nodeDefinition: Record<string, unknown>;
+			nodeCode?: string;
+			category?: string;
+			description?: string;
+			iconUrl?: string;
+			version?: string;
+			isBillable?: boolean;
+			pricePerRequest?: number;
+		}>,
+	): Promise<{
+		created: number;
+		failed: number;
+		errors: Array<{ nodeKey: string; error: string }>;
+	}> {
+		const result = {
+			created: 0,
+			failed: 0,
+			errors: [] as Array<{ nodeKey: string; error: string }>,
+		};
+
+		for (const nodeData of nodes) {
+			try {
+				await this.createNode(nodeData);
+				result.created++;
+			} catch (error) {
+				result.failed++;
+				result.errors.push({
+					nodeKey: nodeData.nodeKey,
+					error: error.message,
+				});
+			}
+		}
+
+		return result;
+	}
+
+	/**
+	 * 获取节点代码（用于节点执行）
+	 *
+	 * @param nodeKey - 节点标识
+	 * @returns 节点代码
+	 * @throws {PlatformNodeNotFoundError} 当节点不存在时
+	 */
+	async getNodeCode(nodeKey: string): Promise<string | null> {
+		const node = await this.getNodeByKey(nodeKey);
+		return node.nodeCode;
 	}
 }

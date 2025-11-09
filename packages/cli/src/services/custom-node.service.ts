@@ -487,4 +487,60 @@ export class CustomNodeService {
 		node.isActive = isActive;
 		await this.customNodeRepository.save(node);
 	}
+
+	/**
+	 * 获取节点执行代码（带权限验证）
+	 * 用于节点执行时获取代码
+	 *
+	 * @param nodeId - 节点 ID
+	 * @param workspaceId - 工作空间 ID
+	 * @returns 节点代码
+	 * @throws {CustomNodeNotFoundError} 当节点不存在时
+	 * @throws {UserError} 当用户无权访问节点时
+	 */
+	async getNodeCode(nodeId: string, workspaceId: string): Promise<string> {
+		const node = await this.getNodeById(nodeId, workspaceId);
+		return node.nodeCode;
+	}
+
+	/**
+	 * 搜索自定义节点（在工作空间内）
+	 *
+	 * @param workspaceId - 工作空间 ID
+	 * @param query - 搜索关键词
+	 * @returns 匹配的节点列表
+	 */
+	async searchWorkspaceNodes(workspaceId: string, query: string) {
+		const allNodes = await this.getWorkspaceNodes(workspaceId);
+		const lowerQuery = query.toLowerCase();
+
+		return allNodes.filter(
+			(node: { nodeName: string; nodeKey: string; description: string | null }) =>
+				node.nodeName.toLowerCase().includes(lowerQuery) ||
+				node.nodeKey.toLowerCase().includes(lowerQuery) ||
+				(node.description && node.description.toLowerCase().includes(lowerQuery)),
+		);
+	}
+
+	/**
+	 * 按分类分组获取工作空间节点
+	 *
+	 * @param workspaceId - 工作空间 ID
+	 * @returns 按分类分组的节点映射
+	 */
+	async getNodesByCategory(workspaceId: string) {
+		const nodes = await this.getWorkspaceNodes(workspaceId);
+
+		const grouped = new Map<string, typeof nodes>();
+
+		for (const node of nodes) {
+			const category = node.category || 'other';
+			if (!grouped.has(category)) {
+				grouped.set(category, []);
+			}
+			grouped.get(category)!.push(node);
+		}
+
+		return Object.fromEntries(grouped);
+	}
 }

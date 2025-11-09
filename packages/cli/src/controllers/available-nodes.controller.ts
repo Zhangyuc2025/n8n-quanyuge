@@ -5,6 +5,7 @@ import type { Response } from 'express';
 import { PlatformNodeService } from '@/services/platform-node.service';
 import { CustomNodeService } from '@/services/custom-node.service';
 import { UserNodeConfigService } from '@/services/user-node-config.service';
+import { NodeTypes } from '@/node-types';
 import { BadRequestError } from '@/errors/response-errors/bad-request.error';
 
 /**
@@ -38,6 +39,7 @@ export class AvailableNodesController {
 		private readonly platformNodeService: PlatformNodeService,
 		private readonly customNodeService: CustomNodeService,
 		private readonly userNodeConfigService: UserNodeConfigService,
+		private readonly nodeTypes: NodeTypes,
 	) {}
 
 	/**
@@ -45,6 +47,7 @@ export class AvailableNodesController {
 	 * 获取当前工作空间可用的所有节点
 	 *
 	 * 返回：
+	 * - 内置节点（从文件系统，约142个）
 	 * - 平台节点（全局可见，已启用）
 	 * - 当前工作空间的自定义节点
 	 * - 每个节点的配置状态（是否已配置）
@@ -63,17 +66,32 @@ export class AvailableNodesController {
 			throw new BadRequestError('workspaceId is required');
 		}
 
-		// 1. 获取平台节点（全局可见，已启用）
+		// 1. 获取内置节点（从文件系统）
+		const knownNodes = this.nodeTypes.getKnownTypes();
+		const builtInNodes = Object.entries(knownNodes).map(([nodeKey, nodeInfo]) => ({
+			nodeKey,
+			nodeName: nodeInfo.className,
+			nodeType: 'builtin' as const,
+			category: (nodeInfo as any).type?.description?.displayName || 'Unknown',
+			description: (nodeInfo as any).type?.description?.description || '',
+			iconUrl: '',
+			version: '1.0',
+			source: 'builtin' as const,
+			needsConfig: false,
+		}));
+
+		// 2. 获取平台节点（全局可见，已启用）
 		const platformNodes = await this.platformNodeService.getAllNodes({
 			enabled: true,
 			isActive: true,
 		});
 
-		// 2. 获取当前工作空间的自定义节点
+		// 3. 获取当前工作空间的自定义节点
 		const customNodes = await this.customNodeService.getWorkspaceNodes(workspaceId);
 
-		// 3. 合并所有节点
+		// 4. 合并所有节点
 		const allNodes = [
+			...builtInNodes,
 			...platformNodes.map((node) => ({
 				nodeKey: node.nodeKey,
 				nodeName: node.nodeName,
@@ -83,8 +101,6 @@ export class AvailableNodesController {
 				iconUrl: node.iconUrl,
 				version: node.version,
 				source: 'platform' as const,
-				// Platform nodes don't have configMode in the entity
-				// We'll determine it based on whether it's billable or needs user config
 				needsConfig: node.isBillable || false,
 			})),
 			...customNodes.map((node) => ({
@@ -96,18 +112,16 @@ export class AvailableNodesController {
 				iconUrl: node.iconUrl,
 				version: node.version,
 				source: 'custom' as const,
-				needsConfig: true, // Custom nodes always need config
+				needsConfig: true,
 			})),
 		];
 
-		// 4. 获取用户的配置状态
+		// 5. 获取用户的配置状态
 		const configStatusPromises = allNodes.map(async (node) => {
-			// 检查节点是否需要配置
 			if (!node.needsConfig) {
 				return { nodeKey: node.nodeKey, isConfigured: true };
 			}
 
-			// 检查用户是否已配置
 			const isConfigured = await this.userNodeConfigService.isNodeConfigured(
 				req.user.id,
 				node.nodeKey,
@@ -120,7 +134,7 @@ export class AvailableNodesController {
 		const configStatuses = await Promise.all(configStatusPromises);
 		const configStatusMap = new Map(configStatuses.map((s) => [s.nodeKey, s.isConfigured]));
 
-		// 5. 标注配置状态
+		// 6. 标注配置状态
 		const nodesWithStatus = allNodes.map((node) => ({
 			...node,
 			isConfigured: configStatusMap.get(node.nodeKey) ?? false,
@@ -213,6 +227,7 @@ export class AvailableNodesController {
 		// 统计信息
 		const stats = {
 			total: nodes.length,
+			builtin: nodes.filter((n) => n.source === 'builtin').length,
 			platform: nodes.filter((n) => n.source === 'platform').length,
 			custom: nodes.filter((n) => n.source === 'custom').length,
 			configured: nodes.filter((n) => n.isConfigured).length,
@@ -227,5 +242,27 @@ export class AvailableNodesController {
 		});
 
 		return stats;
+	}
+
+	/**
+	 * GET /available-nodes/builtin
+	 * 获取所有内置节点（从文件系统）
+	 *
+	 * @returns 内置节点列表
+	 */
+	@Get('/builtin')
+	async getBuiltinNodes(_req: AuthenticatedRequest, _res: Response) {
+		const knownNodes = this.nodeTypes.getKnownTypes();
+
+		return Object.entries(knownNodes).map(([nodeKey, nodeInfo]) => ({
+			nodeKey,
+			className: nodeInfo.className,
+			sourcePath: nodeInfo.sourcePath,
+			// Try to get more details if available
+			displayName: (nodeInfo as any).type?.description?.displayName || nodeInfo.className,
+			description: (nodeInfo as any).type?.description?.description || '',
+			group: (nodeInfo as any).type?.description?.group || [],
+			version: (nodeInfo as any).type?.description?.version || 1,
+		}));
 	}
 }

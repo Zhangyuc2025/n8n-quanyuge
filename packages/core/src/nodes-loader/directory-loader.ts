@@ -291,8 +291,14 @@ export abstract class DirectoryLoader {
 	getVersionedNodeTypeAll(object: IVersionedNodeType | INodeType): INodeType[] {
 		if ('nodeVersions' in object) {
 			const nodeVersions = Object.values(object.nodeVersions).map((element) => {
-				element.description.name = object.description.name;
-				element.description.codex = object.description.codex;
+				// Only overwrite if baseDescription has valid values
+				// Prevents overwriting valid values with null/undefined from baseDescription
+				if (object.description.name != null) {
+					element.description.name = object.description.name;
+				}
+				if (object.description.codex != null) {
+					element.description.codex = object.description.codex;
+				}
 				return element;
 			});
 			return uniqBy(nodeVersions.reverse(), (node) => {

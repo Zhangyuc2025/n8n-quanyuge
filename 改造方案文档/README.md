@@ -14,11 +14,11 @@
 
 | 角色 | 先读什么 | 核心文档 |
 |------|----------|----------|
-| 🎯 **产品经理** | [改造目标](#改造目标) | 01、02 架构图 |
-| 🏗️ **架构师** | [技术架构](#技术架构概览) | 01、02、03 |
-| 💻 **后端工程师** | [后端改造清单](#后端改造清单) | 01 第三、四节 |
-| 🎨 **前端工程师** | [前端改造清单](#前端改造清单) | 01 第五节、03 |
-| 🧪 **测试工程师** | [测试清单](#测试验收清单) | 01 第九节 |
+| 🎯 **产品经理** | [改造目标](#改造目标) | 00 总览、02 实施计划 |
+| 🏗️ **架构师** | [技术架构](#技术架构概览) | 00 总览、modules/01-02 |
+| 💻 **后端工程师** | [后端改造清单](#后端改造清单) | modules/01-06（多租户到后端实现） |
+| 🎨 **前端工程师** | [前端改造清单](#前端改造清单) | modules/07-08（前端实现和用户体验） |
+| 🧪 **测试工程师** | [测试清单](#测试验收清单) | modules/10（验收标准） |
 
 ---
 
@@ -52,22 +52,59 @@
 
 ## 📚 核心文档
 
+### 文档结构（分层架构）
+
 | 序号 | 文档名称 | 用途 | 优先级 |
 |------|----------|------|--------|
-| **1** | [01-n8n多租户架构完整方案.md](./01-n8n多租户架构完整方案.md) | **完整技术方案**：架构设计、数据库、后端、前端、安全性能、计费、后台管理、**节点动态化**（整合了原 02-05 + 节点动态化文档） | ⭐⭐⭐⭐⭐ |
-| **2** | [02-实施计划与里程碑.md](./02-实施计划与里程碑.md) | **实施计划（优化版）**：13-14周详细时间线（含节点动态化）、风险管理、资源需求 | ⭐⭐⭐⭐⭐ |
-| **3** | [03-品牌替换指南.md](./03-品牌替换指南.md) | 品牌定制化（n8n → 全域阁） | ⭐⭐ |
+| **0** | [00-总览与导航.md](./00-总览与导航.md) | **🌟 总览文档**：快速导航、核心概念速览、按角色/问题查找 | ⭐⭐⭐⭐⭐ |
+| **1** | [modules/](./modules/) | **📁 模块文档**：10个独立模块，按需阅读（多租户、架构、数据库、节点、AI、后端、前端、用户体验、实施、验收） | ⭐⭐⭐⭐⭐ |
+| **2** | [02-实施计划与里程碑.md](./02-实施计划与里程碑.md) | **活文档**：详细进度跟踪、里程碑验收、风险管理 | ⭐⭐⭐⭐ |
+| **3** | [03-品牌替换指南.md](./03-品牌替换指南.md) | **操作手册**：品牌定制化（n8n → 全域阁） | ⭐⭐ |
+| **4** | [工作流执行节点类型使用分析.md](./工作流执行节点类型使用分析.md) | **技术分析**：节点类型解析架构、兼容性策略、性能优化 | ⭐⭐⭐⭐ |
 
-### 已归档文档（已整合到 01 文档）
+### 模块文档列表
+
+1. [01-多租户架构.md](./modules/01-多租户架构.md) - 已完成的多租户基础架构（73%）
+2. [02-架构总览.md](./modules/02-架构总览.md) - 整体技术架构和服务分层
+3. [03-数据库设计.md](./modules/03-数据库设计.md) - 完整数据库表结构和E-R图
+4. [04-节点架构.md](./modules/04-节点架构.md) - 三层节点系统架构
+5. [05-AI服务架构.md](./modules/05-AI服务架构.md) - AI 平台托管和计费系统
+6. [06-后端实现.md](./modules/06-后端实现.md) - 后端模块、Service、Controller
+7. [07-前端实现.md](./modules/07-前端实现.md) - Vue 组件、Store、路由
+8. [08-用户体验.md](./modules/08-用户体验.md) - 用户界面和交互设计
+9. [09-实施计划.md](./modules/09-实施计划.md) - 分阶段实施计划和里程碑
+10. [10-验收标准.md](./modules/10-验收标准.md) - 功能和性能验收标准
+
+### 文档说明
+
+- **00-总览与导航.md** - 轻量级导航文档（~15KB），快速了解全局和定位具体模块
+- **modules/** - 分模块详细设计，Claude可按需读取，减少token消耗
+- **02-实施计划与里程碑.md** - 活文档，持续更新进度
+- **03-品牌替换指南.md** - 独立操作手册
+
+### 已删除文档（内容已拆分到模块）
+
+以下文档已删除，内容已拆分到 `modules/` 目录：
+
+| 原文档 | 整合到 | 删除日期 |
+|--------|--------|---------|
+| `00-项目改造方案（统一版）.md` | 拆分为00总览+10个模块 | 2025-01-09 |
+| `01-n8n多租户架构完整方案.md` | modules/01-多租户架构.md | 2025-01-09 |
+| `06-概念修正方案.md` | 00-总览与导航.md（核心概念） | 2025-01-09 |
+| `07-凭证概念分析.md` | 00-总览与导航.md（凭证系统变更） | 2025-01-09 |
+| `07-节点移动和中文化改造方案.md` | modules/04-节点架构.md | 2025-01-09 |
+| `08-节点选择器动态化改造方案-修正版.md` | modules/08-用户体验.md | 2025-01-09 |
+
+### 已归档文档（历史参考）
 
 | 文档 | 状态 | 说明 |
 |------|------|------|
-| `archived/02-架构图和流程图.md` | ✅ 已整合 | 内容已整合到 01 文档第 2 节（架构图和流程图） |
-| `archived/03-前后端分离架构说明.md` | ✅ 已整合 | 内容已整合到 01 文档第 4-5 节（后端和前端架构） |
-| `archived/04-安全与性能优化方案.md` | ✅ 已整合 | 内容已整合到 01 文档第 6 节（安全与性能） |
-| `archived/05-数据库初始化方案.md` | ✅ 已整合 | 内容已整合到 01 文档第 3 节（数据库实现） |
-| `archived/02-节点分类和配置策略.md` | ✅ 已整合 | 内容已整合到 01 文档第 2 节（节点动态化架构） |
-| `archived/03-节点动态化改造影响分析.md` | ✅ 已整合 | 内容已整合到 01 文档第 2/4/5 节（节点动态化） |
+| `archived/02-架构图和流程图.md` | ✅ 已归档 | 早期架构设计，已整合 |
+| `archived/03-前后端分离架构说明.md` | ✅ 已归档 | 前后端分离设计，已整合 |
+| `archived/04-安全与性能优化方案.md` | ✅ 已归档 | 安全性能设计，已整合 |
+| `archived/05-数据库初始化方案.md` | ✅ 已归档 | 数据库初始化方案，已整合 |
+| `archived/02-节点分类和配置策略.md` | ✅ 已归档 | 节点分类设计，已整合 |
+| `archived/03-节点动态化改造影响分析.md` | ✅ 已归档 | 节点动态化影响分析，已整合 |
 
 ---
 
@@ -133,7 +170,7 @@ CREATE TABLE platform_service (
 );
 ```
 
-**完整 SQL 见：** [01-n8n多租户架构完整方案.md](./01-n8n多租户架构完整方案.md) 第三节
+**完整 SQL 见：** [modules/03-数据库设计.md](./modules/03-数据库设计.md)
 
 ---
 
@@ -141,7 +178,7 @@ CREATE TABLE platform_service (
 
 ### 第一阶段：数据库层（Week 1）
 
-- [ ] **执行数据库迁移脚本**（见 01 文档第 3.4 节）
+- [ ] **执行数据库迁移脚本**（见 [modules/03-数据库设计.md](./modules/03-数据库设计.md)）
   - 添加 `workflow.project_id` 和 `credentials.project_id`
   - 从 `shared_workflow` 迁移数据
   - 删除 `shared_workflow` 和 `shared_credentials` 表
@@ -154,7 +191,7 @@ CREATE TABLE platform_service (
 
 ### 第二阶段：Repository 层（Week 2）
 
-- [ ] **重构 WorkflowRepository**（见 01 文档第 4.2 节）
+- [ ] **重构 WorkflowRepository**（见 [modules/06-后端实现.md](./modules/06-后端实现.md)）
   - 删除所有 SharedWorkflow JOIN 查询（147 处）
   - 改为 `WHERE workflow.projectId = :projectId`
   - 更新 `getWorkflowsForUser()` 方法
@@ -169,7 +206,7 @@ CREATE TABLE platform_service (
 
 ### 第三阶段：Service 层（Week 2-3）
 
-- [ ] **创建 WorkspaceContextService**（见 01 文档第 4.3 节）
+- [ ] **创建 WorkspaceContextService**（见相应模块文档）
   - `extractWorkspaceContext(req)` - 从 HTTP Header 提取工作空间 ID
   - `validateAccess(userId, workspaceId, role)` - 验证权限
   - `createValidationMiddleware(role)` - 中间件工厂
@@ -178,7 +215,7 @@ CREATE TABLE platform_service (
   - `createTeamWorkspace(user, data)` - 创建团队空间
   - `addMember(workspaceId, userId, role)` - 添加成员
   - `removeMember(workspaceId, userId)` - 移除成员
-- [ ] **创建 BillingService**（见 01 文档第 5.5 节）
+- [ ] **创建 BillingService**（见相应模块文档）
   - `checkBalance(workspaceId)` - 检查余额
   - `recordUsageAndCharge(params)` - 记录消费
   - `createRechargeOrder(params)` - 创建充值订单
@@ -190,7 +227,7 @@ CREATE TABLE platform_service (
 
 ### 第四阶段：Controller 层（Week 3）
 
-- [ ] **创建 WorkspacesController**（见 01 文档第 4.4 节）
+- [ ] **创建 WorkspacesController**（见相应模块文档）
   - `GET /rest/workspaces` - 获取当前用户工作空间列表
   - `POST /rest/workspaces` - 创建新工作空间
   - `GET /rest/workspaces/:id` - 获取工作空间详情
@@ -202,17 +239,17 @@ CREATE TABLE platform_service (
   - `POST /rest/billing/recharge` - 发起充值
   - `GET /rest/billing/usage` - 获取消费记录
   - `POST /rest/billing/recharge/callback` - 充值回调
-- [ ] **创建 AdminPlatformServicesController**（见 01 文档第 6.1.1 节）
+- [ ] **创建 AdminPlatformServicesController**（见相应模块文档）
   - `GET /rest/admin/platform-services/ai-models` - 获取所有 AI 模型
   - `POST /rest/admin/platform-services/ai-models` - 创建 AI 模型
   - `PATCH /rest/admin/platform-services/ai-models/:key` - 更新 AI 模型
-- [ ] **创建 AdminPluginsController**（见 01 文档第 6.1.4 节）
+- [ ] **创建 AdminPluginsController**（见相应模块文档）
   - `GET /rest/admin/plugins` - 获取所有插件
   - `POST /rest/admin/plugins/platform` - 创建平台插件
   - `POST /rest/admin/plugins/third-party` - 添加第三方插件
   - `GET /rest/admin/plugins/submissions` - 获取插件审核列表
   - `POST /rest/admin/plugins/submissions/:key/review` - 审核插件
-- [ ] **创建 PluginsController**（见 01 文档第 6.1.4 节）
+- [ ] **创建 PluginsController**（见相应模块文档）
   - `GET /rest/plugins/available` - 获取可用插件列表
   - `POST /rest/plugins/custom` - 上传自定义插件
   - `POST /rest/plugins/:key/submit` - 提交插件审核
@@ -247,7 +284,7 @@ CREATE TABLE platform_service (
 
 ### 第七阶段：企业版功能管理（Week 7-9）
 
-- [ ] **创建数据库表**（见 01 文档第 12 节）
+- [ ] **创建数据库表**（见相应模块文档）
   - 创建 `platform_feature_config` 表（平台级功能开关）
   - 扩展 `project` 表添加 `feature_config` 字段（工作空间级配置）
   - 扩展 `user` 表添加 `feature_preferences` 字段（用户偏好）
@@ -282,7 +319,7 @@ CREATE TABLE platform_service (
 
 ### 第一阶段：状态管理（Week 4）
 
-- [ ] **创建 ProjectsStore**（见 01 文档第 5.1 节）
+- [ ] **创建 ProjectsStore**（见相应模块文档）
   - `currentWorkspaceId` - 当前活跃工作空间 ID
   - `workspaces` - 用户所有工作空间列表
   - `setActiveWorkspace(id)` - 切换工作空间
@@ -295,7 +332,7 @@ CREATE TABLE platform_service (
 
 ### 第二阶段：组件开发（Week 4）
 
-- [ ] **创建 WorkspaceSwitcher 组件**（见 01 文档第 5.2 节）
+- [ ] **创建 WorkspaceSwitcher 组件**（见相应模块文档）
   ```vue
   <template>
     <n8n-select v-model="activeWorkspaceId">
@@ -316,7 +353,7 @@ CREATE TABLE platform_service (
 
 ### 第三阶段：页面响应（Week 4）
 
-- [ ] **工作流列表页自动刷新**（见 01 文档第 5.3 节）
+- [ ] **工作流列表页自动刷新**（见相应模块文档）
   ```typescript
   watch(() => projectsStore.currentWorkspaceId, async (newId) => {
     await workflowsStore.fetchWorkflows();
@@ -369,18 +406,18 @@ CREATE TABLE platform_service (
 
 ### 第七阶段：企业版功能管理前端（Week 7-9）
 
-- [ ] **后台管理系统页面**（见 01 文档第 12.3.1 节）
+- [ ] **后台管理系统页面**（见相应模块文档）
   - `PlatformFeatures/FeaturesList.vue` - 平台功能管理页面
   - 功能开关控制（启用/禁用）
   - 功能配置对话框（API限流、版本历史保留策略等）
   - 功能使用统计展示
-- [ ] **用户前端：工作空间设置页面**（见 01 文档第 12.3.2 节）
+- [ ] **用户前端：工作空间设置页面**（见相应模块文档）
   - `WorkspaceSettings.vue` - 工作空间设置主页面
   - 环境变量管理标签页（创建/编辑/删除变量）
   - 审计日志标签页（查看操作记录）
   - 自定义角色标签页（创建和管理角色）
   - 配额显示（已使用/总配额）
-- [ ] **用户前端：个人设置页面**（见 01 文档第 12.3.3 节）
+- [ ] **用户前端：个人设置页面**（见相应模块文档）
   - `PersonalSettings.vue` - 个人设置主页面
   - 语言切换（中文/英文）
   - MFA 启用/禁用流程
@@ -586,19 +623,19 @@ gantt
 
 ### 遇到问题？
 
-1. **先查阅核心文档**：[01-n8n多租户架构完整方案.md](./01-n8n多租户架构完整方案.md)
-2. **查看架构图**：[01-n8n多租户架构完整方案.md](./01-n8n多租户架构完整方案.md)
-3. **查看前后端分离适配**：[01-n8n多租户架构完整方案.md](./01-n8n多租户架构完整方案.md)
+1. **先查阅总览文档**：[00-总览与导航.md](./00-总览与导航.md)
+2. **查看架构图**：[modules/02-架构总览.md](./modules/02-架构总览.md)
+3. **查看前后端实现**：[modules/07-前端实现.md](./modules/07-前端实现.md)
 4. **在仓库提 Issue**：描述问题、复现步骤、环境信息
 
 ### 技术债务
 
 以下功能暂不在当前改造范围，可在后续版本实现：
 
-- ❌ 节点动态化（按工作空间配置节点可见性）
-- ❌ 品牌替换（n8n → 全域阁）
 - ❌ 工作流模板市场
-- ❌ 多语言国际化（i18n）
+- ❌ 多语言国际化（完整 i18n）
+- ❌ 移动端 App
+- ❌ 工作流版本控制（Git 集成）
 
 ---
 
