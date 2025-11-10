@@ -66,8 +66,8 @@
 
 1. [01-多租户架构.md](./modules/01-多租户架构.md) - 已完成的多租户基础架构（73%）
 2. [02-架构总览.md](./modules/02-架构总览.md) - 整体技术架构和服务分层
-3. [03-数据库设计.md](./modules/03-数据库设计.md) - 完整数据库表结构和E-R图
-4. [04-节点架构.md](./modules/04-节点架构.md) - 三层节点系统架构
+3. [03-数据库设计.md](./modules/03-数据库设计.md) - 完整数据库表结构、custom_node表设计、废弃表迁移
+4. [04-节点架构.md](./modules/04-节点架构.md) - 四层节点系统架构（内置+平台+npm社区+用户上传）
 5. [05-AI服务架构.md](./modules/05-AI服务架构.md) - AI 平台托管和计费系统
 6. [06-后端实现.md](./modules/06-后端实现.md) - 后端模块、Service、Controller
 7. [07-前端实现.md](./modules/07-前端实现.md) - Vue 组件、Store、路由
@@ -126,9 +126,15 @@
 
 1. **工作空间隔离**：个人空间 + 团队空间，数据完全隔离
 2. **团队协作**：邀请成员、角色管理（Admin/Editor/Viewer）
-3. **节点动态化（新）**：用户开箱即用 AI 节点（OpenAI, Claude, Gemini），无需配置 API Key，平台统一管理和计费
-4. **平台计费**：工作空间余额（RMB）+ AI 模型调用计费 + RAG 服务计费
-5. **后台管理**：管理员可管理平台服务、充值、查看统计
+3. **四层节点架构（新）**：
+   - 内置节点（142个核心节点，文件系统加载）
+   - 平台节点（管理员托管，按量计费）
+   - npm 社区节点（从 npm 安装，存储到数据库，工作空间私有）
+   - 用户上传节点（自定义代码，工作空间私有）
+4. **节点动态化（新）**：用户开箱即用 AI 节点（OpenAI, Claude, Gemini），无需配置 API Key，平台统一管理和计费
+5. **社区生态保留（新）**：支持从 npm 安装社区节点到工作空间，自动凭证转换，VM2 沙箱隔离，不污染服务器文件系统
+6. **平台计费**：工作空间余额（RMB）+ AI 模型调用计费 + RAG 服务计费
+7. **后台管理**：管理员可管理平台服务、充值、查看统计
 
 ---
 
@@ -168,6 +174,24 @@ CREATE TABLE platform_service (
   pricing_config JSONB,
   -- ...
 );
+
+-- 关键变更 5：四层节点架构 - custom_node 表（新）
+CREATE TABLE custom_node (
+  id UUID PRIMARY KEY,
+  workspace_id UUID NOT NULL,
+  node_source VARCHAR(50) NOT NULL,  -- 'npm_community' | 'user_upload'
+  npm_package_name VARCHAR(200),     -- npm 包名（社区节点）
+  npm_version VARCHAR(50),            -- npm 版本（社区节点）
+  node_code TEXT NOT NULL,            -- 节点代码（VM2 沙箱执行）
+  converted_from_credentials BOOLEAN, -- 是否经过凭证转换
+  original_credentials JSONB,         -- 原始凭证定义
+  -- ...
+);
+
+-- 废弃表（需迁移后删除）
+DROP TABLE IF EXISTS installed_packages;  -- 原社区包表
+DROP TABLE IF EXISTS installed_nodes;     -- 原社区节点表
+DROP TABLE IF EXISTS credentials_entity;  -- 原凭证表
 ```
 
 **完整 SQL 见：** [modules/03-数据库设计.md](./modules/03-数据库设计.md)
@@ -224,6 +248,27 @@ CREATE TABLE platform_service (
   - `listActiveServices()` - 获取可用平台服务
   - `createService(data)` - 创建平台服务（管理员）
   - `updateService(key, updates)` - 更新服务配置
+- [ ] **创建 CustomNodesService（新 - 四层节点架构）**（见 modules/04-节点架构.md）
+  - `getAllNodeTypes(workspaceId)` - 获取工作空间所有可用节点（四层合并）
+  - `loadBuiltinNodes()` - 加载内置节点（文件系统）
+  - `loadPlatformNodes()` - 加载平台节点（数据库）
+  - `loadWorkspaceNodes(workspaceId)` - 加载工作空间自定义节点（数据库）
+  - `uploadCustomNode(workspaceId, code, metadata)` - 上传用户自定义节点
+- [ ] **创建 NpmDownloadService（新 - npm 社区节点）**（见 modules/04-节点架构.md）
+  - `downloadAndExtract(packageName, version)` - 从 npm 下载并解压包
+  - `parsePackageJson(path)` - 解析 package.json
+  - `extractNodeFiles(path)` - 提取节点代码文件
+  - `cleanupTempFiles(path)` - 清理临时文件
+- [ ] **创建 CredentialConverterService（新 - 凭证转换）**（见 modules/04-节点架构.md）
+  - `convertNode(nodeCode, credentialDefinitions)` - AST 转换节点代码
+  - `extractCredentialUsage(ast)` - 提取凭证使用信息
+  - `generateAuthenticationParameter(credentials)` - 生成认证参数定义
+  - `rewriteGetCredentialsCalls(ast)` - 重写 getCredentials() 调用
+- [ ] **创建 WorkflowConverterService（新 - 工作流导入）**（见 modules/04-节点架构.md）
+  - `convertWorkflow(workflowJson)` - 转换导入的工作流
+  - `detectCredentialReferences(workflow)` - 检测凭证引用
+  - `createConversionUI(credentialRefs)` - 创建转换配置界面
+  - `applyUserConfiguration(workflow, config)` - 应用用户配置
 
 ### 第四阶段：Controller 层（Week 3）
 
@@ -239,6 +284,20 @@ CREATE TABLE platform_service (
   - `POST /rest/billing/recharge` - 发起充值
   - `GET /rest/billing/usage` - 获取消费记录
   - `POST /rest/billing/recharge/callback` - 充值回调
+- [ ] **创建 CustomNodesController（新 - 四层节点架构）**（见 modules/04-节点架构.md）
+  - `GET /rest/custom-nodes/available` - 获取工作空间可用节点（四层合并）
+  - `POST /rest/custom-nodes/install-from-npm` - 从 npm 安装社区节点到工作空间
+  - `POST /rest/custom-nodes/upload` - 上传自定义节点代码
+  - `GET /rest/custom-nodes` - 获取工作空间自定义节点列表
+  - `DELETE /rest/custom-nodes/:id` - 删除自定义节点
+  - `GET /rest/custom-nodes/search-npm` - 搜索 npm 社区节点（供用户浏览）
+- [ ] **创建 WorkflowImportController（新 - 工作流导入转换）**（见 modules/04-节点架构.md）
+  - `POST /rest/workflows/import/analyze` - 分析导入的工作流，检测凭证引用
+  - `POST /rest/workflows/import/convert` - 应用转换配置，完成工作流导入
+- [ ] **废弃 CommunityPackagesController**（见 modules/04-节点架构.md）
+  - ~~`POST /rest/community-packages`~~ - 已废弃，使用 `CustomNodesController.installFromNpm` 替代
+  - ~~`GET /rest/community-packages`~~ - 已废弃
+  - ~~`DELETE /rest/community-packages/:packageName`~~ - 已废弃
 - [ ] **创建 AdminPlatformServicesController**（见相应模块文档）
   - `GET /rest/admin/platform-services/ai-models` - 获取所有 AI 模型
   - `POST /rest/admin/platform-services/ai-models` - 创建 AI 模型
