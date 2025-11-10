@@ -1,7 +1,6 @@
 import { Column, Entity, OneToMany } from '@n8n/typeorm';
 
 import { WithTimestampsAndStringId } from './abstract-entity';
-import type { CredentialsEntity } from './credentials-entity';
 import type { ProjectRelation } from './project-relation';
 import type { Variables } from './variables';
 import type { WorkflowEntity } from './workflow-entity';
@@ -22,9 +21,6 @@ export class Project extends WithTimestampsAndStringId {
 
 	@OneToMany('ProjectRelation', 'project')
 	projectRelations: ProjectRelation[];
-
-	@OneToMany('CredentialsEntity', 'project')
-	credentials: CredentialsEntity[];
 
 	@OneToMany('WorkflowEntity', 'project')
 	workflows: WorkflowEntity[];

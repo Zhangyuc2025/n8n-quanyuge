@@ -3,7 +3,6 @@ import { AnnotationTagMapping } from './annotation-tag-mapping.ee';
 import { ApiKey } from './api-key';
 import { AuthIdentity } from './auth-identity';
 import { AuthProviderSyncHistory } from './auth-provider-sync-history';
-import { CredentialsEntity } from './credentials-entity';
 import { CustomNode } from './custom-node.entity';
 import { EventDestinations } from './event-destinations';
 import { ExecutionAnnotation } from './execution-annotation.ee';
@@ -54,7 +53,6 @@ export {
 	ApiKey,
 	WebhookEntity,
 	AuthIdentity,
-	CredentialsEntity,
 	CustomNode,
 	Folder,
 	Project,
@@ -99,7 +97,6 @@ export const entities = {
 	ApiKey,
 	WebhookEntity,
 	AuthIdentity,
-	CredentialsEntity,
 	CustomNode,
 	Folder,
 	Project,
