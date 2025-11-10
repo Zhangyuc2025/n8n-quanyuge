@@ -8,17 +8,17 @@ import {
 
 export class ManualChatTrigger implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Manual Chat Trigger',
+		displayName: '手动聊天触发器',
 		name: 'manualChatTrigger',
 		icon: 'fa:comments',
 		group: ['trigger'],
 		version: [1, 1.1],
-		description: 'Runs the flow on new manual chat message',
+		description: '在新的手动聊天消息时运行工作流',
 		eventTriggerDescription: '',
 		maxNodes: 1,
 		hidden: true,
 		defaults: {
-			name: 'When chat message received',
+			name: '收到聊天消息时',
 			color: '#909298',
 		},
 		codex: {
@@ -38,15 +38,14 @@ export class ManualChatTrigger implements INodeType {
 		outputs: [NodeConnectionTypes.Main],
 		properties: [
 			{
-				displayName:
-					'This node is where a manual chat workflow execution starts. To make one, go back to the canvas and click ‘Chat’',
+				displayName: '此节点是手动聊天工作流执行的起始位置。要创建一个，请返回画布并点击"聊天"',
 				name: 'notice',
 				type: 'notice',
 				default: '',
 			},
 			{
 				// eslint-disable-next-line n8n-nodes-base/node-param-display-name-miscased
-				displayName: 'Chat and execute workflow',
+				displayName: '聊天并执行工作流',
 				name: 'openChat',
 				type: 'button',
 				typeOptions: {

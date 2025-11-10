@@ -13,16 +13,15 @@ import { logWrapper } from '@utils/logWrapper';
 
 export class RetrieverMultiQuery implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'MultiQuery Retriever',
+		displayName: '多查询检索器',
 		name: 'retrieverMultiQuery',
 		icon: 'fa:box-open',
 		iconColor: 'black',
 		group: ['transform'],
 		version: 1,
-		description:
-			'Automates prompt tuning, generates diverse queries and expands document pool for enhanced retrieval.',
+		description: '自动化提示调优，生成多样化的查询并扩展文档池以增强检索效果',
 		defaults: {
-			name: 'MultiQuery Retriever',
+			name: '多查询检索器',
 		},
 		codex: {
 			categories: ['AI'],
@@ -40,13 +39,13 @@ export class RetrieverMultiQuery implements INodeType {
 
 		inputs: [
 			{
-				displayName: 'Model',
+				displayName: '模型',
 				maxConnections: 1,
 				type: NodeConnectionTypes.AiLanguageModel,
 				required: true,
 			},
 			{
-				displayName: 'Retriever',
+				displayName: '检索器',
 				maxConnections: 1,
 				type: NodeConnectionTypes.AiRetriever,
 				required: true,
@@ -54,26 +53,26 @@ export class RetrieverMultiQuery implements INodeType {
 		],
 		outputs: [
 			{
-				displayName: 'Retriever',
+				displayName: '检索器',
 				maxConnections: 1,
 				type: NodeConnectionTypes.AiRetriever,
 			},
 		],
 		properties: [
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
-				placeholder: 'Add Option',
-				description: 'Additional options to add',
+				placeholder: '添加选项',
+				description: '要添加的附加选项',
 				type: 'collection',
 				default: {},
 				options: [
 					{
-						displayName: 'Query Count',
+						displayName: '查询数量',
 						name: 'queryCount',
 						default: 3,
 						typeOptions: { minValue: 1 },
-						description: 'Number of different versions of the given question to generate',
+						description: '要生成的给定问题的不同版本数量',
 						type: 'number',
 					},
 				],

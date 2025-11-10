@@ -16,7 +16,7 @@ import { MemoryVectorStoreManager } from '../shared/MemoryManager/MemoryVectorSt
 
 const warningBanner: INodeProperties = {
 	displayName:
-		'<strong>For experimental use only</strong>: Data is stored in memory and will be lost if n8n restarts. Data may also be cleared if available memory gets low, and is accessible to all users of this instance. <a href="https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.vectorstoreinmemory/">More info</a>',
+		'<strong>仅供实验使用</strong>：数据存储在内存中，如果 n8n 重启将会丢失。如果可用内存不足，数据也可能被清除，并且此实例的所有用户都可以访问。<a href="https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.vectorstoreinmemory/">更多信息</a>',
 	name: 'notice',
 	type: 'notice',
 	default: '',
@@ -24,11 +24,11 @@ const warningBanner: INodeProperties = {
 
 const insertFields: INodeProperties[] = [
 	{
-		displayName: 'Clear Store',
+		displayName: '清除存储',
 		name: 'clearStore',
 		type: 'boolean',
 		default: false,
-		description: 'Whether to clear the store before inserting new data',
+		description: '是否在插入新数据之前清除存储',
 	},
 	warningBanner,
 ];
@@ -54,9 +54,9 @@ function getMemoryKey(context: IExecuteFunctions | ISupplyDataFunctions, itemInd
 
 export class VectorStoreInMemory extends createVectorStoreNode<MemoryVectorStore>({
 	meta: {
-		displayName: 'Simple Vector Store',
+		displayName: '简单向量存储',
 		name: 'vectorStoreInMemory',
-		description: 'The easiest way to experiment with vector stores, without external setup.',
+		description: '实验向量存储的最简单方法，无需外部设置。',
 		icon: 'fa:database',
 		iconColor: 'black',
 		docsUrl:
@@ -70,12 +70,11 @@ export class VectorStoreInMemory extends createVectorStoreNode<MemoryVectorStore
 	},
 	sharedFields: [
 		{
-			displayName: 'Memory Key',
+			displayName: '内存键',
 			name: 'memoryKey',
 			type: 'string',
 			default: DEFAULT_MEMORY_KEY,
-			description:
-				'The key to use to store the vector memory in the workflow data. The key will be prefixed with the workflow ID to avoid collisions.',
+			description: '用于在工作流数据中存储向量内存的键。该键将以工作流 ID 为前缀，以避免冲突。',
 			displayOptions: {
 				show: {
 					'@version': [{ _cnd: { lte: 1.1 } }],
@@ -83,13 +82,12 @@ export class VectorStoreInMemory extends createVectorStoreNode<MemoryVectorStore
 			},
 		},
 		{
-			displayName: 'Memory Key',
+			displayName: '内存键',
 			name: 'memoryKey',
 			type: 'resourceLocator',
 			required: true,
 			default: { mode: 'list', value: DEFAULT_MEMORY_KEY },
-			description:
-				'The key to use to store the vector memory in the workflow data. These keys are shared between workflows.',
+			description: '用于在工作流数据中存储向量内存的键。这些键在工作流之间共享。',
 			displayOptions: {
 				show: {
 					'@version': [{ _cnd: { gte: 1.2 } }],
@@ -97,7 +95,7 @@ export class VectorStoreInMemory extends createVectorStoreNode<MemoryVectorStore
 			},
 			modes: [
 				{
-					displayName: 'From List',
+					displayName: '从列表',
 					name: 'list',
 					type: 'list',
 					typeOptions: {
@@ -111,7 +109,7 @@ export class VectorStoreInMemory extends createVectorStoreNode<MemoryVectorStore
 					},
 				},
 				{
-					displayName: 'Manual',
+					displayName: '手动',
 					name: 'id',
 					type: 'string',
 					placeholder: DEFAULT_MEMORY_KEY,

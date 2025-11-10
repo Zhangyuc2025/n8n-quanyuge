@@ -1,20 +1,20 @@
 import type { INodeProperties } from 'n8n-workflow';
 
 export const specifyBySelector: INodeProperties = {
-	displayName: 'Specify By',
+	displayName: '指定方式',
 	name: 'specifyBy',
 	type: 'options',
 	options: [
 		{
-			name: 'Using Fields Below',
+			name: '使用下面的字段',
 			value: 'keypair',
 		},
 		{
-			name: 'Using JSON Below',
+			name: '使用下面的 JSON',
 			value: 'json',
 		},
 		{
-			name: 'Let Model Specify Entire Body',
+			name: '让模型指定整个请求体',
 			value: 'model',
 		},
 	],
@@ -22,13 +22,13 @@ export const specifyBySelector: INodeProperties = {
 };
 
 export const parametersCollection: INodeProperties = {
-	displayName: 'Parameters',
+	displayName: '参数',
 	name: 'parameters',
 	type: 'fixedCollection',
 	typeOptions: {
 		multipleValues: true,
 	},
-	placeholder: 'Add Parameter',
+	placeholder: '添加参数',
 	default: {
 		values: [
 			{
@@ -39,42 +39,42 @@ export const parametersCollection: INodeProperties = {
 	options: [
 		{
 			name: 'values',
-			displayName: 'Values',
+			displayName: '值',
 			values: [
 				{
-					displayName: 'Name',
+					displayName: '名称',
 					name: 'name',
 					type: 'string',
 					default: '',
 				},
 				{
-					displayName: 'Value Provided',
+					displayName: '值提供方式',
 					name: 'valueProvider',
 					type: 'options',
 					options: [
 						{
 							// eslint-disable-next-line n8n-nodes-base/node-param-display-name-miscased
-							name: 'By Model (and is required)',
+							name: '由模型提供(必填)',
 							value: 'modelRequired',
 						},
 						{
 							// eslint-disable-next-line n8n-nodes-base/node-param-display-name-miscased
-							name: 'By Model (but is optional)',
+							name: '由模型提供(可选)',
 							value: 'modelOptional',
 						},
 						{
-							name: 'Using Field Below',
+							name: '使用下面的字段',
 							value: 'fieldValue',
 						},
 					],
 					default: 'modelRequired',
 				},
 				{
-					displayName: 'Value',
+					displayName: '值',
 					name: 'value',
 					type: 'string',
 					default: '',
-					hint: 'Use a {placeholder} for any data to be filled in by the model',
+					hint: '使用 {占位符} 表示要由模型填充的任何数据',
 					displayOptions: {
 						show: {
 							valueProvider: ['fieldValue'],
@@ -86,51 +86,51 @@ export const parametersCollection: INodeProperties = {
 	],
 };
 export const placeholderDefinitionsCollection: INodeProperties = {
-	displayName: 'Placeholder Definitions',
+	displayName: '占位符定义',
 	name: 'placeholderDefinitions',
 	type: 'fixedCollection',
 	typeOptions: {
 		multipleValues: true,
 	},
-	placeholder: 'Add Definition',
+	placeholder: '添加定义',
 	default: [],
 	options: [
 		{
 			name: 'values',
-			displayName: 'Values',
+			displayName: '值',
 			values: [
 				{
-					displayName: 'Placeholder Name',
+					displayName: '占位符名称',
 					name: 'name',
 					type: 'string',
 					default: '',
 				},
 				{
-					displayName: 'Description',
+					displayName: '描述',
 					name: 'description',
 					type: 'string',
 					default: '',
 				},
 				{
-					displayName: 'Type',
+					displayName: '类型',
 					name: 'type',
 					type: 'options',
 					// eslint-disable-next-line n8n-nodes-base/node-param-options-type-unsorted-items
 					options: [
 						{
-							name: 'Not Specified (Default)',
+							name: '未指定(默认)',
 							value: 'not specified',
 						},
 						{
-							name: 'String',
+							name: '字符串',
 							value: 'string',
 						},
 						{
-							name: 'Number',
+							name: '数字',
 							value: 'number',
 						},
 						{
-							name: 'Boolean',
+							name: '布尔值',
 							value: 'boolean',
 						},
 						{
@@ -152,39 +152,37 @@ export const jsonInput: INodeProperties = {
 	typeOptions: {
 		rows: 5,
 	},
-	hint: 'Use a {placeholder} for any data to be filled in by the model',
+	hint: '使用 {占位符} 表示要由模型填充的任何数据',
 	default: '',
 };
 
 export const authenticationProperties: INodeProperties[] = [
 	{
-		displayName: 'Authentication',
+		displayName: '身份验证',
 		name: 'authentication',
-		description:
-			'Select the type of authentication to use if needed, authentication would be done by n8n and your credentials will not be shared with the LLM',
+		description: '如果需要,选择要使用的身份验证类型,身份验证将由 n8n 完成,您的凭据不会与 LLM 共享',
 		noDataExpression: true,
 		type: 'options',
 		options: [
 			{
-				name: 'None',
+				name: '无',
 				value: 'none',
 			},
 			{
-				name: 'Predefined Credential Type',
+				name: '预定义凭据类型',
 				value: 'predefinedCredentialType',
-				description:
-					"We've already implemented auth for many services so that you don't have to set it up manually",
+				description: '我们已经为许多服务实现了身份验证,因此您无需手动设置',
 			},
 			{
-				name: 'Generic Credential Type',
+				name: '通用凭据类型',
 				value: 'genericCredentialType',
-				description: 'Fully customizable. Choose between basic, header, OAuth2, etc.',
+				description: '完全可自定义。在基本身份验证、标头、OAuth2 等之间选择。',
 			},
 		],
 		default: 'none',
 	},
 	{
-		displayName: 'Credential Type',
+		displayName: '凭据类型',
 		name: 'nodeCredentialType',
 		type: 'credentialsSelect',
 		noDataExpression: true,
@@ -198,8 +196,7 @@ export const authenticationProperties: INodeProperties[] = [
 		},
 	},
 	{
-		displayName:
-			'Make sure you have specified the scope(s) for the Service Account in the credential',
+		displayName: '确保您已在凭据中为服务帐户指定了范围',
 		name: 'googleApiWarning',
 		type: 'notice',
 		default: '',
@@ -210,7 +207,7 @@ export const authenticationProperties: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Generic Auth Type',
+		displayName: '通用身份验证类型',
 		name: 'genericAuthType',
 		type: 'credentialsSelect',
 		required: true,
@@ -226,16 +223,15 @@ export const authenticationProperties: INodeProperties[] = [
 
 export const optimizeResponseProperties: INodeProperties[] = [
 	{
-		displayName: 'Optimize Response',
+		displayName: '优化响应',
 		name: 'optimizeResponse',
 		type: 'boolean',
 		default: false,
 		noDataExpression: true,
-		description:
-			'Whether the optimize the tool response to reduce amount of data passed to the LLM that could lead to better result and reduce cost',
+		description: '是否优化工具响应以减少传递给 LLM 的数据量,这可能会带来更好的结果并降低成本',
 	},
 	{
-		displayName: 'Expected Response Type',
+		displayName: '预期响应类型',
 		name: 'responseType',
 		type: 'options',
 		displayOptions: {
@@ -253,20 +249,20 @@ export const optimizeResponseProperties: INodeProperties[] = [
 				value: 'html',
 			},
 			{
-				name: 'Text',
+				name: '文本',
 				value: 'text',
 			},
 		],
 		default: 'json',
 	},
 	{
-		displayName: 'Field Containing Data',
+		displayName: '包含数据的字段',
 		name: 'dataField',
 		type: 'string',
 		default: '',
-		placeholder: 'e.g. records',
-		description: 'Specify the name of the field in the response containing the data',
-		hint: 'leave blank to use whole response',
+		placeholder: '例如：records',
+		description: '指定响应中包含数据的字段名称',
+		hint: '留空以使用完整响应',
 		requiresDataPath: 'single',
 		displayOptions: {
 			show: {
@@ -276,10 +272,10 @@ export const optimizeResponseProperties: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Include Fields',
+		displayName: '包含字段',
 		name: 'fieldsToInclude',
 		type: 'options',
-		description: 'What fields response object should include',
+		description: '响应对象应包含哪些字段',
 		default: 'all',
 		displayOptions: {
 			show: {
@@ -289,30 +285,29 @@ export const optimizeResponseProperties: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'All',
+				name: '全部',
 				value: 'all',
-				description: 'Include all fields',
+				description: '包含所有字段',
 			},
 			{
-				name: 'Selected',
+				name: '选定的',
 				value: 'selected',
-				description: 'Include only fields specified below',
+				description: '仅包含下面指定的字段',
 			},
 			{
-				name: 'Except',
+				name: '除外',
 				value: 'except',
-				description: 'Exclude fields specified below',
+				description: '排除下面指定的字段',
 			},
 		],
 	},
 	{
-		displayName: 'Fields',
+		displayName: '字段',
 		name: 'fields',
 		type: 'string',
 		default: '',
-		placeholder: 'e.g. field1,field2',
-		description:
-			'Comma-separated list of the field names. Supports dot notation. You can drag the selected fields from the input panel.',
+		placeholder: '例如：field1,field2',
+		description: '字段名称的逗号分隔列表。支持点表示法。您可以从输入面板拖动选定的字段。',
 		requiresDataPath: 'multiple',
 		displayOptions: {
 			show: {
@@ -325,12 +320,11 @@ export const optimizeResponseProperties: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Selector (CSS)',
+		displayName: '选择器 (CSS)',
 		name: 'cssSelector',
 		type: 'string',
-		description:
-			'Select specific element(e.g. body) or multiple elements(e.g. div) of chosen type in the response HTML.',
-		placeholder: 'e.g. body',
+		description: '在响应 HTML 中选择特定元素(例如 body)或所选类型的多个元素(例如 div)。',
+		placeholder: '例如：body',
 		default: 'body',
 		displayOptions: {
 			show: {
@@ -340,13 +334,12 @@ export const optimizeResponseProperties: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Return Only Content',
+		displayName: '仅返回内容',
 		name: 'onlyContent',
 		type: 'boolean',
 		default: false,
-		description:
-			'Whether to return only content of html elements, stripping html tags and attributes',
-		hint: 'Uses less tokens and may be easier for model to understand',
+		description: '是否仅返回 HTML 元素的内容,去除 HTML 标签和属性',
+		hint: '使用更少的令牌,模型可能更容易理解',
 		displayOptions: {
 			show: {
 				optimizeResponse: [true],
@@ -355,7 +348,7 @@ export const optimizeResponseProperties: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Elements To Omit',
+		displayName: '要省略的元素',
 		name: 'elementsToOmit',
 		type: 'string',
 		displayOptions: {
@@ -366,15 +359,15 @@ export const optimizeResponseProperties: INodeProperties[] = [
 			},
 		},
 		default: '',
-		placeholder: 'e.g. img, .className, #ItemId',
-		description: 'Comma-separated list of selectors that would be excluded when extracting content',
+		placeholder: '例如：img, .className, #ItemId',
+		description: '提取内容时将排除的选择器的逗号分隔列表',
 	},
 	{
-		displayName: 'Truncate Response',
+		displayName: '截断响应',
 		name: 'truncateResponse',
 		type: 'boolean',
 		default: false,
-		hint: 'Helps save tokens',
+		hint: '有助于节省令牌',
 		displayOptions: {
 			show: {
 				optimizeResponse: [true],
@@ -383,7 +376,7 @@ export const optimizeResponseProperties: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Max Response Characters',
+		displayName: '最大响应字符数',
 		name: 'maxLength',
 		type: 'number',
 		default: 1000,

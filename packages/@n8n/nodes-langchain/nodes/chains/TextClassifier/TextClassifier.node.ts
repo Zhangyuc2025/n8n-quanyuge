@@ -30,13 +30,13 @@ const configuredOutputs = (parameters: INodeParameters) => {
 
 export class TextClassifier implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Text Classifier',
+		displayName: '文本分类器',
 		name: 'textClassifier',
 		icon: 'fa:tags',
 		iconColor: 'black',
 		group: ['transform'],
 		version: [1, 1.1],
-		description: 'Classify your text into distinct categories',
+		description: '将文本分类为不同的类别',
 		codex: {
 			categories: ['AI'],
 			subcategories: {
@@ -51,12 +51,12 @@ export class TextClassifier implements INodeType {
 			},
 		},
 		defaults: {
-			name: 'Text Classifier',
+			name: '文本分类器',
 		},
 		inputs: [
 			{ displayName: '', type: NodeConnectionTypes.Main },
 			{
-				displayName: 'Model',
+				displayName: '模型',
 				maxConnections: 1,
 				type: NodeConnectionTypes.AiLanguageModel,
 				required: true,
@@ -65,20 +65,20 @@ export class TextClassifier implements INodeType {
 		outputs: `={{(${configuredOutputs})($parameter)}}`,
 		properties: [
 			{
-				displayName: 'Text to Classify',
+				displayName: '要分类的文本',
 				name: 'inputText',
 				type: 'string',
 				required: true,
 				default: '',
-				description: 'Use an expression to reference data in previous nodes or enter static text',
+				description: '使用表达式引用先前节点中的数据或输入静态文本',
 				typeOptions: {
 					rows: 2,
 				},
 			},
 			{
-				displayName: 'Categories',
+				displayName: '类别',
 				name: 'categories',
-				placeholder: 'Add Category',
+				placeholder: '添加类别',
 				type: 'fixedCollection',
 				default: {},
 				typeOptions: {
@@ -87,76 +87,75 @@ export class TextClassifier implements INodeType {
 				options: [
 					{
 						name: 'categories',
-						displayName: 'Categories',
+						displayName: '类别',
 						values: [
 							{
-								displayName: 'Category',
+								displayName: '类别',
 								name: 'category',
 								type: 'string',
 								default: '',
-								description: 'Category to add',
+								description: '要添加的类别',
 								required: true,
 							},
 							{
-								displayName: 'Description',
+								displayName: '描述',
 								name: 'description',
 								type: 'string',
 								default: '',
-								description: "Describe your category if it's not obvious",
+								description: '如果类别不明显，请描述您的类别',
 							},
 						],
 					},
 				],
 			},
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
 				type: 'collection',
 				default: {},
-				placeholder: 'Add Option',
+				placeholder: '添加选项',
 				options: [
 					{
-						displayName: 'Allow Multiple Classes To Be True',
+						displayName: '允许多个类别为真',
 						name: 'multiClass',
 						type: 'boolean',
 						default: false,
 					},
 					{
-						displayName: 'When No Clear Match',
+						displayName: '当没有明确匹配时',
 						name: 'fallback',
 						type: 'options',
 						default: 'discard',
-						description: 'What to do with items that don’t match the categories exactly',
+						description: '对于不完全匹配类别的项目如何处理',
 						options: [
 							{
-								name: 'Discard Item',
+								name: '丢弃项目',
 								value: 'discard',
-								description: 'Ignore the item and drop it from the output',
+								description: '忽略该项目并从输出中删除',
 							},
 							{
-								name: "Output on Extra, 'Other' Branch",
+								name: "在额外的'其他'分支上输出",
 								value: 'other',
-								description: "Create a separate output branch called 'Other'",
+								description: "创建一个名为'其他'的单独输出分支",
 							},
 						],
 					},
 					{
-						displayName: 'System Prompt Template',
+						displayName: '系统提示词模板',
 						name: 'systemPromptTemplate',
 						type: 'string',
 						default: SYSTEM_PROMPT_TEMPLATE,
-						description: 'String to use directly as the system prompt template',
+						description: '直接用作系统提示词模板的字符串',
 						typeOptions: {
 							rows: 6,
 						},
 					},
 					{
-						displayName: 'Enable Auto-Fixing',
+						displayName: '启用自动修复',
 						name: 'enableAutoFixing',
 						type: 'boolean',
 						default: true,
-						description:
-							'Whether to enable auto-fixing (may trigger an additional LLM call if output is broken)',
+						description: '是否启用自动修复（如果输出损坏，可能会触发额外的 LLM 调用）',
 					},
 					getBatchingOptionFields({
 						show: {

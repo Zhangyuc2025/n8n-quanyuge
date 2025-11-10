@@ -7,12 +7,12 @@ import { ChainSummarizationV2 } from './V2/ChainSummarizationV2.node';
 export class ChainSummarization extends VersionedNodeType {
 	constructor() {
 		const baseDescription: INodeTypeBaseDescription = {
-			displayName: 'Summarization Chain',
+			displayName: '摘要链',
 			name: 'chainSummarization',
 			icon: 'fa:link',
 			iconColor: 'black',
 			group: ['transform'],
-			description: 'Transforms text into a concise summary',
+			description: '将文本转换为简洁的摘要',
 			codex: {
 				alias: ['LangChain'],
 				categories: ['AI'],

@@ -55,7 +55,7 @@ export async function sqlAgentAgentExecute(
 			}
 
 			if (input === undefined) {
-				throw new NodeOperationError(this.getNode(), 'The ‘prompt’ parameter is empty.');
+				throw new NodeOperationError(this.getNode(), '"提示词" 参数为空。');
 			}
 
 			const options = this.getNodeParameter('options', i, {});
@@ -73,7 +73,7 @@ export async function sqlAgentAgentExecute(
 				if (!item.binary) {
 					throw new NodeOperationError(
 						this.getNode(),
-						'No binary data found, please connect a binary to the input if you want to use SQLite as data source',
+						'未找到二进制数据，如果要使用 SQLite 作为数据源，请将二进制连接到输入',
 					);
 				}
 
@@ -90,10 +90,7 @@ export async function sqlAgentAgentExecute(
 			}
 
 			if (!dataSource) {
-				throw new NodeOperationError(
-					this.getNode(),
-					'No data source found, please configure data source',
-				);
+				throw new NodeOperationError(this.getNode(), '未找到数据源，请配置数据源');
 			}
 
 			const agentOptions: SqlCreatePromptArgs = {

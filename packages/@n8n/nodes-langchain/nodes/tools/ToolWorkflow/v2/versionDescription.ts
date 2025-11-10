@@ -5,35 +5,34 @@ import { NodeConnectionTypes, type INodeTypeDescription } from 'n8n-workflow';
 import { getConnectionHintNoticeField } from '../../../../utils/sharedFields';
 
 export const versionDescription: INodeTypeDescription = {
-	displayName: 'Call n8n Workflow Tool',
+	displayName: '调用 n8n 工作流工具',
 	name: 'toolWorkflow',
 	group: ['transform'],
-	description: 'Uses another n8n workflow as a tool. Allows packaging any n8n node(s) as a tool.',
+	description: '使用另一个 n8n 工作流作为工具。允许将任何 n8n 节点打包为工具。',
 	defaults: {
-		name: 'Call n8n Workflow Tool',
+		name: '调用 n8n 工作流工具',
 	},
 	version: [2, 2.1, 2.2],
 	inputs: [],
 	outputs: [NodeConnectionTypes.AiTool],
-	outputNames: ['Tool'],
+	outputNames: ['工具'],
 	properties: [
 		getConnectionHintNoticeField([NodeConnectionTypes.AiAgent]),
 		{
 			displayName:
-				'See an example of a workflow to suggest meeting slots using AI <a href="/templates/1953" target="_blank">here</a>.',
+				'在<a href="/templates/1953" target="_blank">这里</a>查看使用 AI 建议会议时间段的工作流示例。',
 			name: 'noticeTemplateExample',
 			type: 'notice',
 			default: '',
 		},
 		{
-			displayName: 'Name',
+			displayName: '名称',
 			name: 'name',
 			type: 'string',
 			default: '',
-			placeholder: 'e.g. My_Color_Tool',
+			placeholder: '例如：My_Color_Tool',
 			validateType: 'string-alphanumeric',
-			description:
-				'The name of the function to be called, could contain letters, numbers, and underscores only',
+			description: '要调用的函数名称,只能包含字母、数字和下划线',
 			displayOptions: {
 				show: {
 					'@version': [{ _cnd: { lte: 2.1 } }],
@@ -41,12 +40,11 @@ export const versionDescription: INodeTypeDescription = {
 			},
 		},
 		{
-			displayName: 'Description',
+			displayName: '描述',
 			name: 'description',
 			type: 'string',
 			default: '',
-			placeholder:
-				'Call this tool to get a random color. The input should be a string with comma separated names of colors to exclude.',
+			placeholder: '调用此工具获取随机颜色。输入应该是一个字符串,包含要排除的颜色名称,用逗号分隔。',
 			typeOptions: {
 				rows: 3,
 			},
@@ -54,37 +52,37 @@ export const versionDescription: INodeTypeDescription = {
 
 		{
 			displayName:
-				'This tool will call the workflow you define below, and look in the last node for the response. The workflow needs to start with an Execute Workflow trigger',
+				'此工具将调用您在下面定义的工作流,并在最后一个节点中查找响应。工作流需要以执行工作流触发器开始',
 			name: 'executeNotice',
 			type: 'notice',
 			default: '',
 		},
 
 		{
-			displayName: 'Source',
+			displayName: '来源',
 			name: 'source',
 			type: 'options',
 			options: [
 				{
-					name: 'Database',
+					name: '数据库',
 					value: 'database',
-					description: 'Load the workflow from the database by ID',
+					description: '通过 ID 从数据库加载工作流',
 				},
 				{
-					name: 'Define Below',
+					name: '在下面定义',
 					value: 'parameter',
-					description: 'Pass the JSON code of a workflow',
+					description: '传递工作流的 JSON 代码',
 				},
 			],
 			default: 'database',
-			description: 'Where to get the workflow to execute from',
+			description: '从哪里获取要执行的工作流',
 		},
 
 		// ----------------------------------
 		//         source:database
 		// ----------------------------------
 		{
-			displayName: 'Workflow',
+			displayName: '工作流',
 			name: 'workflowId',
 			type: 'workflowSelector',
 			displayOptions: {
@@ -99,7 +97,7 @@ export const versionDescription: INodeTypeDescription = {
 		//         Resource mapper for workflow inputs
 		// -----------------------------------------------
 		{
-			displayName: 'Workflow Inputs',
+			displayName: '工作流输入',
 			name: 'workflowInputs',
 			type: 'resourceMapper',
 			noDataExpression: true,
@@ -112,11 +110,11 @@ export const versionDescription: INodeTypeDescription = {
 				loadOptionsDependsOn: ['workflowId.value'],
 				resourceMapper: {
 					localResourceMapperMethod: 'loadSubWorkflowInputs',
-					valuesLabel: 'Workflow Inputs',
+					valuesLabel: '工作流输入',
 					mode: 'map',
 					fieldWords: {
-						singular: 'workflow input',
-						plural: 'workflow inputs',
+						singular: '工作流输入',
+						plural: '工作流输入',
 					},
 					addAllFields: true,
 					multiKeyMatch: false,
@@ -136,7 +134,7 @@ export const versionDescription: INodeTypeDescription = {
 		//         source:parameter
 		// ----------------------------------
 		{
-			displayName: 'Workflow JSON',
+			displayName: '工作流 JSON',
 			name: 'workflowJson',
 			type: 'json',
 			typeOptions: {
@@ -149,7 +147,7 @@ export const versionDescription: INodeTypeDescription = {
 			},
 			default: '\n\n\n\n\n\n\n\n\n',
 			required: true,
-			description: 'The workflow JSON code to execute',
+			description: '要执行的工作流 JSON 代码',
 		},
 	],
 };

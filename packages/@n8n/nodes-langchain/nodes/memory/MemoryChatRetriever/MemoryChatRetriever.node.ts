@@ -34,16 +34,16 @@ function simplifyMessages(messages: BaseMessage[]) {
 // This node is deprecated. Use MemoryManager instead.
 export class MemoryChatRetriever implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Chat Messages Retriever',
+		displayName: '聊天消息检索器',
 		name: 'memoryChatRetriever',
 		icon: 'fa:database',
 		iconColor: 'black',
 		group: ['transform'],
 		hidden: true,
 		version: 1,
-		description: 'Retrieve chat messages from memory and use them in the workflow',
+		description: '从记忆中检索聊天消息并在工作流中使用',
 		defaults: {
-			name: 'Chat Messages Retriever',
+			name: '聊天消息检索器',
 		},
 		codex: {
 			categories: ['AI'],
@@ -62,7 +62,7 @@ export class MemoryChatRetriever implements INodeType {
 		inputs: [
 			NodeConnectionTypes.Main,
 			{
-				displayName: 'Memory',
+				displayName: '记忆',
 				maxConnections: 1,
 				type: NodeConnectionTypes.AiMemory,
 				required: true,
@@ -72,16 +72,16 @@ export class MemoryChatRetriever implements INodeType {
 		outputs: [NodeConnectionTypes.Main],
 		properties: [
 			{
-				displayName: "This node is deprecated. Use 'Chat Memory Manager' node instead.",
+				displayName: '此节点已弃用。请改用"聊天记忆管理器"节点。',
 				type: 'notice',
 				default: '',
 				name: 'deprecatedNotice',
 			},
 			{
-				displayName: 'Simplify Output',
+				displayName: '简化输出',
 				name: 'simplifyOutput',
 				type: 'boolean',
-				description: 'Whether to simplify the output to only include the sender and the text',
+				description: '是否将输出简化为仅包含发送者和文本',
 				default: true,
 			},
 		],

@@ -10,7 +10,7 @@ import {
 import { SQL_PREFIX, SQL_SUFFIX } from './other/prompts';
 
 const dataSourceOptions: INodeProperties = {
-	displayName: 'Data Source',
+	displayName: '数据源',
 	name: 'dataSource',
 	type: 'options',
 	displayOptions: {
@@ -19,22 +19,22 @@ const dataSourceOptions: INodeProperties = {
 		},
 	},
 	default: 'sqlite',
-	description: 'SQL database to connect to',
+	description: '要连接的 SQL 数据库',
 	options: [
 		{
 			name: 'MySQL',
 			value: 'mysql',
-			description: 'Connect to a MySQL database',
+			description: '连接到 MySQL 数据库',
 		},
 		{
 			name: 'Postgres',
 			value: 'postgres',
-			description: 'Connect to a Postgres database',
+			description: '连接到 Postgres 数据库',
 		},
 		{
 			name: 'SQLite',
 			value: 'sqlite',
-			description: 'Use SQLite by connecting a database file as binary input',
+			description: '通过二进制输入连接数据库文件来使用 SQLite',
 		},
 	],
 };
@@ -60,14 +60,14 @@ export const sqlAgentAgentProperties: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Credentials',
+		displayName: '凭据',
 		name: 'credentials',
 		type: 'credentials',
 		default: '',
 	},
 	{
 		displayName:
-			"Pass the SQLite database into this node as binary data, e.g. by inserting a 'Read/Write Files from Disk' node beforehand",
+			'将 SQLite 数据库作为二进制数据传递到此节点，例如在之前插入 "从磁盘读取/写入文件" 节点',
 		name: 'sqLiteFileNotice',
 		type: 'notice',
 		default: '',
@@ -79,13 +79,13 @@ export const sqlAgentAgentProperties: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Input Binary Field',
+		displayName: '输入二进制字段',
 		name: 'binaryPropertyName',
 		type: 'string',
 		default: 'data',
 		required: true,
-		placeholder: 'e.g data',
-		hint: 'The name of the input binary field containing the file to be extracted',
+		placeholder: '例如 data',
+		hint: '包含要提取的文件的输入二进制字段名称',
 		displayOptions: {
 			show: {
 				agent: ['sqlAgent'],
@@ -94,7 +94,7 @@ export const sqlAgentAgentProperties: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Prompt',
+		displayName: '提示词',
 		name: 'input',
 		type: 'string',
 		displayOptions: {
@@ -146,7 +146,7 @@ export const sqlAgentAgentProperties: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Options',
+		displayName: '选项',
 		name: 'options',
 		type: 'collection',
 		displayOptions: {
@@ -158,55 +158,53 @@ export const sqlAgentAgentProperties: INodeProperties[] = [
 		placeholder: '添加选项',
 		options: [
 			{
-				displayName: 'Ignored Tables',
+				displayName: '忽略的表',
 				name: 'ignoredTables',
 				type: 'string',
 				default: '',
-				description:
-					'Comma-separated list of tables to ignore from the database. If empty, no tables are ignored.',
+				description: '要从数据库中忽略的表的逗号分隔列表。如果为空，则不忽略任何表。',
 			},
 			{
-				displayName: 'Include Sample Rows',
+				displayName: '包含示例行',
 				name: 'includedSampleRows',
 				type: 'number',
 				description:
-					'Number of sample rows to include in the prompt to the agent. It helps the agent to understand the schema of the database but it also increases the amount of tokens used.',
+					'在代理提示中包含的示例行数。这有助于代理理解数据库的模式，但也会增加使用的令牌数量。',
 				default: 3,
 			},
 			{
-				displayName: 'Included Tables',
+				displayName: '包含的表',
 				name: 'includedTables',
 				type: 'string',
 				default: '',
-				description:
-					'Comma-separated list of tables to include in the database. If empty, all tables are included.',
+				description: '要包含在数据库中的表的逗号分隔列表。如果为空，则包含所有表。',
 			},
 			{
-				displayName: 'Prefix Prompt',
+				displayName: '前缀提示词',
 				name: 'prefixPrompt',
 				type: 'string',
 				default: SQL_PREFIX,
-				description: 'Prefix prompt to use for the agent',
+				description: '用于代理的前缀提示词',
 				typeOptions: {
 					rows: 10,
 				},
 			},
 			{
-				displayName: 'Suffix Prompt',
+				displayName: '后缀提示词',
 				name: 'suffixPrompt',
 				type: 'string',
 				default: SQL_SUFFIX,
-				description: 'Suffix prompt to use for the agent',
+				description: '用于代理的后缀提示词',
 				typeOptions: {
 					rows: 4,
 				},
 			},
 			{
-				displayName: 'Limit',
+				displayName: '限制',
 				name: 'topK',
 				type: 'number',
 				default: 10,
-				description: 'The maximum number of results to return',
+				description: '要返回的最大结果数',
 			},
 		],
 	},

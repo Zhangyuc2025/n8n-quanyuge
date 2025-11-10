@@ -4,7 +4,7 @@ import { SYSTEM_MESSAGE } from './prompt';
 
 export const openAiFunctionsAgentProperties: INodeProperties[] = [
 	{
-		displayName: 'Text',
+		displayName: '文本',
 		name: 'text',
 		type: 'string',
 		required: true,
@@ -17,7 +17,7 @@ export const openAiFunctionsAgentProperties: INodeProperties[] = [
 		default: '={{ $json.input }}',
 	},
 	{
-		displayName: 'Text',
+		displayName: '文本',
 		name: 'text',
 		type: 'string',
 		required: true,
@@ -30,7 +30,7 @@ export const openAiFunctionsAgentProperties: INodeProperties[] = [
 		default: '={{ $json.chat_input }}',
 	},
 	{
-		displayName: 'Text',
+		displayName: '文本',
 		name: 'text',
 		type: 'string',
 		required: true,
@@ -43,7 +43,7 @@ export const openAiFunctionsAgentProperties: INodeProperties[] = [
 		default: '={{ $json.chatInput }}',
 	},
 	{
-		displayName: 'Options',
+		displayName: '选项',
 		name: 'options',
 		type: 'collection',
 		displayOptions: {
@@ -55,28 +55,28 @@ export const openAiFunctionsAgentProperties: INodeProperties[] = [
 		placeholder: '添加选项',
 		options: [
 			{
-				displayName: 'System Message',
+				displayName: '系统消息',
 				name: 'systemMessage',
 				type: 'string',
 				default: SYSTEM_MESSAGE,
-				description: 'The message that will be sent to the agent before the conversation starts',
+				description: '在对话开始前发送给智能体的消息',
 				typeOptions: {
 					rows: 6,
 				},
 			},
 			{
-				displayName: 'Max Iterations',
+				displayName: '最大迭代次数',
 				name: 'maxIterations',
 				type: 'number',
 				default: 10,
-				description: 'The maximum number of iterations the agent will run before stopping',
+				description: '智能体停止前运行的最大迭代次数',
 			},
 			{
-				displayName: 'Return Intermediate Steps',
+				displayName: '返回中间步骤',
 				name: 'returnIntermediateSteps',
 				type: 'boolean',
 				default: false,
-				description: 'Whether or not the output should include intermediate steps the agent took',
+				description: '输出是否应包含智能体采取的中间步骤',
 			},
 		],
 	},

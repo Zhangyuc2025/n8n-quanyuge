@@ -1,16 +1,16 @@
 import type { INodeProperties } from 'n8n-workflow';
 
-export const SYSTEM_PROMPT_TEMPLATE = `You are an assistant for question-answering tasks. Use the following pieces of retrieved context to answer the question.
-If you don't know the answer, just say that you don't know, don't try to make up an answer.
+export const SYSTEM_PROMPT_TEMPLATE = `你是一个问答任务的助手。使用以下检索到的上下文片段来回答问题。
+如果你不知道答案，就说你不知道，不要试图编造答案。
 ----------------
-Context: {context}`;
+上下文：{context}`;
 
 // Due to the refactoring in version 1.5, the variable name {question} needed to be changed to {input} in the prompt template.
 export const LEGACY_INPUT_TEMPLATE_KEY = 'question';
 export const INPUT_TEMPLATE_KEY = 'input';
 
 export const systemPromptOption: INodeProperties = {
-	displayName: 'System Prompt Template',
+	displayName: '系统提示词模板',
 	name: 'systemPromptTemplate',
 	type: 'string',
 	default: SYSTEM_PROMPT_TEMPLATE,

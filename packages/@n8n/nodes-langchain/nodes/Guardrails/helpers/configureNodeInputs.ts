@@ -8,7 +8,7 @@ export const configureNodeInputs = (operation: 'classify' | 'sanitize') => {
 		'main',
 		{
 			type: 'ai_languageModel',
-			displayName: 'Chat Model',
+			displayName: '聊天模型',
 			maxConnections: 1,
 			required: true,
 			filter: {

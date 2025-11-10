@@ -92,7 +92,7 @@ export async function openAiFunctionsAgentExecute(
 			}
 
 			if (input === undefined) {
-				throw new NodeOperationError(this.getNode(), 'The ‘text‘ parameter is empty.');
+				throw new NodeOperationError(this.getNode(), '"文本" 参数为空。');
 			}
 
 			if (prompt) {

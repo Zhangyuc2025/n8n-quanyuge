@@ -46,12 +46,12 @@ export class AgentV2 implements INodeType {
 				},
 				{
 					// eslint-disable-next-line n8n-nodes-base/node-param-display-name-miscased
-					displayName: 'Get started faster with our',
+					displayName: '通过我们的预构建智能体更快开始',
 					name: 'preBuiltAgentsCallout',
 					type: 'callout',
 					typeOptions: {
 						calloutAction: {
-							label: 'pre-built agents',
+							label: '预构建智能体',
 							icon: 'bot',
 							type: 'openPreBuiltAgentsCollection',
 						},
@@ -84,7 +84,7 @@ export class AgentV2 implements INodeType {
 					},
 				},
 				{
-					displayName: 'Require Specific Output Format',
+					displayName: '需要特定输出格式',
 					name: 'hasOutputParser',
 					type: 'boolean',
 					default: false,
@@ -102,7 +102,7 @@ export class AgentV2 implements INodeType {
 					},
 				},
 				{
-					displayName: 'Enable Fallback Model',
+					displayName: '启用备用模型',
 					name: 'needsFallback',
 					type: 'boolean',
 					default: false,

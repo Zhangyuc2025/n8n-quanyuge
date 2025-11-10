@@ -4,7 +4,7 @@ import { HUMAN_MESSAGE_TEMPLATE, PREFIX, SUFFIX, SUFFIX_CHAT } from './prompt';
 
 export const reActAgentAgentProperties: INodeProperties[] = [
 	{
-		displayName: 'Text',
+		displayName: '文本',
 		name: 'text',
 		type: 'string',
 		required: true,
@@ -17,7 +17,7 @@ export const reActAgentAgentProperties: INodeProperties[] = [
 		default: '={{ $json.input }}',
 	},
 	{
-		displayName: 'Text',
+		displayName: '文本',
 		name: 'text',
 		type: 'string',
 		required: true,
@@ -30,7 +30,7 @@ export const reActAgentAgentProperties: INodeProperties[] = [
 		default: '={{ $json.chat_input }}',
 	},
 	{
-		displayName: 'Text',
+		displayName: '文本',
 		name: 'text',
 		type: 'string',
 		required: true,
@@ -43,7 +43,7 @@ export const reActAgentAgentProperties: INodeProperties[] = [
 		default: '={{ $json.chatInput }}',
 	},
 	{
-		displayName: 'Options',
+		displayName: '选项',
 		name: 'options',
 		type: 'collection',
 		displayOptions: {
@@ -55,60 +55,58 @@ export const reActAgentAgentProperties: INodeProperties[] = [
 		placeholder: '添加选项',
 		options: [
 			{
-				displayName: 'Human Message Template',
+				displayName: '人类消息模板',
 				name: 'humanMessageTemplate',
 				type: 'string',
 				default: HUMAN_MESSAGE_TEMPLATE,
-				description: 'String to use directly as the human message template',
+				description: '直接用作人类消息模板的字符串',
 				typeOptions: {
 					rows: 6,
 				},
 			},
 			{
-				displayName: 'Prefix Message',
+				displayName: '前缀消息',
 				name: 'prefix',
 				type: 'string',
 				default: PREFIX,
-				description: 'String to put before the list of tools',
+				description: '放在工具列表之前的字符串',
 				typeOptions: {
 					rows: 6,
 				},
 			},
 			{
-				displayName: 'Suffix Message for Chat Model',
+				displayName: '聊天模型后缀消息',
 				name: 'suffixChat',
 				type: 'string',
 				default: SUFFIX_CHAT,
-				description:
-					'String to put after the list of tools that will be used if chat model is used',
+				description: '使用聊天模型时放在工具列表之后的字符串',
 				typeOptions: {
 					rows: 6,
 				},
 			},
 			{
-				displayName: 'Suffix Message for Regular Model',
+				displayName: '常规模型后缀消息',
 				name: 'suffix',
 				type: 'string',
 				default: SUFFIX,
-				description:
-					'String to put after the list of tools that will be used if regular model is used',
+				description: '使用常规模型时放在工具列表之后的字符串',
 				typeOptions: {
 					rows: 6,
 				},
 			},
 			{
-				displayName: 'Max Iterations',
+				displayName: '最大迭代次数',
 				name: 'maxIterations',
 				type: 'number',
 				default: 10,
-				description: 'The maximum number of iterations the agent will run before stopping',
+				description: '代理停止前将运行的最大迭代次数',
 			},
 			{
-				displayName: 'Return Intermediate Steps',
+				displayName: '返回中间步骤',
 				name: 'returnIntermediateSteps',
 				type: 'boolean',
 				default: false,
-				description: 'Whether or not the output should include intermediate steps the agent took',
+				description: '是否在输出中包含代理采取的中间步骤',
 			},
 		],
 	},

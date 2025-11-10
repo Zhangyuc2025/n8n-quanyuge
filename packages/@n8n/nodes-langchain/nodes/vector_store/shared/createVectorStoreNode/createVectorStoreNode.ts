@@ -27,12 +27,12 @@ import type { NodeOperationMode, VectorStoreNodeConstructorArgs } from './types'
 import { transformDescriptionForOperationMode, getOperationModeOptions } from './utils';
 
 const ragStarterCallout: INodeProperties = {
-	displayName: 'Tip: Get a feel for vector stores in n8n with our',
+	displayName: '提示：通过我们的 RAG 入门模板快速了解 n8n 中的向量存储',
 	name: 'ragStarterCallout',
 	type: 'callout',
 	typeOptions: {
 		calloutAction: {
-			label: 'RAG starter template',
+			label: 'RAG 入门模板',
 			type: 'openSampleWorkflowTemplate',
 			templateId: 'rag-starter-template',
 		},
@@ -82,10 +82,10 @@ export const createVectorStoreNode = <T extends VectorStore = VectorStore>(
 			((parameters) => {
 				const mode = parameters?.mode;
 				const useReranker = parameters?.useReranker;
-				const inputs = [{ displayName: "Embedding", type: "${NodeConnectionTypes.AiEmbedding}", required: true, maxConnections: 1}]
+				const inputs = [{ displayName: "嵌入", type: "${NodeConnectionTypes.AiEmbedding}", required: true, maxConnections: 1}]
 
 				if (['load', 'retrieve', 'retrieve-as-tool'].includes(mode) && useReranker) {
-					inputs.push({ displayName: "Reranker", type: "${NodeConnectionTypes.AiReranker}", required: true, maxConnections: 1})
+					inputs.push({ displayName: "重排序器", type: "${NodeConnectionTypes.AiReranker}", required: true, maxConnections: 1})
 				}
 
 				if (mode === 'retrieve-as-tool') {
@@ -97,7 +97,7 @@ export const createVectorStoreNode = <T extends VectorStore = VectorStore>(
 				}
 
 				if (['insert'].includes(mode)) {
-					inputs.push({ displayName: "Document", type: "${NodeConnectionTypes.AiDocument}", required: true, maxConnections: 1})
+					inputs.push({ displayName: "文档", type: "${NodeConnectionTypes.AiDocument}", required: true, maxConnections: 1})
 				}
 				return inputs
 			})($parameter)
@@ -107,11 +107,11 @@ export const createVectorStoreNode = <T extends VectorStore = VectorStore>(
 				const mode = parameters?.mode ?? 'retrieve';
 
 				if (mode === 'retrieve-as-tool') {
-					return [{ displayName: "Tool", type: "${NodeConnectionTypes.AiTool}"}]
+					return [{ displayName: "工具", type: "${NodeConnectionTypes.AiTool}"}]
 				}
 
 				if (mode === 'retrieve') {
-					return [{ displayName: "Vector Store", type: "${NodeConnectionTypes.AiVectorStore}"}]
+					return [{ displayName: "向量存储", type: "${NodeConnectionTypes.AiVectorStore}"}]
 				}
 				return [{ displayName: "", type: "${NodeConnectionTypes.Main}"}]
 			})($parameter)
@@ -119,7 +119,7 @@ export const createVectorStoreNode = <T extends VectorStore = VectorStore>(
 			properties: [
 				ragStarterCallout,
 				{
-					displayName: 'Operation Mode',
+					displayName: '操作模式',
 					name: 'mode',
 					type: 'options',
 					noDataExpression: true,
@@ -135,13 +135,13 @@ export const createVectorStoreNode = <T extends VectorStore = VectorStore>(
 					},
 				},
 				{
-					displayName: 'Name',
+					displayName: '名称',
 					name: 'toolName',
 					type: 'string',
 					default: '',
 					required: true,
-					description: 'Name of the vector store',
-					placeholder: 'e.g. company_knowledge_base',
+					description: '向量存储的名称',
+					placeholder: '例如：company_knowledge_base',
 					validateType: 'string-alphanumeric',
 					displayOptions: {
 						show: {
@@ -151,15 +151,14 @@ export const createVectorStoreNode = <T extends VectorStore = VectorStore>(
 					},
 				},
 				{
-					displayName: 'Description',
+					displayName: '描述',
 					name: 'toolDescription',
 					type: 'string',
 					default: '',
 					required: true,
 					typeOptions: { rows: 2 },
-					description:
-						'Explain to the LLM what this tool does, a good, specific description would allow LLMs to produce expected results much more often',
-					placeholder: `e.g. ${args.meta.description}`,
+					description: '向 LLM 解释此工具的用途，一个好的、具体的描述能让 LLM 更频繁地产生预期结果',
+					placeholder: `例如：${args.meta.description}`,
 					displayOptions: {
 						show: {
 							mode: ['retrieve-as-tool'],
@@ -168,11 +167,11 @@ export const createVectorStoreNode = <T extends VectorStore = VectorStore>(
 				},
 				...args.sharedFields,
 				{
-					displayName: 'Embedding Batch Size',
+					displayName: '嵌入批次大小',
 					name: 'embeddingBatchSize',
 					type: 'number',
 					default: 200,
-					description: 'Number of documents to embed in a single batch',
+					description: '单个批次中嵌入的文档数量',
 					displayOptions: {
 						show: {
 							mode: ['insert'],
@@ -183,13 +182,12 @@ export const createVectorStoreNode = <T extends VectorStore = VectorStore>(
 				...transformDescriptionForOperationMode(args.insertFields ?? [], 'insert'),
 				// Prompt and topK are always used for the load operation
 				{
-					displayName: 'Prompt',
+					displayName: '提示词',
 					name: 'prompt',
 					type: 'string',
 					default: '',
 					required: true,
-					description:
-						'Search prompt to retrieve matching documents from the vector store using similarity-based ranking',
+					description: '搜索提示词，用于使用基于相似度的排名从向量存储中检索匹配的文档',
 					displayOptions: {
 						show: {
 							mode: ['load'],
@@ -197,11 +195,11 @@ export const createVectorStoreNode = <T extends VectorStore = VectorStore>(
 					},
 				},
 				{
-					displayName: 'Limit',
+					displayName: '限制',
 					name: 'topK',
 					type: 'number',
 					default: 4,
-					description: 'Number of top results to fetch from vector store',
+					description: '从向量存储中获取的顶部结果数量',
 					displayOptions: {
 						show: {
 							mode: ['load', 'retrieve-as-tool'],
@@ -209,11 +207,11 @@ export const createVectorStoreNode = <T extends VectorStore = VectorStore>(
 					},
 				},
 				{
-					displayName: 'Include Metadata',
+					displayName: '包含元数据',
 					name: 'includeDocumentMetadata',
 					type: 'boolean',
 					default: true,
-					description: 'Whether or not to include document metadata',
+					description: '是否包含文档元数据',
 					displayOptions: {
 						show: {
 							mode: ['load', 'retrieve-as-tool'],
@@ -221,11 +219,11 @@ export const createVectorStoreNode = <T extends VectorStore = VectorStore>(
 					},
 				},
 				{
-					displayName: 'Rerank Results',
+					displayName: '重排结果',
 					name: 'useReranker',
 					type: 'boolean',
 					default: false,
-					description: 'Whether or not to rerank results',
+					description: '是否对结果进行重排序',
 					displayOptions: {
 						show: {
 							mode: ['load', 'retrieve', 'retrieve-as-tool'],
@@ -311,7 +309,7 @@ export const createVectorStoreNode = <T extends VectorStore = VectorStore>(
 
 			throw new NodeOperationError(
 				this.getNode(),
-				'Only the "load", "update", "insert", and "retrieve-as-tool" operation modes are supported with execute',
+				'执行模式仅支持 "加载"、"更新"、"插入" 和 "作为工具检索" 操作',
 			);
 		}
 
@@ -339,7 +337,7 @@ export const createVectorStoreNode = <T extends VectorStore = VectorStore>(
 
 			throw new NodeOperationError(
 				this.getNode(),
-				'Only the "retrieve" and "retrieve-as-tool" operation mode is supported to supply data',
+				'数据供应模式仅支持 "检索" 和 "作为工具检索" 操作',
 			);
 		}
 	};

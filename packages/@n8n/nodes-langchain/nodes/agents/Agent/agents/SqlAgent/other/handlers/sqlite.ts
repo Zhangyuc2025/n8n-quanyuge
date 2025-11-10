@@ -13,7 +13,7 @@ export async function getSqliteDataSource(
 	const binaryData = binary?.[binaryPropertyName];
 
 	if (!binaryData) {
-		throw new NodeOperationError(this.getNode(), 'No binary data received.');
+		throw new NodeOperationError(this.getNode(), '未接收到二进制数据。');
 	}
 
 	let fileBase64;
@@ -37,7 +37,7 @@ export async function getSqliteDataSource(
 	// Initialize a new SQLite database from the temp file
 	const tempDb = new sqlite3.Database(tempDbPath, (error: Error | null) => {
 		if (error) {
-			throw new NodeOperationError(this.getNode(), 'Could not connect to database');
+			throw new NodeOperationError(this.getNode(), '无法连接到数据库');
 		}
 	});
 	tempDb.close();

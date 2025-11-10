@@ -72,15 +72,15 @@ const prepareOutputSetup = (ctx: IExecuteFunctions, version: number, memory: Bas
 
 export class MemoryManager implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Chat Memory Manager',
+		displayName: '聊天记忆管理器',
 		name: 'memoryManager',
 		icon: 'fa:database',
 		iconColor: 'black',
 		group: ['transform'],
 		version: [1, 1.1],
-		description: 'Manage chat messages memory and use it in the workflow',
+		description: '管理聊天消息记忆并在工作流中使用',
 		defaults: {
-			name: 'Chat Memory Manager',
+			name: '聊天记忆管理器',
 		},
 		codex: {
 			categories: ['AI'],
@@ -102,7 +102,7 @@ export class MemoryManager implements INodeType {
 				type: NodeConnectionTypes.Main,
 			},
 			{
-				displayName: 'Memory',
+				displayName: '记忆',
 				type: NodeConnectionTypes.AiMemory,
 				required: true,
 				maxConnections: 1,
@@ -117,46 +117,46 @@ export class MemoryManager implements INodeType {
 		],
 		properties: [
 			{
-				displayName: 'Operation Mode',
+				displayName: '操作模式',
 				name: 'mode',
 				type: 'options',
 				noDataExpression: true,
 				default: 'load',
 				options: [
 					{
-						name: 'Get Many Messages',
-						description: 'Retrieve chat messages from connected memory',
+						name: '获取多条消息',
+						description: '从已连接的记忆中检索聊天消息',
 						value: 'load',
 					},
 					{
-						name: 'Insert Messages',
-						description: 'Insert chat messages into connected memory',
+						name: '插入消息',
+						description: '将聊天消息插入已连接的记忆',
 						value: 'insert',
 					},
 					{
-						name: 'Delete Messages',
-						description: 'Delete chat messages from connected memory',
+						name: '删除消息',
+						description: '从已连接的记忆中删除聊天消息',
 						value: 'delete',
 					},
 				],
 			},
 			{
-				displayName: 'Insert Mode',
+				displayName: '插入模式',
 				name: 'insertMode',
 				type: 'options',
-				description: 'Choose how new messages are inserted into the memory',
+				description: '选择如何将新消息插入记忆',
 				noDataExpression: true,
 				default: 'insert',
 				options: [
 					{
-						name: 'Insert Messages',
+						name: '插入消息',
 						value: 'insert',
-						description: 'Add messages alongside existing ones',
+						description: '在现有消息旁添加消息',
 					},
 					{
-						name: 'Override All Messages',
+						name: '覆盖所有消息',
 						value: 'override',
-						description: 'Replace the current memory with new messages',
+						description: '用新消息替换当前记忆',
 					},
 				],
 				displayOptions: {
@@ -166,22 +166,22 @@ export class MemoryManager implements INodeType {
 				},
 			},
 			{
-				displayName: 'Delete Mode',
+				displayName: '删除模式',
 				name: 'deleteMode',
 				type: 'options',
-				description: 'How messages are deleted from memory',
+				description: '如何从记忆中删除消息',
 				noDataExpression: true,
 				default: 'lastN',
 				options: [
 					{
-						name: 'Last N',
+						name: '最后 N 条',
 						value: 'lastN',
-						description: 'Delete the last N messages',
+						description: '删除最后 N 条消息',
 					},
 					{
-						name: 'All Messages',
+						name: '所有消息',
 						value: 'all',
-						description: 'Clear all messages from memory',
+						description: '清除记忆中的所有消息',
 					},
 				],
 				displayOptions: {
@@ -191,22 +191,22 @@ export class MemoryManager implements INodeType {
 				},
 			},
 			{
-				displayName: 'Chat Messages',
+				displayName: '聊天消息',
 				name: 'messages',
-				description: 'Chat messages to insert into memory',
+				description: '要插入记忆的聊天消息',
 				type: 'fixedCollection',
 				typeOptions: {
 					multipleValues: true,
 				},
 				default: {},
-				placeholder: 'Add message',
+				placeholder: '添加消息',
 				options: [
 					{
 						name: 'messageValues',
-						displayName: 'Message',
+						displayName: '消息',
 						values: [
 							{
-								displayName: 'Type Name or ID',
+								displayName: '类型名称或 ID',
 								name: 'type',
 								type: 'options',
 								options: [
@@ -215,30 +215,30 @@ export class MemoryManager implements INodeType {
 										value: 'ai',
 									},
 									{
-										name: 'System',
+										name: '系统',
 										value: 'system',
 									},
 									{
-										name: 'User',
+										name: '用户',
 										value: 'user',
 									},
 								],
 								default: 'system',
 							},
 							{
-								displayName: 'Message',
+								displayName: '消息',
 								name: 'message',
 								type: 'string',
 								required: true,
 								default: '',
 							},
 							{
-								displayName: 'Hide Message in Chat',
+								displayName: '在聊天中隐藏消息',
 								name: 'hideFromUI',
 								type: 'boolean',
 								required: true,
 								default: false,
-								description: 'Whether to hide the message from the chat UI',
+								description: '是否从聊天 UI 中隐藏该消息',
 							},
 						],
 					},
@@ -250,10 +250,10 @@ export class MemoryManager implements INodeType {
 				},
 			},
 			{
-				displayName: 'Messages Count',
+				displayName: '消息数量',
 				name: 'lastMessagesCount',
 				type: 'number',
-				description: 'The amount of last messages to delete',
+				description: '要删除的最后消息数量',
 				default: 2,
 				displayOptions: {
 					show: {
@@ -263,10 +263,10 @@ export class MemoryManager implements INodeType {
 				},
 			},
 			{
-				displayName: 'Simplify Output',
+				displayName: '简化输出',
 				name: 'simplifyOutput',
 				type: 'boolean',
-				description: 'Whether to simplify the output to only include the sender and the text',
+				description: '是否将输出简化为仅包含发送者和文本',
 				default: true,
 				displayOptions: {
 					show: {
@@ -275,19 +275,18 @@ export class MemoryManager implements INodeType {
 				},
 			},
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
-				placeholder: 'Add Option',
+				placeholder: '添加选项',
 				type: 'collection',
 				default: {},
 				options: [
 					{
-						displayName: 'Group Messages',
+						displayName: '分组消息',
 						name: 'groupMessages',
 						type: 'boolean',
 						default: true,
-						description:
-							'Whether to group messages into a single item or return each message as a separate item',
+						description: '是否将消息分组到单个项目中，或将每条消息作为单独的项目返回',
 					},
 				],
 				displayOptions: {

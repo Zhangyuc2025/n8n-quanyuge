@@ -5,24 +5,23 @@ import { getBatchingOptionFields } from '@utils/sharedFields';
 import { commonOptions } from '../options';
 
 const enableStreaminOption: INodeProperties = {
-	displayName: 'Enable Streaming',
+	displayName: '启用流式传输',
 	name: 'enableStreaming',
 	type: 'boolean',
 	default: true,
-	description: 'Whether this agent will stream the response in real-time as it generates text',
+	description: '此智能体是否在生成文本时实时流式传输响应',
 };
 
 const maxTokensFromMemoryOption: INodeProperties = {
-	displayName: 'Max Tokens To Read From Memory',
+	displayName: '从记忆读取的最大令牌数',
 	name: 'maxTokensFromMemory',
 	type: 'hidden',
 	default: 0,
-	description:
-		'The maximum number of tokens to read from the chat memory history. Set to 0 to read all history.',
+	description: '从聊天记忆历史中读取的最大令牌数。设置为 0 可读取所有历史记录。',
 };
 
 export const toolsAgentProperties: INodeProperties = {
-	displayName: 'Options',
+	displayName: '选项',
 	name: 'options',
 	type: 'collection',
 	default: {},

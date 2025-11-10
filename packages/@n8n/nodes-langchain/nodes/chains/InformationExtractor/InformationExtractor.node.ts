@@ -27,14 +27,14 @@ import type { AttributeDefinition } from './types';
 
 export class InformationExtractor implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Information Extractor',
+		displayName: '信息提取器',
 		name: 'informationExtractor',
 		icon: 'fa:project-diagram',
 		iconColor: 'black',
 		group: ['transform'],
 		version: [1, 1.1, 1.2],
 		defaultVersion: 1.2,
-		description: 'Extract information from text in a structured format',
+		description: '以结构化格式从文本中提取信息',
 		codex: {
 			alias: ['NER', 'parse', 'parsing', 'JSON', 'data extraction', 'structured'],
 			categories: ['AI'],
@@ -50,12 +50,12 @@ export class InformationExtractor implements INodeType {
 			},
 		},
 		defaults: {
-			name: 'Information Extractor',
+			name: '信息提取器',
 		},
 		inputs: [
 			{ displayName: '', type: NodeConnectionTypes.Main },
 			{
-				displayName: 'Model',
+				displayName: '模型',
 				maxConnections: 1,
 				type: NodeConnectionTypes.AiLanguageModel,
 				required: true,
@@ -64,24 +64,23 @@ export class InformationExtractor implements INodeType {
 		outputs: [NodeConnectionTypes.Main],
 		properties: [
 			{
-				displayName: 'Text',
+				displayName: '文本',
 				name: 'text',
 				type: 'string',
 				default: '',
-				description: 'The text to extract information from',
+				description: '要从中提取信息的文本',
 				typeOptions: {
 					rows: 2,
 				},
 			},
 			{
 				...schemaTypeField,
-				description: 'How to specify the schema for the desired output',
+				description: '如何指定所需输出的模式',
 				options: [
 					{
-						name: 'From Attribute Descriptions',
+						name: '从属性描述',
 						value: 'fromAttributes',
-						description:
-							'Extract specific attributes from the text based on types and descriptions',
+						description: '根据类型和描述从文本中提取特定属性',
 					} as INodePropertyOptions,
 					...(schemaTypeField.options as INodePropertyOptions[]),
 				],
@@ -117,9 +116,9 @@ export class InformationExtractor implements INodeType {
 }`,
 			},
 			{
-				displayName: 'Attributes',
+				displayName: '属性',
 				name: 'attributes',
-				placeholder: 'Add Attribute',
+				placeholder: '添加属性',
 				type: 'fixedCollection',
 				default: {},
 				displayOptions: {
@@ -133,58 +132,58 @@ export class InformationExtractor implements INodeType {
 				options: [
 					{
 						name: 'attributes',
-						displayName: 'Attribute List',
+						displayName: '属性列表',
 						values: [
 							{
-								displayName: 'Name',
+								displayName: '名称',
 								name: 'name',
 								type: 'string',
 								default: '',
-								description: 'Attribute to extract',
-								placeholder: 'e.g. company_name',
+								description: '要提取的属性',
+								placeholder: '例如：company_name',
 								required: true,
 							},
 							{
-								displayName: 'Type',
+								displayName: '类型',
 								name: 'type',
 								type: 'options',
-								description: 'Data type of the attribute',
+								description: '属性的数据类型',
 								required: true,
 								options: [
 									{
-										name: 'Boolean',
+										name: '布尔值',
 										value: 'boolean',
 									},
 									{
-										name: 'Date',
+										name: '日期',
 										value: 'date',
 									},
 									{
-										name: 'Number',
+										name: '数字',
 										value: 'number',
 									},
 									{
-										name: 'String',
+										name: '字符串',
 										value: 'string',
 									},
 								],
 								default: 'string',
 							},
 							{
-								displayName: 'Description',
+								displayName: '描述',
 								name: 'description',
 								type: 'string',
 								default: '',
-								description: 'Describe your attribute',
-								placeholder: 'Add description for the attribute',
+								description: '描述您的属性',
+								placeholder: '为属性添加描述',
 								required: true,
 							},
 							{
-								displayName: 'Required',
+								displayName: '必需',
 								name: 'required',
 								type: 'boolean',
 								default: false,
-								description: 'Whether attribute is required',
+								description: '属性是否必需',
 								required: true,
 							},
 						],
@@ -192,18 +191,18 @@ export class InformationExtractor implements INodeType {
 				],
 			},
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
 				type: 'collection',
 				default: {},
-				placeholder: 'Add Option',
+				placeholder: '添加选项',
 				options: [
 					{
-						displayName: 'System Prompt Template',
+						displayName: '系统提示词模板',
 						name: 'systemPromptTemplate',
 						type: 'string',
 						default: SYSTEM_PROMPT_TEMPLATE,
-						description: 'String to use directly as the system prompt template',
+						description: '直接用作系统提示词模板的字符串',
 						typeOptions: {
 							rows: 6,
 						},

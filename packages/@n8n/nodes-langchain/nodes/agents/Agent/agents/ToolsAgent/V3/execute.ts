@@ -407,7 +407,7 @@ export async function toolsAgentExecute(
 				promptTypeKey: 'promptType',
 			});
 			if (input === undefined) {
-				throw new NodeOperationError(this.getNode(), 'The "text" parameter is empty.');
+				throw new NodeOperationError(this.getNode(), '"文本" 参数为空。');
 			}
 			const outputParser = await getOptionalOutputParser(this, itemIndex);
 			const tools = await getTools(this, outputParser);
@@ -492,7 +492,7 @@ export async function toolsAgentExecute(
 
 					// Check if we've exceeded maxIterations
 					if (options.maxIterations && currentIteration > options.maxIterations) {
-						throw new NodeOperationError(this.getNode(), 'Maximum iterations reached');
+						throw new NodeOperationError(this.getNode(), '已达到最大迭代次数');
 					}
 
 					const actions = await createEngineRequests(result.toolCalls, itemIndex, tools);
@@ -550,7 +550,7 @@ export async function toolsAgentExecute(
 
 				// Check if we've exceeded maxIterations
 				if (options.maxIterations && currentIteration > options.maxIterations) {
-					throw new NodeOperationError(this.getNode(), 'Maximum iterations reached');
+					throw new NodeOperationError(this.getNode(), '已达到最大迭代次数');
 				}
 
 				const actions = await createEngineRequests(modelResponse, itemIndex, tools);

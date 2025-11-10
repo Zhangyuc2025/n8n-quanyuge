@@ -53,10 +53,10 @@ function getInputs(
 		inputs: SpecialInput[],
 	): Array<NodeConnectionType | INodeInputConfiguration> => {
 		const displayNames: { [key: string]: string } = {
-			ai_languageModel: 'Model',
-			ai_memory: 'Memory',
-			ai_tool: 'Tool',
-			ai_outputParser: 'Output Parser',
+			ai_languageModel: '模型',
+			ai_memory: '记忆',
+			ai_tool: '工具',
+			ai_outputParser: '输出解析器',
 		};
 
 		return inputs.map(({ type, filter }) => {
@@ -66,7 +66,7 @@ function getInputs(
 				isModelType &&
 				['openAiFunctionsAgent', 'toolsAgent', 'conversationalAgent'].includes(agent)
 			) {
-				displayName = 'Chat Model';
+				displayName = '聊天模型';
 			}
 			const input: INodeInputConfiguration = {
 				type,
@@ -219,7 +219,7 @@ function getInputs(
 }
 
 const agentTypeProperty: INodeProperties = {
-	displayName: 'Agent',
+	displayName: '智能体',
 	name: 'agent',
 	type: 'options',
 	noDataExpression: true,
@@ -321,12 +321,12 @@ export class AgentV1 implements INodeType {
 				},
 				{
 					// eslint-disable-next-line n8n-nodes-base/node-param-display-name-miscased
-					displayName: 'Get started faster with our',
+					displayName: '通过我们的预构建智能体更快开始',
 					name: 'preBuiltAgentsCallout',
 					type: 'callout',
 					typeOptions: {
 						calloutAction: {
-							label: 'pre-built agents',
+							label: '预构建智能体',
 							icon: 'bot',
 							type: 'openPreBuiltAgentsCollection',
 						},
@@ -429,7 +429,7 @@ export class AgentV1 implements INodeType {
 					},
 				},
 				{
-					displayName: 'Require Specific Output Format',
+					displayName: '需要特定输出格式',
 					name: 'hasOutputParser',
 					type: 'boolean',
 					default: false,
@@ -482,6 +482,6 @@ export class AgentV1 implements INodeType {
 			return await planAndExecuteAgentExecute.call(this, nodeVersion);
 		}
 
-		throw new NodeOperationError(this.getNode(), `The agent type "${agentType}" is not supported`);
+		throw new NodeOperationError(this.getNode(), `不支持的代理类型 "${agentType}"`);
 	}
 }

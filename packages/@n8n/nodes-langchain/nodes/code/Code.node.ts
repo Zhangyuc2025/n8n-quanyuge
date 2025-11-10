@@ -111,15 +111,15 @@ function getSandbox(
 
 export class Code implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'LangChain Code',
+		displayName: 'LangChain 代码',
 		name: 'code',
 		icon: 'fa:code',
 		iconColor: 'black',
 		group: ['transform'],
 		version: 1,
-		description: 'LangChain Code Node',
+		description: 'LangChain 代码节点',
 		defaults: {
-			name: 'LangChain Code',
+			name: 'LangChain 代码',
 		},
 		codex: {
 			categories: ['AI'],
@@ -142,43 +142,43 @@ export class Code implements INodeType {
 		)}; return values.map(value => { return { type: value.type, displayName: connectorTypes[value.type] !== 'Main' ? connectorTypes[value.type] : undefined } } ) })($parameter.outputs.output) }}`,
 		properties: [
 			{
-				displayName: 'Code',
+				displayName: '代码',
 				name: 'code',
-				placeholder: 'Add Code',
+				placeholder: '添加代码',
 				type: 'fixedCollection',
 				noDataExpression: true,
 				default: {},
 				options: [
 					{
 						name: 'execute',
-						displayName: 'Execute',
+						displayName: '执行',
 						values: [
 							{
-								displayName: 'JavaScript - Execute',
+								displayName: 'JavaScript - 执行',
 								name: 'code',
 								type: 'string',
 								typeOptions: {
 									editor: 'jsEditor',
 								},
 								default: defaultCodeExecute,
-								hint: 'This code will only run and return data if a "Main" input & output got created.',
+								hint: '此代码仅在创建了"Main"输入和输出时才会运行并返回数据。',
 								noDataExpression: true,
 							},
 						],
 					},
 					{
 						name: 'supplyData',
-						displayName: 'Supply Data',
+						displayName: '提供数据',
 						values: [
 							{
-								displayName: 'JavaScript - Supply Data',
+								displayName: 'JavaScript - 提供数据',
 								name: 'code',
 								type: 'string',
 								typeOptions: {
 									editor: 'jsEditor',
 								},
 								default: defaultCodeSupplyData,
-								hint: 'This code will only run and return data if an output got created which is not "Main".',
+								hint: '此代码仅在创建了非"Main"输出时才会运行并返回数据。',
 								noDataExpression: true,
 							},
 						],
@@ -189,30 +189,30 @@ export class Code implements INodeType {
 			// TODO: Add links to docs which provide additional information regarding functionality
 			{
 				displayName:
-					'You can import LangChain and use all available functionality. Debug by using <code>console.log()</code> statements and viewing their output in the browser console.',
+					'您可以导入 LangChain 并使用所有可用功能。通过使用 <code>console.log()</code> 语句并在浏览器控制台中查看其输出来进行调试。',
 				name: 'notice',
 				type: 'notice',
 				default: '',
 			},
 			{
-				displayName: 'Inputs',
+				displayName: '输入',
 				name: 'inputs',
-				placeholder: 'Add Input',
+				placeholder: '添加输入',
 				type: 'fixedCollection',
 				noDataExpression: true,
 				typeOptions: {
 					multipleValues: true,
 					sortable: true,
 				},
-				description: 'The input to add',
+				description: '要添加的输入',
 				default: {},
 				options: [
 					{
 						name: 'input',
-						displayName: 'Input',
+						displayName: '输入',
 						values: [
 							{
-								displayName: 'Type',
+								displayName: '类型',
 								name: 'type',
 								type: 'options',
 								options: Object.keys(connectorTypes).map((key) => ({
@@ -222,50 +222,49 @@ export class Code implements INodeType {
 								noDataExpression: true,
 								default: '',
 								required: true,
-								description: 'The type of the input',
+								description: '输入的类型',
 							},
 							{
-								displayName: 'Max Connections',
+								displayName: '最大连接数',
 								name: 'maxConnections',
 								type: 'number',
 								noDataExpression: true,
 								default: -1,
 								required: true,
-								description:
-									'How many nodes of this type are allowed to be connected. Set it to -1 for unlimited.',
+								description: '允许连接此类型的节点数量。设置为 -1 表示无限制。',
 							},
 							{
-								displayName: 'Required',
+								displayName: '必需',
 								name: 'required',
 								type: 'boolean',
 								noDataExpression: true,
 								default: false,
 								required: true,
-								description: 'Whether the input needs a connection',
+								description: '输入是否需要连接',
 							},
 						],
 					},
 				],
 			},
 			{
-				displayName: 'Outputs',
+				displayName: '输出',
 				name: 'outputs',
-				placeholder: 'Add Output',
+				placeholder: '添加输出',
 				type: 'fixedCollection',
 				noDataExpression: true,
 				typeOptions: {
 					multipleValues: true,
 					sortable: true,
 				},
-				description: 'The output to add',
+				description: '要添加的输出',
 				default: {},
 				options: [
 					{
 						name: 'output',
-						displayName: 'Output',
+						displayName: '输出',
 						values: [
 							{
-								displayName: 'Type',
+								displayName: '类型',
 								name: 'type',
 								type: 'options',
 								options: Object.keys(connectorTypes).map((key) => ({
@@ -275,7 +274,7 @@ export class Code implements INodeType {
 								noDataExpression: true,
 								default: '',
 								required: true,
-								description: 'The type of the input',
+								description: '输入的类型',
 							},
 						],
 					},

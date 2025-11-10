@@ -1,16 +1,16 @@
-export const NAIVE_FIX_PROMPT = `Instructions:
+export const NAIVE_FIX_PROMPT = `指令：
 --------------
 {instructions}
 --------------
-Completion:
+完成情况：
 --------------
 {completion}
 --------------
 
-Above, the Completion did not satisfy the constraints given in the Instructions.
-Error:
+上述完成情况未满足指令中给出的约束条件。
+错误：
 --------------
 {error}
 --------------
 
-Please try again. Please only respond with an answer that satisfies the constraints laid out in the Instructions:`;
+请重试。请仅提供满足指令中列出的约束条件的答案：`;

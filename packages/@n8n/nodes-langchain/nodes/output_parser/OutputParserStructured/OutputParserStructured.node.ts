@@ -29,16 +29,16 @@ import { NAIVE_FIX_PROMPT } from './prompt';
 
 export class OutputParserStructured implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Structured Output Parser',
+		displayName: '结构化输出解析器',
 		name: 'outputParserStructured',
 		icon: 'fa:code',
 		iconColor: 'black',
 		group: ['transform'],
 		version: [1, 1.1, 1.2, 1.3],
 		defaultVersion: 1.3,
-		description: 'Return data in a defined JSON format',
+		description: '以定义的 JSON 格式返回数据',
 		defaults: {
-			name: 'Structured Output Parser',
+			name: '结构化输出解析器',
 		},
 
 		codex: {
@@ -59,7 +59,7 @@ export class OutputParserStructured implements INodeType {
 			((parameters) => {
 				if (parameters?.autoFix) {
 					return [
-						{ displayName: 'Model', maxConnections: 1, type: "${NodeConnectionTypes.AiLanguageModel}", required: true }
+						{ displayName: '模型', maxConnections: 1, type: "${NodeConnectionTypes.AiLanguageModel}", required: true }
 					];
 				}
 
@@ -68,7 +68,7 @@ export class OutputParserStructured implements INodeType {
 		}}`,
 
 		outputs: [NodeConnectionTypes.AiOutputParser],
-		outputNames: ['Output Parser'],
+		outputNames: ['输出解析器'],
 		properties: [
 			getConnectionHintNoticeField([NodeConnectionTypes.AiChain, NodeConnectionTypes.AiAgent]),
 			{ ...schemaTypeField, displayOptions: { show: { '@version': [{ _cnd: { gte: 1.2 } }] } } },
@@ -102,10 +102,10 @@ export class OutputParserStructured implements INodeType {
 }`,
 			},
 			{
-				displayName: 'JSON Schema',
+				displayName: 'JSON 架构',
 				name: 'jsonSchema',
 				type: 'json',
-				description: 'JSON Schema to structure and validate the output against',
+				description: '用于结构化和验证输出的 JSON 架构',
 				default: `{
   "type": "object",
   "properties": {
@@ -131,15 +131,14 @@ export class OutputParserStructured implements INodeType {
 				},
 			},
 			{
-				displayName: 'Auto-Fix Format',
-				description:
-					'Whether to automatically fix the output when it is not in the correct format. Will cause another LLM call.',
+				displayName: '自动修复格式',
+				description: '当输出格式不正确时是否自动修复。这将导致额外的 LLM 调用。',
 				name: 'autoFix',
 				type: 'boolean',
 				default: false,
 			},
 			{
-				displayName: 'Customize Retry Prompt',
+				displayName: '自定义重试提示词',
 				name: 'customizeRetryPrompt',
 				type: 'boolean',
 				displayOptions: {
@@ -148,11 +147,10 @@ export class OutputParserStructured implements INodeType {
 					},
 				},
 				default: false,
-				description:
-					'Whether to customize the prompt used for retrying the output parsing. If disabled, a default prompt will be used.',
+				description: '是否自定义用于重试输出解析的提示词。如果禁用，将使用默认提示词。',
 			},
 			{
-				displayName: 'Custom Prompt',
+				displayName: '自定义提示词',
 				name: 'prompt',
 				type: 'string',
 				displayOptions: {
@@ -165,15 +163,14 @@ export class OutputParserStructured implements INodeType {
 				typeOptions: {
 					rows: 10,
 				},
-				hint: 'Should include "{error}", "{instructions}", and "{completion}" placeholders',
+				hint: '应包含 "{error}"、"{instructions}" 和 "{completion}" 占位符',
 				description:
-					'Prompt template used for fixing the output. Uses placeholders: "{instructions}" for parsing rules, "{completion}" for the failed attempt, and "{error}" for the validation error message.',
+					'用于修复输出的提示词模板。使用占位符："{instructions}" 表示解析规则，"{completion}" 表示失败的尝试，"{error}" 表示验证错误消息。',
 			},
 		],
 		hints: [
 			{
-				message:
-					'Fields that use $refs might have the wrong type, since this syntax is not currently supported',
+				message: '使用 $refs 的字段可能具有错误的类型，因为目前不支持此语法',
 				type: 'warning',
 				location: 'outputPane',
 				whenToDisplay: 'afterExecution',
@@ -218,10 +215,7 @@ export class OutputParserStructured implements INodeType {
 				this,
 			);
 		} catch (error) {
-			throw new NodeOperationError(
-				this.getNode(),
-				'Error during parsing of JSON Schema. Please check the schema and try again.',
-			);
+			throw new NodeOperationError(this.getNode(), '解析 JSON 架构时出错。请检查架构并重试。');
 		}
 
 		if (!autoFix) {
@@ -238,10 +232,7 @@ export class OutputParserStructured implements INodeType {
 		const prompt = this.getNodeParameter('prompt', itemIndex, NAIVE_FIX_PROMPT) as string;
 
 		if (prompt.length === 0 || !prompt.includes('{error}')) {
-			throw new NodeOperationError(
-				this.getNode(),
-				'Auto-fixing parser prompt has to contain {error} placeholder',
-			);
+			throw new NodeOperationError(this.getNode(), '自动修复解析器提示词必须包含 {error} 占位符');
 		}
 		const parser = new N8nOutputFixingParser(
 			this,

@@ -4,7 +4,7 @@ import { commonOptions } from '../options';
 
 export const toolsAgentProperties: INodeProperties[] = [
 	{
-		displayName: 'Options',
+		displayName: '选项',
 		name: 'options',
 		type: 'collection',
 		displayOptions: {

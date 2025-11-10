@@ -1,20 +1,20 @@
-export const REFINE_PROMPT_TEMPLATE = `Your job is to produce a final summary
-We have provided an existing summary up to a certain point: "{existing_answer}"
-We have the opportunity to refine the existing summary
-(only if needed) with some more context below.
+export const REFINE_PROMPT_TEMPLATE = `你的任务是生成最终摘要
+我们已提供到目前为止的现有摘要："{existing_answer}"
+我们有机会通过以下更多上下文来精炼现有摘要
+（仅在需要时）。
 ------------
 "{text}"
 ------------
 
-Given the new context, refine the original summary
-If the context isn't useful, return the original summary.
+根据新的上下文，精炼原始摘要
+如果上下文没有用处，则返回原始摘要。
 
-REFINED SUMMARY:`;
+精炼摘要：`;
 
-export const DEFAULT_PROMPT_TEMPLATE = `Write a concise summary of the following:
+export const DEFAULT_PROMPT_TEMPLATE = `为以下内容写一个简洁的摘要：
 
 
 "{text}"
 
 
-CONCISE SUMMARY:`;
+简洁摘要：`;

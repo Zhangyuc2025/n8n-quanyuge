@@ -11,15 +11,15 @@ import { getConnectionHintNoticeField } from '@utils/sharedFields';
 
 export class OutputParserItemList implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Item List Output Parser',
+		displayName: '项目列表输出解析器',
 		name: 'outputParserItemList',
 		icon: 'fa:bars',
 		iconColor: 'black',
 		group: ['transform'],
 		version: 1,
-		description: 'Return the results as separate items',
+		description: '将结果作为单独的项目返回',
 		defaults: {
-			name: 'Item List Output Parser',
+			name: '项目列表输出解析器',
 		},
 
 		codex: {
@@ -39,23 +39,22 @@ export class OutputParserItemList implements INodeType {
 		inputs: [],
 
 		outputs: [NodeConnectionTypes.AiOutputParser],
-		outputNames: ['Output Parser'],
+		outputNames: ['输出解析器'],
 		properties: [
 			getConnectionHintNoticeField([NodeConnectionTypes.AiChain, NodeConnectionTypes.AiAgent]),
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
 				type: 'collection',
-				placeholder: 'Add Option',
+				placeholder: '添加选项',
 				default: {},
 				options: [
 					{
-						displayName: 'Number Of Items',
+						displayName: '项目数量',
 						name: 'numberOfItems',
 						type: 'number',
 						default: -1,
-						description:
-							'Defines how many items should be returned maximally. If set to -1, there is no limit.',
+						description: '定义应返回的最大项目数量。如果设置为 -1，则没有限制。',
 					},
 					// For that to be easily possible the metadata would have to be returned and be able to be read.
 					// Would also be possible with a wrapper but that would be even more hacky and the output types
@@ -68,12 +67,12 @@ export class OutputParserItemList implements INodeType {
 					// 	description: 'Whether the output should be automatically be parsed or left RAW',
 					// },
 					{
-						displayName: 'Separator',
+						displayName: '分隔符',
 						name: 'separator',
 						type: 'string',
 						default: '\\n',
 						description:
-							'Defines the separator that should be used to split the results into separate items. Defaults to a new line but can be changed depending on the data that should be returned.',
+							'定义用于将结果拆分为单独项目的分隔符。默认为换行符，但可以根据应返回的数据进行更改。',
 					},
 				],
 			},

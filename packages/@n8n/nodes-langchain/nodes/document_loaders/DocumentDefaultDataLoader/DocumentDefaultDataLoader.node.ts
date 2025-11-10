@@ -28,7 +28,7 @@ function getInputs(parameters: IDataObject) {
 	// If text splitting mode is 'custom' or does not exist (v1), we need to add an input for the text splitter
 	if (!textSplittingMode || textSplittingMode === 'custom') {
 		inputs.push({
-			displayName: 'Text Splitter',
+			displayName: '文本分割器',
 			maxConnections: 1,
 			type: 'ai_textSplitter',
 			required: true,
@@ -40,15 +40,15 @@ function getInputs(parameters: IDataObject) {
 
 export class DocumentDefaultDataLoader implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Default Data Loader',
+		displayName: '默认数据加载器',
 		name: 'documentDefaultDataLoader',
 		icon: 'file:binary.svg',
 		group: ['transform'],
 		version: [1, 1.1],
 		defaultVersion: 1.1,
-		description: 'Load data from previous step in the workflow',
+		description: '从工作流中前一步骤加载数据',
 		defaults: {
-			name: 'Default Data Loader',
+			name: '默认数据加载器',
 		},
 		codex: {
 			categories: ['AI'],
@@ -67,17 +67,17 @@ export class DocumentDefaultDataLoader implements INodeType {
 		inputs: `={{ ((parameter) => { ${getInputs.toString()}; return getInputs(parameter) })($parameter) }}`,
 
 		outputs: [NodeConnectionTypes.AiDocument],
-		outputNames: ['Document'],
+		outputNames: ['文档'],
 		properties: [
 			{
 				displayName:
-					'This will load data from a previous step in the workflow. <a href="/templates/1962" target="_blank">Example</a>',
+					'此节点将从工作流中的前一步骤加载数据。<a href="/templates/1962" target="_blank">示例</a>',
 				name: 'notice',
 				type: 'notice',
 				default: '',
 			},
 			{
-				displayName: 'Type of Data',
+				displayName: '数据类型',
 				name: 'dataType',
 				type: 'options',
 				default: 'json',
@@ -87,17 +87,17 @@ export class DocumentDefaultDataLoader implements INodeType {
 					{
 						name: 'JSON',
 						value: 'json',
-						description: 'Process JSON data from previous step in the workflow',
+						description: '处理工作流中前一步骤的 JSON 数据',
 					},
 					{
-						name: 'Binary',
+						name: '二进制',
 						value: 'binary',
-						description: 'Process binary data from previous step in the workflow',
+						description: '处理工作流中前一步骤的二进制数据',
 					},
 				],
 			},
 			{
-				displayName: 'Mode',
+				displayName: '模式',
 				name: 'jsonMode',
 				type: 'options',
 				default: 'allInputData',
@@ -109,20 +109,19 @@ export class DocumentDefaultDataLoader implements INodeType {
 				},
 				options: [
 					{
-						name: 'Load All Input Data',
+						name: '加载所有输入数据',
 						value: 'allInputData',
-						description: 'Use all JSON data that flows into the parent agent or chain',
+						description: '使用流入父级智能体或链的所有 JSON 数据',
 					},
 					{
-						name: 'Load Specific Data',
+						name: '加载特定数据',
 						value: 'expressionData',
-						description:
-							'Load a subset of data, and/or data from any previous step in the workflow',
+						description: '加载数据的子集，和/或工作流中任何前一步骤的数据',
 					},
 				],
 			},
 			{
-				displayName: 'Mode',
+				displayName: '模式',
 				name: 'binaryMode',
 				type: 'options',
 				default: 'allInputData',
@@ -134,19 +133,19 @@ export class DocumentDefaultDataLoader implements INodeType {
 				},
 				options: [
 					{
-						name: 'Load All Input Data',
+						name: '加载所有输入数据',
 						value: 'allInputData',
-						description: 'Use all Binary data that flows into the parent agent or chain',
+						description: '使用流入父级智能体或链的所有二进制数据',
 					},
 					{
-						name: 'Load Specific Data',
+						name: '加载特定数据',
 						value: 'specificField',
-						description: 'Load data from a specific field in the parent agent or chain',
+						description: '从父级智能体或链的特定字段加载数据',
 					},
 				],
 			},
 			{
-				displayName: 'Data Format',
+				displayName: '数据格式',
 				name: 'loader',
 				type: 'options',
 				default: 'auto',
@@ -158,44 +157,44 @@ export class DocumentDefaultDataLoader implements INodeType {
 				},
 				options: [
 					{
-						name: 'Automatically Detect by Mime Type',
+						name: '通过 MIME 类型自动检测',
 						value: 'auto',
-						description: 'Uses the mime type to detect the format',
+						description: '使用 MIME 类型检测格式',
 					},
 					{
 						name: 'CSV',
 						value: 'csvLoader',
-						description: 'Load CSV files',
+						description: '加载 CSV 文件',
 					},
 					{
 						name: 'Docx',
 						value: 'docxLoader',
-						description: 'Load Docx documents',
+						description: '加载 Docx 文档',
 					},
 					{
 						name: 'EPub',
 						value: 'epubLoader',
-						description: 'Load EPub files',
+						description: '加载 EPub 文件',
 					},
 					{
 						name: 'JSON',
 						value: 'jsonLoader',
-						description: 'Load JSON files',
+						description: '加载 JSON 文件',
 					},
 					{
 						name: 'PDF',
 						value: 'pdfLoader',
-						description: 'Load PDF documents',
+						description: '加载 PDF 文档',
 					},
 					{
-						name: 'Text',
+						name: '文本',
 						value: 'textLoader',
-						description: 'Load plain text files',
+						description: '加载纯文本文件',
 					},
 				],
 			},
 			{
-				displayName: 'Data',
+				displayName: '数据',
 				name: 'jsonData',
 				type: 'string',
 				typeOptions: {
@@ -203,7 +202,7 @@ export class DocumentDefaultDataLoader implements INodeType {
 				},
 				default: '',
 				required: true,
-				description: 'Drag and drop fields from the input pane, or use an expression',
+				description: '从输入面板拖放字段，或使用表达式',
 				displayOptions: {
 					show: {
 						dataType: ['json'],
@@ -212,13 +211,12 @@ export class DocumentDefaultDataLoader implements INodeType {
 				},
 			},
 			{
-				displayName: 'Input Data Field Name',
+				displayName: '输入数据字段名称',
 				name: 'binaryDataKey',
 				type: 'string',
 				default: 'data',
 				required: true,
-				description:
-					'The name of the field in the agent or chain’s input that contains the binary file to be processed',
+				description: '智能体或链的输入中包含要处理的二进制文件的字段名称',
 				displayOptions: {
 					show: {
 						dataType: ['binary'],
@@ -229,7 +227,7 @@ export class DocumentDefaultDataLoader implements INodeType {
 				},
 			},
 			{
-				displayName: 'Text Splitting',
+				displayName: '文本分割',
 				name: 'textSplittingMode',
 				type: 'options',
 				default: 'simple',
@@ -242,30 +240,30 @@ export class DocumentDefaultDataLoader implements INodeType {
 				},
 				options: [
 					{
-						name: 'Simple',
+						name: '简单模式',
 						value: 'simple',
-						description: 'Splits every 1000 characters with a 200 character overlap',
+						description: '每 1000 个字符分割一次，重叠 200 个字符',
 					},
 					{
-						name: 'Custom',
+						name: '自定义模式',
 						value: 'custom',
-						description: 'Connect a custom text-splitting sub-node',
+						description: '连接自定义的文本分割子节点',
 					},
 				],
 			},
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
 				type: 'collection',
-				placeholder: 'Add Option',
+				placeholder: '添加选项',
 				default: {},
 				options: [
 					{
-						displayName: 'JSON Pointers',
+						displayName: 'JSON 指针',
 						name: 'pointers',
 						type: 'string',
 						default: '',
-						description: 'Pointers to extract from JSON, e.g. "/text" or "/text, /meta/title"',
+						description: '从 JSON 中提取的指针，例如："/text" 或 "/text, /meta/title"',
 						displayOptions: {
 							show: {
 								'/loader': ['jsonLoader', 'auto'],
@@ -273,10 +271,10 @@ export class DocumentDefaultDataLoader implements INodeType {
 						},
 					},
 					{
-						displayName: 'CSV Separator',
+						displayName: 'CSV 分隔符',
 						name: 'separator',
 						type: 'string',
-						description: 'Separator to use for CSV',
+						description: '用于 CSV 的分隔符',
 						default: ',',
 						displayOptions: {
 							show: {
@@ -285,11 +283,11 @@ export class DocumentDefaultDataLoader implements INodeType {
 						},
 					},
 					{
-						displayName: 'CSV Column',
+						displayName: 'CSV 列',
 						name: 'column',
 						type: 'string',
 						default: '',
-						description: 'Column to extract from CSV',
+						description: '从 CSV 中提取的列',
 						displayOptions: {
 							show: {
 								'/loader': ['csvLoader', 'auto'],
@@ -297,8 +295,8 @@ export class DocumentDefaultDataLoader implements INodeType {
 						},
 					},
 					{
-						displayName: 'Split Pages in PDF',
-						description: 'Whether to split PDF pages into separate documents',
+						displayName: '拆分 PDF 页面',
+						description: '是否将 PDF 页面拆分为单独的文档',
 						name: 'splitPages',
 						type: 'boolean',
 						default: true,
@@ -310,10 +308,9 @@ export class DocumentDefaultDataLoader implements INodeType {
 					},
 					{
 						...metadataFilterField,
-						displayName: 'Metadata',
-						description:
-							'Metadata to add to each document. Could be used for filtering during retrieval',
-						placeholder: 'Add property',
+						displayName: '元数据',
+						description: '要添加到每个文档的元数据。可用于检索时的过滤',
+						placeholder: '添加属性',
 					},
 				],
 			},

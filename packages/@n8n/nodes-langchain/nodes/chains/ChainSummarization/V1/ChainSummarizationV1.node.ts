@@ -26,20 +26,20 @@ export class ChainSummarizationV1 implements INodeType {
 			...baseDescription,
 			version: 1,
 			defaults: {
-				name: 'Summarization Chain',
+				name: '摘要链',
 				color: '#909298',
 			},
 
 			inputs: [
 				NodeConnectionTypes.Main,
 				{
-					displayName: 'Model',
+					displayName: '模型',
 					maxConnections: 1,
 					type: NodeConnectionTypes.AiLanguageModel,
 					required: true,
 				},
 				{
-					displayName: 'Document',
+					displayName: '文档',
 					maxConnections: 1,
 					type: NodeConnectionTypes.AiDocument,
 					required: true,
@@ -50,43 +50,42 @@ export class ChainSummarizationV1 implements INodeType {
 			properties: [
 				getTemplateNoticeField(1951),
 				{
-					displayName: 'Type',
+					displayName: '类型',
 					name: 'type',
 					type: 'options',
-					description: 'The type of summarization to run',
+					description: '要运行的摘要类型',
 					default: 'map_reduce',
 					options: [
 						{
-							name: 'Map Reduce (Recommended)',
+							name: '映射归并（推荐）',
 							value: 'map_reduce',
-							description:
-								'Summarize each document (or chunk) individually, then summarize those summaries',
+							description: '分别摘要每个文档（或分块），然后再摘要这些摘要',
 						},
 						{
-							name: 'Refine',
+							name: '精炼',
 							value: 'refine',
 							description:
-								'Summarize the first document (or chunk). Then update that summary based on the next document (or chunk), and repeat.',
+								'摘要第一个文档（或分块）。然后基于下一个文档（或分块）更新该摘要，并重复此过程',
 						},
 						{
-							name: 'Stuff',
+							name: '填充',
 							value: 'stuff',
-							description: 'Pass all documents (or chunks) at once. Ideal for small datasets.',
+							description: '一次性传递所有文档（或分块）。适用于小数据集',
 						},
 					],
 				},
 				{
-					displayName: 'Options',
+					displayName: '选项',
 					name: 'options',
 					type: 'collection',
 					default: {},
-					placeholder: 'Add Option',
+					placeholder: '添加选项',
 					options: [
 						{
-							displayName: 'Final Prompt to Combine',
+							displayName: '最终合并提示词',
 							name: 'combineMapPrompt',
 							type: 'string',
-							hint: 'The prompt to combine individual summaries',
+							hint: '用于合并各个摘要的提示词',
 							displayOptions: {
 								show: {
 									'/type': ['map_reduce'],
@@ -98,11 +97,11 @@ export class ChainSummarizationV1 implements INodeType {
 							},
 						},
 						{
-							displayName: 'Individual Summary Prompt',
+							displayName: '单个摘要提示词',
 							name: 'prompt',
 							type: 'string',
 							default: DEFAULT_PROMPT_TEMPLATE,
-							hint: 'The prompt to summarize an individual document (or chunk)',
+							hint: '用于摘要单个文档（或分块）的提示词',
 							displayOptions: {
 								show: {
 									'/type': ['map_reduce'],
@@ -113,7 +112,7 @@ export class ChainSummarizationV1 implements INodeType {
 							},
 						},
 						{
-							displayName: 'Prompt',
+							displayName: '提示词',
 							name: 'prompt',
 							type: 'string',
 							default: DEFAULT_PROMPT_TEMPLATE,
@@ -127,7 +126,7 @@ export class ChainSummarizationV1 implements INodeType {
 							},
 						},
 						{
-							displayName: 'Subsequent (Refine) Prompt',
+							displayName: '后续（精炼）提示词',
 							name: 'refinePrompt',
 							type: 'string',
 							displayOptions: {
@@ -136,13 +135,13 @@ export class ChainSummarizationV1 implements INodeType {
 								},
 							},
 							default: REFINE_PROMPT_TEMPLATE,
-							hint: 'The prompt to refine the summary based on the next document (or chunk)',
+							hint: '基于下一个文档（或分块）精炼摘要的提示词',
 							typeOptions: {
 								rows: 6,
 							},
 						},
 						{
-							displayName: 'Initial Prompt',
+							displayName: '初始提示词',
 							name: 'refineQuestionPrompt',
 							type: 'string',
 							displayOptions: {
@@ -151,7 +150,7 @@ export class ChainSummarizationV1 implements INodeType {
 								},
 							},
 							default: DEFAULT_PROMPT_TEMPLATE,
-							hint: 'The prompt for the first document (or chunk)',
+							hint: '用于第一个文档（或分块）的提示词',
 							typeOptions: {
 								rows: 6,
 							},

@@ -1,2 +1,2 @@
 export const SYSTEM_PROMPT_TEMPLATE =
-	"Please classify the text provided by the user into one of the following categories: {categories}, and use the provided formatting instructions below. Don't explain, and only output the json.";
+	'请将用户提供的文本分类为以下类别之一：{categories}，并使用下面提供的格式化说明。不要解释，只输出 json。';

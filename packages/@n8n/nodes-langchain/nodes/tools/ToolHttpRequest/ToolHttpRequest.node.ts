@@ -112,7 +112,7 @@ export class ToolHttpRequest implements INodeType {
 			},
 			{
 				displayName:
-					'Tip: You can use a {placeholder} for any part of the request to be filled by the model. Provide more context about them in the placeholders section',
+					'提示：您可以在请求的任何部分使用 {占位符} 由模型填充。在占位符部分提供有关它们的更多上下文信息',
 				name: 'placeholderNotice',
 				type: 'notice',
 				default: '',
@@ -123,21 +123,21 @@ export class ToolHttpRequest implements INodeType {
 				type: 'string',
 				default: '',
 				required: true,
-				placeholder: 'e.g. http://www.example.com/{path}',
+				placeholder: '例如：http://www.example.com/{path}',
 			},
 			...authenticationProperties,
 			//----------------------------------------------------------------
 			{
-				displayName: 'Send Query Parameters',
+				displayName: '发送查询参数',
 				name: 'sendQuery',
 				type: 'boolean',
 				default: false,
 				noDataExpression: true,
-				description: 'Whether the request has query params or not',
+				description: '请求是否包含查询参数',
 			},
 			{
 				...specifyBySelector,
-				displayName: 'Specify Query Parameters',
+				displayName: '指定查询参数',
 				name: 'specifyQuery',
 				displayOptions: {
 					show: {
@@ -147,7 +147,7 @@ export class ToolHttpRequest implements INodeType {
 			},
 			{
 				...parametersCollection,
-				displayName: 'Query Parameters',
+				displayName: '查询参数',
 				name: 'parametersQuery',
 				displayOptions: {
 					show: {
@@ -168,16 +168,16 @@ export class ToolHttpRequest implements INodeType {
 			},
 			//----------------------------------------------------------------
 			{
-				displayName: 'Send Headers',
+				displayName: '发送请求头',
 				name: 'sendHeaders',
 				type: 'boolean',
 				default: false,
 				noDataExpression: true,
-				description: 'Whether the request has headers or not',
+				description: '请求是否包含请求头',
 			},
 			{
 				...specifyBySelector,
-				displayName: 'Specify Headers',
+				displayName: '指定请求头',
 				name: 'specifyHeaders',
 				displayOptions: {
 					show: {
@@ -187,7 +187,7 @@ export class ToolHttpRequest implements INodeType {
 			},
 			{
 				...parametersCollection,
-				displayName: 'Header Parameters',
+				displayName: '请求头参数',
 				name: 'parametersHeaders',
 				displayOptions: {
 					show: {
@@ -208,16 +208,16 @@ export class ToolHttpRequest implements INodeType {
 			},
 			//----------------------------------------------------------------
 			{
-				displayName: 'Send Body',
+				displayName: '发送请求体',
 				name: 'sendBody',
 				type: 'boolean',
 				default: false,
 				noDataExpression: true,
-				description: 'Whether the request has body or not',
+				description: '请求是否包含请求体',
 			},
 			{
 				...specifyBySelector,
-				displayName: 'Specify Body',
+				displayName: '指定请求体',
 				name: 'specifyBody',
 				displayOptions: {
 					show: {
@@ -227,7 +227,7 @@ export class ToolHttpRequest implements INodeType {
 			},
 			{
 				...parametersCollection,
-				displayName: 'Body Parameters',
+				displayName: '请求体参数',
 				name: 'parametersBody',
 				displayOptions: {
 					show: {

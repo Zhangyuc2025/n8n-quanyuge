@@ -17,9 +17,9 @@ import { getBatchingOptionFields } from '@utils/sharedFields';
 import { getTracingConfig } from '@utils/tracing';
 
 const DEFAULT_SYSTEM_PROMPT_TEMPLATE =
-	'You are highly intelligent and accurate sentiment analyzer. Analyze the sentiment of the provided text. Categorize it into one of the following: {categories}. Use the provided formatting instructions. Only output the JSON.';
+	'你是一个高度智能和准确的情感分析器。分析提供的文本的情感。将其分类为以下类别之一：{categories}。使用提供的格式化说明。只输出 JSON。';
 
-const DEFAULT_CATEGORIES = 'Positive, Neutral, Negative';
+const DEFAULT_CATEGORIES = '积极，中性，消极';
 const configuredOutputs = (parameters: INodeParameters, defaultCategories: string) => {
 	const options = (parameters?.options ?? {}) as IDataObject;
 	const categories = (options?.categories as string) ?? defaultCategories;
@@ -31,13 +31,13 @@ const configuredOutputs = (parameters: INodeParameters, defaultCategories: strin
 
 export class SentimentAnalysis implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Sentiment Analysis',
+		displayName: '情感分析',
 		name: 'sentimentAnalysis',
 		icon: 'fa:balance-scale-left',
 		iconColor: 'black',
 		group: ['transform'],
 		version: [1, 1.1],
-		description: 'Analyze the sentiment of your text',
+		description: '分析文本的情感',
 		codex: {
 			categories: ['AI'],
 			subcategories: {
@@ -52,12 +52,12 @@ export class SentimentAnalysis implements INodeType {
 			},
 		},
 		defaults: {
-			name: 'Sentiment Analysis',
+			name: '情感分析',
 		},
 		inputs: [
 			{ displayName: '', type: NodeConnectionTypes.Main },
 			{
-				displayName: 'Model',
+				displayName: '模型',
 				maxConnections: 1,
 				type: NodeConnectionTypes.AiLanguageModel,
 				required: true,
@@ -66,19 +66,19 @@ export class SentimentAnalysis implements INodeType {
 		outputs: `={{(${configuredOutputs})($parameter, "${DEFAULT_CATEGORIES}")}}`,
 		properties: [
 			{
-				displayName: 'Text to Analyze',
+				displayName: '要分析的文本',
 				name: 'inputText',
 				type: 'string',
 				required: true,
 				default: '',
-				description: 'Use an expression to reference data in previous nodes or enter static text',
+				description: '使用表达式引用先前节点中的数据或输入静态文本',
 				typeOptions: {
 					rows: 2,
 				},
 			},
 			{
 				displayName:
-					'Sentiment scores are LLM-generated estimates, not statistically rigorous measurements. They may be inconsistent across runs and should be used as rough indicators only.',
+					'情感得分是 LLM 生成的估计值，而非统计学上严格的测量。它们在运行之间可能不一致，应仅用作粗略指标',
 				name: 'detailedResultsNotice',
 				type: 'notice',
 				default: '',
@@ -89,48 +89,46 @@ export class SentimentAnalysis implements INodeType {
 				},
 			},
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
 				type: 'collection',
 				default: {},
-				placeholder: 'Add Option',
+				placeholder: '添加选项',
 				options: [
 					{
-						displayName: 'Sentiment Categories',
+						displayName: '情感类别',
 						name: 'categories',
 						type: 'string',
 						default: DEFAULT_CATEGORIES,
-						description: 'A comma-separated list of categories to analyze',
+						description: '要分析的逗号分隔类别列表',
 						noDataExpression: true,
 						typeOptions: {
 							rows: 2,
 						},
 					},
 					{
-						displayName: 'System Prompt Template',
+						displayName: '系统提示词模板',
 						name: 'systemPromptTemplate',
 						type: 'string',
 						default: DEFAULT_SYSTEM_PROMPT_TEMPLATE,
-						description: 'String to use directly as the system prompt template',
+						description: '直接用作系统提示词模板的字符串',
 						typeOptions: {
 							rows: 6,
 						},
 					},
 					{
-						displayName: 'Include Detailed Results',
+						displayName: '包含详细结果',
 						name: 'includeDetailedResults',
 						type: 'boolean',
 						default: false,
-						description:
-							'Whether to include sentiment strength and confidence scores in the output',
+						description: '是否在输出中包含情感强度和置信度得分',
 					},
 					{
-						displayName: 'Enable Auto-Fixing',
+						displayName: '启用自动修复',
 						name: 'enableAutoFixing',
 						type: 'boolean',
 						default: true,
-						description:
-							'Whether to enable auto-fixing (may trigger an additional LLM call if output is broken)',
+						description: '是否启用自动修复（如果输出损坏，可能会触发额外的 LLM 调用）',
 					},
 					getBatchingOptionFields({
 						show: {

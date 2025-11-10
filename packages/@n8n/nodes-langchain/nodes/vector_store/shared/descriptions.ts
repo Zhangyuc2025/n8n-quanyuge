@@ -1,14 +1,14 @@
 import type { INodeProperties } from 'n8n-workflow';
 
 export const pineconeIndexRLC: INodeProperties = {
-	displayName: 'Pinecone Index',
+	displayName: 'Pinecone 索引',
 	name: 'pineconeIndex',
 	type: 'resourceLocator',
 	default: { mode: 'list', value: '' },
 	required: true,
 	modes: [
 		{
-			displayName: 'From List',
+			displayName: '从列表',
 			name: 'list',
 			type: 'list',
 			typeOptions: {
@@ -24,14 +24,14 @@ export const pineconeIndexRLC: INodeProperties = {
 };
 
 export const supabaseTableNameRLC: INodeProperties = {
-	displayName: 'Table Name',
+	displayName: '表名',
 	name: 'tableName',
 	type: 'resourceLocator',
 	default: { mode: 'list', value: '' },
 	required: true,
 	modes: [
 		{
-			displayName: 'From List',
+			displayName: '从列表',
 			name: 'list',
 			type: 'list',
 			typeOptions: {
@@ -47,14 +47,14 @@ export const supabaseTableNameRLC: INodeProperties = {
 };
 
 export const qdrantCollectionRLC: INodeProperties = {
-	displayName: 'Qdrant Collection',
+	displayName: 'Qdrant 集合',
 	name: 'qdrantCollection',
 	type: 'resourceLocator',
 	default: { mode: 'list', value: '' },
 	required: true,
 	modes: [
 		{
-			displayName: 'From List',
+			displayName: '从列表',
 			name: 'list',
 			type: 'list',
 			typeOptions: {
@@ -70,14 +70,14 @@ export const qdrantCollectionRLC: INodeProperties = {
 };
 
 export const milvusCollectionRLC: INodeProperties = {
-	displayName: 'Milvus Collection',
+	displayName: 'Milvus 集合',
 	name: 'milvusCollection',
 	type: 'resourceLocator',
 	default: { mode: 'list', value: '' },
 	required: true,
 	modes: [
 		{
-			displayName: 'From List',
+			displayName: '从列表',
 			name: 'list',
 			type: 'list',
 			typeOptions: {
@@ -93,14 +93,14 @@ export const milvusCollectionRLC: INodeProperties = {
 };
 
 export const weaviateCollectionRLC: INodeProperties = {
-	displayName: 'Weaviate Collection',
+	displayName: 'Weaviate 集合',
 	name: 'weaviateCollection',
 	type: 'resourceLocator',
 	default: { mode: 'list', value: '' },
 	required: true,
 	modes: [
 		{
-			displayName: 'From List',
+			displayName: '从列表',
 			name: 'list',
 			type: 'list',
 			typeOptions: {

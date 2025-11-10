@@ -139,16 +139,16 @@ class PlatformChatModel extends SimpleChatModel {
 export class LmChatPlatform implements INodeType {
 	description: INodeTypeDescription = {
 		// ✅ 动态显示名称（根据 providerName 参数）
-		displayName: '={{$parameter.providerName || "Chat Model"}}',
+		displayName: '={{$parameter.providerName || "聊天模型"}}',
 		name: 'lmChatPlatform',
 		// ✅ 动态图标（根据 providerIcon 参数）
 		icon: '={{$parameter.providerIcon || "fa:robot"}}',
 		iconColor: 'black',
 		group: ['transform'],
 		version: 1,
-		description: 'Platform-hosted AI chat model with automatic billing',
+		description: '平台托管的 AI 聊天模型，自动计费',
 		defaults: {
-			name: '={{$parameter.providerName || "Chat Model"}}',
+			name: '={{$parameter.providerName || "聊天模型"}}',
 		},
 		codex: {
 			categories: ['AI'],
@@ -175,41 +175,41 @@ export class LmChatPlatform implements INodeType {
 			getConnectionHintNoticeField([NodeConnectionTypes.AiChain, NodeConnectionTypes.AiAgent]),
 			{
 				// ✅ 隐藏字段：提供商标识（由前端预设）
-				displayName: 'Provider Key',
+				displayName: '提供商键',
 				name: 'providerKey',
 				type: 'hidden',
 				default: '',
-				description: 'AI provider identifier (e.g., openai, anthropic)',
+				description: 'AI 提供商标识（例如 openai、anthropic）',
 			},
 			{
 				// ✅ 隐藏字段：提供商名称（用于节点显示名称）
-				displayName: 'Provider Name',
+				displayName: '提供商名称',
 				name: 'providerName',
 				type: 'hidden',
 				default: '',
-				description: 'AI provider display name (e.g., OpenAI, Anthropic)',
+				description: 'AI 提供商显示名称（例如 OpenAI、Anthropic）',
 			},
 			{
 				// ✅ 隐藏字段：提供商图标
-				displayName: 'Provider Icon',
+				displayName: '提供商图标',
 				name: 'providerIcon',
 				type: 'hidden',
 				default: '',
-				description: 'Provider icon for display',
+				description: '用于显示的提供商图标',
 			},
 			{
-				displayName: 'Model',
+				displayName: '模型',
 				name: 'model',
 				type: 'resourceLocator',
 				default: { mode: 'list', value: '' },
 				required: true,
-				description: 'The AI model to use',
+				description: '要使用的 AI 模型',
 				modes: [
 					{
-						displayName: 'From List',
+						displayName: '从列表选择',
 						name: 'list',
 						type: 'list',
-						placeholder: 'Select a model...',
+						placeholder: '选择一个模型...',
 						typeOptions: {
 							searchListMethod: 'searchModels',
 							searchFilterRequired: false,
@@ -225,7 +225,7 @@ export class LmChatPlatform implements INodeType {
 								type: 'regex',
 								properties: {
 									regex: '[a-zA-Z0-9-_]+',
-									errorMessage: 'Not a valid model ID',
+									errorMessage: '不是有效的模型 ID',
 								},
 							},
 						],
@@ -233,14 +233,14 @@ export class LmChatPlatform implements INodeType {
 				],
 			},
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
 				type: 'collection',
 				default: {},
-				placeholder: 'Add Option',
+				placeholder: '添加选项',
 				options: [
 					{
-						displayName: 'Sampling Temperature',
+						displayName: '采样温度',
 						name: 'temperature',
 						type: 'number',
 						default: 0.7,
@@ -249,18 +249,17 @@ export class LmChatPlatform implements INodeType {
 							maxValue: 2,
 							numberPrecision: 2,
 						},
-						description:
-							'Controls randomness in the output. Lower values make output more focused and deterministic.',
+						description: '控制输出的随机性。较低的值使输出更加集中和确定性。',
 					},
 					{
-						displayName: 'Max Tokens',
+						displayName: '最大令牌数',
 						name: 'maxTokens',
 						type: 'number',
 						default: -1,
-						description: 'Maximum number of tokens to generate. Use -1 for unlimited.',
+						description: '生成的最大令牌数。使用 -1 表示无限制。',
 					},
 					{
-						displayName: 'Frequency Penalty',
+						displayName: '频率惩罚',
 						name: 'frequencyPenalty',
 						type: 'number',
 						default: 0,
@@ -269,11 +268,10 @@ export class LmChatPlatform implements INodeType {
 							maxValue: 2,
 							numberPrecision: 2,
 						},
-						description:
-							'Positive values penalize new tokens based on their frequency in the text so far',
+						description: '正值会根据新令牌在文本中出现的频率对其进行惩罚',
 					},
 					{
-						displayName: 'Presence Penalty',
+						displayName: '存在惩罚',
 						name: 'presencePenalty',
 						type: 'number',
 						default: 0,
@@ -282,8 +280,7 @@ export class LmChatPlatform implements INodeType {
 							maxValue: 2,
 							numberPrecision: 2,
 						},
-						description:
-							'Positive values penalize new tokens based on whether they appear in the text so far',
+						description: '正值会根据新令牌是否出现在文本中对其进行惩罚',
 					},
 					{
 						displayName: 'Top P',
@@ -295,8 +292,7 @@ export class LmChatPlatform implements INodeType {
 							maxValue: 1,
 							numberPrecision: 2,
 						},
-						description:
-							'An alternative to sampling with temperature. The model considers the results of the tokens with top_p probability mass.',
+						description: '温度采样的替代方案。模型会考虑具有 top_p 概率质量的令牌结果。',
 					},
 				],
 			},
@@ -363,13 +359,11 @@ export class LmChatPlatform implements INodeType {
 		};
 
 		if (!providerKey) {
-			throw new Error(
-				'Provider key is required. This node should be created with a provider preset.',
-			);
+			throw new Error('需要提供商键。此节点应使用提供商预设创建。');
 		}
 
 		if (!modelResource) {
-			throw new Error('Please select a model');
+			throw new Error('请选择一个模型');
 		}
 
 		// ✅ 创建 PlatformChatModel 实例

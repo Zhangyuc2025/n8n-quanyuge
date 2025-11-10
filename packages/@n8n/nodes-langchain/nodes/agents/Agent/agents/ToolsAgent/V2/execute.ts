@@ -246,7 +246,7 @@ export async function toolsAgentExecute(
 				promptTypeKey: 'promptType',
 			});
 			if (input === undefined) {
-				throw new NodeOperationError(this.getNode(), 'The "text" parameter is empty.');
+				throw new NodeOperationError(this.getNode(), '"文本" 参数为空。');
 			}
 			const outputParser = await getOptionalOutputParser(this, itemIndex);
 			const tools = await getTools(this, outputParser);

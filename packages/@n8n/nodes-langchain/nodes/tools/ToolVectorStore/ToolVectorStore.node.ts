@@ -78,13 +78,13 @@ export class ToolVectorStore implements INodeType {
 
 		inputs: [
 			{
-				displayName: 'Vector Store',
+				displayName: '向量存储',
 				maxConnections: 1,
 				type: NodeConnectionTypes.AiVectorStore,
 				required: true,
 			},
 			{
-				displayName: 'Model',
+				displayName: '模型',
 				maxConnections: 1,
 				type: NodeConnectionTypes.AiLanguageModel,
 				required: true,
@@ -92,18 +92,18 @@ export class ToolVectorStore implements INodeType {
 		],
 
 		outputs: [NodeConnectionTypes.AiTool],
-		outputNames: ['Tool'],
+		outputNames: ['工具'],
 		properties: [
 			getConnectionHintNoticeField([NodeConnectionTypes.AiAgent]),
 			{
-				displayName: 'Data Name',
+				displayName: '数据名称',
 				name: 'name',
 				type: 'string',
 				default: '',
-				placeholder: 'e.g. users_info',
+				placeholder: '例如：users_info',
 				validateType: 'string-alphanumeric',
 				description:
-					'Name of the data in vector store. This will be used to fill this tool description: Useful for when you need to answer questions about [name]. Whenever you need information about [data description], you should ALWAYS use this. Input should be a fully formed question.',
+					'向量存储中的数据名称。这将用于填充此工具描述：当您需要回答有关 [名称] 的问题时很有用。每当您需要有关 [数据描述] 的信息时,您应该始终使用此工具。输入应该是一个完整的问题。',
 				displayOptions: {
 					show: {
 						'@version': [1],
@@ -111,23 +111,23 @@ export class ToolVectorStore implements INodeType {
 				},
 			},
 			{
-				displayName: 'Description of Data',
+				displayName: '数据描述',
 				name: 'description',
 				type: 'string',
 				default: '',
-				placeholder: "[Describe your data here, e.g. a user's name, email, etc.]",
+				placeholder: '在此描述您的数据,例如：用户的姓名、电子邮件等',
 				description:
-					'Describe the data in vector store. This will be used to fill this tool description: Useful for when you need to answer questions about [name]. Whenever you need information about [data description], you should ALWAYS use this. Input should be a fully formed question.',
+					'描述向量存储中的数据。这将用于填充此工具描述：当您需要回答有关 [名称] 的问题时很有用。每当您需要有关 [数据描述] 的信息时,您应该始终使用此工具。输入应该是一个完整的问题。',
 				typeOptions: {
 					rows: 3,
 				},
 			},
 			{
-				displayName: 'Limit',
+				displayName: '限制',
 				name: 'topK',
 				type: 'number',
 				default: 4,
-				description: 'The maximum number of results to return',
+				description: '返回的最大结果数',
 			},
 		],
 	};

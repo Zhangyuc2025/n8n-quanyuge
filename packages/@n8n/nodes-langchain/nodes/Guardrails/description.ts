@@ -9,12 +9,12 @@ import { configureNodeInputs } from './helpers/configureNodeInputs';
 import { LLM_SYSTEM_RULES } from './helpers/model';
 
 const THRESHOLD_OPTION: INodeProperties = {
-	displayName: 'Threshold',
+	displayName: '阈值',
 	name: 'threshold',
 	type: 'number',
 	default: '',
-	description: 'Minimum confidence threshold to trigger the guardrail (0.0 to 1.0)',
-	hint: 'Inputs scoring less than this will be treated as violations',
+	description: '触发防护栏的最小置信度阈值（0.0 到 1.0）',
+	hint: '评分低于此值的输入将被视为违规',
 };
 
 const getPromptOption: (
@@ -23,12 +23,11 @@ const getPromptOption: (
 	hint?: string,
 ) => INodeProperties[] = (defaultPrompt, collapsible = true, hint) => {
 	const promptParameters: INodeProperties = {
-		displayName: 'Prompt',
+		displayName: '提示词',
 		name: 'prompt',
 		type: 'string',
 		default: defaultPrompt,
-		description:
-			'The system prompt used by the guardrail. Thresholds and JSON output are enforced by the node automatically.',
+		description: '防护栏使用的系统提示词。阈值和 JSON 输出由节点自动执行。',
 		hint,
 		typeOptions: {
 			rows: 6,
@@ -36,7 +35,7 @@ const getPromptOption: (
 	};
 	if (collapsible) {
 		return [
-			{ displayName: 'Customize Prompt', name: 'customizePrompt', type: 'boolean', default: false },
+			{ displayName: '自定义提示词', name: 'customizePrompt', type: 'boolean', default: false },
 			{ ...promptParameters, displayOptions: { show: { customizePrompt: [true] } } },
 		];
 	}
@@ -44,21 +43,20 @@ const getPromptOption: (
 };
 
 const wrapValue = (properties: INodeProperties[]) => ({
-	displayName: 'Value',
+	displayName: '值',
 	name: 'value',
 	values: properties,
 });
 
 export const versionDescription: INodeTypeDescription = {
-	displayName: 'Guardrails',
+	displayName: '防护栏',
 	name: 'guardrails',
 	icon: 'file:guardrails.svg',
 	group: ['transform'],
 	version: 1,
-	description:
-		'Safeguard AI models from malicious input or prevent them from generating undesirable responses',
+	description: '保护 AI 模型免受恶意输入的影响，或防止它们生成不良响应',
 	defaults: {
-		name: 'Guardrails',
+		name: '防护栏',
 	},
 	codex: {
 		alias: ['LangChain', 'Guardrails', 'PII', 'Secret', 'Injection', 'Sanitize'],
@@ -89,35 +87,35 @@ export const versionDescription: INodeTypeDescription = {
 	properties: [
 		{
 			displayName:
-				'Use guardrails to validate text against a set of policies (e.g. NSFW, prompt injection) or to sanitize it (e.g. personal data, secret keys)',
+				'使用防护栏根据一组策略（例如 NSFW、提示词注入）验证文本，或对其进行清理（例如个人数据、密钥）',
 			name: 'guardrailsUsage',
 			type: 'notice',
 			default: '',
 		},
 		{
-			displayName: 'Operation',
+			displayName: '操作',
 			name: 'operation',
 			type: 'options',
 			noDataExpression: true,
 			options: [
 				{
-					name: 'Check Text for Violations',
+					name: '检查文本是否违规',
 					value: 'classify',
-					action: 'Check text for violations',
-					description: 'Validate text against a set of policies (e.g. NSFW, prompt injection)',
+					action: '检查文本是否违规',
+					description: '根据一组策略（例如 NSFW、提示词注入）验证文本',
 				},
 				{
-					name: 'Sanitize Text',
+					name: '清理文本',
 					value: 'sanitize',
-					action: 'Sanitize text',
+					action: '清理文本',
 					// eslint-disable-next-line n8n-nodes-base/node-param-description-excess-final-period
-					description: 'Redact text to mask personal data, secret keys, URLs, etc.',
+					description: '编辑文本以屏蔽个人数据、密钥、URL 等。',
 				},
 			],
 			default: 'classify',
 		},
 		{
-			displayName: 'Text To Check',
+			displayName: '要检查的文本',
 			name: 'text',
 			type: 'string',
 			required: true,
@@ -127,19 +125,19 @@ export const versionDescription: INodeTypeDescription = {
 			},
 		},
 		{
-			displayName: 'Guardrails',
+			displayName: '防护栏',
 			name: 'guardrails',
-			placeholder: 'Add Guardrail',
+			placeholder: '添加防护栏',
 			type: 'collection',
 			default: {},
 			options: [
 				{
-					displayName: 'Keywords',
+					displayName: '关键词',
 					name: 'keywords',
 					type: 'string',
 					default: '',
 					description:
-						'This guardrail checks if specified keywords appear in the input text and can be configured to trigger tripwires based on keyword matches. Multiple keywords can be added separated by comma.',
+						'此防护栏检查输入文本中是否出现指定的关键词，并可配置为根据关键词匹配触发警报。可以用逗号分隔添加多个关键词。',
 					displayOptions: {
 						show: {
 							'/operation': ['classify'],
@@ -147,11 +145,11 @@ export const versionDescription: INodeTypeDescription = {
 					},
 				},
 				{
-					displayName: 'Jailbreak',
+					displayName: '越狱',
 					name: 'jailbreak',
 					type: 'fixedCollection',
 					default: { value: { threshold: 0.7 } },
-					description: 'Detects attempts to jailbreak or bypass AI safety measures',
+					description: '检测试图越狱或绕过 AI 安全措施的行为',
 					options: [wrapValue([THRESHOLD_OPTION, ...getPromptOption(JAILBREAK_PROMPT)])],
 					displayOptions: {
 						show: {
@@ -160,11 +158,11 @@ export const versionDescription: INodeTypeDescription = {
 					},
 				},
 				{
-					displayName: 'NSFW',
+					displayName: 'NSFW（不适合工作场合）',
 					name: 'nsfw',
 					type: 'fixedCollection',
 					default: { value: { threshold: 0.7 } },
-					description: 'Detects attempts to generate NSFW content',
+					description: '检测试图生成 NSFW 内容的行为',
 					options: [wrapValue([THRESHOLD_OPTION, ...getPromptOption(NSFW_SYSTEM_PROMPT)])],
 					displayOptions: {
 						show: {
@@ -173,25 +171,25 @@ export const versionDescription: INodeTypeDescription = {
 					},
 				},
 				{
-					displayName: 'Personal Data (PII)',
+					displayName: '个人数据（PII）',
 					name: 'pii',
 					type: 'fixedCollection',
 					default: { value: { type: 'all' } },
-					description: 'Detects attempts to use personal data content',
+					description: '检测试图使用个人数据内容的行为',
 					options: [
 						wrapValue([
 							{
-								displayName: 'Type',
+								displayName: '类型',
 								name: 'type',
 								type: 'options',
 								default: '',
 								options: [
-									{ name: 'All', value: 'all' },
-									{ name: 'Selected', value: 'selected' },
+									{ name: '全部', value: 'all' },
+									{ name: '已选择', value: 'selected' },
 								],
 							},
 							{
-								displayName: 'Entities',
+								displayName: '实体',
 								name: 'entities',
 								type: 'multiOptions',
 								default: [],
@@ -209,36 +207,34 @@ export const versionDescription: INodeTypeDescription = {
 					],
 				},
 				{
-					displayName: 'Secret Keys',
+					displayName: '密钥',
 					name: 'secretKeys',
 					type: 'fixedCollection',
 					default: { value: { permissiveness: 'balanced' } },
 					description:
-						'Detects attempts to use secret keys in the input text. Scans text for common patterns, applies entropy analysis to detect random-looking strings.',
+						'检测输入文本中尝试使用密钥的行为。扫描文本中的常见模式，应用熵分析来检测看起来随机的字符串。',
 					options: [
 						wrapValue([
 							{
-								displayName: 'Permissiveness',
+								displayName: '宽松度',
 								name: 'permissiveness',
 								type: 'options',
 								default: '',
 								options: [
 									{
-										name: 'Strict',
+										name: '严格',
 										value: 'strict',
-										description:
-											'Most sensitive, may have more false positives (commonly flag high entropy filenames or code)',
+										description: '最敏感，可能会有更多误报（通常会标记高熵文件名或代码）',
 									},
 									{
-										name: 'Balanced',
+										name: '平衡',
 										value: 'balanced',
-										description: 'Balanced between sensitivity and specificity',
+										description: '在敏感性和特异性之间取得平衡',
 									},
 									{
-										name: 'Permissive',
+										name: '宽松',
 										value: 'permissive',
-										description:
-											'Least sensitive, may miss some secret keys (but also reduces false positives)',
+										description: '最不敏感，可能会错过一些密钥（但也减少了误报）',
 									},
 								],
 							},
@@ -246,19 +242,15 @@ export const versionDescription: INodeTypeDescription = {
 					],
 				},
 				{
-					displayName: 'Topical Alignment',
+					displayName: '主题对齐',
 					name: 'topicalAlignment',
 					type: 'fixedCollection',
 					default: { value: { threshold: 0.7 } },
-					description: 'Detects attempts to stray from the business scope',
+					description: '检测试图偏离业务范围的行为',
 					options: [
 						wrapValue([
 							THRESHOLD_OPTION,
-							...getPromptOption(
-								TOPICAL_ALIGNMENT_SYSTEM_PROMPT,
-								false,
-								'Make sure you replace the placeholder.',
-							),
+							...getPromptOption(TOPICAL_ALIGNMENT_SYSTEM_PROMPT, false, '请确保替换占位符。'),
 						]),
 					],
 					displayOptions: {
@@ -268,24 +260,23 @@ export const versionDescription: INodeTypeDescription = {
 					},
 				},
 				{
-					displayName: 'URLs',
+					displayName: 'URL',
 					name: 'urls',
 					type: 'fixedCollection',
 					default: { value: { allowedSchemes: ['https'], allowedUrls: '' } },
-					description: 'Blocks URLs that are not in the allowed list',
+					description: '阻止不在允许列表中的 URL',
 					options: [
 						wrapValue([
 							{
-								displayName: 'Block All URLs Except',
+								displayName: '阻止所有 URL，除了',
 								name: 'allowedUrls',
 								type: 'string',
 								// keep placeholder to avoid limitation that removes collections with unchanged default values
 								default: 'PLACEHOLDER',
-								description:
-									'Multiple URLs can be added separated by comma. Leave empty to block all URLs.',
+								description: '可以用逗号分隔添加多个 URL。留空以阻止所有 URL。',
 							},
 							{
-								displayName: 'Allowed Schemes',
+								displayName: '允许的协议',
 								name: 'allowedSchemes',
 								type: 'multiOptions',
 								default: ['https'],
@@ -308,12 +299,11 @@ export const versionDescription: INodeTypeDescription = {
 								],
 							},
 							{
-								displayName: 'Block Userinfo',
+								displayName: '阻止用户信息',
 								name: 'blockUserinfo',
 								type: 'boolean',
 								default: true,
-								description:
-									'Whether to block URLs with userinfo (user:pass@domain) to prevent credential injection',
+								description: '是否阻止包含用户信息的 URL（user:pass@domain）以防止凭据注入',
 								displayOptions: {
 									show: {
 										'/operation': ['classify'],
@@ -321,12 +311,11 @@ export const versionDescription: INodeTypeDescription = {
 								},
 							},
 							{
-								displayName: 'Sanitize Userinfo',
+								displayName: '清理用户信息',
 								name: 'blockUserinfo',
 								type: 'boolean',
 								default: true,
-								description:
-									'Whether to sanitize URLs with userinfo (user:pass@domain) to prevent credential injection',
+								description: '是否清理包含用户信息的 URL（user:pass@domain）以防止凭据注入',
 								displayOptions: {
 									show: {
 										'/operation': ['sanitize'],
@@ -334,39 +323,38 @@ export const versionDescription: INodeTypeDescription = {
 								},
 							},
 							{
-								displayName: 'Allow Subdomains',
+								displayName: '允许子域名',
 								name: 'allowSubdomains',
 								type: 'boolean',
 								default: true,
-								description:
-									'Whether to allow subdomains (e.g. sub.domain.com if domain.com is allowed)',
+								description: '是否允许子域名（例如，如果允许 domain.com，则允许 sub.domain.com）',
 							},
 						]),
 					],
 				},
 				{
-					displayName: 'Custom',
+					displayName: '自定义',
 					name: 'custom',
 					type: 'fixedCollection',
 					typeOptions: {
 						sortable: true,
 						multipleValues: true,
 					},
-					placeholder: 'Add Custom Guardrail',
+					placeholder: '添加自定义防护栏',
 					default: {
-						guardrail: [{ name: 'Custom Guardrail' }],
+						guardrail: [{ name: '自定义防护栏' }],
 					},
 					options: [
 						{
-							displayName: 'Guardrail',
+							displayName: '防护栏',
 							name: 'guardrail',
 							values: [
 								{
-									displayName: 'Name',
+									displayName: '名称',
 									name: 'name',
 									type: 'string',
 									default: '',
-									description: 'Name of the custom guardrail',
+									description: '自定义防护栏的名称',
 								},
 								THRESHOLD_OPTION,
 								...getPromptOption('', false),
@@ -380,34 +368,33 @@ export const versionDescription: INodeTypeDescription = {
 					},
 				},
 				{
-					displayName: 'Custom Regex',
+					displayName: '自定义正则表达式',
 					name: 'customRegex',
 					type: 'fixedCollection',
 					typeOptions: {
 						sortable: true,
 						multipleValues: true,
 					},
-					placeholder: 'Add Custom Regex',
+					placeholder: '添加自定义正则表达式',
 					default: {},
 					options: [
 						{
-							displayName: 'Regex',
+							displayName: '正则表达式',
 							name: 'regex',
 							values: [
 								{
-									displayName: 'Name',
+									displayName: '名称',
 									name: 'name',
 									type: 'string',
 									default: '',
-									description:
-										'Name of the custom regex. Will be used for replacement when sanitizing.',
+									description: '自定义正则表达式的名称。清理时将用于替换。',
 								},
 								{
-									displayName: 'Regex',
+									displayName: '正则表达式',
 									name: 'value',
 									type: 'string',
 									default: '',
-									description: 'Regex to match the input text',
+									description: '用于匹配输入文本的正则表达式',
 									placeholder: '/text/gi',
 								},
 							],
@@ -417,10 +404,9 @@ export const versionDescription: INodeTypeDescription = {
 			],
 		},
 		{
-			displayName: 'Customize System Message',
+			displayName: '自定义系统消息',
 			name: 'customizeSystemMessage',
-			description:
-				'Whether to customize the system message used by the guardrail to specify the output format',
+			description: '是否自定义防护栏使用的系统消息以指定输出格式',
 			type: 'boolean',
 			default: false,
 			displayOptions: {
@@ -430,12 +416,11 @@ export const versionDescription: INodeTypeDescription = {
 			},
 		},
 		{
-			displayName: 'System Message',
+			displayName: '系统消息',
 			name: 'systemMessage',
 			type: 'string',
-			description:
-				'The system message used by the guardrail to enforce thresholds and JSON output according to schema',
-			hint: 'This message is appended after prompts defined by guardrails',
+			description: '防护栏使用的系统消息，用于根据架构执行阈值和 JSON 输出',
+			hint: '此消息在防护栏定义的提示词之后附加',
 			default: LLM_SYSTEM_RULES,
 			typeOptions: {
 				rows: 6,

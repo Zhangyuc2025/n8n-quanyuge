@@ -7,13 +7,12 @@ import { ToolWorkflowV2 } from './v2/ToolWorkflowV2.node';
 export class ToolWorkflow extends VersionedNodeType {
 	constructor() {
 		const baseDescription: INodeTypeBaseDescription = {
-			displayName: 'Call n8n Sub-Workflow Tool',
+			displayName: '调用 n8n 子工作流工具',
 			name: 'toolWorkflow',
 			icon: 'fa:network-wired',
 			iconColor: 'black',
 			group: ['transform'],
-			description:
-				'Uses another n8n workflow as a tool. Allows packaging any n8n node(s) as a tool.',
+			description: '使用另一个 n8n 工作流作为工具。允许将任何 n8n 节点打包为工具。',
 			codex: {
 				categories: ['AI'],
 				subcategories: {

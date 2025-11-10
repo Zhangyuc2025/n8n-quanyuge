@@ -18,15 +18,15 @@ import { processItem } from './processItem';
 
 export class ChainRetrievalQa implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Question and Answer Chain',
+		displayName: '问答链',
 		name: 'chainRetrievalQa',
 		icon: 'fa:link',
 		iconColor: 'black',
 		group: ['transform'],
 		version: [1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6],
-		description: 'Answer questions about retrieved documents',
+		description: '回答关于检索到的文档的问题',
 		defaults: {
-			name: 'Question and Answer Chain',
+			name: '问答链',
 			color: '#909298',
 		},
 		codex: {
@@ -47,13 +47,13 @@ export class ChainRetrievalQa implements INodeType {
 		inputs: [
 			NodeConnectionTypes.Main,
 			{
-				displayName: 'Model',
+				displayName: '模型',
 				maxConnections: 1,
 				type: NodeConnectionTypes.AiLanguageModel,
 				required: true,
 			},
 			{
-				displayName: 'Retriever',
+				displayName: '检索器',
 				maxConnections: 1,
 				type: NodeConnectionTypes.AiRetriever,
 				required: true,
@@ -64,7 +64,7 @@ export class ChainRetrievalQa implements INodeType {
 		properties: [
 			getTemplateNoticeField(1960),
 			{
-				displayName: 'Query',
+				displayName: '查询',
 				name: 'query',
 				type: 'string',
 				required: true,
@@ -76,7 +76,7 @@ export class ChainRetrievalQa implements INodeType {
 				},
 			},
 			{
-				displayName: 'Query',
+				displayName: '查询',
 				name: 'query',
 				type: 'string',
 				required: true,
@@ -88,7 +88,7 @@ export class ChainRetrievalQa implements INodeType {
 				},
 			},
 			{
-				displayName: 'Query',
+				displayName: '查询',
 				name: 'query',
 				type: 'string',
 				required: true,
@@ -118,12 +118,12 @@ export class ChainRetrievalQa implements INodeType {
 				displayOptions: { show: { promptType: ['auto'], '@version': [{ _cnd: { gte: 1.4 } }] } },
 			},
 			{
-				displayName: 'Prompt (User Message)',
+				displayName: '提示词（用户消息）',
 				name: 'text',
 				type: 'string',
 				required: true,
 				default: '',
-				placeholder: 'e.g. Hello, how can you help me?',
+				placeholder: '例如：你好，你能帮我什么？',
 				typeOptions: {
 					rows: 2,
 				},
@@ -134,15 +134,15 @@ export class ChainRetrievalQa implements INodeType {
 				},
 			},
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
 				type: 'collection',
 				default: {},
-				placeholder: 'Add Option',
+				placeholder: '添加选项',
 				options: [
 					{
 						...systemPromptOption,
-						description: `Template string used for the system prompt. This should include the variable \`{context}\` for the provided context. For text completion models, you should also include the variable \`{${LEGACY_INPUT_TEMPLATE_KEY}}\` for the user’s query.`,
+						description: `用于系统提示词的模板字符串。这应包含变量 \`{context}\` 来表示提供的上下文。对于文本完成模型，您还应包含变量 \`{${LEGACY_INPUT_TEMPLATE_KEY}}\` 来表示用户的查询`,
 						displayOptions: {
 							show: {
 								'@version': [{ _cnd: { lt: 1.5 } }],
@@ -151,7 +151,7 @@ export class ChainRetrievalQa implements INodeType {
 					},
 					{
 						...systemPromptOption,
-						description: `Template string used for the system prompt. This should include the variable \`{context}\` for the provided context. For text completion models, you should also include the variable \`{${INPUT_TEMPLATE_KEY}}\` for the user’s query.`,
+						description: `用于系统提示词的模板字符串。这应包含变量 \`{context}\` 来表示提供的上下文。对于文本完成模型，您还应包含变量 \`{${INPUT_TEMPLATE_KEY}}\` 来表示用户的查询`,
 						displayOptions: {
 							show: {
 								'@version': [{ _cnd: { gte: 1.5 } }],

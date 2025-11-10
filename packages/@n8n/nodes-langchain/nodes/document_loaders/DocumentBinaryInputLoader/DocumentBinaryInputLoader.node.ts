@@ -23,14 +23,14 @@ export class DocumentBinaryInputLoader implements INodeType {
 		// This node is deprecated and will be removed in the future.
 		// The functionality was merged with the `DocumentJSONInputLoader` to `DocumentDefaultDataLoader`
 		hidden: true,
-		displayName: 'Binary Input Loader',
+		displayName: '二进制输入加载器',
 		name: 'documentBinaryInputLoader',
 		icon: 'file:binary.svg',
 		group: ['transform'],
 		version: 1,
-		description: 'Use binary data from a previous step in the workflow',
+		description: '使用工作流中前一步骤的二进制数据',
 		defaults: {
-			name: 'Binary Input Loader',
+			name: '二进制输入加载器',
 		},
 		codex: {
 			categories: ['AI'],
@@ -48,7 +48,7 @@ export class DocumentBinaryInputLoader implements INodeType {
 
 		inputs: [
 			{
-				displayName: 'Text Splitter',
+				displayName: '文本分割器',
 				maxConnections: 1,
 				type: NodeConnectionTypes.AiTextSplitter,
 				required: true,
@@ -56,59 +56,59 @@ export class DocumentBinaryInputLoader implements INodeType {
 		],
 
 		outputs: [NodeConnectionTypes.AiDocument],
-		outputNames: ['Document'],
+		outputNames: ['文档'],
 		properties: [
 			getConnectionHintNoticeField([NodeConnectionTypes.AiVectorStore]),
 			{
-				displayName: 'Loader Type',
+				displayName: '加载器类型',
 				name: 'loader',
 				type: 'options',
 				default: 'jsonLoader',
 				required: true,
 				options: [
 					{
-						name: 'CSV Loader',
+						name: 'CSV 加载器',
 						value: 'csvLoader',
-						description: 'Load CSV files',
+						description: '加载 CSV 文件',
 					},
 					{
-						name: 'Docx Loader',
+						name: 'Docx 加载器',
 						value: 'docxLoader',
-						description: 'Load Docx documents',
+						description: '加载 Docx 文档',
 					},
 					{
-						name: 'EPub Loader',
+						name: 'EPub 加载器',
 						value: 'epubLoader',
-						description: 'Load EPub files',
+						description: '加载 EPub 文件',
 					},
 					{
-						name: 'JSON Loader',
+						name: 'JSON 加载器',
 						value: 'jsonLoader',
-						description: 'Load JSON files',
+						description: '加载 JSON 文件',
 					},
 					{
-						name: 'PDF Loader',
+						name: 'PDF 加载器',
 						value: 'pdfLoader',
-						description: 'Load PDF documents',
+						description: '加载 PDF 文档',
 					},
 					{
-						name: 'Text Loader',
+						name: '文本加载器',
 						value: 'textLoader',
-						description: 'Load plain text files',
+						description: '加载纯文本文件',
 					},
 				],
 			},
 			{
-				displayName: 'Binary Data Key',
+				displayName: '二进制数据键',
 				name: 'binaryDataKey',
 				type: 'string',
 				default: 'data',
 				required: true,
-				description: 'Name of the binary property from which to read the file buffer',
+				description: '用于读取文件缓冲区的二进制属性名称',
 			},
 			// PDF Only Fields
 			{
-				displayName: 'Split Pages',
+				displayName: '拆分页面',
 				name: 'splitPages',
 				type: 'boolean',
 				default: true,
@@ -120,11 +120,11 @@ export class DocumentBinaryInputLoader implements INodeType {
 			},
 			// CSV Only Fields
 			{
-				displayName: 'Column',
+				displayName: '列',
 				name: 'column',
 				type: 'string',
 				default: '',
-				description: 'Column to extract from CSV',
+				description: '从 CSV 中提取的列',
 				displayOptions: {
 					show: {
 						loader: ['csvLoader'],
@@ -132,10 +132,10 @@ export class DocumentBinaryInputLoader implements INodeType {
 				},
 			},
 			{
-				displayName: 'Separator',
+				displayName: '分隔符',
 				name: 'separator',
 				type: 'string',
-				description: 'Separator to use for CSV',
+				description: '用于 CSV 的分隔符',
 				default: ',',
 				displayOptions: {
 					show: {
@@ -145,11 +145,11 @@ export class DocumentBinaryInputLoader implements INodeType {
 			},
 			// JSON Only Fields
 			{
-				displayName: 'Pointers',
+				displayName: '指针',
 				name: 'pointers',
 				type: 'string',
 				default: '',
-				description: 'Pointers to extract from JSON, e.g. "/text" or "/text, /meta/title"',
+				description: '从 JSON 中提取的指针，例如："/text" 或 "/text, /meta/title"',
 				displayOptions: {
 					show: {
 						loader: ['jsonLoader'],
@@ -157,18 +157,17 @@ export class DocumentBinaryInputLoader implements INodeType {
 				},
 			},
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
 				type: 'collection',
-				placeholder: 'Add Option',
+				placeholder: '添加选项',
 				default: {},
 				options: [
 					{
 						...metadataFilterField,
-						displayName: 'Metadata',
-						description:
-							'Metadata to add to each document. Could be used for filtering during retrieval',
-						placeholder: 'Add property',
+						displayName: '元数据',
+						description: '要添加到每个文档的元数据。可用于检索时的过滤',
+						placeholder: '添加属性',
 					},
 				],
 			},

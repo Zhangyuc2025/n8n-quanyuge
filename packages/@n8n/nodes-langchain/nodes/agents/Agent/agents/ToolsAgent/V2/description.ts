@@ -5,18 +5,18 @@ import { getBatchingOptionFields } from '@utils/sharedFields';
 import { commonOptions } from '../options';
 
 const enableStreaminOption: INodeProperties = {
-	displayName: 'Enable Streaming',
+	displayName: '启用流式传输',
 	name: 'enableStreaming',
 	type: 'boolean',
 	default: true,
-	description: 'Whether this agent will stream the response in real-time as it generates text',
+	description: '此智能体是否在生成文本时实时流式传输响应',
 };
 
 export const getToolsAgentProperties = ({
 	withStreaming,
 }: { withStreaming: boolean }): INodeProperties[] => [
 	{
-		displayName: 'Options',
+		displayName: '选项',
 		name: 'options',
 		type: 'collection',
 		default: {},
@@ -33,7 +33,7 @@ export const getToolsAgentProperties = ({
 		},
 	},
 	{
-		displayName: 'Options',
+		displayName: '选项',
 		name: 'options',
 		type: 'collection',
 		default: {},

@@ -74,15 +74,15 @@ class MemoryChatBufferSingleton {
 
 export class MemoryBufferWindow implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Simple Memory',
+		displayName: '简单记忆',
 		name: 'memoryBufferWindow',
 		icon: 'fa:database',
 		iconColor: 'black',
 		group: ['transform'],
 		version: [1, 1.1, 1.2, 1.3],
-		description: 'Stores in n8n memory, so no credentials required',
+		description: '存储在 n8n 内存中，无需凭据',
 		defaults: {
-			name: 'Simple Memory',
+			name: '简单记忆',
 		},
 		codex: {
 			categories: ['AI'],
@@ -102,15 +102,15 @@ export class MemoryBufferWindow implements INodeType {
 		inputs: [],
 
 		outputs: [NodeConnectionTypes.AiMemory],
-		outputNames: ['Memory'],
+		outputNames: ['记忆'],
 		properties: [
 			getConnectionHintNoticeField([NodeConnectionTypes.AiAgent]),
 			{
-				displayName: 'Session Key',
+				displayName: '会话键',
 				name: 'sessionKey',
 				type: 'string',
 				default: 'chat_history',
-				description: 'The key to use to store the memory in the workflow data',
+				description: '用于在工作流数据中存储记忆的键',
 				displayOptions: {
 					show: {
 						'@version': [1],
@@ -118,11 +118,11 @@ export class MemoryBufferWindow implements INodeType {
 				},
 			},
 			{
-				displayName: 'Session ID',
+				displayName: '会话 ID',
 				name: 'sessionKey',
 				type: 'string',
 				default: '={{ $json.sessionId }}',
-				description: 'The key to use to store the memory',
+				description: '用于存储记忆的键',
 				displayOptions: {
 					show: {
 						'@version': [1.1],

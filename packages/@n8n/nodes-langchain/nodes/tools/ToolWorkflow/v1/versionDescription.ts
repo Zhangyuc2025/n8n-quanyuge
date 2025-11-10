@@ -11,13 +11,13 @@ import {
 import { getConnectionHintNoticeField } from '../../../../utils/sharedFields';
 
 export const versionDescription: INodeTypeDescription = {
-	displayName: 'Call n8n Workflow Tool',
+	displayName: '调用 n8n 工作流工具',
 	name: 'toolWorkflow',
 	group: ['transform'],
 	version: [1, 1.1, 1.2, 1.3],
-	description: 'Uses another n8n workflow as a tool. Allows packaging any n8n node(s) as a tool.',
+	description: '使用另一个 n8n 工作流作为工具。允许将任何 n8n 节点打包为工具。',
 	defaults: {
-		name: 'Call n8n Workflow Tool',
+		name: '调用 n8n 工作流工具',
 	},
 	codex: {
 		categories: ['AI'],
@@ -37,18 +37,18 @@ export const versionDescription: INodeTypeDescription = {
 	inputs: [],
 
 	outputs: [NodeConnectionTypes.AiTool],
-	outputNames: ['Tool'],
+	outputNames: ['工具'],
 	properties: [
 		getConnectionHintNoticeField([NodeConnectionTypes.AiAgent]),
 		{
 			displayName:
-				'See an example of a workflow to suggest meeting slots using AI <a href="/templates/1953" target="_blank">here</a>.',
+				'在<a href="/templates/1953" target="_blank">这里</a>查看使用 AI 建议会议时间段的工作流示例。',
 			name: 'noticeTemplateExample',
 			type: 'notice',
 			default: '',
 		},
 		{
-			displayName: 'Name',
+			displayName: '名称',
 			name: 'name',
 			type: 'string',
 			default: '',
@@ -60,14 +60,13 @@ export const versionDescription: INodeTypeDescription = {
 			},
 		},
 		{
-			displayName: 'Name',
+			displayName: '名称',
 			name: 'name',
 			type: 'string',
 			default: '',
-			placeholder: 'e.g. My_Color_Tool',
+			placeholder: '例如：My_Color_Tool',
 			validateType: 'string-alphanumeric',
-			description:
-				'The name of the function to be called, could contain letters, numbers, and underscores only',
+			description: '要调用的函数名称,只能包含字母、数字和下划线',
 			displayOptions: {
 				show: {
 					'@version': [{ _cnd: { gte: 1.1 } }],
@@ -75,12 +74,11 @@ export const versionDescription: INodeTypeDescription = {
 			},
 		},
 		{
-			displayName: 'Description',
+			displayName: '描述',
 			name: 'description',
 			type: 'string',
 			default: '',
-			placeholder:
-				'Call this tool to get a random color. The input should be a string with comma separted names of colors to exclude.',
+			placeholder: '调用此工具获取随机颜色。输入应该是一个字符串,包含要排除的颜色名称,用逗号分隔。',
 			typeOptions: {
 				rows: 3,
 			},
@@ -88,37 +86,37 @@ export const versionDescription: INodeTypeDescription = {
 
 		{
 			displayName:
-				'This tool will call the workflow you define below, and look in the last node for the response. The workflow needs to start with an Execute Workflow trigger',
+				'此工具将调用您在下面定义的工作流,并在最后一个节点中查找响应。工作流需要以执行工作流触发器开始',
 			name: 'executeNotice',
 			type: 'notice',
 			default: '',
 		},
 
 		{
-			displayName: 'Source',
+			displayName: '来源',
 			name: 'source',
 			type: 'options',
 			options: [
 				{
-					name: 'Database',
+					name: '数据库',
 					value: 'database',
-					description: 'Load the workflow from the database by ID',
+					description: '通过 ID 从数据库加载工作流',
 				},
 				{
-					name: 'Define Below',
+					name: '在下面定义',
 					value: 'parameter',
-					description: 'Pass the JSON code of a workflow',
+					description: '传递工作流的 JSON 代码',
 				},
 			],
 			default: 'database',
-			description: 'Where to get the workflow to execute from',
+			description: '从哪里获取要执行的工作流',
 		},
 
 		// ----------------------------------
 		//         source:database
 		// ----------------------------------
 		{
-			displayName: 'Workflow ID',
+			displayName: '工作流 ID',
 			name: 'workflowId',
 			type: 'string',
 			displayOptions: {
@@ -129,12 +127,12 @@ export const versionDescription: INodeTypeDescription = {
 			},
 			default: '',
 			required: true,
-			description: 'The workflow to execute',
-			hint: 'Can be found in the URL of the workflow',
+			description: '要执行的工作流',
+			hint: '可以在工作流的 URL 中找到',
 		},
 
 		{
-			displayName: 'Workflow',
+			displayName: '工作流',
 			name: 'workflowId',
 			type: 'workflowSelector',
 			displayOptions: {
@@ -151,7 +149,7 @@ export const versionDescription: INodeTypeDescription = {
 		//         source:parameter
 		// ----------------------------------
 		{
-			displayName: 'Workflow JSON',
+			displayName: '工作流 JSON',
 			name: 'workflowJson',
 			type: 'json',
 			typeOptions: {
@@ -164,20 +162,20 @@ export const versionDescription: INodeTypeDescription = {
 			},
 			default: '\n\n\n\n\n\n\n\n\n',
 			required: true,
-			description: 'The workflow JSON code to execute',
+			description: '要执行的工作流 JSON 代码',
 		},
 		// ----------------------------------
 		//         For all
 		// ----------------------------------
 		{
-			displayName: 'Field to Return',
+			displayName: '要返回的字段',
 			name: 'responsePropertyName',
 			type: 'string',
 			default: 'response',
 			required: true,
-			hint: 'The field in the last-executed node of the workflow that contains the response',
+			hint: '工作流最后执行的节点中包含响应的字段',
 			description:
-				'Where to find the data that this tool should return. n8n will look in the output of the last-executed node of the workflow for a field with this name, and return its value.',
+				'在哪里找到此工具应返回的数据。n8n 将在工作流最后执行的节点的输出中查找具有此名称的字段,并返回其值。',
 			displayOptions: {
 				show: {
 					'@version': [{ _cnd: { lt: 1.3 } }],
@@ -185,12 +183,11 @@ export const versionDescription: INodeTypeDescription = {
 			},
 		},
 		{
-			displayName: 'Extra Workflow Inputs',
+			displayName: '额外工作流输入',
 			name: 'fields',
-			placeholder: 'Add Value',
+			placeholder: '添加值',
 			type: 'fixedCollection',
-			description:
-				"These will be output by the 'execute workflow' trigger of the workflow being called",
+			description: '这些将由被调用工作流的"执行工作流"触发器输出',
 			typeOptions: {
 				multipleValues: true,
 				sortable: true,
@@ -199,50 +196,49 @@ export const versionDescription: INodeTypeDescription = {
 			options: [
 				{
 					name: 'values',
-					displayName: 'Values',
+					displayName: '值',
 					values: [
 						{
-							displayName: 'Name',
+							displayName: '名称',
 							name: 'name',
 							type: 'string',
 							default: '',
-							placeholder: 'e.g. fieldName',
-							description:
-								'Name of the field to set the value of. Supports dot-notation. Example: data.person[0].name.',
+							placeholder: '例如：fieldName',
+							description: '要设置值的字段名称。支持点表示法。示例：data.person[0].name。',
 							requiresDataPath: 'single',
 						},
 						{
-							displayName: 'Type',
+							displayName: '类型',
 							name: 'type',
 							type: 'options',
-							description: 'The field value type',
+							description: '字段值类型',
 							// eslint-disable-next-line n8n-nodes-base/node-param-options-type-unsorted-items
 							options: [
 								{
-									name: 'String',
+									name: '字符串',
 									value: 'stringValue',
 								},
 								{
-									name: 'Number',
+									name: '数字',
 									value: 'numberValue',
 								},
 								{
-									name: 'Boolean',
+									name: '布尔值',
 									value: 'booleanValue',
 								},
 								{
-									name: 'Array',
+									name: '数组',
 									value: 'arrayValue',
 								},
 								{
-									name: 'Object',
+									name: '对象',
 									value: 'objectValue',
 								},
 							],
 							default: 'stringValue',
 						},
 						{
-							displayName: 'Value',
+							displayName: '值',
 							name: 'stringValue',
 							type: 'string',
 							default: '',
@@ -255,7 +251,7 @@ export const versionDescription: INodeTypeDescription = {
 							ignoreValidationDuringExecution: true,
 						},
 						{
-							displayName: 'Value',
+							displayName: '值',
 							name: 'numberValue',
 							type: 'string',
 							default: '',
@@ -268,17 +264,17 @@ export const versionDescription: INodeTypeDescription = {
 							ignoreValidationDuringExecution: true,
 						},
 						{
-							displayName: 'Value',
+							displayName: '值',
 							name: 'booleanValue',
 							type: 'options',
 							default: 'true',
 							options: [
 								{
-									name: 'True',
+									name: '真',
 									value: 'true',
 								},
 								{
-									name: 'False',
+									name: '假',
 									value: 'false',
 								},
 							],
@@ -291,11 +287,11 @@ export const versionDescription: INodeTypeDescription = {
 							ignoreValidationDuringExecution: true,
 						},
 						{
-							displayName: 'Value',
+							displayName: '值',
 							name: 'arrayValue',
 							type: 'string',
 							default: '',
-							placeholder: 'e.g. [ arrayItem1, arrayItem2, arrayItem3 ]',
+							placeholder: '例如：[ arrayItem1, arrayItem2, arrayItem3 ]',
 							displayOptions: {
 								show: {
 									type: ['arrayValue'],
@@ -305,7 +301,7 @@ export const versionDescription: INodeTypeDescription = {
 							ignoreValidationDuringExecution: true,
 						},
 						{
-							displayName: 'Value',
+							displayName: '值',
 							name: 'objectValue',
 							type: 'json',
 							default: '={}',
@@ -328,11 +324,10 @@ export const versionDescription: INodeTypeDescription = {
 		//         Output Parsing
 		// ----------------------------------
 		{
-			displayName: 'Specify Input Schema',
+			displayName: '指定输入架构',
 			name: 'specifyInputSchema',
 			type: 'boolean',
-			description:
-				'Whether to specify the schema for the function. This would require the LLM to provide the input in the correct format and would validate it against the schema.',
+			description: '是否为函数指定架构。这将要求 LLM 以正确的格式提供输入,并根据架构进行验证。',
 			noDataExpression: true,
 			default: false,
 		},

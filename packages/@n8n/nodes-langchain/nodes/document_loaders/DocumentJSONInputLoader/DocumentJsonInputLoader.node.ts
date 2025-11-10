@@ -16,14 +16,14 @@ export class DocumentJsonInputLoader implements INodeType {
 		// This node is deprecated and will be removed in the future.
 		// The functionality was merged with the `DocumentBinaryInputLoader` to `DocumentDefaultDataLoader`
 		hidden: true,
-		displayName: 'JSON Input Loader',
+		displayName: 'JSON 输入加载器',
 		name: 'documentJsonInputLoader',
 		icon: 'file:json.svg',
 		group: ['transform'],
 		version: 1,
-		description: 'Use JSON data from a previous step in the workflow',
+		description: '使用工作流中前一步骤的 JSON 数据',
 		defaults: {
-			name: 'JSON Input Loader',
+			name: 'JSON 输入加载器',
 		},
 		codex: {
 			categories: ['AI'],
@@ -41,37 +41,36 @@ export class DocumentJsonInputLoader implements INodeType {
 
 		inputs: [
 			{
-				displayName: 'Text Splitter',
+				displayName: '文本分割器',
 				maxConnections: 1,
 				type: NodeConnectionTypes.AiTextSplitter,
 			},
 		],
-		inputNames: ['Text Splitter'],
+		inputNames: ['文本分割器'],
 
 		outputs: [NodeConnectionTypes.AiDocument],
-		outputNames: ['Document'],
+		outputNames: ['文档'],
 		properties: [
 			getConnectionHintNoticeField([NodeConnectionTypes.AiVectorStore]),
 			{
-				displayName: 'Pointers',
+				displayName: '指针',
 				name: 'pointers',
 				type: 'string',
 				default: '',
-				description: 'Pointers to extract from JSON, e.g. "/text" or "/text, /meta/title"',
+				description: '从 JSON 中提取的指针，例如："/text" 或 "/text, /meta/title"',
 			},
 			{
-				displayName: 'Options',
+				displayName: '选项',
 				name: 'options',
 				type: 'collection',
-				placeholder: 'Add Option',
+				placeholder: '添加选项',
 				default: {},
 				options: [
 					{
 						...metadataFilterField,
-						displayName: 'Metadata',
-						description:
-							'Metadata to add to each document. Could be used for filtering during retrieval',
-						placeholder: 'Add property',
+						displayName: '元数据',
+						description: '要添加到每个文档的元数据。可用于检索时的过滤',
+						placeholder: '添加属性',
 					},
 				],
 			},

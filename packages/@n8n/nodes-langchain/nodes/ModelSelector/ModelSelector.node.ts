@@ -55,17 +55,16 @@ function getCallbacksArray(
 
 export class ModelSelector implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Model Selector',
+		displayName: '模型选择器',
 		name: 'modelSelector',
 		icon: 'fa:map-signs',
 		iconColor: 'green',
 		defaults: {
-			name: 'Model Selector',
+			name: '模型选择器',
 		},
 		version: 1,
 		group: ['transform'],
-		description:
-			'Use this node to select one of the connected models to this node based on workflow data',
+		description: '使用此节点根据工作流数据选择连接到此节点的模型之一',
 		inputs: `={{
 				((parameters) => {
 					${configuredInputs.toString()};
@@ -90,37 +89,37 @@ export class ModelSelector implements INodeType {
 		properties: [
 			numberInputsProperty,
 			{
-				displayName: 'Rules',
+				displayName: '规则',
 				name: 'rules',
-				placeholder: 'Add Rule',
+				placeholder: '添加规则',
 				type: 'fixedCollection',
 				typeOptions: {
 					multipleValues: true,
 					sortable: true,
 				},
-				description: 'Rules to map workflow data to specific models',
+				description: '将工作流数据映射到特定模型的规则',
 				default: {},
 				options: [
 					{
-						displayName: 'Rule',
+						displayName: '规则',
 						name: 'rule',
 						values: [
 							{
-								displayName: 'Model',
+								displayName: '模型',
 								name: 'modelIndex',
 								type: 'options',
-								description: 'Choose model input from the list',
+								description: '从列表中选择模型输入',
 								default: 1,
 								required: true,
-								placeholder: 'Choose model input from the list',
+								placeholder: '从列表中选择模型输入',
 								typeOptions: {
 									loadOptionsMethod: 'getModels',
 								},
 							},
 							{
-								displayName: 'Conditions',
+								displayName: '条件',
 								name: 'conditions',
-								placeholder: 'Add Condition',
+								placeholder: '添加条件',
 								type: 'filter',
 								default: {},
 								typeOptions: {
@@ -130,7 +129,7 @@ export class ModelSelector implements INodeType {
 										version: 2,
 									},
 								},
-								description: 'Conditions that must be met to select this model',
+								description: '选择此模型必须满足的条件',
 							},
 						],
 					},
@@ -146,7 +145,7 @@ export class ModelSelector implements INodeType {
 
 				return Array.from({ length: numberInputs ?? 2 }, (_, i) => ({
 					value: i + 1,
-					name: `Model ${(i + 1).toString()}`,
+					name: `模型 ${(i + 1).toString()}`,
 				}));
 			},
 		},
@@ -159,9 +158,9 @@ export class ModelSelector implements INodeType {
 		)) as unknown[];
 
 		if (!models || models.length === 0) {
-			throw new NodeOperationError(this.getNode(), 'No models connected', {
+			throw new NodeOperationError(this.getNode(), '未连接模型', {
 				itemIndex,
-				description: 'No models found in input connections',
+				description: '在输入连接中未找到模型',
 			});
 		}
 		models.reverse();
@@ -169,9 +168,9 @@ export class ModelSelector implements INodeType {
 		const rules = this.getNodeParameter('rules.rule', itemIndex, []) as ModeleSelectionRule[];
 
 		if (!rules || rules.length === 0) {
-			throw new NodeOperationError(this.getNode(), 'No rules defined', {
+			throw new NodeOperationError(this.getNode(), '未定义规则', {
 				itemIndex,
-				description: 'At least one rule must be defined to select a model',
+				description: '必须定义至少一个规则来选择模型',
 			});
 		}
 
@@ -180,9 +179,9 @@ export class ModelSelector implements INodeType {
 			const modelIndex = rule.modelIndex;
 
 			if (modelIndex <= 0 || modelIndex > models.length) {
-				throw new NodeOperationError(this.getNode(), `Invalid model index ${modelIndex}`, {
+				throw new NodeOperationError(this.getNode(), `无效的模型索引 ${modelIndex}`, {
 					itemIndex,
-					description: `Model index must be between 1 and ${models.length}`,
+					description: `模型索引必须在 1 到 ${models.length} 之间`,
 				});
 			}
 
@@ -209,9 +208,9 @@ export class ModelSelector implements INodeType {
 			}
 		}
 
-		throw new NodeOperationError(this.getNode(), 'No matching rule found', {
+		throw new NodeOperationError(this.getNode(), '未找到匹配的规则', {
 			itemIndex,
-			description: 'None of the defined rules matched the workflow data',
+			description: '没有定义的规则与工作流数据匹配',
 		});
 	}
 }

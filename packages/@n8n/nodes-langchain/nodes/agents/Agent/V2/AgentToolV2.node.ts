@@ -37,7 +37,7 @@ export class AgentToolV2 implements INodeType {
 					...textInput,
 				},
 				{
-					displayName: 'Require Specific Output Format',
+					displayName: '需要特定输出格式',
 					name: 'hasOutputParser',
 					type: 'boolean',
 					default: false,
@@ -55,7 +55,7 @@ export class AgentToolV2 implements INodeType {
 					},
 				},
 				{
-					displayName: 'Enable Fallback Model',
+					displayName: '启用备用模型',
 					name: 'needsFallback',
 					type: 'boolean',
 					default: false,

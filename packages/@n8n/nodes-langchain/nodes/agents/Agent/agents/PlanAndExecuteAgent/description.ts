@@ -4,7 +4,7 @@ import { DEFAULT_STEP_EXECUTOR_HUMAN_CHAT_MESSAGE_TEMPLATE } from './prompt';
 
 export const planAndExecuteAgentProperties: INodeProperties[] = [
 	{
-		displayName: 'Text',
+		displayName: '文本',
 		name: 'text',
 		type: 'string',
 		required: true,
@@ -17,7 +17,7 @@ export const planAndExecuteAgentProperties: INodeProperties[] = [
 		default: '={{ $json.input }}',
 	},
 	{
-		displayName: 'Text',
+		displayName: '文本',
 		name: 'text',
 		type: 'string',
 		required: true,
@@ -30,7 +30,7 @@ export const planAndExecuteAgentProperties: INodeProperties[] = [
 		default: '={{ $json.chat_input }}',
 	},
 	{
-		displayName: 'Text',
+		displayName: '文本',
 		name: 'text',
 		type: 'string',
 		required: true,
@@ -43,7 +43,7 @@ export const planAndExecuteAgentProperties: INodeProperties[] = [
 		default: '={{ $json.chatInput }}',
 	},
 	{
-		displayName: 'Options',
+		displayName: '选项',
 		name: 'options',
 		type: 'collection',
 		displayOptions: {
@@ -55,11 +55,11 @@ export const planAndExecuteAgentProperties: INodeProperties[] = [
 		placeholder: '添加选项',
 		options: [
 			{
-				displayName: 'Human Message Template',
+				displayName: '人类消息模板',
 				name: 'humanMessageTemplate',
 				type: 'string',
 				default: DEFAULT_STEP_EXECUTOR_HUMAN_CHAT_MESSAGE_TEMPLATE,
-				description: 'The message that will be sent to the agent during each step execution',
+				description: '在每个步骤执行期间发送给智能体的消息',
 				typeOptions: {
 					rows: 6,
 				},

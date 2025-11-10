@@ -2,29 +2,29 @@ import { NodeConnectionTypes } from 'n8n-workflow';
 import type { IDisplayOptions, INodeProperties } from 'n8n-workflow';
 
 export const metadataFilterField: INodeProperties = {
-	displayName: 'Metadata Filter',
+	displayName: '元数据过滤器',
 	name: 'metadata',
 	type: 'fixedCollection',
-	description: 'Metadata to filter the document by',
+	description: '用于过滤文档的元数据',
 	typeOptions: {
 		multipleValues: true,
 	},
 	default: {},
-	placeholder: 'Add filter field',
+	placeholder: '添加过滤字段',
 	options: [
 		{
 			name: 'metadataValues',
-			displayName: 'Fields to Set',
+			displayName: '要设置的字段',
 			values: [
 				{
-					displayName: 'Name',
+					displayName: '名称',
 					name: 'name',
 					type: 'string',
 					default: '',
 					required: true,
 				},
 				{
-					displayName: 'Value',
+					displayName: '值',
 					name: 'value',
 					type: 'string',
 					default: '',
@@ -36,7 +36,7 @@ export const metadataFilterField: INodeProperties = {
 
 export function getTemplateNoticeField(templateId: number): INodeProperties {
 	return {
-		displayName: `Save time with an <a href="/templates/${templateId}" target="_blank">example</a> of how this node works`,
+		displayName: `通过<a href="/templates/${templateId}" target="_blank">示例</a>节省时间，了解此节点如何工作`,
 		name: 'notice',
 		type: 'notice',
 		default: '',
@@ -48,27 +48,26 @@ export function getBatchingOptionFields(
 	defaultBatchSize: number = 5,
 ): INodeProperties {
 	return {
-		displayName: 'Batch Processing',
+		displayName: '批处理',
 		name: 'batching',
 		type: 'collection',
-		placeholder: 'Add Batch Processing Option',
-		description: 'Batch processing options for rate limiting',
+		placeholder: '添加批处理选项',
+		description: '用于速率限制的批处理选项',
 		default: {},
 		options: [
 			{
-				displayName: 'Batch Size',
+				displayName: '批次大小',
 				name: 'batchSize',
 				default: defaultBatchSize,
 				type: 'number',
-				description:
-					'How many items to process in parallel. This is useful for rate limiting, but might impact the log output ordering.',
+				description: '并行处理的项目数量。这对于速率限制很有用，但可能会影响日志输出顺序。',
 			},
 			{
-				displayName: 'Delay Between Batches',
+				displayName: '批次间延迟',
 				name: 'delayBetweenBatches',
 				default: 0,
 				type: 'number',
-				description: 'Delay in milliseconds between batches. This is useful for rate limiting.',
+				description: '批次之间的延迟（毫秒）。这对于速率限制很有用。',
 			},
 		],
 		displayOptions,
@@ -79,24 +78,24 @@ const connectionsString = {
 	[NodeConnectionTypes.AiAgent]: {
 		// Root AI view
 		connection: '',
-		locale: 'AI Agent',
+		locale: 'AI 智能体',
 	},
 	[NodeConnectionTypes.AiChain]: {
 		// Root AI view
 		connection: '',
-		locale: 'AI Chain',
+		locale: 'AI 链',
 	},
 	[NodeConnectionTypes.AiDocument]: {
 		connection: NodeConnectionTypes.AiDocument,
-		locale: 'Document Loader',
+		locale: '文档加载器',
 	},
 	[NodeConnectionTypes.AiVectorStore]: {
 		connection: NodeConnectionTypes.AiVectorStore,
-		locale: 'Vector Store',
+		locale: '向量存储',
 	},
 	[NodeConnectionTypes.AiRetriever]: {
 		connection: NodeConnectionTypes.AiRetriever,
-		locale: 'Vector Store Retriever',
+		locale: '向量存储检索器',
 	},
 };
 
@@ -107,11 +106,11 @@ type AllowedConnectionTypes =
 	| typeof NodeConnectionTypes.AiVectorStore
 	| typeof NodeConnectionTypes.AiRetriever;
 
-function determineArticle(nextWord: string): string {
-	// check if the next word starts with a vowel sound
-	const vowels = /^[aeiouAEIOU]/;
-	return vowels.test(nextWord) ? 'an' : 'a';
-}
+// function determineArticle(nextWord: string): string {
+// 	// check if the next word starts with a vowel sound
+// 	const vowels = /^[aeiouAEIOU]/;
+// 	return vowels.test(nextWord) ? 'an' : 'a';
+// }
 const getConnectionParameterString = (connectionType: string) => {
 	if (connectionType === '') return "data-action-parameter-creatorview='AI'";
 
@@ -146,14 +145,9 @@ export function getConnectionHintNoticeField(
 	if (groupedConnections.size === 1) {
 		const [[connection, locales]] = Array.from(groupedConnections);
 
-		displayName = `This node must be connected to ${determineArticle(locales[0])} ${locales[0]
-			.toLowerCase()
-			.replace(
-				/^ai /,
-				'AI ',
-			)}. <a data-action='openSelectiveNodeCreator' ${getConnectionParameterString(
+		displayName = `此节点必须连接到${locales[0]}。<a data-action='openSelectiveNodeCreator' ${getConnectionParameterString(
 			connection,
-		)}>Insert one</a>`;
+		)}>插入一个</a>`;
 	} else {
 		const ahrefs = Array.from(groupedConnections, ([connection, locales]) => {
 			// If there are multiple locales, join them with ' or '
@@ -162,17 +156,14 @@ export function getConnectionHintNoticeField(
 				locales.length > 1
 					? locales
 							.map((localeString, index, { length }) => {
-								return (
-									(index === 0 ? `${determineArticle(localeString)} ` : '') +
-									(index < length - 1 ? `${localeString} or ` : localeString)
-								);
+								return index < length - 1 ? `${localeString}或` : localeString;
 							})
 							.join('')
-					: `${determineArticle(locales[0])} ${locales[0]}`;
+					: locales[0];
 			return getAhref({ connection, locale });
 		});
 
-		displayName = `This node needs to be connected to ${ahrefs.join(' or ')}.`;
+		displayName = `此节点需要连接到 ${ahrefs.join('或')}。`;
 	}
 
 	return {

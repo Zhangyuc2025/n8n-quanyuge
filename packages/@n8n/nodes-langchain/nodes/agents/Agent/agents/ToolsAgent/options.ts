@@ -4,35 +4,34 @@ import { SYSTEM_MESSAGE } from './prompt';
 
 export const commonOptions: INodeProperties[] = [
 	{
-		displayName: 'System Message',
+		displayName: '系统消息',
 		name: 'systemMessage',
 		type: 'string',
 		default: SYSTEM_MESSAGE,
-		description: 'The message that will be sent to the agent before the conversation starts',
+		description: '在对话开始之前发送给智能体的消息',
 		typeOptions: {
 			rows: 6,
 		},
 	},
 	{
-		displayName: 'Max Iterations',
+		displayName: '最大迭代次数',
 		name: 'maxIterations',
 		type: 'number',
 		default: 10,
-		description: 'The maximum number of iterations the agent will run before stopping',
+		description: '智能体在停止前运行的最大迭代次数',
 	},
 	{
-		displayName: 'Return Intermediate Steps',
+		displayName: '返回中间步骤',
 		name: 'returnIntermediateSteps',
 		type: 'boolean',
 		default: false,
-		description: 'Whether or not the output should include intermediate steps the agent took',
+		description: '输出是否应包含智能体采取的中间步骤',
 	},
 	{
-		displayName: 'Automatically Passthrough Binary Images',
+		displayName: '自动传递二进制图像',
 		name: 'passthroughBinaryImages',
 		type: 'boolean',
 		default: true,
-		description:
-			'Whether or not binary images should be automatically passed through to the agent as image type messages',
+		description: '是否应自动将二进制图像作为图像类型消息传递给智能体',
 	},
 ];

@@ -1,24 +1,24 @@
 import type { DisplayCondition, INodeProperties, NodeParameterValue } from 'n8n-workflow';
 
 export const schemaTypeField: INodeProperties = {
-	displayName: 'Schema Type',
+	displayName: '架构类型',
 	name: 'schemaType',
 	type: 'options',
 	noDataExpression: true,
 	options: [
 		{
-			name: 'Generate From JSON Example',
+			name: '从 JSON 示例生成',
 			value: 'fromJson',
-			description: 'Generate a schema from an example JSON object',
+			description: '从 JSON 示例对象生成架构',
 		},
 		{
-			name: 'Define using JSON Schema',
+			name: '使用 JSON Schema 定义',
 			value: 'manual',
-			description: 'Define the JSON schema manually',
+			description: '手动定义 JSON 架构',
 		},
 	],
 	default: 'fromJson',
-	description: 'How to specify the schema for the function',
+	description: '如何指定函数的架构',
 };
 
 /**
@@ -28,7 +28,7 @@ export const schemaTypeField: INodeProperties = {
 export const buildJsonSchemaExampleField = (props?: {
 	showExtraProps?: Record<string, Array<NodeParameterValue | DisplayCondition> | undefined>;
 }): INodeProperties => ({
-	displayName: 'JSON Example',
+	displayName: 'JSON 示例',
 	name: 'jsonSchemaExample',
 	type: 'json',
 	default: `{
@@ -44,7 +44,7 @@ export const buildJsonSchemaExampleField = (props?: {
 			schemaType: ['fromJson'],
 		},
 	},
-	description: 'Example JSON object to use to generate the schema',
+	description: '用于生成架构的 JSON 示例对象',
 });
 
 /**
@@ -54,8 +54,7 @@ export const buildJsonSchemaExampleField = (props?: {
 export const buildJsonSchemaExampleNotice = (props?: {
 	showExtraProps?: Record<string, Array<NodeParameterValue | DisplayCondition> | undefined>;
 }): INodeProperties => ({
-	displayName:
-		"All properties will be required. To make them optional, use the 'JSON Schema' schema type instead",
+	displayName: "所有属性都将是必需的。要使其成为可选，请改用 'JSON Schema' 架构类型",
 	name: 'notice',
 	type: 'notice',
 	default: '',
@@ -72,7 +71,7 @@ export const jsonSchemaExampleField = buildJsonSchemaExampleField();
 export const buildInputSchemaField = (props?: {
 	showExtraProps?: Record<string, Array<NodeParameterValue | DisplayCondition> | undefined>;
 }): INodeProperties => ({
-	displayName: 'Input Schema',
+	displayName: '输入架构',
 	name: 'inputSchema',
 	type: 'json',
 	default: `{
@@ -94,8 +93,8 @@ export const buildInputSchemaField = (props?: {
 			schemaType: ['manual'],
 		},
 	},
-	description: 'Schema to use for the function',
-	hint: 'Use <a target="_blank" href="https://json-schema.org/">JSON Schema</a> format (<a target="_blank" href="https://json-schema.org/learn/miscellaneous-examples.html">examples</a>). $refs syntax is currently not supported.',
+	description: '用于函数的架构',
+	hint: '使用 <a target="_blank" href="https://json-schema.org/">JSON Schema</a> 格式（<a target="_blank" href="https://json-schema.org/learn/miscellaneous-examples.html">示例</a>）。目前不支持 $refs 语法。',
 });
 
 export const inputSchemaField = buildInputSchemaField();
@@ -161,12 +160,11 @@ export const textFromGuardrailsNode: INodeProperties = {
 };
 
 export const toolDescription: INodeProperties = {
-	displayName: 'Description',
+	displayName: '描述',
 	name: 'toolDescription',
 	type: 'string',
-	default: 'AI Agent that can call other tools',
+	default: '可以调用其他工具的 AI 智能体',
 	required: true,
 	typeOptions: { rows: 2 },
-	description:
-		'Explain to the LLM what this tool does, a good, specific description would allow LLMs to produce expected results much more often',
+	description: '向 LLM 解释此工具的作用，一个良好、具体的描述可以让 LLM 更频繁地产生预期结果',
 };

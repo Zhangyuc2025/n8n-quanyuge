@@ -22,15 +22,15 @@ import {
  */
 export class ChainLlm implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Basic LLM Chain',
+		displayName: '基础 LLM 链',
 		name: 'chainLlm',
 		icon: 'fa:link',
 		iconColor: 'black',
 		group: ['transform'],
 		version: [1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7],
-		description: 'A simple chain to prompt a large language model',
+		description: '向大型语言模型发送提示词的简单链',
 		defaults: {
-			name: 'Basic LLM Chain',
+			name: '基础 LLM 链',
 			color: '#909298',
 		},
 		codex: {

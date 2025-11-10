@@ -14,15 +14,15 @@ import { logWrapper } from '@utils/logWrapper';
 
 export class RetrieverContextualCompression implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Contextual Compression Retriever',
+		displayName: '上下文压缩检索器',
 		name: 'retrieverContextualCompression',
 		icon: 'fa:box-open',
 		iconColor: 'black',
 		group: ['transform'],
 		version: 1,
-		description: 'Enhances document similarity search by contextual compression.',
+		description: '通过上下文压缩增强文档相似性搜索',
 		defaults: {
-			name: 'Contextual Compression Retriever',
+			name: '上下文压缩检索器',
 		},
 		codex: {
 			categories: ['AI'],
@@ -40,13 +40,13 @@ export class RetrieverContextualCompression implements INodeType {
 
 		inputs: [
 			{
-				displayName: 'Model',
+				displayName: '模型',
 				maxConnections: 1,
 				type: NodeConnectionTypes.AiLanguageModel,
 				required: true,
 			},
 			{
-				displayName: 'Retriever',
+				displayName: '检索器',
 				maxConnections: 1,
 				type: NodeConnectionTypes.AiRetriever,
 				required: true,
@@ -54,7 +54,7 @@ export class RetrieverContextualCompression implements INodeType {
 		],
 		outputs: [
 			{
-				displayName: 'Retriever',
+				displayName: '检索器',
 				maxConnections: 1,
 				type: NodeConnectionTypes.AiRetriever,
 			},

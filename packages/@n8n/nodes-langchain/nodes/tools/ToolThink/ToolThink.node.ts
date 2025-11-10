@@ -65,16 +65,16 @@ export class ToolThink implements INodeType {
 		},
 		inputs: [],
 		outputs: [NodeConnectionTypes.AiTool],
-		outputNames: ['Tool'],
+		outputNames: ['工具'],
 		properties: [
 			getConnectionHintNoticeField([NodeConnectionTypes.AiAgent]),
 			{
-				displayName: 'Think Tool Description',
+				displayName: '思考工具描述',
 				name: 'description',
 				type: 'string',
 				default: defaultToolDescription,
-				placeholder: '[Describe your thinking tool here, explaining how it will help the AI think]',
-				description: "The thinking tool's description",
+				placeholder: '在此描述您的思考工具,解释它将如何帮助 AI 思考',
+				description: '思考工具的描述',
 				typeOptions: {
 					rows: 3,
 				},

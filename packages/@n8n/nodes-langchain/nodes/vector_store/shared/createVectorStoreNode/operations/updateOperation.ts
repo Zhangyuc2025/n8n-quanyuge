@@ -21,10 +21,7 @@ export async function handleUpdateOperation<T extends VectorStore = VectorStore>
 ): Promise<INodeExecutionData[]> {
 	// First check if update operation is supported by this vector store
 	if (!isUpdateSupported(args)) {
-		throw new NodeOperationError(
-			context.getNode(),
-			'Update operation is not implemented for this Vector Store',
-		);
+		throw new NodeOperationError(context.getNode(), '此向量存储不支持更新操作');
 	}
 
 	// Get input items
@@ -56,7 +53,7 @@ export async function handleUpdateOperation<T extends VectorStore = VectorStore>
 
 			// Validate that we have exactly one document to update
 			if (processedDocuments?.length !== 1) {
-				throw new NodeOperationError(context.getNode(), 'Single document per item expected');
+				throw new NodeOperationError(context.getNode(), '每个项目应包含单个文档');
 			}
 
 			// Add the serialized document to the result
