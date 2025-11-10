@@ -10,7 +10,6 @@ import type {
 	WorkflowTagMapping,
 } from '@n8n/db';
 import {
-	CredentialsRepository,
 	FolderRepository,
 	ProjectRepository,
 	TagRepository,
@@ -24,13 +23,12 @@ import { PROJECT_OWNER_ROLE_SLUG } from '@n8n/permissions';
 // eslint-disable-next-line n8n-local-rules/misplaced-n8n-typeorm-import
 import { In } from '@n8n/typeorm';
 import glob from 'fast-glob';
-import { Credentials, ErrorReporter, InstanceSettings } from 'n8n-core';
+import { ErrorReporter, InstanceSettings } from 'n8n-core';
 import { ensureError, jsonParse, UnexpectedError, UserError } from 'n8n-workflow';
 import { readFile as fsReadFile } from 'node:fs/promises';
 import path from 'path';
 
 import { ActiveWorkflowManager } from '@/active-workflow-manager';
-import { CredentialsService } from '@/credentials/credentials.service';
 import type { IWorkflowToImport } from '@/interfaces';
 import { isUniqueConstraintError } from '@/response-helper';
 import { TagService } from '@/services/tag.service';
@@ -38,7 +36,6 @@ import { assertNever } from '@/utils';
 import { WorkflowService } from '@/workflows/workflow.service';
 
 import {
-	SOURCE_CONTROL_CREDENTIAL_EXPORT_FOLDER,
 	SOURCE_CONTROL_FOLDERS_EXPORT_FILE,
 	SOURCE_CONTROL_GIT_FOLDER,
 	SOURCE_CONTROL_PROJECT_EXPORT_FOLDER,
@@ -46,17 +43,10 @@ import {
 	SOURCE_CONTROL_VARIABLES_EXPORT_FILE,
 	SOURCE_CONTROL_WORKFLOW_EXPORT_FOLDER,
 } from './constants';
-import {
-	getCredentialExportPath,
-	getProjectExportPath,
-	getWorkflowExportPath,
-} from './source-control-helper.ee';
+import { getProjectExportPath, getWorkflowExportPath } from './source-control-helper.ee';
 import { SourceControlScopedService } from './source-control-scoped.service';
 import { VariablesService } from '../variables/variables.service.ee';
-import type {
-	ExportableCredential,
-	StatusExportableCredential,
-} from './types/exportable-credential';
+import type { StatusExportableCredential } from './types/exportable-credential';
 import type { ExportableFolder } from './types/exportable-folders';
 import type { ExportableProject, ExportableProjectWithFileName } from './types/exportable-project';
 import type { ExportableTags } from './types/exportable-tags';
@@ -125,8 +115,6 @@ export class SourceControlImportService {
 
 	private workflowExportFolder: string;
 
-	private credentialExportFolder: string;
-
 	private projectExportFolder: string;
 
 	constructor(
@@ -134,7 +122,6 @@ export class SourceControlImportService {
 		private readonly errorReporter: ErrorReporter,
 		private readonly variablesService: VariablesService,
 		private readonly activeWorkflowManager: ActiveWorkflowManager,
-		private readonly credentialsRepository: CredentialsRepository,
 		private readonly projectRepository: ProjectRepository,
 		private readonly tagRepository: TagRepository,
 		private readonly userRepository: UserRepository,
@@ -142,7 +129,6 @@ export class SourceControlImportService {
 		private readonly workflowRepository: WorkflowRepository,
 		private readonly workflowTagMappingRepository: WorkflowTagMappingRepository,
 		private readonly workflowService: WorkflowService,
-		private readonly credentialsService: CredentialsService,
 		private readonly tagService: TagService,
 		private readonly folderRepository: FolderRepository,
 		instanceSettings: InstanceSettings,
@@ -150,10 +136,6 @@ export class SourceControlImportService {
 	) {
 		this.gitFolder = path.join(instanceSettings.n8nFolder, SOURCE_CONTROL_GIT_FOLDER);
 		this.workflowExportFolder = path.join(this.gitFolder, SOURCE_CONTROL_WORKFLOW_EXPORT_FOLDER);
-		this.credentialExportFolder = path.join(
-			this.gitFolder,
-			SOURCE_CONTROL_CREDENTIAL_EXPORT_FOLDER,
-		);
 		this.projectExportFolder = path.join(this.gitFolder, SOURCE_CONTROL_PROJECT_EXPORT_FOLDER);
 	}
 
@@ -307,105 +289,28 @@ export class SourceControlImportService {
 		});
 	}
 
+	/**
+	 * Credential import/export is no longer supported in Source Control.
+	 * Enterprise Git integration now focuses on workflow synchronization only.
+	 * Credentials should be managed through other secure mechanisms.
+	 */
 	async getRemoteCredentialsFromFiles(
-		context: SourceControlContext,
+		_context: SourceControlContext,
 	): Promise<StatusExportableCredential[]> {
-		const remoteCredentialFiles = await glob('*.json', {
-			cwd: this.credentialExportFolder,
-			absolute: true,
-		});
-
-		const accessibleProjects =
-			await this.sourceControlScopedService.getAuthorizedProjectsFromContext(context);
-
-		const remoteCredentialFilesRead = await Promise.all(
-			remoteCredentialFiles.map(async (file) => {
-				this.logger.debug(`Parsing credential file ${file}`);
-				const remote = jsonParse<ExportableCredential>(
-					await fsReadFile(file, { encoding: 'utf8' }),
-				);
-				return remote;
-			}),
-		);
-
-		const remoteCredentialFilesParsed = remoteCredentialFilesRead
-			.filter((remote) => {
-				if (!remote?.id) {
-					return false;
-				}
-				const owner = remote.ownedBy;
-				// The credential `remote` belongs not to a project, that the context has access to
-				return (
-					!owner || context.hasAccessToAllProjects() || findOwnerProject(owner, accessibleProjects)
-				);
-			})
-			.map((remote) => {
-				const project = remote.ownedBy
-					? findOwnerProject(remote.ownedBy, accessibleProjects)
-					: null;
-				return {
-					...remote,
-					ownedBy: project
-						? {
-								type: project.type,
-								projectId: project.id,
-								projectName: project.name,
-							}
-						: undefined,
-					filename: getCredentialExportPath(remote.id, this.credentialExportFolder),
-				};
-			});
-
-		return remoteCredentialFilesParsed.filter(
-			(e) => e !== undefined,
-		) as StatusExportableCredential[];
+		this.logger.debug('Credential import is no longer supported in Source Control');
+		return [];
 	}
 
+	/**
+	 * Credential import/export is no longer supported in Source Control.
+	 * Enterprise Git integration now focuses on workflow synchronization only.
+	 * Credentials should be managed through other secure mechanisms.
+	 */
 	async getLocalCredentialsFromDb(
-		context: SourceControlContext,
+		_context: SourceControlContext,
 	): Promise<StatusExportableCredential[]> {
-		const localCredentials = await this.credentialsRepository.find({
-			relations: {
-				project: {
-					projectRelations: {
-						user: true,
-						role: true,
-					},
-				},
-			},
-			select: {
-				id: true,
-				name: true,
-				type: true,
-				project: {
-					id: true,
-					name: true,
-					type: true,
-					projectRelations: {
-						// Even if the userId is not used, it seems that this is needed to get the other nested properties populated
-						userId: true,
-						role: {
-							slug: true,
-						},
-						user: {
-							email: true,
-						},
-					},
-				},
-			},
-			where:
-				this.sourceControlScopedService.getCredentialsInAdminProjectsFromContextFilter(context),
-		});
-		return localCredentials.map((local) => {
-			const remoteOwnerProject = local.project;
-			return {
-				id: local.id,
-				name: local.name,
-				type: local.type,
-				filename: getCredentialExportPath(local.id, this.credentialExportFolder),
-				ownedBy: remoteOwnerProject ? getOwnerFromProject(remoteOwnerProject) : undefined,
-			};
-		}) as StatusExportableCredential[];
+		this.logger.debug('Credential export is no longer supported in Source Control');
+		return [];
 	}
 
 	async getRemoteVariablesFromFile(): Promise<ExportableVariable[]> {
@@ -734,62 +639,16 @@ export class SourceControlImportService {
 		}
 	}
 
-	async importCredentialsFromWorkFolder(candidates: SourceControlledFile[], userId: string) {
-		const personalProject = await this.projectRepository.getPersonalProjectForUserOrFail(userId);
-		const candidateIds = candidates.map((c) => c.id);
-		const existingCredentials = await this.credentialsRepository.find({
-			where: {
-				id: In(candidateIds),
-			},
-			select: ['id', 'name', 'type', 'data', 'projectId'],
-		});
-
-		let importCredentialsResult: Array<{ id: string; name: string; type: string }> = [];
-		importCredentialsResult = await Promise.all(
-			candidates.map(async (candidate) => {
-				this.logger.debug(`Importing credentials file ${candidate.file}`);
-				const credential = jsonParse<ExportableCredential>(
-					await fsReadFile(candidate.file, { encoding: 'utf8' }),
-				);
-				const existingCredential = existingCredentials.find(
-					(e) => e.id === credential.id && e.type === credential.type,
-				);
-
-				const { name, type, data, id } = credential;
-				const newCredentialObject = new Credentials({ id, name }, type);
-				if (existingCredential?.data) {
-					newCredentialObject.data = existingCredential.data;
-				} else {
-					/**
-					 * Edge case: Do not import `oauthTokenData`, so that that the
-					 * pulling instance reconnects instead of trying to use stubbed values.
-					 */
-					const { oauthTokenData, ...rest } = data;
-					newCredentialObject.setData(rest);
-				}
-
-				this.logger.debug(`Updating credential id ${newCredentialObject.id as string}`);
-				await this.credentialsRepository.upsert(newCredentialObject, ['id']);
-
-				const localCredential = existingCredentials.find((c) => c.id === credential.id);
-
-				await this.syncResourceOwnership({
-					resourceId: credential.id,
-					remoteOwner: credential.ownedBy,
-					localOwner: localCredential?.projectId
-						? { projectId: localCredential.projectId }
-						: undefined,
-					fallbackProject: personalProject,
-				});
-
-				return {
-					id: newCredentialObject.id as string,
-					name: newCredentialObject.name,
-					type: newCredentialObject.type,
-				};
-			}),
+	/**
+	 * Credential import/export is no longer supported in Source Control.
+	 * Enterprise Git integration now focuses on workflow synchronization only.
+	 * Credentials should be managed through other secure mechanisms.
+	 */
+	async importCredentialsFromWorkFolder(_candidates: SourceControlledFile[], _userId: string) {
+		this.logger.warn(
+			'Credential import is no longer supported. Skipping credential import operation.',
 		);
-		return importCredentialsResult.filter((e) => e !== undefined);
+		return [];
 	}
 
 	async importTagsFromWorkFolder(candidate: SourceControlledFile) {
@@ -1066,10 +925,15 @@ export class SourceControlImportService {
 		}
 	}
 
-	async deleteCredentialsNotInWorkfolder(user: User, candidates: SourceControlledFile[]) {
-		for (const candidate of candidates) {
-			await this.credentialsService.delete(user, candidate.id);
-		}
+	/**
+	 * Credential import/export is no longer supported in Source Control.
+	 * Enterprise Git integration now focuses on workflow synchronization only.
+	 * Credentials should be managed through other secure mechanisms.
+	 */
+	async deleteCredentialsNotInWorkfolder(_user: User, _candidates: SourceControlledFile[]) {
+		this.logger.warn(
+			'Credential deletion is no longer supported. Skipping credential deletion operation.',
+		);
 	}
 
 	async deleteVariablesNotInWorkfolder(candidates: SourceControlledFile[]) {
@@ -1134,23 +998,11 @@ export class SourceControlImportService {
 		// Update ownership if it changed
 		const shouldUpdateOwner = !localOwner || localOwner.projectId !== targetOwnerProject.id;
 		if (shouldUpdateOwner) {
-			// Update the workflow or credential's projectId
-			// We determine the entity type by checking if it exists in workflows or credentials
-			const workflow = await this.workflowRepository.findOne({
-				where: { id: resourceId },
-			});
-
-			if (workflow) {
-				await this.workflowRepository.update(
-					{ id: resourceId },
-					{ projectId: targetOwnerProject.id },
-				);
-			} else {
-				await this.credentialsRepository.update(
-					{ id: resourceId },
-					{ projectId: targetOwnerProject.id },
-				);
-			}
+			// Update the workflow's projectId (credentials are no longer supported)
+			await this.workflowRepository.update(
+				{ id: resourceId },
+				{ projectId: targetOwnerProject.id },
+			);
 		}
 	}
 

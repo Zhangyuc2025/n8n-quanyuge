@@ -13,9 +13,7 @@ import {
 	PLACEHOLDER_EMPTY_WORKFLOW_ID,
 } from '@/app/constants';
 import WorkflowActivationErrorMessage from './WorkflowActivationErrorMessage.vue';
-import { useCredentialsStore } from '@/features/credentials/credentials.store';
 import type { INodeUi } from '@/Interface';
-import type { IUsedCredential } from '@/features/credentials/credentials.types';
 import { OPEN_AI_API_CREDENTIAL_TYPE } from 'n8n-workflow';
 import { useUIStore } from '@/app/stores/ui.store';
 
@@ -100,9 +98,7 @@ const disabled = computed((): boolean => {
 	return false;
 });
 
-function findManagedOpenAiCredentialId(
-	usedCredentials: Record<string, IUsedCredential>,
-): string | undefined {
+function findManagedOpenAiCredentialId(usedCredentials: Record<string>): string | undefined {
 	return Object.keys(usedCredentials).find((credentialId) => {
 		const credential = credentialsStore.state.credentials[credentialId];
 		return credential.isManaged && credential.type === OPEN_AI_API_CREDENTIAL_TYPE;

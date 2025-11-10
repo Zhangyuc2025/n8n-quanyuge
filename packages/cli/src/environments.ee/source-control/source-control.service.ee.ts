@@ -310,16 +310,9 @@ export class SourceControlService {
 		await this.sourceControlExportService.exportWorkflowsToWorkFolder(workflowsToBeExported);
 
 		const credentialsToBeExported = getNonDeletedResources(filesToPush, 'credential');
-		const credentialExportResult =
-			await this.sourceControlExportService.exportCredentialsToWorkFolder(credentialsToBeExported);
-		if (credentialExportResult.missingIds && credentialExportResult.missingIds.length > 0) {
-			credentialExportResult.missingIds.forEach((id) => {
-				filesToBePushed.delete(this.sourceControlExportService.getCredentialsPath(id));
-				statusResult = statusResult.filter(
-					(e) => e.file !== this.sourceControlExportService.getCredentialsPath(id),
-				);
-			});
-		}
+		await this.sourceControlExportService.exportCredentialsToWorkFolder(credentialsToBeExported);
+		// Credential export is no longer supported - the export will return empty result
+		// This code block is kept for backward compatibility
 
 		const projectsToBeExported = getNonDeletedResources(filesToPush, 'project');
 		await this.sourceControlExportService.exportTeamProjectsToWorkFolder(projectsToBeExported);

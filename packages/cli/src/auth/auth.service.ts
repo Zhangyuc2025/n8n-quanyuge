@@ -77,13 +77,8 @@ export class AuthService {
 			// We need to exclude binary-data downloading endpoint because we can't send custom headers on `<embed>` tags
 			`/${restEndpoint}/binary-data/`,
 
-			// oAuth callback urls aren't called by the frontend. therefore we can't send custom header on these requests
-			`/${restEndpoint}/oauth1-credential/callback`,
-			`/${restEndpoint}/oauth2-credential/callback`,
-
 			// Skip browser ID check for type files
 			'/types/nodes.json',
-			'/types/credentials.json',
 			'/mcp-oauth/authorize/',
 		];
 	}

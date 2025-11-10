@@ -1,20 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-import { Container } from '@n8n/di';
 import axios from 'axios';
 import type { AxiosRequestConfig, Method } from 'axios';
 import { Agent as HTTPSAgent } from 'https';
-import { ExternalSecretsProxy } from 'n8n-core';
 import { jsonParse, MessageEventBusDestinationTypeNames } from 'n8n-workflow';
 import type {
 	MessageEventBusDestinationOptions,
 	MessageEventBusDestinationWebhookParameterItem,
 	MessageEventBusDestinationWebhookParameterOptions,
-	IWorkflowExecuteAdditionalData,
 	MessageEventBusDestinationWebhookOptions,
 } from 'n8n-workflow';
-
-import { CredentialsHelper } from '@/credentials-helper';
 
 import { MessageEventBusDestination } from './message-event-bus-destination.ee';
 import { eventMessageGenericDestinationTestEvent } from '../event-message-classes/event-message-generic';
@@ -66,8 +61,6 @@ export class MessageEventBusDestinationWebhook
 
 	sendPayload = true;
 
-	credentialsHelper?: CredentialsHelper;
-
 	axiosRequestOptions: AxiosRequestConfig;
 
 	constructor(
@@ -98,21 +91,8 @@ export class MessageEventBusDestinationWebhook
 		this.logger.debug(`MessageEventBusDestinationWebhook with id ${this.getId()} initialized`);
 	}
 
-	async matchDecryptedCredentialType(credentialType: string) {
-		const foundCredential = Object.entries(this.credentials).find((e) => e[0] === credentialType);
-		if (foundCredential) {
-			const credentialsDecrypted = await this.credentialsHelper?.getDecrypted(
-				{
-					externalSecretsProxy: Container.get(ExternalSecretsProxy),
-				} as unknown as IWorkflowExecuteAdditionalData,
-				foundCredential[1],
-				foundCredential[0],
-				'internal',
-				undefined,
-				true,
-			);
-			return credentialsDecrypted;
-		}
+	async matchDecryptedCredentialType() {
+		// Credential system removed - this method is no longer functional
 		return null;
 	}
 
@@ -127,10 +107,6 @@ export class MessageEventBusDestinationWebhook
 			url: this.url,
 			maxRedirects: 0,
 		} as AxiosRequestConfig;
-
-		if (this.credentialsHelper === undefined) {
-			this.credentialsHelper = Container.get(CredentialsHelper);
-		}
 
 		const sendQuery = this.sendQuery;
 		const specifyQuery = this.specifyQuery;
@@ -234,7 +210,6 @@ export class MessageEventBusDestinationWebhook
 			queryParameters: this.queryParameters,
 			sendPayload: this.sendPayload,
 			options: this.options,
-			credentials: this.credentials,
 		};
 	}
 
@@ -283,54 +258,9 @@ export class MessageEventBusDestinationWebhook
 			}
 		}
 
-		// TODO: implement extra auth requests
-		let httpBasicAuth;
-		let httpDigestAuth;
-		let httpHeaderAuth;
-		let httpQueryAuth;
-
-		if (this.authentication === 'genericCredentialType') {
-			if (this.genericAuthType === 'httpBasicAuth') {
-				try {
-					httpBasicAuth = await this.matchDecryptedCredentialType('httpBasicAuth');
-				} catch {}
-			} else if (this.genericAuthType === 'httpDigestAuth') {
-				try {
-					httpDigestAuth = await this.matchDecryptedCredentialType('httpDigestAuth');
-				} catch {}
-			} else if (this.genericAuthType === 'httpHeaderAuth') {
-				try {
-					httpHeaderAuth = await this.matchDecryptedCredentialType('httpHeaderAuth');
-				} catch {}
-			} else if (this.genericAuthType === 'httpQueryAuth') {
-				try {
-					httpQueryAuth = await this.matchDecryptedCredentialType('httpQueryAuth');
-				} catch {}
-			}
-		}
-
-		if (httpBasicAuth) {
-			// Add credentials if any are set
-			this.axiosRequestOptions.auth = {
-				username: httpBasicAuth.user as string,
-				password: httpBasicAuth.password as string,
-			};
-		} else if (httpHeaderAuth) {
-			this.axiosRequestOptions.headers = {
-				...this.axiosRequestOptions.headers,
-				[httpHeaderAuth.name as string]: httpHeaderAuth.value as string,
-			};
-		} else if (httpQueryAuth) {
-			this.axiosRequestOptions.params = {
-				...this.axiosRequestOptions.params,
-				[httpQueryAuth.name as string]: httpQueryAuth.value as string,
-			};
-		} else if (httpDigestAuth) {
-			this.axiosRequestOptions.auth = {
-				username: httpDigestAuth.user as string,
-				password: httpDigestAuth.password as string,
-			};
-		}
+		// Authentication via credentials has been removed
+		// The webhook destination now only supports authentication via headers/query params
+		// configured directly in the webhook settings
 
 		try {
 			const requestResponse = await axios.request(this.axiosRequestOptions);

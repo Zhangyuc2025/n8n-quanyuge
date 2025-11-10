@@ -9,7 +9,6 @@ import type {
 	INodeExecutionData,
 	ITaskDataConnections,
 	IExecuteData,
-	ICredentialDataDecryptedObject,
 	CallbackManager,
 	IExecuteWorkflowInfo,
 	RelatedExecution,
@@ -91,18 +90,6 @@ export class BaseExecuteContext extends NodeExecutionContext {
 		}
 
 		return ['continueRegularOutput', 'continueErrorOutput'].includes(onError);
-	}
-
-	async getCredentials<T extends object = ICredentialDataDecryptedObject>(
-		type: string,
-		itemIndex: number,
-	) {
-		return await this._getCredentials<T>(
-			type,
-			this.executeData,
-			this.connectionInputData,
-			itemIndex,
-		);
 	}
 
 	async putExecutionToWait(waitTill: Date): Promise<void> {

@@ -8,7 +8,6 @@ import { useNodeCommands } from './useNodeCommands';
 import { useWorkflowCommands } from './useWorkflowCommands';
 import { useWorkflowNavigationCommands } from './useWorkflowNavigationCommands';
 import { useDataTableNavigationCommands } from './useDataTableNavigationCommands';
-import { useCredentialNavigationCommands } from './useCredentialNavigationCommands';
 import { useExecutionNavigationCommands } from './useExecutionNavigationCommands';
 import { useProjectNavigationCommands } from './useProjectNavigationCommands';
 import { useExecutionCommands } from './useExecutionCommands';
@@ -64,11 +63,6 @@ export function useCommandBar() {
 		activeNodeId,
 		currentProjectName,
 	});
-	const credentialNavigationGroup = useCredentialNavigationCommands({
-		lastQuery,
-		activeNodeId,
-		currentProjectName,
-	});
 	const executionNavigationGroup = useExecutionNavigationCommands();
 	const projectNavigationGroup = useProjectNavigationCommands({
 		lastQuery,
@@ -90,7 +84,6 @@ export function useCommandBar() {
 		executionCommandGroup,
 		workflowNavigationGroup,
 		projectNavigationGroup,
-		credentialNavigationGroup,
 		dataTableNavigationGroup,
 		executionNavigationGroup,
 		genericCommandGroup,
@@ -100,7 +93,6 @@ export function useCommandBar() {
 		recentResourcesGroup,
 		workflowNavigationGroup,
 		projectNavigationGroup,
-		credentialNavigationGroup,
 		dataTableNavigationGroup,
 		executionNavigationGroup,
 		genericCommandGroup,
@@ -108,7 +100,6 @@ export function useCommandBar() {
 
 	const credentialsListViewGroups: CommandGroup[] = [
 		recentResourcesGroup,
-		credentialNavigationGroup,
 		projectNavigationGroup,
 		workflowNavigationGroup,
 		dataTableNavigationGroup,
@@ -120,7 +111,6 @@ export function useCommandBar() {
 		recentResourcesGroup,
 		workflowNavigationGroup,
 		projectNavigationGroup,
-		credentialNavigationGroup,
 		dataTableNavigationGroup,
 		genericCommandGroup,
 	];
@@ -130,7 +120,6 @@ export function useCommandBar() {
 		dataTableNavigationGroup,
 		projectNavigationGroup,
 		workflowNavigationGroup,
-		credentialNavigationGroup,
 		executionNavigationGroup,
 		genericCommandGroup,
 	];
@@ -139,7 +128,6 @@ export function useCommandBar() {
 		recentResourcesGroup,
 		workflowNavigationGroup,
 		projectNavigationGroup,
-		credentialNavigationGroup,
 		dataTableNavigationGroup,
 		executionNavigationGroup,
 		genericCommandGroup,
@@ -149,7 +137,6 @@ export function useCommandBar() {
 		recentResourcesGroup,
 		projectNavigationGroup,
 		workflowNavigationGroup,
-		credentialNavigationGroup,
 		dataTableNavigationGroup,
 		executionNavigationGroup,
 		genericCommandGroup,

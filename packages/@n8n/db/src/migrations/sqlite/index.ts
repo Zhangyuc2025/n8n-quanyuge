@@ -47,7 +47,6 @@ import { AddScopesColumnToApiKeys1742918400000 } from './1742918400000-AddScopes
 import { AddWorkflowVersionColumn1761047826451 } from './1761047826451-AddWorkflowVersionColumn';
 import { ChangeDependencyInfoToJson1761655473000 } from './1761655473000-ChangeDependencyInfoToJson';
 import { UniqueWorkflowNames1620821879465 } from '../common/1620821879465-UniqueWorkflowNames';
-import { UpdateWorkflowCredentials1630330987096 } from '../common/1630330987096-UpdateWorkflowCredentials';
 import { AddNodeIds1658930531669 } from '../common/1658930531669-AddNodeIds';
 import { AddJsonKeyPinData1659888469333 } from '../common/1659888469333-AddJsonKeyPinData';
 import { AddWorkflowVersionIdColumn1669739707124 } from '../common/1669739707124-AddWorkflowVersionIdColumn';
@@ -125,7 +124,6 @@ const sqliteMigrations: Migration[] = [
 	CreateTagEntity1617213344594,
 	UniqueWorkflowNames1620821879465,
 	AddWaitColumn1621707690587,
-	UpdateWorkflowCredentials1630330987096,
 	AddExecutionEntityIndexes1644421939510,
 	CreateUserManagement1646992772331,
 	LowerCaseUserEmail1648740597343,

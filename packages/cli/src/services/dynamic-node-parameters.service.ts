@@ -13,7 +13,6 @@ import type {
 	ITaskDataConnections,
 	IWorkflowExecuteAdditionalData,
 	ResourceMapperFields,
-	INodeCredentials,
 	INodeParameters,
 	INodeTypeNameVersion,
 	NodeParameterValueType,
@@ -21,6 +20,8 @@ import type {
 	ILocalLoadOptionsFunctions,
 	IExecuteData,
 } from 'n8n-workflow';
+
+type INodeCredentials = Record<string, { id: string; name?: string }>;
 import { Workflow, UnexpectedError } from 'n8n-workflow';
 
 import { NodeTypes } from '@/node-types';
@@ -305,10 +306,6 @@ export class DynamicNodeParametersService {
 			typeVersion: nodeTypeAndVersion.version,
 			position: [0, 0],
 		};
-
-		if (credentials) {
-			node.credentials = credentials;
-		}
 
 		return new Workflow({
 			nodes: [node],

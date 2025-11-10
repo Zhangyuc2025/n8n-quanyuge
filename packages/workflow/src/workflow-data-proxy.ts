@@ -193,7 +193,7 @@ export class WorkflowDataProxy {
 				)
 				?.options?.find((y) => 'value' in y && y.value === operationKey)?.name ?? null;
 
-		const hasCredentials = !isObjectEmpty(node.credentials ?? {});
+		const hasCredentials = false;
 
 		const hasValidCalendar = nodeType.description.name.includes('googleCalendar')
 			? isResourceLocatorValue(node.parameters.calendar) && node.parameters.calendar.value !== ''

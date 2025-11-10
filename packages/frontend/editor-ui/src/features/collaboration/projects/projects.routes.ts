@@ -6,8 +6,6 @@ import { getResourcePermissions } from '@n8n/permissions';
 const MainSidebar = async () => await import('@/app/components/MainSidebar.vue');
 const MainHeader = async () => await import('@/app/components/MainHeader/MainHeader.vue');
 const WorkflowsView = async () => await import('@/app/views/WorkflowsView.vue');
-const CredentialsView = async () =>
-	await import('@/features/credentials/views/CredentialsView.vue');
 const ProjectSettings = async () => await import('./views/ProjectSettings.vue');
 const ExecutionsView = async () =>
 	await import('@/features/execution/executions/views/ExecutionsView.vue');
@@ -26,21 +24,6 @@ const commonChildRoutes: RouteRecordRaw[] = [
 		path: 'workflows',
 		components: {
 			default: WorkflowsView,
-			header: MainHeader,
-			sidebar: MainSidebar,
-		},
-		meta: {
-			middleware: ['authenticated', 'custom'],
-			middlewareOptions: {
-				custom: (options) => checkProjectAvailability(options?.to),
-			},
-		},
-	},
-	{
-		path: 'credentials/:credentialId?',
-		props: true,
-		components: {
-			default: CredentialsView,
 			header: MainHeader,
 			sidebar: MainSidebar,
 		},
@@ -213,31 +196,11 @@ export const projectsRoutes: RouteRecordRaw[] = [
 					},
 				},
 			},
-			{
-				path: 'credentials/:credentialId?',
-				props: true,
-				name: VIEWS.SHARED_CREDENTIALS,
-				components: {
-					default: CredentialsView,
-					header: MainHeader,
-					sidebar: MainSidebar,
-				},
-				meta: {
-					middleware: ['authenticated', 'custom'],
-					middlewareOptions: {
-						custom: (options) => checkProjectAvailability(options?.to),
-					},
-				},
-			},
 		],
 	},
 	{
 		path: '/workflows',
 		redirect: '/home/workflows',
-	},
-	{
-		path: '/credentials',
-		redirect: '/home/credentials',
 	},
 	{
 		path: '/executions',

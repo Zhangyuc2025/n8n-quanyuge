@@ -8,7 +8,6 @@ import { useSettingsStore } from '@/app/stores/settings.store';
 import { useWorkflowsStore } from '@/app/stores/workflows.store';
 import type { WorkflowDataUpdate } from '@n8n/rest-api-client/api/workflows';
 import { createEventBus, type EventBus } from '@n8n/utils/event-bus';
-import { useCredentialsStore } from '@/features/credentials/credentials.store';
 import { useWorkflowHelpers } from '@/app/composables/useWorkflowHelpers';
 import { useRouter } from 'vue-router';
 import { useI18n } from '@n8n/i18n';

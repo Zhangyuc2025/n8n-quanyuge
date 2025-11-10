@@ -13,11 +13,9 @@ import { AbstractServer } from '@/abstract-server';
 import { AuthService } from '@/auth/auth.service';
 import { CLI_DIR, inE2ETests } from '@/constants';
 import { ControllerRegistry } from '@/controller.registry';
-import { CredentialsOverwrites } from '@/credentials-overwrites';
 import { MessageEventBus } from '@/eventbus/message-event-bus/message-event-bus';
 import { EventService } from '@/events/event.service';
 import { LogStreamingEventRelay } from '@/events/relays/log-streaming.event-relay';
-import type { ICredentialsOverwrite } from '@/interfaces';
 import { LoadNodesAndCredentials } from '@/load-nodes-and-credentials';
 import { handleMfaDisable, isMfaFeatureEnabled } from '@/mfa/helpers';
 import { isApiEnabled, loadPublicApiVersions } from '@/public-api';
@@ -41,8 +39,9 @@ import '@/controllers/dynamic-node-parameters.controller';
 import '@/controllers/invitation.controller';
 import '@/controllers/me.controller';
 import '@/controllers/node-types.controller';
-import '@/controllers/oauth/oauth1-credential.controller';
-import '@/controllers/oauth/oauth2-credential.controller';
+// OAuth credential controllers removed - credential system disabled
+// import '@/controllers/oauth/oauth1-credential.controller';
+// import '@/controllers/oauth/oauth2-credential.controller';
 import '@/controllers/orchestration.controller';
 import '@/controllers/owner.controller';
 import '@/controllers/password-reset.controller';
@@ -55,7 +54,6 @@ import '@/controllers/users.controller';
 import '@/controllers/user-settings.controller';
 import '@/controllers/workflow-statistics.controller';
 import '@/controllers/api-keys.controller';
-import '@/credentials/credentials.controller';
 import '@/eventbus/event-bus.controller';
 import '@/events/events.controller';
 import '@/executions/executions.controller';
@@ -70,10 +68,6 @@ import { PubSubRegistry } from './scaling/pubsub/pubsub.registry';
 
 @Service()
 export class Server extends AbstractServer {
-	private endpointPresetCredentials: string;
-
-	private presetCredentialsLoaded: boolean;
-
 	private frontendService?: FrontendService;
 
 	constructor(
@@ -94,10 +88,6 @@ export class Server extends AbstractServer {
 			await import('@/controllers/module-settings.controller');
 			await import('@/controllers/third-party-licenses.controller');
 		}
-
-		this.presetCredentialsLoaded = false;
-
-		this.endpointPresetCredentials = this.globalConfig.credentials.overwrite.endpoint;
 
 		await super.start();
 		this.logger.debug(`Server ID: ${this.instanceSettings.hostId}`);
@@ -277,45 +267,6 @@ export class Server extends AbstractServer {
 		// Workflow Indexing Setup
 		// ----------------------------------------
 		await this.initializeWorkflowIndexing();
-
-		if (this.endpointPresetCredentials !== '') {
-			// POST endpoint to set preset credentials
-			const overwriteEndpointMiddleware =
-				Container.get(CredentialsOverwrites).getOverwriteEndpointMiddleware();
-
-			if (overwriteEndpointMiddleware) {
-				this.app.use(`/${this.endpointPresetCredentials}`, overwriteEndpointMiddleware);
-			}
-
-			const authenticationEnforced = overwriteEndpointMiddleware !== null;
-			this.app.post(
-				`/${this.endpointPresetCredentials}`,
-				async (req: express.Request, res: express.Response) => {
-					// If authentication is enforced we can allow multiple overwrites
-					if (!this.presetCredentialsLoaded || authenticationEnforced) {
-						const body = req.body as ICredentialsOverwrite;
-
-						if (req.contentType !== 'application/json') {
-							ResponseHelper.sendErrorResponse(
-								res,
-								new Error(
-									'Body must be a valid JSON, make sure the content-type is application/json',
-								),
-							);
-							return;
-						}
-
-						await Container.get(CredentialsOverwrites).setData(body, true, true);
-
-						this.presetCredentialsLoaded = true;
-
-						ResponseHelper.sendSuccessResponse(res, { success: true }, true, 200);
-					} else {
-						ResponseHelper.sendErrorResponse(res, new Error('Preset credentials can be set once'));
-					}
-				},
-			);
-		}
 
 		const maxAge = Time.days.toMilliseconds;
 		const cacheOptions = inE2ETests || inDevelopment ? {} : { maxAge };

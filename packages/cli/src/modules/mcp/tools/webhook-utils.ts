@@ -1,13 +1,4 @@
-import type { User } from '@n8n/db';
 import type { INode } from 'n8n-workflow';
-
-import {
-	hasHttpHeaderAuthDecryptedData,
-	hasJwtPemKeyDecryptedData,
-	hasJwtSecretDecryptedData,
-} from '../mcp.typeguards';
-
-import type { CredentialsService } from '@/credentials/credentials.service';
 
 export type WebhookEndpoints = {
 	webhook: string;
@@ -17,8 +8,8 @@ export type WebhookEndpoints = {
 type WebhookCredentialRequirement =
 	| { type: 'none' }
 	| { type: 'basic' }
-	| { type: 'header'; headerName: string }
-	| { type: 'jwt'; variant: 'secret' | 'pem-key' };
+	| { type: 'header' }
+	| { type: 'jwt' };
 
 type WebhookNodeDetails = {
 	nodeName: string;
@@ -45,10 +36,8 @@ export const buildWebhookPath = (segment: string, pathParam: string) => {
  * @returns A detailed string description of the webhook triggers in the workflow.
  */
 export const getWebhookDetails = async (
-	user: User,
 	webhookNodes: INode[],
 	baseUrl: string,
-	credentialsService: CredentialsService,
 	endpoints: WebhookEndpoints,
 ): Promise<string> => {
 	if (webhookNodes.length === 0) {
@@ -56,20 +45,15 @@ export const getWebhookDetails = async (
 	}
 
 	const nodeDetails = await Promise.all(
-		webhookNodes.map(
-			async (node) =>
-				await collectWebhookNodeDetails(user, node, baseUrl, credentialsService, endpoints),
-		),
+		webhookNodes.map(async (node) => await collectWebhookNodeDetails(node, baseUrl, endpoints)),
 	);
 
 	return formatWebhookDetails(nodeDetails);
 };
 
 const collectWebhookNodeDetails = async (
-	user: User,
 	node: INode,
 	baseUrl: string,
-	credentialsService: CredentialsService,
 	endpoints: WebhookEndpoints,
 ): Promise<WebhookNodeDetails> => {
 	const pathParam = typeof node.parameters.path === 'string' ? node.parameters.path : '';
@@ -83,7 +67,7 @@ const collectWebhookNodeDetails = async (
 		testPath: buildWebhookPath(endpoints.webhookTest, pathParam),
 		httpMethod,
 		responseModeDescription: getResponseModeDescription(node),
-		credentials: await resolveCredentialRequirement(user, node, credentialsService),
+		credentials: resolveCredentialRequirement(node),
 	};
 };
 
@@ -111,80 +95,28 @@ const formatCredentialRequirement = (requirement: WebhookCredentialRequirement):
 		case 'basic':
 			return '\t - Credentials: \n\t - This webhook requires basic authentication with a username and password that should be provided by the user.';
 		case 'header':
-			return `\t - Credentials: \n\t - This webhook requires a header with name "${requirement.headerName}" and a value that should be provided by the user.`;
+			return '\t - Credentials: \n\t - This webhook requires a custom header for authentication that should be provided by the user.';
 		case 'jwt':
-			if (requirement.variant === 'secret') {
-				return '\t - Credentials: \n\t - This webhook requires a JWT secret that should be provided by the user.';
-			}
-			return '\t - Credentials: \n\t - This webhook requires JWT private and public keys that should be provided by the user.';
+			return '\t - Credentials: \n\t - This webhook requires JWT authentication that should be provided by the user.';
 		default:
 			return '\t - No credentials required for this webhook.';
 	}
 };
 
-const resolveCredentialRequirement = async (
-	user: User,
-	node: INode,
-	credentialsService: CredentialsService,
-): Promise<WebhookCredentialRequirement> => {
+const resolveCredentialRequirement = (node: INode): WebhookCredentialRequirement => {
 	const authType =
 		typeof node.parameters.authentication === 'string' ? node.parameters.authentication : undefined;
 
 	switch (authType) {
 		case 'basicAuth':
 			return { type: 'basic' };
-		case 'headerAuth': {
-			const headerName = await getHeaderAuthName(user, node, credentialsService);
-			if (headerName) {
-				return { type: 'header', headerName };
-			}
-			break;
-		}
-		case 'jwtAuth': {
-			const variant = await getJWTAuthVariant(user, node, credentialsService);
-			if (variant) {
-				return { type: 'jwt', variant };
-			}
-			break;
-		}
+		case 'headerAuth':
+			return { type: 'header' };
+		case 'jwtAuth':
+			return { type: 'jwt' };
+		default:
+			return { type: 'none' };
 	}
-
-	return { type: 'none' };
-};
-
-const getHeaderAuthName = async (
-	user: User,
-	node: INode,
-	credentialsService: CredentialsService,
-): Promise<string | null> => {
-	const id = node.credentials?.httpHeaderAuth?.id;
-	if (!id) return null;
-
-	const creds = await credentialsService.getOne(user, id, true);
-	if (hasHttpHeaderAuthDecryptedData(creds)) {
-		return creds.data.name;
-	}
-	return null;
-};
-
-const getJWTAuthVariant = async (
-	user: User,
-	node: INode,
-	credentialsService: CredentialsService,
-): Promise<'secret' | 'pem-key' | null> => {
-	const id = node.credentials?.jwtAuth?.id;
-	if (!id) return null;
-	try {
-		const creds = await credentialsService.getOne(user, id, true);
-		if (hasJwtSecretDecryptedData(creds)) {
-			return 'secret';
-		} else if (hasJwtPemKeyDecryptedData(creds)) {
-			return 'pem-key';
-		}
-	} catch {
-		return null;
-	}
-	return null;
 };
 
 const getResponseModeDescription = (node: INode): string => {

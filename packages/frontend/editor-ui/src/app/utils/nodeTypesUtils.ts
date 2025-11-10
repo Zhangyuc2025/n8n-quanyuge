@@ -8,7 +8,6 @@ import {
 	TEMPLATES_NODES_FILTER,
 } from '@/app/constants';
 import { i18n as locale } from '@n8n/i18n';
-import { useCredentialsStore } from '@/features/credentials/credentials.store';
 import { useNodeTypesStore } from '@/app/stores/nodeTypes.store';
 import { isJsonKeyObject } from '@/app/utils/typesUtils';
 import {

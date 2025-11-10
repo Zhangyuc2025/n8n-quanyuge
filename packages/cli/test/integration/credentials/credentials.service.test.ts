@@ -40,7 +40,7 @@ describe('credentials service', () => {
 				['credential:read'],
 			);
 
-			const decryptedData = Container.get(CredentialsService).decrypt(storedCredential!);
+			const decryptedData = Container.get(CredentialsService).decrypt(storedCredential);
 
 			const mergedCredentials = {
 				id: credential.id,
@@ -51,7 +51,7 @@ describe('credentials service', () => {
 
 			await Container.get(CredentialsService).replaceCredentialContentsForSharee(
 				memberWhoDoesNotOwnCredential,
-				storedCredential!,
+				storedCredential,
 				decryptedData,
 				mergedCredentials,
 			);

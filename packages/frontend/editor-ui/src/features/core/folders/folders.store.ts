@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia';
 import { STORES } from '@n8n/stores';
-import type { IUsedCredential } from '@/features/credentials/credentials.types';
 import type {
 	ChangeLocationSearchResult,
 	FolderCreateResponse,

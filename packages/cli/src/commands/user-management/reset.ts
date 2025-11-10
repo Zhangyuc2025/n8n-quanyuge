@@ -1,6 +1,5 @@
 import {
 	User,
-	CredentialsRepository,
 	WorkflowRepository,
 	ProjectRepository,
 	SettingsRepository,
@@ -33,9 +32,6 @@ export class Reset extends BaseCommand {
 
 		// Transfer all workflows to owner's personal project
 		await Container.get(WorkflowRepository).update({}, { projectId: personalProject.id });
-
-		// Transfer all credentials to owner's personal project
-		await Container.get(CredentialsRepository).update({}, { projectId: personalProject.id });
 
 		await Container.get(UserRepository).deleteAllExcept(owner);
 		await Container.get(UserRepository).save(Object.assign(owner, defaultUserProps));

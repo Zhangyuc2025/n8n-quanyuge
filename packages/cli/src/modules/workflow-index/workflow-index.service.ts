@@ -11,7 +11,7 @@ const LOOP_LIMIT = 1_000_000_000;
 
 /**
  * Service for managing the workflow dependency index. The index tracks dependencies such as node types,
- * credentials, workflow calls, and webhook paths used by each workflow. The service builds the index on server start
+ * workflow calls, and webhook paths used by each workflow. The service builds the index on server start
  * and updates it in response to workflow-related events.
  *
  * TODO(CAT-1595): Build the index on startup.
@@ -95,7 +95,6 @@ export class WorkflowIndexService {
 
 		workflow.nodes.forEach((node) => {
 			this.addNodeTypeDependencies(node, dependencyUpdates);
-			this.addCredentialDependencies(node, dependencyUpdates);
 			this.addWorkflowCallDependencies(node, dependencyUpdates);
 			this.addWebhookPathDependencies(node, dependencyUpdates);
 		});
@@ -125,20 +124,6 @@ export class WorkflowIndexService {
 			dependencyKey: node.type,
 			dependencyInfo: { nodeId: node.id, nodeVersion: node.typeVersion },
 		});
-	}
-
-	private addCredentialDependencies(node: INode, dependencyUpdates: WorkflowDependencies): void {
-		if (!node.credentials) {
-			return;
-		}
-		for (const credentialDetails of Object.values(node.credentials)) {
-			const { id } = credentialDetails;
-			dependencyUpdates.add({
-				dependencyType: 'credentialId',
-				dependencyKey: id,
-				dependencyInfo: { nodeId: node.id, nodeVersion: node.typeVersion },
-			});
-		}
 	}
 
 	private addWorkflowCallDependencies(node: INode, dependencyUpdates: WorkflowDependencies): void {

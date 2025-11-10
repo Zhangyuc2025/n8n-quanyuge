@@ -1,25 +1,16 @@
-import { CredentialsRepository, WorkflowRepository } from '@n8n/db';
+import { WorkflowRepository } from '@n8n/db';
 import { Service } from '@n8n/di';
 
 @Service()
 export class NamingService {
-	constructor(
-		private readonly workflowRepository: WorkflowRepository,
-		private readonly credentialsRepository: CredentialsRepository,
-	) {}
+	constructor(private readonly workflowRepository: WorkflowRepository) {}
 
 	async getUniqueWorkflowName(requestedName: string) {
-		return await this.getUniqueName(requestedName, 'workflow');
+		return await this.getUniqueName(requestedName);
 	}
 
-	async getUniqueCredentialName(requestedName: string) {
-		return await this.getUniqueName(requestedName, 'credential');
-	}
-
-	private async getUniqueName(requestedName: string, entity: 'workflow' | 'credential') {
-		const repository = entity === 'workflow' ? this.workflowRepository : this.credentialsRepository;
-
-		const found = await repository.findStartingWith(requestedName);
+	private async getUniqueName(requestedName: string) {
+		const found = await this.workflowRepository.findStartingWith(requestedName);
 
 		if (found.length === 0) return requestedName;
 

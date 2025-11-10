@@ -18,14 +18,5 @@ export class CustomDirectoryLoader extends DirectoryLoader {
 		for (const nodePath of nodes) {
 			this.loadNodeFromFile(nodePath);
 		}
-
-		const credentials = await glob('**/*.credentials.js', {
-			cwd: this.directory,
-			absolute: true,
-		});
-
-		for (const credentialPath of credentials) {
-			this.loadCredentialFromFile(credentialPath);
-		}
 	}
 }

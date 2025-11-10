@@ -12,7 +12,6 @@ import type { CanvasConnection, CanvasNode } from '@/features/workflows/canvas/c
 import { CanvasConnectionMode } from '@/features/workflows/canvas/canvas.types';
 import type { INodeUi, IWorkflowDb, WorkflowDataWithTemplateId } from '@/Interface';
 import type { IExecutionResponse } from '@/features/execution/executions/executions.types';
-import type { ICredentialsResponse } from '@/features/credentials/credentials.types';
 import type { IWorkflowTemplate, IWorkflowTemplateNode } from '@n8n/rest-api-client/api/templates';
 import { RemoveNodeCommand, ReplaceNodeParametersCommand } from '@/app/models/history';
 import { useWorkflowsStore } from '@/app/stores/workflows.store';
@@ -28,7 +27,6 @@ import {
 } from '@/__tests__/mocks';
 import { mock } from 'vitest-mock-extended';
 import { useNodeTypesStore } from '@/app/stores/nodeTypes.store';
-import { useCredentialsStore } from '@/features/credentials/credentials.store';
 import { useExecutionsStore } from '@/features/execution/executions/executions.store';
 import { useNodeCreatorStore } from '@/features/shared/nodeCreator/nodeCreator.store';
 import { useProjectsStore } from '@/features/collaboration/projects/projects.store';

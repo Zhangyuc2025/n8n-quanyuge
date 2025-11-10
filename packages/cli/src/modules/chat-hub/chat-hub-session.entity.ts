@@ -1,5 +1,5 @@
 import { ChatHubProvider } from '@n8n/api-types';
-import { WithTimestamps, DateTimeColumn, User, CredentialsEntity, WorkflowEntity } from '@n8n/db';
+import { WithTimestamps, DateTimeColumn, User, WorkflowEntity } from '@n8n/db';
 import {
 	Column,
 	Entity,
@@ -45,20 +45,8 @@ export class ChatHubSession extends WithTimestamps {
 	lastMessageAt: Date | null;
 
 	/*
-	 * ID of the selected credential to use by default with the selected LLM provider (if applicable).
-	 */
-	@Column({ type: 'varchar', length: 36, nullable: true })
-	credentialId: string | null;
-
-	/**
-	 * The selected credential to use by default with the selected LLM provider (if applicable).
-	 */
-	@ManyToOne('CredentialsEntity', { onDelete: 'SET NULL', nullable: true })
-	@JoinColumn({ name: 'credentialId' })
-	credential?: Relation<CredentialsEntity> | null;
-
-	/*
 	 * Enum value of the LLM provider to use, e.g. 'openai', 'anthropic', 'google', 'n8n' (if applicable).
+	 * TODO: Implement API key-based authentication for pay-per-use model
 	 */
 	@Column({ type: 'varchar', length: 16, nullable: true })
 	provider: ChatHubProvider | null;

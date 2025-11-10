@@ -1,20 +1,13 @@
 <script lang="ts" setup>
 import Modal from '@/app/components/Modal.vue';
-import ProjectMoveResourceModalCredentialsList from './ProjectMoveResourceModalCredentialsList.vue';
 import ProjectMoveSuccessToastMessage from './ProjectMoveSuccessToastMessage.vue';
 import { useTelemetry } from '@/app/composables/useTelemetry';
 import { useToast } from '@/app/composables/useToast';
 import { VIEWS } from '@/app/constants';
-import type {
-	ICredentialsResponse,
-	IUsedCredential,
-} from '@/features/credentials/credentials.types';
 import type { IWorkflowDb } from '@/Interface';
 import { getResourcePermissions } from '@n8n/permissions';
-import { useCredentialsStore } from '@/features/credentials/credentials.store';
 import { useProjectsStore } from '../projects.store';
 import { useUIStore } from '@/app/stores/ui.store';
-import { useWorkflowsStore } from '@/app/stores/workflows.store';
 import { ProjectTypes } from '../projects.types';
 import {
 	getTruncatedProjectName,
@@ -30,20 +23,11 @@ import { computed, h, onMounted, ref } from 'vue';
 import { I18nT } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
-import {
-	N8nButton,
-	N8nCheckbox,
-	N8nHeading,
-	N8nIcon,
-	N8nOption,
-	N8nSelect,
-	N8nText,
-	N8nTooltip,
-} from '@n8n/design-system';
+import { N8nButton, N8nHeading, N8nIcon, N8nOption, N8nSelect, N8nText } from '@n8n/design-system';
 const props = defineProps<{
 	modalName: string;
 	data: {
-		resource: IWorkflowDb | ICredentialsResponse;
+		resource: IWorkflowDb;
 		resourceType: ResourceType;
 		resourceTypeLabel: string;
 		eventBus?: EventBus;
@@ -55,40 +39,11 @@ const uiStore = useUIStore();
 const toast = useToast();
 const router = useRouter();
 const projectsStore = useProjectsStore();
-const workflowsStore = useWorkflowsStore();
-const credentialsStore = useCredentialsStore();
 const telemetry = useTelemetry();
 
 const filter = ref('');
 const projectId = ref<string | null>(null);
-const shareUsedCredentials = ref(false);
-const usedCredentials = ref<IUsedCredential[]>([]);
-const allCredentials = ref<ICredentialsResponse[]>([]);
 const loading = ref(false);
-const shareableCredentials = computed(() =>
-	allCredentials.value.filter(
-		(credential) =>
-			getResourcePermissions(credential.scopes).credential.share &&
-			usedCredentials.value.find((uc) => uc.id === credential.id),
-	),
-);
-const unShareableCredentials = computed(() =>
-	usedCredentials.value.reduce(
-		(acc, uc) => {
-			const credential = credentialsStore.getCredentialById(uc.id);
-			const credentialPermissions = getResourcePermissions(credential?.scopes).credential;
-			if (!credentialPermissions.share) {
-				if (credentialPermissions.read) {
-					acc.push(credential);
-				} else {
-					acc.push(uc);
-				}
-			}
-			return acc;
-		},
-		[] as Array<IUsedCredential | ICredentialsResponse>,
-	),
-);
 const homeProjectName = computed(
 	() => processProjectName(props.data.resource.homeProject?.name ?? '') ?? '',
 );
@@ -115,7 +70,7 @@ const targetProjectName = computed(() => {
 });
 const resourceName = computed(() => truncate(props.data.resource.name, MAX_NAME_LENGTH));
 
-const isHomeProjectTeam = (resource: IWorkflowDb | ICredentialsResponse) =>
+const isHomeProjectTeam = (resource: IWorkflowDb) =>
 	resource.homeProject?.type === ProjectTypes.Team;
 
 const processProjectName = (projectName: string) => {
@@ -145,7 +100,7 @@ const moveResource = async () => {
 			props.data.resource.id,
 			selectedProject.value.id,
 			undefined,
-			shareUsedCredentials.value ? shareableCredentials.value.map((c) => c.id) : undefined,
+			undefined,
 		);
 		closeModal();
 		telemetry.track(`User successfully moved ${props.data.resourceType}`, {
@@ -161,18 +116,17 @@ const moveResource = async () => {
 				},
 			}),
 			message: h(ProjectMoveSuccessToastMessage, {
-				routeName: isResourceWorkflow.value ? VIEWS.PROJECTS_WORKFLOWS : VIEWS.PROJECTS_CREDENTIALS,
+				routeName: VIEWS.PROJECTS_WORKFLOWS,
 				resourceType: props.data.resourceType,
 				targetProject: selectedProject.value,
-				isShareCredentialsChecked: shareUsedCredentials.value,
-				areAllUsedCredentialsShareable:
-					shareableCredentials.value.length === usedCredentials.value.length,
+				isShareCredentialsChecked: false,
+				areAllUsedCredentialsShareable: false,
 			}),
 			onClick: (event: MouseEvent | undefined) => {
 				if (event?.target instanceof HTMLAnchorElement && selectedProject.value) {
 					event.preventDefault();
 					void router.push({
-						name: isResourceWorkflow.value ? VIEWS.PROJECTS_WORKFLOWS : VIEWS.PROJECTS_CREDENTIALS,
+						name: VIEWS.PROJECTS_WORKFLOWS,
 						params: { projectId: selectedProject.value.id },
 					});
 				}
@@ -209,16 +163,6 @@ onMounted(async () => {
 	});
 
 	await projectsStore.getAvailableProjects();
-
-	if (isResourceWorkflow.value) {
-		const [workflow, credentials] = await Promise.all([
-			workflowsStore.fetchWorkflow(props.data.resource.id),
-			credentialsStore.fetchAllCredentials(),
-		]);
-
-		usedCredentials.value = workflow?.usedCredentials ?? [];
-		allCredentials.value = credentials ?? [];
-	}
 });
 </script>
 <template>
@@ -296,53 +240,6 @@ onMounted(async () => {
 							})
 						}}</span
 					>
-					<N8nCheckbox
-						v-if="shareableCredentials.length"
-						v-model="shareUsedCredentials"
-						:class="$style.textBlock"
-						data-test-id="project-move-resource-modal-checkbox-all"
-					>
-						<I18nT keypath="projects.move.resource.modal.message.usedCredentials" scope="global">
-							<template #usedCredentials>
-								<N8nTooltip placement="top">
-									<span :class="$style.tooltipText">
-										{{
-											i18n.baseText('projects.move.resource.modal.message.usedCredentials.number', {
-												adjustToNumber: shareableCredentials.length,
-												interpolate: { count: shareableCredentials.length },
-											})
-										}}
-									</span>
-									<template #content>
-										<ProjectMoveResourceModalCredentialsList
-											:current-project-id="projectsStore.currentProjectId"
-											:credentials="shareableCredentials"
-										/>
-									</template>
-								</N8nTooltip>
-							</template>
-						</I18nT>
-					</N8nCheckbox>
-					<span v-if="unShareableCredentials.length" :class="$style.textBlock">
-						<I18nT
-							keypath="projects.move.resource.modal.message.unAccessibleCredentials.note"
-							scope="global"
-						>
-							<template #credentials>
-								<N8nTooltip placement="top">
-									<span :class="$style.tooltipText">{{
-										i18n.baseText('projects.move.resource.modal.message.unAccessibleCredentials')
-									}}</span>
-									<template #content>
-										<ProjectMoveResourceModalCredentialsList
-											:current-project-id="projectsStore.currentProjectId"
-											:credentials="unShareableCredentials"
-										/>
-									</template>
-								</N8nTooltip>
-							</template>
-						</I18nT>
-					</span>
 				</N8nText>
 			</div>
 			<N8nText v-else>{{
@@ -383,9 +280,5 @@ onMounted(async () => {
 .textBlock {
 	display: block;
 	margin-top: var(--spacing--sm);
-}
-
-.tooltipText {
-	text-decoration: underline;
 }
 </style>

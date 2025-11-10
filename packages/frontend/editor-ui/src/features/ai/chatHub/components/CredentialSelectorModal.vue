@@ -2,12 +2,9 @@
 import { ref, computed } from 'vue';
 import { N8nButton, N8nOption, N8nSelect, N8nText } from '@n8n/design-system';
 import Modal from '@/app/components/Modal.vue';
-import { useCredentialsStore } from '@/features/credentials/credentials.store';
-import type { ICredentialsResponse } from '@/features/credentials/credentials.types';
 import { createEventBus } from '@n8n/utils/event-bus';
 import { type ChatHubLLMProvider, PROVIDER_CREDENTIAL_TYPE_MAP } from '@n8n/api-types';
 import { providerDisplayNames } from '@/features/ai/chatHub/constants';
-import CredentialIcon from '@/features/credentials/components/CredentialIcon.vue';
 
 const props = defineProps<{
 	provider: ChatHubLLMProvider;
@@ -59,11 +56,6 @@ function onCancel() {
 	>
 		<template #header>
 			<div :class="$style.header">
-				<CredentialIcon
-					:credential-type-name="PROVIDER_CREDENTIAL_TYPE_MAP[provider]"
-					:size="24"
-					:class="$style.icon"
-				/>
 				<h2 :class="$style.title">Select {{ providerDisplayNames[provider] }} Credential</h2>
 			</div>
 		</template>

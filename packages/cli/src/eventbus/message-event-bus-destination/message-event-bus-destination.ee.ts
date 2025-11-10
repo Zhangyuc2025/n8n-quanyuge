@@ -1,7 +1,7 @@
 import { Logger } from '@n8n/backend-common';
 import { EventDestinationsRepository } from '@n8n/db';
 import { Container } from '@n8n/di';
-import type { INodeCredentials, MessageEventBusDestinationOptions } from 'n8n-workflow';
+import type { MessageEventBusDestinationOptions } from 'n8n-workflow';
 import { MessageEventBusDestinationTypeNames } from 'n8n-workflow';
 import { v4 as uuid } from 'uuid';
 
@@ -27,8 +27,6 @@ export abstract class MessageEventBusDestination implements MessageEventBusDesti
 
 	subscribedEvents: string[];
 
-	credentials: INodeCredentials = {};
-
 	anonymizeAuditMessages: boolean;
 
 	constructor(eventBusInstance: MessageEventBus, options: MessageEventBusDestinationOptions) {
@@ -42,7 +40,6 @@ export abstract class MessageEventBusDestination implements MessageEventBusDesti
 		this.enabled = options.enabled ?? false;
 		this.subscribedEvents = options.subscribedEvents ?? [];
 		this.anonymizeAuditMessages = options.anonymizeAuditMessages ?? false;
-		if (options.credentials) this.credentials = options.credentials;
 		this.logger.debug(`${this.__type}(${this.id}) event destination constructed`);
 	}
 

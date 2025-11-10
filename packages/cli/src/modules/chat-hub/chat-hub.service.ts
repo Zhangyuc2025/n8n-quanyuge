@@ -1,7 +1,5 @@
 import {
-	PROVIDER_CREDENTIAL_TYPE_MAP,
 	type ChatHubProvider,
-	type ChatHubLLMProvider,
 	type ChatModelsResponse,
 	type ChatHubConversationsResponse,
 	type ChatHubConversationResponse,
@@ -13,8 +11,6 @@ import {
 	chatHubProviderSchema,
 	type EnrichedStructuredChunk,
 	ChatHubBaseLLMModel,
-	ChatHubN8nModel,
-	ChatHubCustomAgentModel,
 	emptyChatModelsResponse,
 } from '@n8n/api-types';
 import { Logger } from '@n8n/backend-common';
@@ -26,35 +22,27 @@ import {
 	CHAT_TRIGGER_NODE_TYPE,
 	OperationalError,
 	ManualExecutionCancelledError,
-	type INodeCredentials,
 	type IWorkflowBase,
-	type IWorkflowExecuteAdditionalData,
 	type IRun,
 	jsonParse,
 	StructuredChunk,
 	RESPOND_TO_CHAT_NODE_TYPE,
 	IExecuteData,
 	IRunExecutionData,
-	INodeParameters,
-	INode,
 } from 'n8n-workflow';
 
 import { ActiveExecutions } from '@/active-executions';
-import { CredentialsFinderService } from '@/credentials/credentials-finder.service';
 import { BadRequestError } from '@/errors/response-errors/bad-request.error';
 import { NotFoundError } from '@/errors/response-errors/not-found.error';
 import { ExecutionService } from '@/executions/execution.service';
-import { DynamicNodeParametersService } from '@/services/dynamic-node-parameters.service';
-import { getBase } from '@/workflow-execute-additional-data';
 import { WorkflowExecutionService } from '@/workflows/workflow-execution.service';
 import { WorkflowFinderService } from '@/workflows/workflow-finder.service';
 import { WorkflowService } from '@/workflows/workflow.service';
 
 import { ChatHubAgentService } from './chat-hub-agent.service';
-import { ChatHubCredentialsService, CredentialWithProjectId } from './chat-hub-credentials.service';
 import type { ChatHubMessage } from './chat-hub-message.entity';
 import { ChatHubWorkflowService } from './chat-hub-workflow.service';
-import { JSONL_STREAM_HEADERS, NODE_NAMES, PROVIDER_NODE_TYPE_MAP } from './chat-hub.constants';
+import { JSONL_STREAM_HEADERS, NODE_NAMES } from './chat-hub.constants';
 import type {
 	HumanMessagePayload,
 	RegenerateMessagePayload,
@@ -70,7 +58,6 @@ export class ChatHubService {
 	constructor(
 		private readonly logger: Logger,
 		private readonly executionService: ExecutionService,
-		private readonly nodeParametersService: DynamicNodeParametersService,
 		private readonly executionRepository: ExecutionRepository,
 		private readonly workflowExecutionService: WorkflowExecutionService,
 		private readonly workflowService: WorkflowService,
@@ -79,54 +66,23 @@ export class ChatHubService {
 		private readonly activeExecutions: ActiveExecutions,
 		private readonly sessionRepository: ChatHubSessionRepository,
 		private readonly messageRepository: ChatHubMessageRepository,
-		private readonly credentialsFinderService: CredentialsFinderService,
 		private readonly chatHubAgentService: ChatHubAgentService,
-		private readonly chatHubCredentialsService: ChatHubCredentialsService,
 		private readonly chatHubWorkflowService: ChatHubWorkflowService,
 	) {}
 
-	async getModels(
-		user: User,
-		credentialIds: Record<ChatHubLLMProvider, string | null>,
-	): Promise<ChatModelsResponse> {
-		const additionalData = await getBase({ userId: user.id });
+	async getModels(user: User): Promise<ChatModelsResponse> {
+		// TODO: Implement pay-per-use authentication for LLM providers
 		const providers = chatHubProviderSchema.options;
-
-		const allCredentials = await this.credentialsFinderService.findCredentialsForUser(user, [
-			'credential:read',
-		]);
 
 		const responses = await Promise.all(
 			providers.map<Promise<[ChatHubProvider, ChatModelsResponse[ChatHubProvider]]>>(
 				async (provider: ChatHubProvider) => {
-					const credentials: INodeCredentials = {};
-
-					if (provider !== 'n8n' && provider !== 'custom-agent') {
-						const credentialId = credentialIds[provider];
-						if (!credentialId) {
-							return [provider, { models: [] }];
-						}
-
-						// Ensure the user has the permission to read the credential
-						if (!allCredentials.some((credential) => credential.id === credentialId)) {
-							return [
-								provider,
-								{ models: [], error: 'Could not retrieve models. Verify credentials.' },
-							];
-						}
-
-						credentials[PROVIDER_CREDENTIAL_TYPE_MAP[provider]] = { name: '', id: credentialId };
-					}
-
 					try {
-						return [
-							provider,
-							await this.fetchModelsForProvider(user, provider, credentials, additionalData),
-						];
+						return [provider, await this.fetchModelsForProvider(user, provider)];
 					} catch {
 						return [
 							provider,
-							{ models: [], error: 'Could not retrieve models. Verify credentials.' },
+							{ models: [], error: 'Could not retrieve models. Service unavailable.' },
 						];
 					}
 				},
@@ -145,140 +101,22 @@ export class ChatHubService {
 	private async fetchModelsForProvider(
 		user: User,
 		provider: ChatHubProvider,
-		credentials: INodeCredentials,
-		additionalData: IWorkflowExecuteAdditionalData,
 	): Promise<ChatModelsResponse[ChatHubProvider]> {
 		switch (provider) {
 			case 'openai':
-				return await this.fetchOpenAiModels(credentials, additionalData);
+				// TODO: Fetch models from OpenAI with pay-per-use authentication
+				return { models: [] };
 			case 'anthropic':
-				return await this.fetchAnthropicModels(credentials, additionalData);
+				// TODO: Fetch models from Anthropic with pay-per-use authentication
+				return { models: [] };
 			case 'google':
-				return await this.fetchGoogleModels(credentials, additionalData);
+				// TODO: Fetch models from Google with pay-per-use authentication
+				return { models: [] };
 			case 'n8n':
 				return await this.fetchAgentWorkflowsAsModels(user);
 			case 'custom-agent':
 				return await this.chatHubAgentService.getAgentsByUserIdAsModels(user.id);
 		}
-	}
-
-	private async fetchOpenAiModels(
-		credentials: INodeCredentials,
-		additionalData: IWorkflowExecuteAdditionalData,
-	): Promise<ChatModelsResponse['openai']> {
-		const resourceLocatorResults = await this.nodeParametersService.getResourceLocatorResults(
-			'searchModels',
-			'parameters.model',
-			additionalData,
-			PROVIDER_NODE_TYPE_MAP.openai,
-			{},
-			credentials,
-		);
-
-		return {
-			models: resourceLocatorResults.results.map((result) => ({
-				name: result.name,
-				description: result.description ?? null,
-				model: {
-					provider: 'openai',
-					model: String(result.value),
-				},
-				createdAt: null,
-				updatedAt: null,
-			})),
-		};
-	}
-
-	private async fetchAnthropicModels(
-		credentials: INodeCredentials,
-		additionalData: IWorkflowExecuteAdditionalData,
-	): Promise<ChatModelsResponse['anthropic']> {
-		const resourceLocatorResults = await this.nodeParametersService.getResourceLocatorResults(
-			'searchModels',
-			'parameters.model',
-			additionalData,
-			PROVIDER_NODE_TYPE_MAP.anthropic,
-			{},
-			credentials,
-		);
-
-		return {
-			models: resourceLocatorResults.results.map((result) => ({
-				name: result.name,
-				description: result.description ?? null,
-				model: {
-					provider: 'anthropic',
-					model: String(result.value),
-				},
-				createdAt: null,
-				updatedAt: null,
-			})),
-		};
-	}
-
-	private async fetchGoogleModels(
-		credentials: INodeCredentials,
-		additionalData: IWorkflowExecuteAdditionalData,
-	): Promise<ChatModelsResponse['google']> {
-		const results = await this.nodeParametersService.getOptionsViaLoadOptions(
-			{
-				// From Gemini node
-				// https://github.com/n8n-io/n8n/blob/master/packages/%40n8n/nodes-langchain/nodes/llms/LmChatGoogleGemini/LmChatGoogleGemini.node.ts#L75
-				routing: {
-					request: {
-						method: 'GET',
-						url: '/v1beta/models',
-					},
-					output: {
-						postReceive: [
-							{
-								type: 'rootProperty',
-								properties: {
-									property: 'models',
-								},
-							},
-							{
-								type: 'filter',
-								properties: {
-									pass: "={{ !$responseItem.name.includes('embedding') }}",
-								},
-							},
-							{
-								type: 'setKeyValue',
-								properties: {
-									name: '={{$responseItem.name}}',
-									value: '={{$responseItem.name}}',
-									description: '={{$responseItem.description}}',
-								},
-							},
-							{
-								type: 'sort',
-								properties: {
-									key: 'name',
-								},
-							},
-						],
-					},
-				},
-			},
-			additionalData,
-			PROVIDER_NODE_TYPE_MAP.google,
-			{},
-			credentials,
-		);
-
-		return {
-			models: results.map((result) => ({
-				name: String(result.value),
-				description: result.description ?? null,
-				model: {
-					provider: 'google',
-					model: String(result.value),
-				},
-				createdAt: null,
-				updatedAt: null,
-			})),
-		};
 	}
 
 	private async fetchAgentWorkflowsAsModels(user: User): Promise<ChatModelsResponse['n8n']> {
@@ -363,22 +201,11 @@ export class ChatHubService {
 		return undefined;
 	}
 
-	private pickCredentialId(
-		provider: ChatHubProvider,
-		credentials: INodeCredentials,
-	): string | null {
-		if (provider === 'n8n' || provider === 'custom-agent') {
-			return null;
-		}
-
-		return credentials[PROVIDER_CREDENTIAL_TYPE_MAP[provider]]?.id ?? null;
-	}
-
 	async sendHumanMessage(res: Response, user: User, payload: HumanMessagePayload) {
-		const { sessionId, messageId, message, model, credentials, previousMessageId } = payload;
+		const { sessionId, messageId, message, model, previousMessageId } = payload;
 		const { provider } = model;
 
-		const selectedModel = this.getModelWithCredentials(model, credentials);
+		const selectedModel = this.getModelWithCredentials(model);
 
 		const { executionData, workflowData } = await this.messageRepository.manager.transaction(
 			async (trx) => {
@@ -414,7 +241,6 @@ export class ChatHubService {
 				return await this.prepareBaseChatWorkflow(
 					user,
 					sessionId,
-					credentials,
 					model,
 					history,
 					message,
@@ -438,19 +264,17 @@ export class ChatHubService {
 		// Generate title for the session on receiving the first human message.
 		// This could be moved on a separate API call perhaps, maybe triggered after the first message is sent?
 		if (previousMessageId === null) {
-			await this.generateSessionTitle(user, sessionId, message, credentials, model).catch(
-				(error) => {
-					this.logger.error(`Title generation failed: ${error}`);
-				},
-			);
+			await this.generateSessionTitle(user, sessionId, message, model).catch((error) => {
+				this.logger.error(`Title generation failed: ${error}`);
+			});
 		}
 	}
 
 	async editMessage(res: Response, user: User, payload: EditMessagePayload) {
-		const { sessionId, editId, messageId, message, model, credentials } = payload;
+		const { sessionId, editId, messageId, message, model } = payload;
 		const { provider } = model;
 
-		const selectedModel = this.getModelWithCredentials(model, credentials);
+		const selectedModel = this.getModelWithCredentials(model);
 
 		const workflow = await this.messageRepository.manager.transaction(async (trx) => {
 			const session = await this.getChatSession(user, sessionId, selectedModel, true, trx);
@@ -500,7 +324,6 @@ export class ChatHubService {
 				return await this.prepareBaseChatWorkflow(
 					user,
 					sessionId,
-					credentials,
 					model,
 					history,
 					message,
@@ -530,10 +353,10 @@ export class ChatHubService {
 	}
 
 	async regenerateAIMessage(res: Response, user: User, payload: RegenerateMessagePayload) {
-		const { sessionId, retryId, model, credentials } = payload;
+		const { sessionId, retryId, model } = payload;
 		const { provider } = model;
 
-		const selectedModel = this.getModelWithCredentials(model, credentials);
+		const selectedModel = this.getModelWithCredentials(model);
 
 		const {
 			workflow: { workflowData, executionData },
@@ -588,7 +411,6 @@ export class ChatHubService {
 				workflow = await this.prepareBaseChatWorkflow(
 					user,
 					sessionId,
-					credentials,
 					model,
 					history,
 					message,
@@ -620,27 +442,22 @@ export class ChatHubService {
 	private async prepareBaseChatWorkflow(
 		user: User,
 		sessionId: ChatSessionId,
-		credentials: INodeCredentials,
 		model: ChatHubBaseLLMModel,
 		history: ChatHubMessage[],
 		message: string,
 		systemMessage: string | undefined,
 		trx: EntityManager,
 	) {
-		const credential = await this.chatHubCredentialsService.ensureCredentials(
-			user,
-			model.provider,
-			credentials,
-			trx,
-		);
+		// TODO: Implement pay-per-use authentication for LLM providers
+		// For now, use a default project ID (user's default project)
+		const projectId = user.id; // Temporary: using user ID as project ID
 
 		return await this.chatHubWorkflowService.createChatWorkflow(
 			user.id,
 			sessionId,
-			credential.projectId,
+			projectId,
 			history,
 			message,
-			credentials,
 			model,
 			systemMessage,
 			trx,
@@ -669,11 +486,7 @@ export class ChatHubService {
 			throw new BadRequestError('Invalid provider');
 		}
 
-		const credentialId = agent.credentialId;
-		if (!credentialId) {
-			throw new BadRequestError('Credentials not set for agent');
-		}
-
+		// TODO: Validate agent has proper API key for pay-per-use model
 		const systemMessage = agent.systemPrompt;
 
 		const model: ChatHubBaseLLMModel = {
@@ -681,17 +494,9 @@ export class ChatHubService {
 			model: agent.model,
 		};
 
-		const credentials: INodeCredentials = {
-			[PROVIDER_CREDENTIAL_TYPE_MAP[agent.provider]]: {
-				id: credentialId,
-				name: '',
-			},
-		};
-
 		return await this.prepareBaseChatWorkflow(
 			user,
 			sessionId,
-			credentials,
 			model,
 			history,
 			message,
@@ -996,14 +801,12 @@ export class ChatHubService {
 		user: User,
 		sessionId: ChatSessionId,
 		humanMessage: string,
-		credentials: INodeCredentials,
 		model: ChatHubConversationModel,
 	) {
 		const { executionData, workflowData } = await this.prepareTitleGenerationWorkflow(
 			user,
 			sessionId,
 			humanMessage,
-			credentials,
 			model,
 		);
 
@@ -1026,201 +829,27 @@ export class ChatHubService {
 		user: User,
 		sessionId: ChatSessionId,
 		humanMessage: string,
-		incomingCredentials: INodeCredentials,
 		incomingModel: ChatHubConversationModel,
 	) {
 		return await this.messageRepository.manager.transaction(async (trx) => {
-			const { resolvedCredentials, resolvedModel, credential } =
-				await this.resolveCredentialsAndModelForTitle(
-					user,
-					incomingModel,
-					incomingCredentials,
-					trx,
-				);
-
-			if (!credential) {
-				throw new BadRequestError('Could not determine credentials for title generation');
-			}
+			// TODO: Implement pay-per-use authentication for title generation
+			// For now, use a default project ID
+			const projectId = user.id;
+			const resolvedModel = incomingModel;
 
 			this.logger.debug(
-				`Using credential ID ${credential.id} for title generation in project ${credential.projectId}, model ${JSON.stringify(resolvedModel)}`,
+				`Generating title for session ${sessionId}, model ${JSON.stringify(resolvedModel)}`,
 			);
 
 			return await this.chatHubWorkflowService.createTitleGenerationWorkflow(
 				user.id,
 				sessionId,
-				credential.projectId,
+				projectId,
 				humanMessage,
-				resolvedCredentials,
 				resolvedModel,
 				trx,
 			);
 		});
-	}
-
-	private async resolveCredentialsAndModelForTitle(
-		user: User,
-		model: ChatHubConversationModel,
-		credentials: INodeCredentials,
-		trx: EntityManager,
-	): Promise<{
-		resolvedCredentials: INodeCredentials;
-		resolvedModel: ChatHubConversationModel;
-		credential: CredentialWithProjectId;
-	}> {
-		if (model.provider === 'n8n') {
-			return await this.resolveFromN8nWorkflow(user, model, trx);
-		}
-
-		if (model.provider === 'custom-agent') {
-			return await this.resolveFromCustomAgent(user, model, trx);
-		}
-
-		const credential = await this.chatHubCredentialsService.ensureCredentials(
-			user,
-			model.provider,
-			credentials,
-			trx,
-		);
-
-		return {
-			resolvedCredentials: credentials,
-			resolvedModel: model,
-			credential,
-		};
-	}
-
-	private async resolveFromN8nWorkflow(
-		user: User,
-		model: ChatHubN8nModel,
-		trx: EntityManager,
-	): Promise<{
-		resolvedCredentials: INodeCredentials;
-		resolvedModel: ChatHubConversationModel;
-		credential: CredentialWithProjectId;
-	}> {
-		const workflowEntity = await this.workflowFinderService.findWorkflowForUser(
-			model.workflowId,
-			user,
-			['workflow:read'],
-			{ includeTags: false, includeParentFolder: false },
-		);
-
-		if (!workflowEntity) {
-			throw new BadRequestError('Workflow not found for title generation');
-		}
-
-		const modelNodes = this.findSupportedLLMNodes(workflowEntity);
-		this.logger.debug(
-			`Found ${modelNodes.length} LLM nodes in workflow ${workflowEntity.id} for title generation`,
-		);
-
-		if (modelNodes.length === 0) {
-			throw new BadRequestError('No supported Model nodes found in workflow for title generation');
-		}
-
-		const modelNode = modelNodes[0];
-		const llmModel = (modelNode.node.parameters?.model as INodeParameters)?.value;
-		if (!llmModel) {
-			throw new BadRequestError(
-				`No model set on Model node "${modelNode.node.name}" for title generation`,
-			);
-		}
-
-		if (typeof llmModel !== 'string' || llmModel.length === 0 || llmModel.startsWith('=')) {
-			throw new BadRequestError(
-				`Invalid model set on Model node "${modelNode.node.name}" for title generation`,
-			);
-		}
-
-		const llmCredentials = modelNode.node.credentials;
-		if (!llmCredentials) {
-			throw new BadRequestError(
-				`No credentials found on Model node "${modelNode.node.name}" for title generation`,
-			);
-		}
-
-		const credential = await this.chatHubCredentialsService.ensureCredentials(
-			user,
-			modelNode.provider,
-			llmCredentials,
-			trx,
-		);
-
-		const resolvedModel: ChatHubConversationModel = {
-			provider: modelNode.provider,
-			model: llmModel,
-		};
-
-		const resolvedCredentials: INodeCredentials = {
-			[PROVIDER_CREDENTIAL_TYPE_MAP[modelNode.provider]]: {
-				id: credential.id,
-				name: '',
-			},
-		};
-
-		return { resolvedCredentials, resolvedModel, credential };
-	}
-
-	private findSupportedLLMNodes(workflowEntity: { nodes: INode[]; id: string }) {
-		return workflowEntity.nodes.reduce<Array<{ node: INode; provider: ChatHubLLMProvider }>>(
-			(acc, node) => {
-				const supportedProvider = Object.entries(PROVIDER_NODE_TYPE_MAP).find(
-					([_provider, { name }]) => node.type === name,
-				);
-				if (supportedProvider) {
-					const [provider] = supportedProvider;
-					acc.push({ node, provider: provider as ChatHubLLMProvider });
-				}
-				return acc;
-			},
-			[],
-		);
-	}
-
-	private async resolveFromCustomAgent(
-		user: User,
-		model: ChatHubCustomAgentModel,
-		trx: EntityManager,
-	): Promise<{
-		resolvedCredentials: INodeCredentials;
-		resolvedModel: ChatHubConversationModel;
-		credential: CredentialWithProjectId;
-	}> {
-		const agent = await this.chatHubAgentService.getAgentById(model.agentId, user.id);
-		if (!agent) {
-			throw new BadRequestError('Agent not found for title generation');
-		}
-
-		if (agent.provider === 'n8n' || agent.provider === 'custom-agent') {
-			throw new BadRequestError('Invalid provider for title generation');
-		}
-
-		const credentialId = agent.credentialId;
-		if (!credentialId) {
-			throw new BadRequestError('Credentials not set for agent');
-		}
-
-		const resolvedModel: ChatHubConversationModel = {
-			provider: agent.provider,
-			model: agent.model,
-		};
-
-		const resolvedCredentials: INodeCredentials = {
-			[PROVIDER_CREDENTIAL_TYPE_MAP[agent.provider]]: {
-				id: credentialId,
-				name: '',
-			},
-		};
-
-		const credential = await this.chatHubCredentialsService.ensureCredentials(
-			user,
-			agent.provider,
-			resolvedCredentials,
-			trx,
-		);
-
-		return { resolvedCredentials, resolvedModel, credential };
 	}
 
 	private async runTitleWorkflowAndGetTitle(
@@ -1326,15 +955,11 @@ export class ChatHubService {
 		});
 	}
 
-	private getModelWithCredentials(
-		selectedModel: ChatHubConversationModel,
-		credentials: INodeCredentials,
-	) {
-		const provider = selectedModel.provider;
-
+	private getModelWithCredentials(selectedModel: ChatHubConversationModel) {
+		// TODO: Remove this method once pay-per-use model is implemented
 		const modelWithCredentials: ModelWithCredentials = {
 			...selectedModel,
-			credentialId: provider !== 'n8n' ? this.pickCredentialId(provider, credentials) : null,
+			credentialId: null, // No longer using credentials
 		};
 
 		return modelWithCredentials;
@@ -1427,7 +1052,6 @@ export class ChatHubService {
 			title: session.title,
 			ownerId: session.ownerId,
 			lastMessageAt: session.lastMessageAt?.toISOString() ?? null,
-			credentialId: session.credentialId,
 			provider: session.provider,
 			model: session.model,
 			workflowId: session.workflowId,
@@ -1455,7 +1079,6 @@ export class ChatHubService {
 				title: session.title,
 				ownerId: session.ownerId,
 				lastMessageAt: session.lastMessageAt?.toISOString() ?? null,
-				credentialId: session.credentialId,
 				provider: session.provider,
 				model: session.model,
 				workflowId: session.workflowId,
@@ -1542,7 +1165,6 @@ export class ChatHubService {
 		sessionId: ChatSessionId,
 		updates: {
 			title?: string;
-			credentialId?: string | null;
 			provider?: ChatHubProvider;
 			model?: string | null;
 			workflowId?: string | null;
@@ -1598,12 +1220,10 @@ export class ChatHubService {
 		if (updates.provider === 'n8n') {
 			// n8n provider only stores workflowId
 			updates.model = null;
-			updates.credentialId = null;
 			updates.agentId = null;
 		} else if (updates.provider === 'custom-agent') {
 			// custom-agent provider only stores agentId & Agent name
 			updates.model = null;
-			updates.credentialId = null;
 			updates.workflowId = null;
 		} else if (updates.provider) {
 			updates.workflowId = null;

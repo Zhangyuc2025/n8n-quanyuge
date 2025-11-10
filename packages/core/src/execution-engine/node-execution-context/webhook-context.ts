@@ -2,7 +2,6 @@ import type { Request, Response } from 'express';
 import type {
 	AINodeConnectionType,
 	CloseFunction,
-	ICredentialDataDecryptedObject,
 	IDataObject,
 	IExecuteData,
 	INode,
@@ -76,10 +75,6 @@ export class WebhookContext extends NodeExecutionContext implements IWebhookFunc
 					mimeType,
 				),
 		};
-	}
-
-	async getCredentials<T extends object = ICredentialDataDecryptedObject>(type: string) {
-		return await this._getCredentials<T>(type);
 	}
 
 	getBodyData() {

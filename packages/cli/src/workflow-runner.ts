@@ -35,7 +35,6 @@ import {
 	getLifecycleHooksForScalingMain,
 } from '@/execution-lifecycle/execution-lifecycle-hooks';
 import { ExecutionDataService } from '@/executions/execution-data.service';
-import { CredentialsPermissionChecker } from '@/executions/pre-execution-checks';
 import { ManualExecutionService } from '@/manual-execution.service';
 import { NodeTypes } from '@/node-types';
 import type { ScalingService } from '@/scaling/scaling.service';
@@ -56,7 +55,6 @@ export class WorkflowRunner {
 		private readonly executionRepository: ExecutionRepository,
 		private readonly workflowStaticDataService: WorkflowStaticDataService,
 		private readonly nodeTypes: NodeTypes,
-		private readonly credentialsPermissionChecker: CredentialsPermissionChecker,
 		private readonly instanceSettings: InstanceSettings,
 		private readonly manualExecutionService: ManualExecutionService,
 		private readonly executionDataService: ExecutionDataService,
@@ -141,23 +139,7 @@ export class WorkflowRunner {
 		// Register a new execution
 		const executionId = await this.activeExecutions.add(data, restartExecutionId);
 
-		const { id: workflowId, nodes } = data.workflowData;
-		try {
-			await this.credentialsPermissionChecker.check(workflowId, nodes);
-		} catch (error) {
-			// Create a failed execution with the data for the node, save it and abort execution
-			const runData = this.executionDataService.generateFailedExecutionFromError(
-				data.executionMode,
-				error,
-				error.node,
-			);
-			const lifecycleHooks = getLifecycleHooksForRegularMain(data, executionId);
-			await lifecycleHooks.runHook('workflowExecuteBefore', [undefined, data.executionData]);
-			await lifecycleHooks.runHook('workflowExecuteAfter', [runData]);
-			responsePromise?.reject(error);
-			this.activeExecutions.finalizeExecution(executionId);
-			return executionId;
-		}
+		const { id: workflowId } = data.workflowData;
 
 		if (responsePromise) {
 			this.activeExecutions.attachResponsePromise(executionId, responsePromise);

@@ -37,9 +37,7 @@ import {
 } from 'n8n-workflow';
 import type {
 	GenericValue,
-	IAdditionalCredentialOptions,
 	IAllExecuteFunctions,
-	ICredentialDataDecryptedObject,
 	IDataObject,
 	IExecuteData,
 	IExecuteFunctions,
@@ -877,23 +875,10 @@ export function applyPaginationRequestData(
 	return merge({}, requestData, preparedPaginationData);
 }
 
-function createOAuth2Client(credentials: OAuth2CredentialData): ClientOAuth2 {
-	return new ClientOAuth2({
-		clientId: credentials.clientId,
-		clientSecret: credentials.clientSecret,
-		accessTokenUri: credentials.accessTokenUrl,
-		scopes: (credentials.scope ?? '').split(' '),
-		ignoreSSLIssues: credentials.ignoreSSLIssues,
-		authentication: credentials.authentication ?? 'header',
-		...(credentials.additionalBodyProperties && {
-			additionalBodyProperties: jsonParse(credentials.additionalBodyProperties, {
-				fallbackValue: {},
-			}),
-		}),
-	});
-}
-
-/** @deprecated make these requests using httpRequestWithAuthentication */
+/**
+ * @deprecated OAuth2 authentication removed - credentials system has been removed
+ * This function now throws an error as OAuth2 is no longer supported
+ */
 export async function requestOAuth2(
 	this: IAllExecuteFunctions,
 	credentialsType: string,
@@ -902,381 +887,53 @@ export async function requestOAuth2(
 	additionalData: IWorkflowExecuteAdditionalData,
 	oAuth2Options?: IOAuth2Options,
 	isN8nRequest = false,
-) {
-	removeEmptyBody(requestOptions);
-
-	const credentials = (await this.getCredentials(
-		credentialsType,
-	)) as unknown as OAuth2CredentialData;
-
-	// Only the OAuth2 with authorization code grant needs connection
-	if (credentials.grantType === 'authorizationCode' && credentials.oauthTokenData === undefined) {
-		throw new ApplicationError('OAuth credentials not connected');
-	}
-
-	const oAuthClient = createOAuth2Client(credentials);
-
-	let oauthTokenData = credentials.oauthTokenData as ClientOAuth2TokenData;
-	// if it's the first time using the credentials, get the access token and save it into the DB.
-	if (
-		credentials.grantType === 'clientCredentials' &&
-		(oauthTokenData === undefined ||
-			Object.keys(oauthTokenData).length === 0 ||
-			oauthTokenData.access_token === '') // stub
-	) {
-		const { data } = await oAuthClient.credentials.getToken();
-		// Find the credentials
-		if (!node.credentials?.[credentialsType]) {
-			throw new ApplicationError('Node does not have credential type', {
-				extra: { nodeName: node.name },
-				tags: { credentialType: credentialsType },
-			});
-		}
-
-		const nodeCredentials = node.credentials[credentialsType];
-		credentials.oauthTokenData = data;
-
-		// Save the refreshed token
-		await additionalData.credentialsHelper.updateCredentialsOauthTokenData(
-			nodeCredentials,
-			credentialsType,
-			credentials as unknown as ICredentialDataDecryptedObject,
-		);
-
-		oauthTokenData = data;
-	}
-
-	const accessToken =
-		get(oauthTokenData, oAuth2Options?.property as string) || oauthTokenData.accessToken;
-	const refreshToken = oauthTokenData.refreshToken;
-	const token = oAuthClient.createToken(
+): Promise<never> {
+	throw new ApplicationError(
+		'OAuth2 authentication is no longer supported - credentials system has been removed',
 		{
-			...oauthTokenData,
-			...(accessToken ? { access_token: accessToken } : {}),
-			...(refreshToken ? { refresh_token: refreshToken } : {}),
+			extra: { credentialsType, nodeName: node.name },
 		},
-		oAuth2Options?.tokenType || oauthTokenData.tokenType,
 	);
-
-	(requestOptions as IRequestOptions).rejectUnauthorized = !credentials.ignoreSSLIssues;
-
-	// Signs the request by adding authorization headers or query parameters depending
-	// on the token-type used.
-	const newRequestOptions = token.sign(requestOptions as ClientOAuth2RequestObject);
-	const newRequestHeaders = (newRequestOptions.headers = newRequestOptions.headers ?? {});
-	// If keep bearer is false remove the it from the authorization header
-	if (oAuth2Options?.keepBearer === false && typeof newRequestHeaders.Authorization === 'string') {
-		newRequestHeaders.Authorization = newRequestHeaders.Authorization.split(' ')[1];
-	}
-	if (oAuth2Options?.keyToIncludeInAccessTokenHeader) {
-		Object.assign(newRequestHeaders, {
-			[oAuth2Options.keyToIncludeInAccessTokenHeader]: token.accessToken,
-		});
-	}
-	if (isN8nRequest) {
-		return await this.helpers.httpRequest(newRequestOptions).catch(async (error: AxiosError) => {
-			if (error.response?.status === 401) {
-				this.logger.debug(
-					`OAuth2 token for "${credentialsType}" used by node "${node.name}" expired. Should revalidate.`,
-				);
-				const tokenRefreshOptions: IDataObject = {};
-				if (oAuth2Options?.includeCredentialsOnRefreshOnBody) {
-					const body: IDataObject = {
-						client_id: credentials.clientId,
-						...(credentials.grantType === 'authorizationCode' && {
-							client_secret: credentials.clientSecret as string,
-						}),
-					};
-					tokenRefreshOptions.body = body;
-					tokenRefreshOptions.headers = {
-						Authorization: '',
-					};
-				}
-
-				let newToken;
-
-				this.logger.debug(
-					`OAuth2 token for "${credentialsType}" used by node "${node.name}" has been renewed.`,
-				);
-				// if it's OAuth2 with client credentials grant type, get a new token
-				// instead of refreshing it.
-				if (credentials.grantType === 'clientCredentials') {
-					newToken = await token.client.credentials.getToken();
-				} else {
-					newToken = await token.refresh(tokenRefreshOptions as unknown as ClientOAuth2Options);
-				}
-
-				this.logger.debug(
-					`OAuth2 token for "${credentialsType}" used by node "${node.name}" has been renewed.`,
-				);
-
-				credentials.oauthTokenData = newToken.data;
-				// Find the credentials
-				if (!node.credentials?.[credentialsType]) {
-					throw new ApplicationError('Node does not have credential type', {
-						extra: { nodeName: node.name, credentialType: credentialsType },
-					});
-				}
-				const nodeCredentials = node.credentials[credentialsType];
-				await additionalData.credentialsHelper.updateCredentialsOauthTokenData(
-					nodeCredentials,
-					credentialsType,
-					credentials as unknown as ICredentialDataDecryptedObject,
-				);
-				const refreshedRequestOption = newToken.sign(requestOptions as ClientOAuth2RequestObject);
-
-				if (oAuth2Options?.keyToIncludeInAccessTokenHeader) {
-					Object.assign(newRequestHeaders, {
-						[oAuth2Options.keyToIncludeInAccessTokenHeader]: token.accessToken,
-					});
-				}
-
-				return await this.helpers.httpRequest(refreshedRequestOption);
-			}
-			throw error;
-		});
-	}
-	const tokenExpiredStatusCode =
-		oAuth2Options?.tokenExpiredStatusCode === undefined
-			? 401
-			: oAuth2Options?.tokenExpiredStatusCode;
-
-	return await this.helpers
-		.request(newRequestOptions as IRequestOptions)
-		.then((response) => {
-			const requestOptions = newRequestOptions as any;
-			if (
-				requestOptions.resolveWithFullResponse === true &&
-				requestOptions.simple === false &&
-				response.statusCode === tokenExpiredStatusCode
-			) {
-				throw response;
-			}
-			return response;
-		})
-		.catch(async (error: IResponseError) => {
-			if (error.statusCode === tokenExpiredStatusCode) {
-				// Token is probably not valid anymore. So try refresh it.
-				const tokenRefreshOptions: IDataObject = {};
-				if (oAuth2Options?.includeCredentialsOnRefreshOnBody) {
-					const body: IDataObject = {
-						client_id: credentials.clientId,
-						client_secret: credentials.clientSecret,
-					};
-					tokenRefreshOptions.body = body;
-					// Override authorization property so the credentials are not included in it
-					tokenRefreshOptions.headers = {
-						Authorization: '',
-					};
-				}
-				this.logger.debug(
-					`OAuth2 token for "${credentialsType}" used by node "${node.name}" expired. Should revalidate.`,
-				);
-
-				let newToken;
-
-				// if it's OAuth2 with client credentials grant type, get a new token
-				// instead of refreshing it.
-				if (credentials.grantType === 'clientCredentials') {
-					newToken = await token.client.credentials.getToken();
-				} else {
-					newToken = await token.refresh(tokenRefreshOptions as unknown as ClientOAuth2Options);
-				}
-				this.logger.debug(
-					`OAuth2 token for "${credentialsType}" used by node "${node.name}" has been renewed.`,
-				);
-
-				credentials.oauthTokenData = newToken.data;
-
-				// Find the credentials
-				if (!node.credentials?.[credentialsType]) {
-					throw new ApplicationError('Node does not have credential type', {
-						tags: { credentialType: credentialsType },
-						extra: { nodeName: node.name },
-					});
-				}
-				const nodeCredentials = node.credentials[credentialsType];
-
-				// Save the refreshed token
-				await additionalData.credentialsHelper.updateCredentialsOauthTokenData(
-					nodeCredentials,
-					credentialsType,
-					credentials as unknown as ICredentialDataDecryptedObject,
-				);
-
-				this.logger.debug(
-					`OAuth2 token for "${credentialsType}" used by node "${node.name}" has been saved to database successfully.`,
-				);
-
-				// Make the request again with the new token
-				const newRequestOptions = newToken.sign(requestOptions as ClientOAuth2RequestObject);
-				newRequestOptions.headers = newRequestOptions.headers ?? {};
-
-				if (oAuth2Options?.keyToIncludeInAccessTokenHeader) {
-					Object.assign(newRequestOptions.headers, {
-						[oAuth2Options.keyToIncludeInAccessTokenHeader]: token.accessToken,
-					});
-				}
-
-				return await this.helpers.request(newRequestOptions as IRequestOptions);
-			}
-
-			// Unknown error so simply throw it
-			throw error;
-		});
 }
-
-/** @deprecated make these requests using httpRequestWithAuthentication */
+/**
+ * @deprecated OAuth1 authentication removed - credentials system has been removed
+ * This function now throws an error as OAuth1 is no longer supported
+ */
 export async function requestOAuth1(
 	this: IAllExecuteFunctions,
 	credentialsType: string,
 	requestOptions: IHttpRequestOptions | IRequestOptions,
 	isN8nRequest = false,
-) {
-	removeEmptyBody(requestOptions);
-
-	const credentials = await this.getCredentials(credentialsType);
-
-	if (credentials === undefined) {
-		throw new ApplicationError('No credentials were returned');
-	}
-
-	if (credentials.oauthTokenData === undefined) {
-		throw new ApplicationError('OAuth credentials not connected');
-	}
-
-	const oauth = new clientOAuth1({
-		consumer: {
-			key: credentials.consumerKey as string,
-			secret: credentials.consumerSecret as string,
+): Promise<never> {
+	throw new ApplicationError(
+		'OAuth1 authentication is no longer supported - credentials system has been removed',
+		{
+			extra: { credentialsType },
 		},
-		signature_method: credentials.signatureMethod as string,
-		hash_function(base, key) {
-			let algorithm: string;
-			switch (credentials.signatureMethod) {
-				case 'HMAC-SHA256':
-					algorithm = 'sha256';
-					break;
-				case 'HMAC-SHA512':
-					algorithm = 'sha512';
-					break;
-				default:
-					algorithm = 'sha1';
-					break;
-			}
-			return createHmac(algorithm, key).update(base).digest('base64');
-		},
-	});
-
-	const oauthTokenData = credentials.oauthTokenData as IDataObject;
-
-	const token: Token = {
-		key: oauthTokenData.oauth_token as string,
-		secret: oauthTokenData.oauth_token_secret as string,
-	};
-
-	// @ts-expect-error @TECH_DEBT: Remove request library
-	requestOptions.data = { ...requestOptions.qs, ...requestOptions.form };
-
-	// Fixes issue that OAuth1 library only works with "url" property and not with "uri"
-	if ('uri' in requestOptions && !requestOptions.url) {
-		requestOptions.url = requestOptions.uri;
-		delete requestOptions.uri;
-	}
-
-	requestOptions.headers = oauth.toHeader(
-		oauth.authorize(requestOptions as unknown as clientOAuth1.RequestOptions, token),
-	) as unknown as Record<string, string>;
-	if (isN8nRequest) {
-		return await this.helpers.httpRequest(requestOptions as IHttpRequestOptions);
-	}
-
-	return await this.helpers
-		.request(requestOptions as IRequestOptions)
-		.catch(async (error: IResponseError) => {
-			// Unknown error so simply throw it
-			throw error;
-		});
+	);
 }
-
+/**
+ * @deprecated OAuth2 token refresh removed - credentials system has been removed
+ * This function now throws an error as OAuth2 is no longer supported
+ */
 export async function refreshOAuth2Token(
 	this: IAllExecuteFunctions,
 	credentialsType: string,
 	node: INode,
 	additionalData: IWorkflowExecuteAdditionalData,
 	oAuth2Options?: IOAuth2Options,
-) {
-	const credentials = (await this.getCredentials(
-		credentialsType,
-	)) as unknown as OAuth2CredentialData;
-	if (credentials.grantType === 'authorizationCode' && credentials.oauthTokenData === undefined) {
-		throw new ApplicationError('OAuth credentials not connected');
-	}
-
-	const oAuthClient = createOAuth2Client(credentials);
-	const oauthTokenData = credentials.oauthTokenData as ClientOAuth2TokenData;
-	const accessToken =
-		get(oauthTokenData, oAuth2Options?.property as string) || oauthTokenData.accessToken;
-	const refreshToken = oauthTokenData.refreshToken;
-	const token = oAuthClient.createToken(
+): Promise<never> {
+	throw new ApplicationError(
+		'OAuth2 token refresh is no longer supported - credentials system has been removed',
 		{
-			...oauthTokenData,
-			...(accessToken ? { access_token: accessToken } : {}),
-			...(refreshToken ? { refresh_token: refreshToken } : {}),
+			extra: { credentialsType, nodeName: node.name },
 		},
-		oAuth2Options?.tokenType || oauthTokenData.tokenType,
 	);
-	const tokenRefreshOptions: IDataObject = {};
-	if (oAuth2Options?.includeCredentialsOnRefreshOnBody) {
-		const body: IDataObject = {
-			client_id: credentials.clientId,
-			...(credentials.grantType === 'authorizationCode' && {
-				client_secret: credentials.clientSecret as string,
-			}),
-		};
-		tokenRefreshOptions.body = body;
-		tokenRefreshOptions.headers = {
-			Authorization: '',
-		};
-	}
-
-	this.logger.debug(
-		`Refreshing the OAuth2 token for "${credentialsType}" used by node "${node.name}".`,
-	);
-
-	let newToken;
-	// If it's OAuth2 with client credentials grant type, get a new token instead of refreshing it.
-	if (credentials.grantType === 'clientCredentials') {
-		newToken = await token.client.credentials.getToken();
-	} else {
-		newToken = await token.refresh(tokenRefreshOptions as unknown as ClientOAuth2Options);
-	}
-
-	this.logger.debug(
-		`OAuth2 token for "${credentialsType}" used by node "${node.name}" has been renewed.`,
-	);
-
-	credentials.oauthTokenData = newToken.data;
-	if (!node.credentials?.[credentialsType]) {
-		throw new ApplicationError('Node does not have credential type', {
-			extra: { nodeName: node.name, credentialType: credentialsType },
-		});
-	}
-
-	const nodeCredentials = node.credentials[credentialsType];
-	await additionalData.credentialsHelper.updateCredentialsOauthTokenData(
-		nodeCredentials,
-		credentialsType,
-		credentials as unknown as ICredentialDataDecryptedObject,
-	);
-
-	this.logger.debug(
-		`OAuth2 token for "${credentialsType}" used by node "${node.name}" has been saved to database successfully.`,
-	);
-
-	return newToken.data;
 }
 
+/**
+ * @deprecated Credential authentication removed - just use httpRequest directly
+ */
 export async function httpRequestWithAuthentication(
 	this: IAllExecuteFunctions,
 	credentialsType: string,
@@ -1284,115 +941,23 @@ export async function httpRequestWithAuthentication(
 	workflow: Workflow,
 	node: INode,
 	additionalData: IWorkflowExecuteAdditionalData,
-	additionalCredentialOptions?: IAdditionalCredentialOptions,
 ) {
 	removeEmptyBody(requestOptions);
 
-	// Cancel this request on execution cancellation
 	if ('getExecutionCancelSignal' in this) {
 		requestOptions.abortSignal = this.getExecutionCancelSignal();
 	}
 
-	let credentialsDecrypted: ICredentialDataDecryptedObject | undefined;
 	try {
-		const parentTypes = additionalData.credentialsHelper.getParentTypes(credentialsType);
-
-		if (parentTypes.includes('oAuth1Api')) {
-			return await requestOAuth1.call(this, credentialsType, requestOptions, true);
-		}
-		if (parentTypes.includes('oAuth2Api')) {
-			return await requestOAuth2.call(
-				this,
-				credentialsType,
-				requestOptions,
-				node,
-				additionalData,
-				additionalCredentialOptions?.oauth2,
-				true,
-			);
-		}
-
-		if (additionalCredentialOptions?.credentialsDecrypted) {
-			credentialsDecrypted = additionalCredentialOptions.credentialsDecrypted.data;
-		} else {
-			credentialsDecrypted =
-				await this.getCredentials<ICredentialDataDecryptedObject>(credentialsType);
-		}
-
-		if (credentialsDecrypted === undefined) {
-			throw new NodeOperationError(
-				node,
-				`Node "${node.name}" does not have any credentials of type "${credentialsType}" set`,
-				{ level: 'warning' },
-			);
-		}
-
-		const data = await additionalData.credentialsHelper.preAuthentication(
-			{ helpers: this.helpers },
-			credentialsDecrypted,
-			credentialsType,
-			node,
-			false,
-		);
-
-		if (data) {
-			// make the updated property in the credentials
-			// available to the authenticate method
-			Object.assign(credentialsDecrypted, data);
-		}
-
-		requestOptions = await additionalData.credentialsHelper.authenticate(
-			credentialsDecrypted,
-			credentialsType,
-			requestOptions,
-			workflow,
-			node,
-		);
 		return await httpRequest(requestOptions);
 	} catch (error) {
-		// if there is a pre authorization method defined and
-		// the method failed due to unauthorized request
-		if (
-			error.response?.status === 401 &&
-			additionalData.credentialsHelper.preAuthentication !== undefined
-		) {
-			try {
-				if (credentialsDecrypted !== undefined) {
-					// try to refresh the credentials
-					const data = await additionalData.credentialsHelper.preAuthentication(
-						{ helpers: this.helpers },
-						credentialsDecrypted,
-						credentialsType,
-						node,
-						true,
-					);
-
-					if (data) {
-						// make the updated property in the credentials
-						// available to the authenticate method
-						Object.assign(credentialsDecrypted, data);
-					}
-
-					requestOptions = await additionalData.credentialsHelper.authenticate(
-						credentialsDecrypted,
-						credentialsType,
-						requestOptions,
-						workflow,
-						node,
-					);
-				}
-				// retry the request
-				return await httpRequest(requestOptions);
-			} catch (error) {
-				throw new NodeApiError(this.getNode(), error);
-			}
-		}
-
 		throw new NodeApiError(this.getNode(), error);
 	}
 }
 
-/** @deprecated use httpRequestWithAuthentication */
+/**
+ * @deprecated use httpRequestWithAuthentication or httpRequest directly
+ */
 export async function requestWithAuthentication(
 	this: IAllExecuteFunctions,
 	credentialsType: string,
@@ -1400,103 +965,15 @@ export async function requestWithAuthentication(
 	workflow: Workflow,
 	node: INode,
 	additionalData: IWorkflowExecuteAdditionalData,
-	additionalCredentialOptions?: IAdditionalCredentialOptions,
 	itemIndex?: number,
 ) {
 	removeEmptyBody(requestOptions);
 
-	let credentialsDecrypted: ICredentialDataDecryptedObject | undefined;
-
 	try {
-		const parentTypes = additionalData.credentialsHelper.getParentTypes(credentialsType);
-
-		if (credentialsType === 'oAuth1Api' || parentTypes.includes('oAuth1Api')) {
-			return await requestOAuth1.call(this, credentialsType, requestOptions, false);
-		}
-		if (credentialsType === 'oAuth2Api' || parentTypes.includes('oAuth2Api')) {
-			return await requestOAuth2.call(
-				this,
-				credentialsType,
-				requestOptions,
-				node,
-				additionalData,
-				additionalCredentialOptions?.oauth2,
-				false,
-			);
-		}
-
-		if (additionalCredentialOptions?.credentialsDecrypted) {
-			credentialsDecrypted = additionalCredentialOptions.credentialsDecrypted.data;
-		} else {
-			credentialsDecrypted = await this.getCredentials<ICredentialDataDecryptedObject>(
-				credentialsType,
-				itemIndex,
-			);
-		}
-
-		if (credentialsDecrypted === undefined) {
-			throw new NodeOperationError(
-				node,
-				`Node "${node.name}" does not have any credentials of type "${credentialsType}" set`,
-				{ level: 'warning' },
-			);
-		}
-
-		const data = await additionalData.credentialsHelper.preAuthentication(
-			{ helpers: this.helpers },
-			credentialsDecrypted,
-			credentialsType,
-			node,
-			false,
-		);
-
-		if (data) {
-			// make the updated property in the credentials
-			// available to the authenticate method
-			Object.assign(credentialsDecrypted, data);
-		}
-
-		requestOptions = (await additionalData.credentialsHelper.authenticate(
-			credentialsDecrypted,
-			credentialsType,
-			requestOptions as IHttpRequestOptions,
-			workflow,
-			node,
-		)) as IRequestOptions;
 		return await proxyRequestToAxios(workflow, additionalData, node, requestOptions);
 	} catch (error) {
-		try {
-			if (credentialsDecrypted !== undefined) {
-				// try to refresh the credentials
-				const data = await additionalData.credentialsHelper.preAuthentication(
-					{ helpers: this.helpers },
-					credentialsDecrypted,
-					credentialsType,
-					node,
-					true,
-				);
-
-				if (data) {
-					// make the updated property in the credentials
-					// available to the authenticate method
-					Object.assign(credentialsDecrypted, data);
-					requestOptions = (await additionalData.credentialsHelper.authenticate(
-						credentialsDecrypted,
-						credentialsType,
-						requestOptions as IHttpRequestOptions,
-						workflow,
-						node,
-					)) as IRequestOptions;
-					// retry the request
-					return await proxyRequestToAxios(workflow, additionalData, node, requestOptions);
-				}
-			}
-			throw error;
-		} catch (error) {
-			if (error instanceof ExecutionBaseError) throw error;
-
-			throw new NodeApiError(this.getNode(), error);
-		}
+		if (error instanceof ExecutionBaseError) throw error;
+		throw new NodeApiError(this.getNode(), error);
 	}
 }
 
@@ -1545,7 +1022,6 @@ export const getRequestHelperFunctions = (
 		itemIndex: number,
 		paginationOptions: PaginationOptions,
 		credentialsType?: string,
-		additionalCredentialOptions?: IAdditionalCredentialOptions,
 	): Promise<any[]> {
 		const responseData = [];
 		if (!requestOptions.qs) {
@@ -1598,16 +1074,7 @@ export const getRequestHelperFunctions = (
 				});
 			}
 
-			if (credentialsType) {
-				tempResponseData = await this.helpers.requestWithAuthentication.call(
-					this,
-					credentialsType,
-					tempRequestOptions,
-					additionalCredentialOptions,
-				);
-			} else {
-				tempResponseData = await this.helpers.request(tempRequestOptions);
-			}
+			tempResponseData = await this.helpers.request(tempRequestOptions);
 
 			const newResponse: IN8nHttpFullResponse = Object.assign(
 				{
@@ -1753,82 +1220,29 @@ export const getRequestHelperFunctions = (
 
 	return {
 		httpRequest,
-		requestWithAuthenticationPaginated,
-		async httpRequestWithAuthentication(
-			this,
-			credentialsType,
-			requestOptions,
-			additionalCredentialOptions,
-		): Promise<any> {
-			return await httpRequestWithAuthentication.call(
-				this,
-				credentialsType,
-				requestOptions,
-				workflow,
-				node,
-				additionalData,
-				additionalCredentialOptions,
-			);
-		},
-
-		async refreshOAuth2Token(
-			this: IAllExecuteFunctions,
-			credentialsType: string,
-			oAuth2Options?: IOAuth2Options,
-		) {
-			return await refreshOAuth2Token.call(
-				this,
-				credentialsType,
-				node,
-				additionalData,
-				oAuth2Options,
-			);
-		},
-
 		request: async (uriOrObject, options) =>
 			await proxyRequestToAxios(workflow, additionalData, node, uriOrObject, options),
-
-		async requestWithAuthentication(
-			this,
-			credentialsType,
-			requestOptions,
-			additionalCredentialOptions,
-			itemIndex,
-		): Promise<any> {
-			return await requestWithAuthentication.call(
-				this,
-				credentialsType,
-				requestOptions,
-				workflow,
-				node,
-				additionalData,
-				additionalCredentialOptions,
-				itemIndex,
-			);
-		},
-
-		async requestOAuth1(
+		requestOAuth1: async function (
 			this: IAllExecuteFunctions,
 			credentialsType: string,
 			requestOptions: IRequestOptions,
 		): Promise<any> {
-			return await requestOAuth1.call(this, credentialsType, requestOptions);
+			throw new Error('OAuth1 authentication has been removed from this system');
 		},
-
-		async requestOAuth2(
+		requestOAuth2: async function (
 			this: IAllExecuteFunctions,
 			credentialsType: string,
 			requestOptions: IRequestOptions,
 			oAuth2Options?: IOAuth2Options,
 		): Promise<any> {
-			return await requestOAuth2.call(
-				this,
-				credentialsType,
-				requestOptions,
-				node,
-				additionalData,
-				oAuth2Options,
-			);
+			throw new Error('OAuth2 authentication has been removed from this system');
+		},
+		refreshOAuth2Token: async function (
+			this: IAllExecuteFunctions,
+			credentialsType: string,
+			oAuth2Options?: IOAuth2Options,
+		): Promise<any> {
+			throw new Error('OAuth2 token refresh has been removed from this system');
 		},
 	};
 };

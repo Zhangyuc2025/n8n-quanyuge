@@ -15,11 +15,13 @@ import type {
 	ProjectRole,
 	Scope,
 } from '@n8n/permissions';
-import type {
-	ICredentialDataDecryptedObject,
-	INodeCredentialTestRequest,
-	IPersonalizationSurveyAnswersV4,
-} from 'n8n-workflow';
+import type { IPersonalizationSurveyAnswersV4 } from 'n8n-workflow';
+
+type ICredentialDataDecryptedObject = Record<string, any>;
+type INodeCredentialTestRequest = {
+	credentials: ICredentialDataDecryptedObject;
+	nodeToTestWith?: string;
+};
 
 export type AuthlessRequest<
 	RouteParams = {},

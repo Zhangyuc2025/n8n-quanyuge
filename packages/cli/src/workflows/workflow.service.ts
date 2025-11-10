@@ -253,9 +253,6 @@ export class WorkflowService {
 			);
 		}
 
-		// check credentials for old format
-		await WorkflowHelpers.replaceInvalidCredentials(workflowUpdateData);
-
 		WorkflowHelpers.addNodeIds(workflowUpdateData);
 
 		await this.externalHooks.run('workflow.update', [workflowUpdateData]);

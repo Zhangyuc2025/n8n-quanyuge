@@ -1203,7 +1203,7 @@ describe('PATCH /credentials/:id', () => {
 		expect(data.accessToken).toBe(patchPayload.data.accessToken);
 		// was not overwritten
 		const dbCredential = await getCredentialById(savedCredential.id);
-		const unencryptedData = Container.get(CredentialsService).decrypt(dbCredential!);
+		const unencryptedData = Container.get(CredentialsService).decrypt(dbCredential);
 		expect(unencryptedData.oauthTokenData).toEqual(credential.data.oauthTokenData);
 	});
 

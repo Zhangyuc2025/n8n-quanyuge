@@ -4,7 +4,6 @@ import { waitFor } from '@testing-library/vue';
 import { useWorkflowNavigationCommands } from './useWorkflowNavigationCommands';
 import { ProjectTypes } from '@/features/collaboration/projects/projects.types';
 import { useNodeTypesStore } from '@/app/stores/nodeTypes.store';
-import { useCredentialsStore } from '@/features/credentials/credentials.store';
 import { useWorkflowsStore } from '@/app/stores/workflows.store';
 import { useProjectsStore } from '@/features/collaboration/projects/projects.store';
 import { useTagsStore } from '@/features/shared/tags/tags.store';

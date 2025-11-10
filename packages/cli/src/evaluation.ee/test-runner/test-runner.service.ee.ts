@@ -89,7 +89,7 @@ export class TestRunnerService {
 			throw new TestRunError('EVALUATION_TRIGGER_NOT_FOUND');
 		}
 
-		const { parameters, credentials, name, typeVersion } = triggerNode;
+		const { parameters, name, typeVersion } = triggerNode;
 		const source = parameters?.source
 			? (parameters.source as string)
 			: typeVersion >= 4.7
@@ -99,8 +99,7 @@ export class TestRunnerService {
 		const isConfigured =
 			source === 'dataTable'
 				? checkNodeParameterNotEmpty(parameters?.dataTableId)
-				: !!credentials &&
-					checkNodeParameterNotEmpty(parameters?.documentId) &&
+				: checkNodeParameterNotEmpty(parameters?.documentId) &&
 					checkNodeParameterNotEmpty(parameters?.sheetName);
 
 		if (!isConfigured) {

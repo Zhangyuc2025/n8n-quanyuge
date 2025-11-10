@@ -12,7 +12,7 @@ import { z } from 'zod';
 import { ActiveWorkflowManager } from '@/active-workflow-manager';
 import { EventService } from '@/events/event.service';
 import { ExternalHooks } from '@/external-hooks';
-import { addNodeIds, replaceInvalidCredentials } from '@/workflow-helpers';
+import { addNodeIds } from '@/workflow-helpers';
 import { WorkflowFinderService } from '@/workflows/workflow-finder.service';
 import { WorkflowHistoryService } from '@/workflows/workflow-history.ee/workflow-history.service.ee';
 import { WorkflowService } from '@/workflows/workflow.service';
@@ -44,8 +44,6 @@ export = {
 
 			workflow.active = false;
 			workflow.versionId = uuid();
-
-			await replaceInvalidCredentials(workflow);
 
 			addNodeIds(workflow);
 
@@ -287,7 +285,6 @@ export = {
 				return res.status(404).json({ message: 'Not Found' });
 			}
 
-			await replaceInvalidCredentials(updateData);
 			addNodeIds(updateData);
 
 			const workflowManager = Container.get(ActiveWorkflowManager);

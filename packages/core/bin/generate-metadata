@@ -68,14 +68,10 @@ function findReferencedMethods(obj, refs = {}, latestName = '') {
 			return true;
 		});
 
-	const knownCredentials = loader.known.credentials;
-	const credentialTypes = Object.values(loader.credentialTypes).map(({ type }) => type);
 	const referencedMethods = findReferencedMethods(nodeTypes);
 
 	await Promise.all([
 		writeJSON('known/nodes.json', loader.known.nodes),
-		writeJSON('known/credentials.json', loader.known.credentials),
-		writeJSON('types/credentials.json', credentialTypes),
 		writeJSON('types/nodes.json', nodeTypes),
 		writeJSON('methods/defined.json', definedMethods),
 		writeJSON('methods/referenced.json', referencedMethods),

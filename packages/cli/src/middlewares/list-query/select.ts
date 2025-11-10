@@ -4,7 +4,6 @@ import type { ListQuery } from '@/requests';
 import * as ResponseHelper from '@/response-helper';
 import { toError } from '@/utils';
 
-import { CredentialsSelect } from './dtos/credentials.select.dto';
 import { UserSelect } from './dtos/user.select.dto';
 import { WorkflowSelect } from './dtos/workflow.select.dto';
 
@@ -17,8 +16,6 @@ export const selectListQueryMiddleware: RequestHandler = (req: ListQuery.Request
 
 	if (req.baseUrl.endsWith('workflows')) {
 		Select = WorkflowSelect;
-	} else if (req.baseUrl.endsWith('credentials')) {
-		Select = CredentialsSelect;
 	} else if (req.baseUrl.endsWith('users')) {
 		Select = UserSelect;
 	} else {

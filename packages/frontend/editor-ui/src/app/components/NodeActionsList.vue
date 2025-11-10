@@ -27,7 +27,7 @@ const selectedActionRef = ref<HTMLElement>();
 
 const nodeType = computed(() => nodeTypesStore.getNodeType(node.type, node.typeVersion));
 const options = computed(() => {
-	const { actions } = generateMergedNodesAndActions(nodeType.value ? [nodeType.value] : [], []);
+	const { actions } = generateMergedNodesAndActions(nodeType.value ? [nodeType.value] : []);
 
 	return parseCategoryActions(
 		Object.values(actions).flatMap((typeDescriptions) =>

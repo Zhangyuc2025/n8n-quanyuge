@@ -74,9 +74,6 @@ vi.mock('./useWorkflowNavigationCommands', () => ({
 vi.mock('./useDataTableNavigationCommands', () => ({
 	useDataTableNavigationCommands: () => mkGroup('dt'),
 }));
-vi.mock('./useCredentialNavigationCommands', () => ({
-	useCredentialNavigationCommands: () => mkGroup('cred'),
-}));
 vi.mock('./useExecutionNavigationCommands', () => ({
 	useExecutionNavigationCommands: () => mkGroup('execnav'),
 }));

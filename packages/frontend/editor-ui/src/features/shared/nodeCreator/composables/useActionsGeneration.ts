@@ -4,12 +4,10 @@ import {
 	AI_CATEGORY_TOOLS,
 	AI_SUBCATEGORY,
 	CUSTOM_API_CALL_KEY,
-	HTTP_REQUEST_NODE_TYPE,
 } from '@/app/constants';
 import memoize from 'lodash/memoize';
 import startCase from 'lodash/startCase';
 import type {
-	ICredentialType,
 	INodeProperties,
 	INodePropertyCollection,
 	INodePropertyOptions,
@@ -18,7 +16,6 @@ import type {
 
 import { i18n } from '@n8n/i18n';
 
-import { getCredentialOnlyNodeType } from '@/app/utils/credentialOnlyNodes';
 import { formatTriggerActionName } from '../nodeCreator.utils';
 import { useEvaluationStore } from '@/features/ai/evaluation.ee/evaluation.store';
 import { useSettingsStore } from '@/app/stores/settings.store';
@@ -368,10 +365,7 @@ export function useActionsGenerator() {
 		};
 	}
 
-	function generateMergedNodesAndActions(
-		nodeTypes: INodeTypeDescription[],
-		httpOnlyCredentials: ICredentialType[],
-	) {
+	function generateMergedNodesAndActions(nodeTypes: INodeTypeDescription[]) {
 		const evaluationStore = useEvaluationStore();
 
 		const visibleNodeTypes = nodeTypes.filter((node) => {
@@ -391,20 +385,6 @@ export function useActionsGenerator() {
 			.forEach((app) => {
 				const appActions = generateNodeActions(app);
 				actions[app.name] = appActions;
-
-				if (app.name === HTTP_REQUEST_NODE_TYPE) {
-					const credentialOnlyNodes = httpOnlyCredentials.map((credentialType) => {
-						const credsOnlyNode = getCredentialOnlyNodeType(app, credentialType);
-						if (credsOnlyNode) return getSimplifiedNodeType(credsOnlyNode);
-						return null;
-					});
-
-					const filteredNodes = credentialOnlyNodes.filter(
-						(node): node is SimplifiedNodeType => node !== null,
-					);
-
-					mergedNodes.push(...filteredNodes);
-				}
 
 				mergedNodes.push(getSimplifiedNodeType(app));
 			});

@@ -19,10 +19,7 @@ import { ActiveExecutions } from '@/active-executions';
 import { CredentialsHelper } from '@/credentials-helper';
 import { VariablesService } from '@/environments.ee/variables/variables.service.ee';
 import { EventService } from '@/events/event.service';
-import {
-	CredentialsPermissionChecker,
-	SubworkflowPolicyChecker,
-} from '@/executions/pre-execution-checks';
+import { SubworkflowPolicyChecker } from '@/executions/pre-execution-checks';
 import { ExternalHooks } from '@/external-hooks';
 import { DataTableProxyService } from '@/modules/data-table/data-table-proxy.service';
 import { UrlService } from '@/services/url.service';
@@ -96,7 +93,6 @@ describe('WorkflowExecuteAdditionalData', () => {
 	mockInstance(Telemetry);
 	const workflowRepository = mockInstance(WorkflowRepository);
 	const activeExecutions = mockInstance(ActiveExecutions);
-	mockInstance(CredentialsPermissionChecker);
 	mockInstance(SubworkflowPolicyChecker);
 	mockInstance(WorkflowStatisticsService);
 	mockInstance(DataTableProxyService);

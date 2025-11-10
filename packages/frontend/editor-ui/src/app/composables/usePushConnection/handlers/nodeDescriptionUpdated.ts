@@ -1,6 +1,5 @@
 import type { NodeDescriptionUpdated } from '@n8n/api-types/push/hot-reload';
 import { useNodeTypesStore } from '@/app/stores/nodeTypes.store';
-import { useCredentialsStore } from '@/features/credentials/credentials.store';
 
 /**
  * Handles the 'nodeDescriptionUpdated' event from the push connection, which indicates

@@ -4,9 +4,6 @@ import uniqBy from 'lodash/uniqBy';
 import type {
 	CodexData,
 	DocumentationLink,
-	ICredentialType,
-	ICredentialTypeData,
-	INodeCredentialDescription,
 	INodePropertyOptions,
 	INodeType,
 	INodeTypeBaseDescription,
@@ -20,7 +17,6 @@ import { ApplicationError, isExpression, isSubNodeType, UnexpectedError } from '
 import { realpathSync } from 'node:fs';
 import * as path from 'path';
 
-import { UnrecognizedCredentialTypeError } from '@/errors/unrecognized-credential-type.error';
 import { UnrecognizedNodeTypeError } from '@/errors/unrecognized-node-type.error';
 
 import {
@@ -31,31 +27,22 @@ import {
 } from './constants';
 import { loadClassInIsolation } from './load-class-in-isolation';
 
-function toJSON(this: ICredentialType) {
-	return {
-		...this,
-		authenticate: typeof this.authenticate === 'function' ? {} : this.authenticate,
-	};
-}
-
 type Codex = {
 	categories: string[];
 	subcategories: { [subcategory: string]: string[] };
 	resources: {
 		primaryDocumentation: DocumentationLink[];
-		credentialDocumentation: DocumentationLink[];
 	};
 	alias: string[];
 };
 
 export type Types = {
 	nodes: INodeTypeDescription[];
-	credentials: ICredentialType[];
 };
 
 /**
- * Base class for loading n8n nodes and credentials from a directory.
- * Handles the common functionality for resolving paths, loading classes, and managing node and credential types.
+ * Base class for loading n8n nodes from a directory.
+ * Handles the common functionality for resolving paths, loading classes, and managing node types.
  */
 export abstract class DirectoryLoader {
 	isLazyLoaded = false;
@@ -67,16 +54,12 @@ export abstract class DirectoryLoader {
 	// Stores the loaded descriptions and sourcepaths
 	nodeTypes: INodeTypeData = {};
 
-	credentialTypes: ICredentialTypeData = {};
-
-	// Stores the location and classnames of the nodes and credentials that are
+	// Stores the location and classnames of the nodes that are
 	// loaded; used to actually load the files in lazy-loading scenario.
 	known: KnownNodesAndCredentials = { nodes: {}, credentials: {} };
 
 	// Stores the different versions with their individual descriptions
-	types: Types = { nodes: [], credentials: [] };
-
-	readonly nodesByCredential: Record<string, string[]> = {};
+	types: Types = { nodes: [] };
 
 	protected readonly logger = Container.get(Logger);
 
@@ -106,9 +89,8 @@ export abstract class DirectoryLoader {
 		this.unloadAll();
 		this.loadedNodes = [];
 		this.nodeTypes = {};
-		this.credentialTypes = {};
 		this.known = { nodes: {}, credentials: {} };
-		this.types = { nodes: [], credentials: [] };
+		this.types = { nodes: [] };
 	}
 
 	protected resolvePath(file: string) {
@@ -198,13 +180,6 @@ export abstract class DirectoryLoader {
 		this.getVersionedNodeTypeAll(tempNode).forEach(({ description }) => {
 			this.types.nodes.push(description);
 		});
-
-		for (const credential of this.getCredentialsForNode(tempNode)) {
-			if (!this.nodesByCredential[credential.name]) {
-				this.nodesByCredential[credential.name] = [];
-			}
-			this.nodesByCredential[credential.name].push(nodeType);
-		}
 	}
 
 	getNode(nodeType: string) {
@@ -224,65 +199,6 @@ export abstract class DirectoryLoader {
 		throw new UnrecognizedNodeTypeError(this.packageName, nodeType);
 	}
 
-	/** Loads a credential class from a file, and fixes icons */
-	loadCredentialFromFile(filePath: string): void {
-		const tempCredential = this.loadClass<ICredentialType>(filePath);
-		// Add serializer method "toJSON" to the class so that authenticate method (if defined)
-		// gets mapped to the authenticate attribute before it is sent to the client.
-		// The authenticate property is used by the client to decide whether or not to
-		// include the credential type in the predefined credentials (HTTP node)
-		Object.assign(tempCredential, { toJSON });
-
-		this.fixIconPaths(tempCredential, filePath);
-
-		const credentialType = tempCredential.name;
-		this.known.credentials[credentialType] = {
-			className: tempCredential.constructor.name,
-			sourcePath: filePath,
-			extends: tempCredential.extends,
-			supportedNodes: this.nodesByCredential[credentialType],
-		};
-
-		this.credentialTypes[credentialType] = {
-			type: tempCredential,
-			sourcePath: filePath,
-		};
-
-		if (this.isLazyLoaded) return;
-		this.types.credentials.push(tempCredential);
-	}
-
-	getCredential(credentialType: string) {
-		const {
-			credentialTypes,
-			known: { credentials: knownCredentials },
-		} = this;
-		if (!(credentialType in credentialTypes) && credentialType in knownCredentials) {
-			const { sourcePath } = knownCredentials[credentialType];
-			this.loadCredentialFromFile(sourcePath);
-		}
-
-		if (credentialType in credentialTypes) {
-			return credentialTypes[credentialType];
-		}
-
-		throw new UnrecognizedCredentialTypeError(credentialType);
-	}
-
-	/**
-	 * Returns an array of credential descriptions that are supported by a node.
-	 * For versioned nodes, combines and deduplicates credentials from all versions.
-	 */
-	getCredentialsForNode(object: IVersionedNodeType | INodeType): INodeCredentialDescription[] {
-		if ('nodeVersions' in object) {
-			const credentials = Object.values(object.nodeVersions).flatMap(
-				({ description }) => description.credentials ?? [],
-			);
-			return uniqBy(credentials, 'name');
-		}
-		return object.description.credentials ?? [];
-	}
-
 	/**
 	 * Returns an array of all versions of a node type.
 	 * For non-versioned nodes, returns an array with just that node.
@@ -293,10 +209,10 @@ export abstract class DirectoryLoader {
 			const nodeVersions = Object.values(object.nodeVersions).map((element) => {
 				// Only overwrite if baseDescription has valid values
 				// Prevents overwriting valid values with null/undefined from baseDescription
-				if (object.description.name != null) {
+				if (object.description.name !== null && object.description.name !== undefined) {
 					element.description.name = object.description.name;
 				}
-				if (object.description.codex != null) {
+				if (object.description.codex !== null && object.description.codex !== undefined) {
 					element.description.codex = object.description.codex;
 				}
 				return element;
@@ -319,7 +235,7 @@ export abstract class DirectoryLoader {
 		const {
 			categories,
 			subcategories,
-			resources: { primaryDocumentation, credentialDocumentation },
+			resources: { primaryDocumentation },
 			alias,
 		} = module.require(codexFilePath) as Codex;
 
@@ -329,7 +245,6 @@ export abstract class DirectoryLoader {
 			...(alias && { alias }),
 			resources: {
 				primaryDocumentation,
-				credentialDocumentation,
 			},
 		};
 	}
@@ -405,10 +320,7 @@ export abstract class DirectoryLoader {
 		return `icons/${this.packageName}/${iconPath}`;
 	}
 
-	private fixIconPaths(
-		obj: INodeTypeDescription | INodeTypeBaseDescription | ICredentialType,
-		filePath: string,
-	) {
+	private fixIconPaths(obj: INodeTypeDescription | INodeTypeBaseDescription, filePath: string) {
 		const { icon } = obj;
 		if (!icon) return;
 

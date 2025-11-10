@@ -4,13 +4,9 @@ import { Container } from '@n8n/di';
 import get from 'lodash/get';
 import type {
 	FunctionsBase,
-	ICredentialDataDecryptedObject,
-	ICredentialsExpressionResolveValues,
 	IExecuteData,
 	IGetNodeParameterOptions,
 	INode,
-	INodeCredentialDescription,
-	INodeCredentialsDetails,
 	INodeExecutionData,
 	INodeInputConfiguration,
 	INodeOutputConfiguration,
@@ -242,143 +238,6 @@ export abstract class NodeExecutionContext implements Omit<FunctionsBase, 'getCr
 
 	getTimezone() {
 		return this.workflow.timezone;
-	}
-
-	getCredentialsProperties(type: string) {
-		return this.additionalData.credentialsHelper.getCredentialsProperties(type);
-	}
-
-	/** Returns the requested decrypted credentials if the node has access to them */
-	protected async _getCredentials<T extends object = ICredentialDataDecryptedObject>(
-		type: string,
-		executeData?: IExecuteData,
-		connectionInputData?: INodeExecutionData[],
-		itemIndex?: number,
-	): Promise<T> {
-		const { workflow, node, additionalData, mode, runExecutionData, runIndex } = this;
-		// Get the NodeType as it has the information if the credentials are required
-		const nodeType = workflow.nodeTypes.getByNameAndVersion(node.type, node.typeVersion);
-
-		// Hardcode for now for security reasons that only a single node can access
-		// all credentials
-		const fullAccess = [
-			HTTP_REQUEST_NODE_TYPE,
-			HTTP_REQUEST_TOOL_NODE_TYPE,
-			HTTP_REQUEST_AS_TOOL_NODE_TYPE,
-		].includes(node.type);
-
-		let nodeCredentialDescription: INodeCredentialDescription | undefined;
-		if (!fullAccess) {
-			if (nodeType.description.credentials === undefined) {
-				throw new NodeOperationError(
-					node,
-					`Node type "${node.type}" does not have any credentials defined`,
-					{ level: 'warning' },
-				);
-			}
-
-			nodeCredentialDescription = nodeType.description.credentials.find(
-				(credentialTypeDescription) => credentialTypeDescription.name === type,
-			);
-			if (nodeCredentialDescription === undefined) {
-				throw new NodeOperationError(
-					node,
-					`Node type "${node.type}" does not have any credentials of type "${type}" defined`,
-					{ level: 'warning' },
-				);
-			}
-
-			if (
-				!NodeHelpers.displayParameter(
-					// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-					additionalData.currentNodeParameters || node.parameters,
-					nodeCredentialDescription,
-					node,
-					nodeType.description,
-					node.parameters,
-				)
-			) {
-				// Credentials should not be displayed even if they would be defined
-				throw new NodeOperationError(node, 'Credentials not found');
-			}
-		}
-
-		// Check if node has any credentials defined
-		if (!fullAccess && !node.credentials?.[type]) {
-			// If none are defined check if the credentials are required or not
-
-			if (nodeCredentialDescription?.required === true) {
-				// Credentials are required so error
-				if (!node.credentials) {
-					throw new NodeOperationError(node, 'Node does not have any credentials set', {
-						level: 'warning',
-					});
-				}
-				if (!node.credentials[type]) {
-					throw new NodeOperationError(
-						node,
-						`Node does not have any credentials set for "${type}"`,
-						{
-							level: 'warning',
-						},
-					);
-				}
-			} else {
-				// Credentials are not required
-				throw new NodeOperationError(node, 'Node does not require credentials');
-			}
-		}
-
-		if (fullAccess && !node.credentials?.[type]) {
-			// Make sure that fullAccess nodes still behave like before that if they
-			// request access to credentials that are currently not set it returns undefined
-			throw new NodeOperationError(node, 'Credentials not found');
-		}
-
-		let expressionResolveValues: ICredentialsExpressionResolveValues | undefined;
-		if (connectionInputData && runExecutionData && runIndex !== undefined) {
-			expressionResolveValues = {
-				connectionInputData,
-				// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-				itemIndex: itemIndex || 0,
-				node,
-				runExecutionData,
-				runIndex,
-				workflow,
-			} as ICredentialsExpressionResolveValues;
-		}
-
-		const nodeCredentials = node.credentials
-			? node.credentials[type]
-			: ({} as INodeCredentialsDetails);
-
-		// TODO: solve using credentials via expression
-		// if (name.charAt(0) === '=') {
-		// 	// If the credential name is an expression resolve it
-		// 	const additionalKeys = getAdditionalKeys(additionalData, mode);
-		// 	name = workflow.expression.getParameterValue(
-		// 		name,
-		// 		runExecutionData || null,
-		// 		runIndex || 0,
-		// 		itemIndex || 0,
-		// 		node.name,
-		// 		connectionInputData || [],
-		// 		mode,
-		// 		additionalKeys,
-		// 	) as string;
-		// }
-
-		const decryptedDataObject = await additionalData.credentialsHelper.getDecrypted(
-			additionalData,
-			nodeCredentials,
-			type,
-			mode,
-			executeData,
-			false,
-			expressionResolveValues,
-		);
-
-		return decryptedDataObject as T;
 	}
 
 	@Memoized

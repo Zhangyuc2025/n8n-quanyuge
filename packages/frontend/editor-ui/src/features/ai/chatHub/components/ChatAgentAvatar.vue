@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import CredentialIcon from '@/features/credentials/components/CredentialIcon.vue';
 import { type ChatModelDto, PROVIDER_CREDENTIAL_TYPE_MAP } from '@n8n/api-types';
 import { N8nAvatar, N8nIcon, N8nTooltip } from '@n8n/design-system';
 
@@ -23,10 +22,10 @@ defineProps<{
 			:first-name="agent.name"
 			:size="size === 'lg' ? 'medium' : size === 'sm' ? 'xxsmall' : 'xsmall'"
 		/>
-		<CredentialIcon
+		<N8nAvatar
 			v-else
-			:credential-type-name="PROVIDER_CREDENTIAL_TYPE_MAP[agent.model.provider]"
-			:size="size === 'sm' ? 16 : size === 'lg' ? 40 : 20"
+			:first-name="agent.name"
+			:size="size === 'lg' ? 'medium' : size === 'sm' ? 'xxsmall' : 'xsmall'"
 		/>
 	</N8nTooltip>
 </template>

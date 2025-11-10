@@ -20,16 +20,10 @@ import type {
 	IParameterLabel,
 	NodeParameterValueType,
 } from 'n8n-workflow';
-import {
-	CREDENTIAL_EMPTY_VALUE,
-	isResourceLocatorValue,
-	NodeHelpers,
-	resolveRelativePath,
-} from 'n8n-workflow';
+import { isResourceLocatorValue, NodeHelpers, resolveRelativePath } from 'n8n-workflow';
 
 import type { CodeNodeLanguageOption } from '@/features/shared/editors/components/CodeNodeEditor/CodeNodeEditor.vue';
 import CodeNodeEditor from '@/features/shared/editors/components/CodeNodeEditor/CodeNodeEditor.vue';
-import CredentialsSelect from '@/features/credentials/components/CredentialsSelect.vue';
 import ExpressionEditModal from './ExpressionEditModal.vue';
 import ExpressionParameterInput from './ExpressionParameterInput.vue';
 import HtmlEditor from '@/features/shared/editors/components/HtmlEditor/HtmlEditor.vue';
@@ -70,7 +64,6 @@ import { useTelemetry } from '@/app/composables/useTelemetry';
 import { useWorkflowHelpers } from '@/app/composables/useWorkflowHelpers';
 import { useNodeSettingsParameters } from '@/features/ndv/settings/composables/useNodeSettingsParameters';
 import { htmlEditorEventBus } from '@/app/event-bus';
-import { useCredentialsStore } from '@/features/credentials/credentials.store';
 import { useNDVStore } from '@/features/ndv/shared/ndv.store';
 import { useNodeTypesStore } from '@/app/stores/nodeTypes.store';
 import { useSettingsStore } from '@/app/stores/settings.store';
@@ -80,7 +73,6 @@ import type { EventBus } from '@n8n/utils/event-bus';
 import { createEventBus } from '@n8n/utils/event-bus';
 import { useElementSize } from '@vueuse/core';
 import { captureMessage } from '@sentry/vue';
-import { isCredentialOnlyNodeType } from '@/app/utils/credentialOnlyNodes';
 import {
 	hasFocusOnInput,
 	isBlurrableEl,
@@ -324,11 +316,6 @@ const displayValue = computed(() => {
 		// display the user the key instead of the value it
 		// represents
 		return i18n.baseText('parameterInput.loadingOptions');
-	}
-
-	// if the value is marked as empty return empty string, to prevent displaying the asterisks
-	if (props.modelValue === CREDENTIAL_EMPTY_VALUE) {
-		return '';
 	}
 
 	let returnValue;
@@ -749,7 +736,7 @@ function trackExpressionEditOpen() {
 		return;
 	}
 
-	if (node.value.type.startsWith('n8n-nodes-base') || isCredentialOnlyNodeType(node.value.type)) {
+	if (node.value.type.startsWith('n8n-nodes-base')) {
 		telemetry.track('User opened Expression Editor', {
 			node_type: node.value.type,
 			parameter_name: props.parameter.displayName,
@@ -1686,26 +1673,6 @@ onUpdated(async () => {
 				@blur="onBlur"
 				@paste="onPasteNumber"
 			/>
-
-			<CredentialsSelect
-				v-else-if="parameter.type === 'credentialsSelect' || parameter.name === 'genericAuthType'"
-				ref="inputField"
-				:parameter="parameter"
-				:node="node"
-				:active-credential-type="activeCredentialType"
-				:input-size="inputSize"
-				:display-value="displayValue"
-				:is-read-only="isReadOnly"
-				:display-title="displayTitle"
-				@credential-selected="credentialSelected"
-				@update:model-value="valueChanged"
-				@set-focus="setFocus"
-				@on-blur="onBlur"
-			>
-				<template #issues-and-options>
-					<ParameterIssues :issues="getIssues" />
-				</template>
-			</CredentialsSelect>
 
 			<N8nSelect
 				v-else-if="parameter.type === 'options'"

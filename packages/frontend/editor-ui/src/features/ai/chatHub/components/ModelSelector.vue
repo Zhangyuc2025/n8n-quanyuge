@@ -14,14 +14,12 @@ import type {
 	ChatModelsResponse,
 } from '@n8n/api-types';
 import { providerDisplayNames } from '@/features/ai/chatHub/constants';
-import CredentialIcon from '@/features/credentials/components/CredentialIcon.vue';
 import { onClickOutside } from '@vueuse/core';
 import { useI18n } from '@n8n/i18n';
 
 import type { CredentialsMap } from '../chat.types';
 import CredentialSelectorModal from './CredentialSelectorModal.vue';
 import { useUIStore } from '@/app/stores/ui.store';
-import { useCredentialsStore } from '@/features/credentials/credentials.store';
 import ChatAgentAvatar from '@/features/ai/chatHub/components/ChatAgentAvatar.vue';
 import {
 	fromStringToModel,
@@ -210,10 +208,10 @@ defineExpose({
 <template>
 	<N8nNavigationDropdown ref="dropdownRef" :menu="menu" @select="onSelect">
 		<template #item-icon="{ item }">
-			<CredentialIcon
+			<N8nAvatar
 				v-if="item.id in PROVIDER_CREDENTIAL_TYPE_MAP"
-				:credential-type-name="PROVIDER_CREDENTIAL_TYPE_MAP[item.id as ChatHubLLMProvider]"
-				:size="16"
+				:first-name="item.title"
+				size="xsmall"
 				:class="$style.menuIcon"
 			/>
 			<N8nAvatar

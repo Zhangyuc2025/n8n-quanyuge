@@ -17,7 +17,6 @@ import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from
 import { BASE_NODE_SURVEY_URL, VIEWS } from '@/app/constants';
 
 import NDVSubConnections from '@/features/ndv/panel/components/NDVSubConnections.vue';
-import NodeCredentials from '@/features/credentials/components/NodeCredentials.vue';
 import NodeSettingsHeader from './NodeSettingsHeader.vue';
 import NodeSettingsTabs from './NodeSettingsTabs.vue';
 import NodeWebhooks from './NodeWebhooks.vue';
@@ -30,7 +29,6 @@ import NodeActionsList from '@/app/components/NodeActionsList.vue';
 import NodeSettingsInvalidNodeWarning from './NodeSettingsInvalidNodeWarning.vue';
 import { useExternalHooks } from '@/app/composables/useExternalHooks';
 import { useInstalledCommunityPackage } from '@/features/settings/communityNodes/composables/useInstalledCommunityPackage';
-import { useNodeCredentialOptions } from '@/features/credentials/composables/useNodeCredentialOptions';
 import { useNodeHelpers } from '@/app/composables/useNodeHelpers';
 import { useNodeSettingsParameters } from '@/features/ndv/settings/composables/useNodeSettingsParameters';
 import { useTelemetry } from '@/app/composables/useTelemetry';
@@ -39,7 +37,6 @@ import { ndvEventBus } from '@/features/ndv/shared/ndv.eventBus';
 import NodeStorageLimitCallout from '@/features/core/dataTable/components/NodeStorageLimitCallout.vue';
 import NodeTitle from '@/app/components/NodeTitle.vue';
 import { RenameNodeCommand } from '@/app/models/history';
-import { useCredentialsStore } from '@/features/credentials/credentials.store';
 import { useHistoryStore } from '@/app/stores/history.store';
 import { useNDVStore } from '@/features/ndv/shared/ndv.store';
 import { useNodeTypesStore } from '@/app/stores/nodeTypes.store';
@@ -122,7 +119,6 @@ const nodeTypesStore = useNodeTypesStore();
 const ndvStore = useNDVStore();
 const workflowsStore = useWorkflowsStore();
 const workflowState = injectWorkflowState();
-const credentialsStore = useCredentialsStore();
 const historyStore = useHistoryStore();
 
 const telemetry = useTelemetry();
@@ -171,7 +167,7 @@ const nodeType = computed(() =>
 	node.value ? nodeTypesStore.getNodeType(node.value.type, node.value.typeVersion) : null,
 );
 
-const { areAllCredentialsSet } = useNodeCredentialOptions(node, nodeType, '');
+const areAllCredentialsSet = ref(true);
 
 const nodeTypeName = computed(() => node.value?.type);
 const { installedPackage, isUpdateCheckAvailable } = useInstalledCommunityPackage(nodeTypeName);
@@ -235,13 +231,7 @@ const parametersByTab = computed(() =>
 	collectParametersByTab(parameters.value, props.isEmbeddedInCanvas),
 );
 
-const isDisplayingCredentials = computed(
-	() =>
-		credentialsStore
-			.getCredentialTypesNodeDescriptions('', nodeType.value)
-			.filter((credentialTypeDescription) => displayCredentials(credentialTypeDescription)).length >
-		0,
-);
+const isDisplayingCredentials = ref(false);
 
 const showNoParametersNotice = computed(
 	() =>
@@ -254,23 +244,7 @@ const outputPanelEditMode = computed(() => ndvStore.outputPanelEditMode);
 const isCommunityNode = computed(() => !!node.value && isCommunityPackageName(node.value.type));
 const packageName = computed(() => node.value?.type.split('.')[0] ?? '');
 
-const usedCredentials = computed(() =>
-	Object.values(workflowsStore.usedCredentials).filter((credential) =>
-		Object.values(node.value?.credentials || []).find(
-			(nodeCredential) => nodeCredential.id === credential.id,
-		),
-	),
-);
-
-const credentialOwnerName = computed(() => {
-	const credential = usedCredentials.value
-		? Object.values(usedCredentials.value).find(
-				(credential) => credential.id === props.foreignCredentials[0],
-			)
-		: undefined;
-
-	return credentialsStore.getCredentialOwnerName(credential);
-});
+const credentialOwnerName = ref('');
 
 const featureRequestUrl = computed(() => {
 	if (!nodeType.value) {
@@ -479,20 +453,6 @@ const onNodeExecute = () => {
 	emit('execute');
 };
 
-const credentialSelected = (updateInformation: INodeUpdatePropertiesInformation) => {
-	// Update the values on the node
-	workflowState.updateNodeProperties(updateInformation);
-
-	const node = workflowsStore.getNodeByName(updateInformation.name);
-
-	if (node) {
-		// Update the issues
-		nodeHelpers.updateNodeCredentialIssues(node);
-	}
-
-	void externalHooks.run('nodeSettings.credentialSelected', { updateInformation });
-};
-
 const nameChanged = (name: string) => {
 	if (node.value) {
 		historyStore.pushCommandToUndo(new RenameNodeCommand(node.value.name, name, Date.now()));
@@ -565,18 +525,6 @@ onBeforeUnmount(() => {
 	importCurlEventBus.off('setHttpNodeParameters', setHttpNodeParameters);
 	ndvEventBus.off('updateParameterValue', valueChanged);
 });
-
-function displayCredentials(credentialTypeDescription: INodeCredentialDescription): boolean {
-	if (credentialTypeDescription.displayOptions === undefined) {
-		// If it is not defined no need to do a proper check
-		return true;
-	}
-
-	return (
-		!!node.value &&
-		nodeHelpers.displayParameter(node.value.parameters, credentialTypeDescription, '', node.value)
-	);
-}
 
 function handleSelectAction(params: INodeParameters) {
 	for (const [key, value] of Object.entries(params)) {
@@ -706,16 +654,6 @@ function handleSelectAction(params: INodeParameters) {
 				:node="node"
 				@action-selected="handleSelectAction"
 			/>
-			<NodeCredentials
-				v-if="openPanel === 'credential'"
-				:node="node"
-				:readonly="isReadOnly"
-				:show-all="true"
-				:hide-issues="hiddenIssuesInputs.includes('credentials')"
-				@credential-selected="credentialSelected"
-				@value-changed="valueChanged"
-				@blur="onParameterBlur"
-			/>
 			<div v-show="openPanel === 'params'">
 				<NodeWebhooks :node="node" :node-type-description="nodeType" />
 
@@ -732,16 +670,6 @@ function handleSelectAction(params: INodeParameters) {
 					@activate="onWorkflowActivate"
 					@parameter-blur="onParameterBlur"
 				>
-					<NodeCredentials
-						v-if="!isEmbeddedInCanvas && !isDemoPreview"
-						:node="node"
-						:readonly="isReadOnly"
-						:show-all="true"
-						:hide-issues="hiddenIssuesInputs.includes('credentials')"
-						@credential-selected="credentialSelected"
-						@value-changed="valueChanged"
-						@blur="onParameterBlur"
-					/>
 				</ParameterInputList>
 				<div v-if="showNoParametersNotice" class="no-parameters">
 					<N8nText>

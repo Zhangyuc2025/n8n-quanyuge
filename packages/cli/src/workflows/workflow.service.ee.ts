@@ -1,31 +1,15 @@
 import { Logger } from '@n8n/backend-common';
-import type {
-	CredentialsEntity,
-	CredentialUsedByWorkflow,
-	User,
-	WorkflowWithSharingsAndCredentials,
-	WorkflowWithSharingsMetaDataAndCredentials,
-} from '@n8n/db';
-import {
-	Folder,
-	WorkflowEntity,
-	CredentialsRepository,
-	FolderRepository,
-	WorkflowRepository,
-} from '@n8n/db';
+import type { User } from '@n8n/db';
+import { Folder, WorkflowEntity, FolderRepository, WorkflowRepository } from '@n8n/db';
 import { Service } from '@n8n/di';
 // eslint-disable-next-line n8n-local-rules/misplaced-n8n-typeorm-import
 import { In, type EntityManager } from '@n8n/typeorm';
-import omit from 'lodash/omit';
 import type { IWorkflowBase, WorkflowId } from 'n8n-workflow';
-import { NodeOperationError, PROJECT_ROOT, UserError, WorkflowActivationError } from 'n8n-workflow';
+import { NodeOperationError, PROJECT_ROOT, WorkflowActivationError } from 'n8n-workflow';
 
 import { WorkflowFinderService } from './workflow-finder.service';
 
 import { ActiveWorkflowManager } from '@/active-workflow-manager';
-import { CredentialsFinderService } from '@/credentials/credentials-finder.service';
-import { CredentialsService } from '@/credentials/credentials.service';
-import { EnterpriseCredentialsService } from '@/credentials/credentials.service.ee';
 import { BadRequestError } from '@/errors/response-errors/bad-request.error';
 import { NotFoundError } from '@/errors/response-errors/not-found.error';
 import { TransferWorkflowError } from '@/errors/response-errors/transfer-workflow.error';
@@ -33,18 +17,22 @@ import { FolderService } from '@/services/folder.service';
 import { OwnershipService } from '@/services/ownership.service';
 import { ProjectService } from '@/services/project.service.ee';
 
+type WorkflowWithSharingsAndCredentials = WorkflowEntity & { usedCredentials?: any[] };
+type WorkflowWithSharingsMetaDataAndCredentials = WorkflowWithSharingsAndCredentials & {
+	ownedBy?: any;
+	sharedWith?: any;
+	homeProject?: any;
+	sharedWithProjects?: any;
+};
+
 @Service()
 export class EnterpriseWorkflowService {
 	constructor(
 		private readonly logger: Logger,
 		private readonly workflowRepository: WorkflowRepository,
-		private readonly credentialsRepository: CredentialsRepository,
-		private readonly credentialsService: CredentialsService,
 		private readonly ownershipService: OwnershipService,
 		private readonly projectService: ProjectService,
 		private readonly activeWorkflowManager: ActiveWorkflowManager,
-		private readonly credentialsFinderService: CredentialsFinderService,
-		private readonly enterpriseCredentialsService: EnterpriseCredentialsService,
 		private readonly workflowFinderService: WorkflowFinderService,
 		private readonly folderService: FolderService,
 		private readonly folderRepository: FolderRepository,
@@ -86,75 +74,21 @@ export class EnterpriseWorkflowService {
 
 	async addCredentialsToWorkflow(
 		workflow: WorkflowWithSharingsMetaDataAndCredentials,
-		currentUser: User,
+		_currentUser: User,
 	): Promise<void> {
 		workflow.usedCredentials = [];
-		const userCredentials = await this.credentialsService.getCredentialsAUserCanUseInAWorkflow(
-			currentUser,
-			{ workflowId: workflow.id },
-		);
-		const credentialIdsUsedByWorkflow = new Set<string>();
-		workflow.nodes.forEach((node) => {
-			if (!node.credentials) {
-				return;
-			}
-			Object.keys(node.credentials).forEach((credentialType) => {
-				const credential = node.credentials?.[credentialType];
-				if (!credential?.id) {
-					return;
-				}
-				credentialIdsUsedByWorkflow.add(credential.id);
-			});
-		});
-		const workflowCredentials = await this.credentialsRepository.getManyByIds(
-			Array.from(credentialIdsUsedByWorkflow),
-			{ withSharings: true },
-		);
-		const userCredentialIds = userCredentials.map((credential) => credential.id);
-		workflowCredentials.forEach((credential) => {
-			const credentialId = credential.id;
-			const filledCred = this.ownershipService.addOwnedByAndSharedWith(credential);
-			workflow.usedCredentials?.push({
-				id: credentialId,
-				name: credential.name,
-				type: credential.type,
-				currentUserHasAccess: userCredentialIds.includes(credentialId),
-				homeProject: filledCred.homeProject,
-				sharedWithProjects: filledCred.sharedWithProjects,
-			});
-		});
 	}
 
-	validateCredentialPermissionsToUser(
-		workflow: IWorkflowBase,
-		allowedCredentials: CredentialsEntity[],
-	) {
-		workflow.nodes.forEach((node) => {
-			if (!node.credentials) {
-				return;
-			}
-			Object.keys(node.credentials).forEach((credentialType) => {
-				const credentialId = node.credentials?.[credentialType].id;
-				if (credentialId === undefined) return;
-				const matchedCredential = allowedCredentials.find(({ id }) => id === credentialId);
-				if (!matchedCredential) {
-					throw new UserError('The workflow contains credentials that you do not have access to');
-				}
-			});
-		});
-	}
+	validateCredentialPermissionsToUser(_workflow: IWorkflowBase, _allowedCredentials: any[]) {}
 
-	async preventTampering<T extends IWorkflowBase>(workflow: T, workflowId: string, user: User) {
+	async preventTampering<T extends IWorkflowBase>(workflow: T, workflowId: string, _user: User) {
 		const previousVersion = await this.workflowRepository.get({ id: workflowId });
 
 		if (!previousVersion) {
 			throw new NotFoundError('Workflow not found');
 		}
 
-		const allCredentials = await this.credentialsService.getCredentialsAUserCanUseInAWorkflow(
-			user,
-			{ workflowId },
-		);
+		const allCredentials: any[] = [];
 
 		try {
 			return this.validateWorkflowCredentialUsage(workflow, previousVersion, allCredentials);
@@ -170,88 +104,14 @@ export class EnterpriseWorkflowService {
 
 	validateWorkflowCredentialUsage<T extends IWorkflowBase>(
 		newWorkflowVersion: T,
-		previousWorkflowVersion: IWorkflowBase,
-		credentialsUserHasAccessTo: Array<{ id: string }>,
+		_previousWorkflowVersion: IWorkflowBase,
+		_credentialsUserHasAccessTo: Array<{ id: string }>,
 	) {
-		/**
-		 * We only need to check nodes that use credentials the current user cannot access,
-		 * since these can be 2 possibilities:
-		 * - Same ID already exist: it's a read only node and therefore cannot be changed
-		 * - It's a new node which indicates tampering and therefore must fail saving
-		 */
-
-		const allowedCredentialIds = credentialsUserHasAccessTo.map((cred) => cred.id);
-
-		const nodesWithCredentialsUserDoesNotHaveAccessTo = this.getNodesWithInaccessibleCreds(
-			newWorkflowVersion,
-			allowedCredentialIds,
-		);
-
-		// If there are no nodes with credentials the user does not have access to we can skip the rest
-		if (nodesWithCredentialsUserDoesNotHaveAccessTo.length === 0) {
-			return newWorkflowVersion;
-		}
-
-		const previouslyExistingNodeIds = previousWorkflowVersion.nodes.map((node) => node.id);
-
-		// If it's a new node we can't allow it to be saved
-		// since it uses creds the node doesn't have access
-		const isTamperingAttempt = (inaccessibleCredNodeId: string) =>
-			!previouslyExistingNodeIds.includes(inaccessibleCredNodeId);
-
-		nodesWithCredentialsUserDoesNotHaveAccessTo.forEach((node) => {
-			if (isTamperingAttempt(node.id)) {
-				this.logger.warn('Blocked workflow update due to tampering attempt', {
-					nodeType: node.type,
-					nodeName: node.name,
-					nodeId: node.id,
-					nodeCredentials: node.credentials,
-				});
-				// Node is new, so this is probably a tampering attempt. Throw an error
-				throw new NodeOperationError(
-					node,
-					`You don't have access to the credentials in the '${node.name}' node. Ask the owner to share them with you.`,
-				);
-			}
-			// Replace the node with the previous version of the node
-			// Since it cannot be modified (read only node)
-			const nodeIdx = newWorkflowVersion.nodes.findIndex(
-				(newWorkflowNode) => newWorkflowNode.id === node.id,
-			);
-
-			this.logger.debug('Replacing node with previous version when saving updated workflow', {
-				nodeType: node.type,
-				nodeName: node.name,
-				nodeId: node.id,
-			});
-			const previousNodeVersion = previousWorkflowVersion.nodes.find(
-				(previousNode) => previousNode.id === node.id,
-			);
-			// Allow changing only name, position and disabled status for read-only nodes
-			Object.assign(
-				newWorkflowVersion.nodes[nodeIdx],
-				omit(previousNodeVersion, ['name', 'position', 'disabled']),
-			);
-		});
-
 		return newWorkflowVersion;
 	}
 
-	/** Get all nodes in a workflow where the node credential is not accessible to the user. */
-	getNodesWithInaccessibleCreds(workflow: IWorkflowBase, userCredIds: string[]) {
-		if (!workflow.nodes) {
-			return [];
-		}
-		return workflow.nodes.filter((node) => {
-			if (!node.credentials) return false;
-
-			const allUsedCredentials = Object.values(node.credentials);
-
-			const allUsedCredentialIds = allUsedCredentials.map((nodeCred) => nodeCred.id?.toString());
-			return allUsedCredentialIds.some(
-				(nodeCredId) => nodeCredId && !userCredIds.includes(nodeCredId),
-			);
-		});
+	getNodesWithInaccessibleCreds(_workflow: IWorkflowBase, _userCredIds: string[]) {
+		return [];
 	}
 
 	async transferWorkflow(
@@ -338,27 +198,8 @@ export class EnterpriseWorkflowService {
 		return;
 	}
 
-	async getFolderUsedCredentials(user: User, folderId: string, projectId: string) {
-		await this.folderService.findFolderInProjectOrFail(folderId, projectId);
-
-		const workflows = await this.workflowFinderService.findAllWorkflowsForUser(
-			user,
-			['workflow:read'],
-			folderId,
-			projectId,
-		);
-
-		const usedCredentials = new Map<string, CredentialUsedByWorkflow>();
-
-		for (const workflow of workflows) {
-			const workflowWithMetaData = this.addOwnerAndSharings(workflow as unknown as WorkflowEntity);
-			await this.addCredentialsToWorkflow(workflowWithMetaData, user);
-			for (const credential of workflowWithMetaData?.usedCredentials ?? []) {
-				usedCredentials.set(credential.id, credential);
-			}
-		}
-
-		return [...usedCredentials.values()];
+	async getFolderUsedCredentials(_user: User, _folderId: string, _projectId: string) {
+		return [];
 	}
 
 	async transferFolder(
@@ -491,29 +332,10 @@ export class EnterpriseWorkflowService {
 	}
 
 	private async shareCredentialsWithProject(
-		user: User,
-		credentialIds: string[],
-		projectId: string,
-	) {
-		await this.workflowRepository.manager.transaction(async (trx) => {
-			const allCredentials = await this.credentialsFinderService.findAllCredentialsForUser(
-				user,
-				['credential:share'],
-				trx,
-			);
-
-			const credentialsToShare = allCredentials.filter((c) => credentialIds.includes(c.id));
-
-			for (const credential of credentialsToShare) {
-				await this.enterpriseCredentialsService.shareWithProjects(
-					user,
-					credential.id,
-					[projectId],
-					trx,
-				);
-			}
-		});
-	}
+		_user: User,
+		_credentialIds: string[],
+		_projectId: string,
+	) {}
 
 	private async moveFoldersToDestination(
 		sourceFolderId: string,

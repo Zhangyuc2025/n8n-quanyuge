@@ -6,7 +6,6 @@ import type {
 } from 'n8n-workflow';
 import { NodeConnectionTypes } from 'n8n-workflow';
 
-import * as iCall from './actions/iCall.operation';
 import * as spreadsheet from './actions/spreadsheet.operation';
 import * as toBinary from './actions/toBinary.operation';
 import * as toJson from './actions/toJson.operation';
@@ -43,12 +42,6 @@ export class ConvertToFile implements INodeType {
 						value: 'html',
 						action: '转换为 HTML',
 						description: '将输入数据转换为 HTML 文件中的表格',
-					},
-					{
-						name: '转换为 ICS',
-						value: 'iCal',
-						action: '转换为 ICS',
-						description: '将每个输入项转换为 ICS 事件文件',
 					},
 					{
 						name: '转换为 JSON',
@@ -99,7 +92,6 @@ export class ConvertToFile implements INodeType {
 			...toBinary.description,
 			...toText.description,
 			...toJson.description,
-			...iCall.description,
 		],
 	};
 
@@ -122,10 +114,6 @@ export class ConvertToFile implements INodeType {
 
 		if (operation === 'toText') {
 			returnData = await toText.execute.call(this, items);
-		}
-
-		if (operation === 'iCal') {
-			returnData = await iCall.execute.call(this, items);
 		}
 
 		return [returnData];

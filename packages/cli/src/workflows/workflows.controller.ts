@@ -36,7 +36,6 @@ import { WorkflowHistoryService } from './workflow-history.ee/workflow-history.s
 import { WorkflowRequest } from './workflow.request';
 import { WorkflowService } from './workflow.service';
 import { EnterpriseWorkflowService } from './workflow.service.ee';
-import { CredentialsService } from '../credentials/credentials.service';
 
 import { BadRequestError } from '@/errors/response-errors/bad-request.error';
 import { ForbiddenError } from '@/errors/response-errors/forbidden.error';
@@ -71,7 +70,6 @@ export class WorkflowsController {
 		private readonly workflowService: WorkflowService,
 		private readonly workflowExecutionService: WorkflowExecutionService,
 		private readonly mailer: UserManagementMailer,
-		private readonly credentialsService: CredentialsService,
 		private readonly projectRepository: ProjectRepository,
 		private readonly projectService: ProjectService,
 		private readonly projectRelationRepository: ProjectRelationRepository,
@@ -105,27 +103,7 @@ export class WorkflowsController {
 			newWorkflow.tags = await this.tagRepository.findMany(tagIds);
 		}
 
-		await WorkflowHelpers.replaceInvalidCredentials(newWorkflow);
-
 		WorkflowHelpers.addNodeIds(newWorkflow);
-
-		if (true) {
-			// This is a new workflow, so we simply check if the user has access to
-			// all used credentials
-
-			const allCredentials = await this.credentialsService.getMany(req.user);
-
-			try {
-				this.enterpriseWorkflowService.validateCredentialPermissionsToUser(
-					newWorkflow,
-					allCredentials,
-				);
-			} catch (error) {
-				throw new BadRequestError(
-					'The workflow you are trying to save contains credentials that are not shared with you',
-				);
-			}
-		}
 
 		const { manager: dbManager } = this.projectRepository;
 

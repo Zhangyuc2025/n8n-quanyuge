@@ -1,5 +1,4 @@
 import { faker } from '@faker-js/faker/locale/en';
-import type { ICredentialsResponse } from '@/features/credentials/credentials.types';
 import type {
 	ITemplatesWorkflowFull,
 	IWorkflowTemplateNode,
@@ -45,7 +44,7 @@ export const newFullOneNodeTemplate = (node: IWorkflowTemplateNode): ITemplatesW
 });
 
 export const newCredential = (
-	opts: Pick<ICredentialsResponse, 'type'> & Partial<ICredentialsResponse>,
+	opts: Pick<'type'> & Partial<ICredentialsResponse>,
 ): ICredentialsResponse => ({
 	createdAt: faker.date.past().toISOString(),
 	updatedAt: faker.date.past().toISOString(),

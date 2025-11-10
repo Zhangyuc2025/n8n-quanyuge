@@ -1,16 +1,5 @@
-import type {
-	AuthenticatedRequest,
-	Settings,
-	CredentialsEntity,
-	User,
-	WorkflowEntity,
-} from '@n8n/db';
-import {
-	CredentialsRepository,
-	WorkflowRepository,
-	SettingsRepository,
-	UserRepository,
-} from '@n8n/db';
+import type { AuthenticatedRequest, Settings, User, WorkflowEntity } from '@n8n/db';
+import { WorkflowRepository, SettingsRepository, UserRepository } from '@n8n/db';
 import { Service } from '@n8n/di';
 // eslint-disable-next-line n8n-local-rules/misplaced-n8n-typeorm-import
 import type { FindManyOptions, FindOneOptions, FindOptionsWhere } from '@n8n/typeorm';
@@ -40,7 +29,6 @@ export class HooksService {
 		private readonly userRepository: UserRepository,
 		private readonly settingsRepository: SettingsRepository,
 		private readonly workflowRepository: WorkflowRepository,
-		private readonly credentialsRepository: CredentialsRepository,
 	) {
 		this.innerAuthMiddleware = authService.createAuthMiddleware({ allowSkipMFA: false });
 	}
@@ -95,12 +83,8 @@ export class HooksService {
 		return await this.workflowRepository.count(filter);
 	}
 
-	/**
-	 * Count the number of credentials
-	 * 1. To enforce the max credential limits in cloud
-	 */
-	async credentialsCount(filter: FindManyOptions<CredentialsEntity>) {
-		return await this.credentialsRepository.count(filter);
+	async credentialsCount() {
+		return 0;
 	}
 
 	/**
@@ -131,7 +115,6 @@ export class HooksService {
 		return {
 			User: this.userRepository,
 			Settings: this.settingsRepository,
-			Credentials: this.credentialsRepository,
 			Workflow: this.workflowRepository,
 		};
 	}

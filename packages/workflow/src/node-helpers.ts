@@ -12,7 +12,6 @@ import type {
 	FieldType,
 	IContextObject,
 	INode,
-	INodeCredentialDescription,
 	INodeIssueObjectProperty,
 	INodeIssues,
 	INodeParameterResourceLocator,
@@ -346,12 +345,12 @@ const checkConditions = (
  *
  * @param {INodeParameters} nodeValues The data on the node which decides if the parameter
  *                                    should be displayed
- * @param {(INodeProperties | INodeCredentialDescription)} parameter The parameter to check if it should be displayed
+ * @param {(INodeProperties | INodePropertyOptions)} parameter The parameter to check if it should be displayed
  * @param {INodeParameters} [nodeValuesRoot] The root node-parameter-data
  */
 export function displayParameter(
 	nodeValues: INodeParameters,
-	parameter: INodeProperties | INodeCredentialDescription | INodePropertyOptions,
+	parameter: INodeProperties | INodePropertyOptions,
 	node: Pick<INode, 'typeVersion'> | null, // Allow null as it does also get used by credentials and they do not have versioning yet
 	nodeTypeDescription: INodeTypeDescription | null,
 	nodeValuesRoot?: INodeParameters,
@@ -412,12 +411,12 @@ export function displayParameter(
  *
  * @param {INodeParameters} nodeValues The data on the node which decides if the parameter
  *                                    should be displayed
- * @param {(INodeProperties | INodeCredentialDescription)} parameter The parameter to check if it should be displayed
+ * @param {(INodeProperties | INodePropertyOptions)} parameter The parameter to check if it should be displayed
  * @param {string} path The path to the property
  */
 export function displayParameterPath(
 	nodeValues: INodeParameters,
-	parameter: INodeProperties | INodeCredentialDescription | INodePropertyOptions,
+	parameter: INodeProperties | INodePropertyOptions,
 	path: string,
 	node: Pick<INode, 'typeVersion'> | null,
 	nodeTypeDescription: INodeTypeDescription | null,

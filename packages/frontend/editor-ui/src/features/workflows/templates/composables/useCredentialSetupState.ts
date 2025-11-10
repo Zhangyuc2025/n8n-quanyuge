@@ -1,7 +1,5 @@
 import type { Ref } from 'vue';
 import { computed, ref } from 'vue';
-import type { ICredentialsResponse } from '@/features/credentials/credentials.types';
-import { useCredentialsStore } from '@/features/credentials/credentials.store';
 import { useNodeTypesStore } from '@/app/stores/nodeTypes.store';
 import { getAppNameFromNodeName } from '@/app/utils/nodeTypesUtils';
 import type { TemplateCredentialKey } from '../utils/templateTransforms';
@@ -105,9 +103,7 @@ export const useCredentialSetupState = <TNode extends BaseNode>(nodes: Ref<TNode
 	 * Credentials user has selected from the UI. Map from credential
 	 * name in the template to the credential ID.
 	 */
-	const selectedCredentialIdByKey = ref<
-		Record<CredentialUsages<TNode>['key'], ICredentialsResponse['id']>
-	>({});
+	const selectedCredentialIdByKey = ref<Record<CredentialUsages<TNode>['key']['id']>>({});
 
 	const nodeTypesStore = useNodeTypesStore();
 	const credentialsStore = useCredentialsStore();

@@ -26,9 +26,7 @@ import type {
 } from 'n8n-workflow';
 import { NodeConnectionTypes, NodeHelpers } from 'n8n-workflow';
 import { defineStore } from 'pinia';
-import { useCredentialsStore } from '@/features/credentials/credentials.store';
 import { useRootStore } from '@n8n/stores/useRootStore';
-import * as utils from '@/app/utils/credentialOnlyNodes';
 import { groupNodeTypesByNameAndType } from '@/app/utils/nodeTypes/nodeTypeTransforms';
 import { computed, ref } from 'vue';
 import { useActionsGenerator } from '@/features/shared/nodeCreator/composables/useActionsGeneration';
@@ -80,7 +78,7 @@ export const useNodeTypesStore = defineStore(STORES.NODE_TYPES, () => {
 	);
 
 	const communityNodesAndActions = computed(() => {
-		return actionsGenerator.generateMergedNodesAndActions(unofficialCommunityNodeTypes.value, []);
+		return actionsGenerator.generateMergedNodesAndActions(unofficialCommunityNodeTypes.value);
 	});
 
 	const allNodeTypes = computed(() => {
@@ -118,10 +116,6 @@ export const useNodeTypesStore = defineStore(STORES.NODE_TYPES, () => {
 
 	const getNodeType = computed(() => {
 		return (nodeTypeName: string, version?: number): INodeTypeDescription | null => {
-			if (utils.isCredentialOnlyNodeType(nodeTypeName)) {
-				return getCredentialOnlyNodeType.value(nodeTypeName, version);
-			}
-
 			const nodeVersions = nodeTypes.value[nodeTypeName];
 
 			if (!nodeVersions) return null;
@@ -139,14 +133,8 @@ export const useNodeTypesStore = defineStore(STORES.NODE_TYPES, () => {
 	});
 
 	const getCredentialOnlyNodeType = computed(() => {
-		return (nodeTypeName: string, version?: number): INodeTypeDescription | null => {
-			const credentialName = utils.getCredentialTypeName(nodeTypeName);
-			const httpNode = getNodeType.value(
-				HTTP_REQUEST_NODE_TYPE,
-				version ?? CREDENTIAL_ONLY_HTTP_NODE_VERSION,
-			);
-			const credential = useCredentialsStore().getCredentialTypeByName(credentialName);
-			return utils.getCredentialOnlyNodeType(httpNode, credential) ?? null;
+		return (_nodeTypeName: string, _version?: number): INodeTypeDescription | null => {
+			return null;
 		};
 	});
 

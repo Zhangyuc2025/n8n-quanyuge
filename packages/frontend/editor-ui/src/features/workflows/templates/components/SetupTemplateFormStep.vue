@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import NodeIcon from '@/app/components/NodeIcon.vue';
-import CredentialPicker from '@/features/credentials/components/CredentialPicker/CredentialPicker.vue';
 import IconSuccess from './IconSuccess.vue';
 import { getAppNameFromNodeName } from '@/app/utils/nodeTypesUtils';
 import { formatList } from '@/app/utils/formatters/listFormatter';
@@ -92,23 +91,6 @@ const onCredentialModalOpened = () => {
 		</p>
 
 		<div :class="$style.credentials">
-			<CredentialPicker
-				:class="$style.credentialPicker"
-				:app-name="appName"
-				:credential-type="props.credentials.credentialType"
-				:selected-credential-id="selectedCredentialId"
-				@credential-selected="
-					emit('credentialSelected', {
-						credentialUsageKey: $props.credentials.key,
-						credentialId: $event,
-					})
-				"
-				@credential-deselected="
-					emit('credentialDeselected', { credentialUsageKey: $props.credentials.key })
-				"
-				@credential-modal-opened="onCredentialModalOpened"
-			/>
-
 			<IconSuccess
 				:class="{
 					[$style.credentialOk]: true,

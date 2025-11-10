@@ -152,23 +152,13 @@ export class WorkflowStatisticsService extends TypedEmitter<WorkflowStatisticsEv
 		const project = await this.ownershipService.getWorkflowProjectCached(workflowId);
 		const owner = await this.ownershipService.getPersonalProjectOwnerCached(project.id);
 
-		let metrics = {
+		const metrics = {
 			userId: owner?.id ?? '', // team projects have no owner
 			project: project.id,
 			workflowId,
 			nodeType: node.type,
 			nodeId: node.id,
 		};
-
-		// This is probably naive but I can't see a way for a node to have multiple credentials attached so..
-		if (node.credentials) {
-			Object.entries(node.credentials).forEach(([credName, credDetails]) => {
-				metrics = Object.assign(metrics, {
-					credentialType: credName,
-					credentialId: credDetails.id,
-				});
-			});
-		}
 
 		this.eventService.emit('first-workflow-data-loaded', metrics);
 	}

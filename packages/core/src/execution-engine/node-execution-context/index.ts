@@ -1,4 +1,3 @@
-export { CredentialTestContext } from './credentials-test-context';
 export { ExecuteContext } from './execute-context';
 export { ExecuteSingleContext } from './execute-single-context';
 export { HookContext } from './hook-context';

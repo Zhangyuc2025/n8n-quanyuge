@@ -1,5 +1,5 @@
 import { GlobalConfig } from '@n8n/config';
-import { CredentialsRepository, ProjectRelationRepository, WorkflowRepository } from '@n8n/db';
+import { ProjectRelationRepository, WorkflowRepository } from '@n8n/db';
 import { Service } from '@n8n/di';
 import { PROJECT_OWNER_ROLE_SLUG } from '@n8n/permissions';
 import { snakeCase } from 'change-case';
@@ -31,7 +31,6 @@ export class TelemetryEventRelay extends EventRelay {
 		private readonly workflowRepository: WorkflowRepository,
 		private readonly nodeTypes: NodeTypes,
 		private readonly projectRelationRepository: ProjectRelationRepository,
-		private readonly credentialsRepository: CredentialsRepository,
 	) {
 		super(eventService);
 	}
@@ -65,10 +64,6 @@ export class TelemetryEventRelay extends EventRelay {
 			'community-package-installed': (event) => this.communityPackageInstalled(event),
 			'community-package-updated': (event) => this.communityPackageUpdated(event),
 			'community-package-deleted': (event) => this.communityPackageDeleted(event),
-			'credentials-created': (event) => this.credentialsCreated(event),
-			'credentials-shared': (event) => this.credentialsShared(event),
-			'credentials-updated': (event) => this.credentialsUpdated(event),
-			'credentials-deleted': (event) => this.credentialsDeleted(event),
 			'ldap-general-sync-finished': (event) => this.ldapGeneralSyncFinished(event),
 			'ldap-settings-updated': (event) => this.ldapSettingsUpdated(event),
 			'ldap-login-sync-failed': (event) => this.ldapLoginSyncFailed(event),
@@ -401,70 +396,6 @@ export class TelemetryEventRelay extends EventRelay {
 
 	// #endregion
 
-	// #region Credentials
-
-	private credentialsCreated({
-		user,
-		credentialType,
-		credentialId,
-		projectId,
-		projectType,
-		uiContext,
-	}: RelayEventMap['credentials-created']) {
-		this.telemetry.track('User created credentials', {
-			user_id: user.id,
-			credential_type: credentialType,
-			credential_id: credentialId,
-			project_id: projectId,
-			project_type: projectType,
-			uiContext,
-		});
-	}
-
-	private credentialsShared({
-		user,
-		credentialType,
-		credentialId,
-		userIdSharer,
-		userIdsShareesAdded,
-		shareesRemoved,
-	}: RelayEventMap['credentials-shared']) {
-		this.telemetry.track('User updated cred sharing', {
-			user_id: user.id,
-			credential_type: credentialType,
-			credential_id: credentialId,
-			user_id_sharer: userIdSharer,
-			user_ids_sharees_added: userIdsShareesAdded,
-			sharees_removed: shareesRemoved,
-		});
-	}
-
-	private credentialsUpdated({
-		user,
-		credentialId,
-		credentialType,
-	}: RelayEventMap['credentials-updated']) {
-		this.telemetry.track('User updated credentials', {
-			user_id: user.id,
-			credential_type: credentialType,
-			credential_id: credentialId,
-		});
-	}
-
-	private credentialsDeleted({
-		user,
-		credentialId,
-		credentialType,
-	}: RelayEventMap['credentials-deleted']) {
-		this.telemetry.track('User deleted credentials', {
-			user_id: user.id,
-			credential_type: credentialType,
-			credential_id: credentialId,
-		});
-	}
-
-	// #endregion
-
 	// #region LDAP
 
 	private ldapGeneralSyncFinished({
@@ -751,8 +682,6 @@ export class TelemetryEventRelay extends EventRelay {
 					error_node_id: telemetryProperties.error_node_id as string,
 					webhook_domain: null,
 					sharing_role: userRole,
-					credential_type: null,
-					is_managed: false,
 					eval_rows_left: null,
 					meta: JSON.stringify(workflow.meta),
 					...TelemetryHelpers.resolveAIMetrics(workflow.nodes, this.nodeTypes),
@@ -781,17 +710,6 @@ export class TelemetryEventRelay extends EventRelay {
 				});
 
 				if (runData.data.startData?.destinationNode) {
-					const credentialsData = TelemetryHelpers.extractLastExecutedNodeCredentialData(runData);
-					if (credentialsData) {
-						manualExecEventProperties.credential_type = credentialsData.credentialType;
-						const credential = await this.credentialsRepository.findOneBy({
-							id: credentialsData.credentialId,
-						});
-						if (credential) {
-							manualExecEventProperties.is_managed = credential.isManaged;
-						}
-					}
-
 					const telemetryPayload: ITelemetryTrackProperties = {
 						...manualExecEventProperties,
 						node_type: TelemetryHelpers.getNodeTypeForName(
@@ -917,16 +835,12 @@ export class TelemetryEventRelay extends EventRelay {
 		workflowId,
 		nodeType,
 		nodeId,
-		credentialType,
-		credentialId,
 	}: RelayEventMap['first-workflow-data-loaded']) {
 		this.telemetry.track('Workflow first data fetched', {
 			user_id: userId,
 			workflow_id: workflowId,
 			node_type: nodeType,
 			node_id: nodeId,
-			credential_type: credentialType,
-			credential_id: credentialId,
 		});
 	}
 

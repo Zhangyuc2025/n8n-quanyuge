@@ -3,7 +3,6 @@ import { computed, nextTick, onBeforeMount, onMounted, ref, getCurrentInstance }
 import { v4 as uuid } from 'uuid';
 import { useWorkflowsStore } from '@/app/stores/workflows.store';
 import { hasPermission } from '@/app/utils/rbac/permissions';
-import { useCredentialsStore } from '@/features/credentials/credentials.store';
 import { useLogStreamingStore } from '../logStreaming.store';
 import { useUIStore } from '@/app/stores/ui.store';
 import type { MessageEventBusDestinationOptions } from 'n8n-workflow';

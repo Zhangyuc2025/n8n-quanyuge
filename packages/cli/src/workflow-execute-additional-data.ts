@@ -33,15 +33,11 @@ import type {
 } from 'n8n-workflow';
 
 import { ActiveExecutions } from '@/active-executions';
-import { CredentialsHelper } from '@/credentials-helper';
 import { EventService } from '@/events/event.service';
 import type { AiEventMap, AiEventPayload } from '@/events/maps/ai.event-map';
 import { getLifecycleHooksForSubExecutions } from '@/execution-lifecycle/execution-lifecycle-hooks';
 import { ExecutionDataService } from '@/executions/execution-data.service';
-import {
-	CredentialsPermissionChecker,
-	SubworkflowPolicyChecker,
-} from '@/executions/pre-execution-checks';
+import { SubworkflowPolicyChecker } from '@/executions/pre-execution-checks';
 import type { UpdateExecutionPayload } from '@/interfaces';
 import { NodeTypes } from '@/node-types';
 import { Push } from '@/push';
@@ -209,7 +205,6 @@ async function startExecution(
 
 	let data;
 	try {
-		await Container.get(CredentialsPermissionChecker).check(workflowData.id, workflowData.nodes);
 		await Container.get(SubworkflowPolicyChecker).check(
 			workflow,
 			options.parentWorkflowId,
@@ -392,7 +387,6 @@ export async function getBase({
 
 	const additionalData: IWorkflowExecuteAdditionalData = {
 		currentNodeExecutionIndex: 0,
-		credentialsHelper: Container.get(CredentialsHelper),
 		executeWorkflow,
 		restApiUrl: urlBaseWebhook + globalConfig.endpoints.rest,
 		instanceBaseUrl: urlBaseWebhook,

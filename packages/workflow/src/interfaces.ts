@@ -29,11 +29,6 @@ import type { Result } from './result';
 import type { Workflow } from './workflow';
 import type { EnvProviderState } from './workflow-data-proxy-env-provider';
 
-export interface IAdditionalCredentialOptions {
-	oauth2?: IOAuth2Options;
-	credentialsDecrypted?: ICredentialsDecrypted;
-}
-
 export type IAllExecuteFunctions =
 	| IExecuteFunctions
 	| IExecutePaginationFunctions
@@ -90,34 +85,6 @@ export type ExecutionError =
 	| NodeOperationError
 	| NodeApiError;
 
-// Get used to gives nodes access to credentials
-export interface IGetCredentials {
-	get(type: string, id: string | null): Promise<ICredentialsEncrypted>;
-}
-
-export abstract class ICredentials<T extends object = ICredentialDataDecryptedObject> {
-	id?: string;
-
-	name: string;
-
-	type: string;
-
-	data: string | undefined;
-
-	constructor(nodeCredentials: INodeCredentialsDetails, type: string, data?: string) {
-		this.id = nodeCredentials.id ?? undefined;
-		this.name = nodeCredentials.name;
-		this.type = type;
-		this.data = data;
-	}
-
-	abstract getData(nodeType?: string): T;
-
-	abstract getDataToSave(): ICredentialsEncrypted;
-
-	abstract setData(data: T): void;
-}
-
 export interface IUser {
 	id: string;
 	email: string;
@@ -133,31 +100,6 @@ export type ProjectSharingData = {
 	createdAt: string;
 	updatedAt: string;
 };
-
-export interface ICredentialsDecrypted<T extends object = ICredentialDataDecryptedObject> {
-	id: string;
-	name: string;
-	type: string;
-	data?: T;
-	homeProject?: ProjectSharingData;
-	sharedWithProjects?: ProjectSharingData[];
-}
-
-export interface ICredentialsEncrypted {
-	id?: string;
-	name: string;
-	type: string;
-	data?: string;
-}
-
-export interface ICredentialsExpressionResolveValues {
-	connectionInputData: INodeExecutionData[];
-	itemIndex: number;
-	node: INode;
-	runExecutionData: IRunExecutionData | null;
-	runIndex: number;
-	workflow: Workflow;
-}
 
 // Simplified options of request library
 export interface IRequestOptionsSimplified {
@@ -187,54 +129,6 @@ export interface IRequestOptionsSimplifiedAuth {
 export interface IHttpRequestHelper {
 	helpers: { httpRequest: IAllExecuteFunctions['helpers']['httpRequest'] };
 }
-export abstract class ICredentialsHelper {
-	abstract getParentTypes(name: string): string[];
-
-	abstract authenticate(
-		credentials: ICredentialDataDecryptedObject,
-		typeName: string,
-		requestOptions: IHttpRequestOptions | IRequestOptionsSimplified,
-		workflow: Workflow,
-		node: INode,
-	): Promise<IHttpRequestOptions>;
-
-	abstract preAuthentication(
-		helpers: IHttpRequestHelper,
-		credentials: ICredentialDataDecryptedObject,
-		typeName: string,
-		node: INode,
-		credentialsExpired: boolean,
-	): Promise<ICredentialDataDecryptedObject | undefined>;
-
-	abstract getCredentials(
-		nodeCredentials: INodeCredentialsDetails,
-		type: string,
-	): Promise<ICredentials>;
-
-	abstract getDecrypted(
-		additionalData: IWorkflowExecuteAdditionalData,
-		nodeCredentials: INodeCredentialsDetails,
-		type: string,
-		mode: WorkflowExecuteMode,
-		executeData?: IExecuteData,
-		raw?: boolean,
-		expressionResolveValues?: ICredentialsExpressionResolveValues,
-	): Promise<ICredentialDataDecryptedObject>;
-
-	abstract updateCredentials(
-		nodeCredentials: INodeCredentialsDetails,
-		type: string,
-		data: ICredentialDataDecryptedObject,
-	): Promise<void>;
-
-	abstract updateCredentialsOauthTokenData(
-		nodeCredentials: INodeCredentialsDetails,
-		type: string,
-		data: ICredentialDataDecryptedObject,
-	): Promise<void>;
-
-	abstract getCredentialsProperties(type: string): INodeProperties[];
-}
 
 export interface IAuthenticateBase {
 	type: string;
@@ -249,13 +143,6 @@ export interface IAuthenticateGeneric extends IAuthenticateBase {
 	type: 'generic';
 	properties: IRequestOptionsSimplifiedAuth;
 }
-
-export type IAuthenticate =
-	| ((
-			credentials: ICredentialDataDecryptedObject,
-			requestOptions: IHttpRequestOptions,
-	  ) => Promise<IHttpRequestOptions>)
-	| IAuthenticateGeneric;
 
 export interface IAuthenticateRuleBase {
 	type: string;
@@ -305,77 +192,6 @@ export namespace DeclarativeRestApiSettings {
 		}>;
 		requestOperations?: IN8nRequestOperations;
 	};
-}
-
-export interface ICredentialTestRequest {
-	request: DeclarativeRestApiSettings.HttpRequestOptions;
-	rules?: IAuthenticateRuleResponseCode[] | IAuthenticateRuleResponseSuccessBody[];
-}
-
-export interface ICredentialTestRequestData {
-	nodeType?: INodeType;
-	testRequest: ICredentialTestRequest;
-}
-
-type ICredentialHttpRequestNode = {
-	name: string;
-	docsUrl: string;
-	hidden?: boolean;
-} & ({ apiBaseUrl: string } | { apiBaseUrlPlaceholder: string });
-
-export interface ICredentialType {
-	name: string;
-	displayName: string;
-	icon?: Icon;
-	iconColor?: ThemeIconColor;
-	iconUrl?: Themed<string>;
-	/**
-	 * Base path for resolving file icons from expressions.
-	 * Used when icon is an expression that resolves to `file:filename.svg`
-	 * Format: `icons/${packageName}/${nodeDirPath}`
-	 */
-	iconBasePath?: string;
-	extends?: string[];
-	properties: INodeProperties[];
-	documentationUrl?: string;
-	__overwrittenProperties?: string[];
-	authenticate?: IAuthenticate;
-	preAuthentication?: (
-		this: IHttpRequestHelper,
-		credentials: ICredentialDataDecryptedObject,
-	) => Promise<IDataObject>;
-	test?: ICredentialTestRequest;
-	genericAuth?: boolean;
-	httpRequestNode?: ICredentialHttpRequestNode;
-	supportedNodes?: string[];
-}
-
-export interface ICredentialTypes {
-	recognizes(credentialType: string): boolean;
-	getByName(credentialType: string): ICredentialType;
-	getSupportedNodes(type: string): string[];
-	getParentTypes(typeName: string): string[];
-}
-
-// The way the credentials get saved in the database (data encrypted)
-export interface ICredentialData {
-	id?: string;
-	name: string;
-	data: string; // Contains the access data as encrypted JSON string
-}
-
-// The encrypted credentials which the nodes can access
-export type CredentialInformation =
-	| string
-	| string[]
-	| number
-	| boolean
-	| IDataObject
-	| IDataObject[];
-
-// The encrypted credentials which the nodes can access
-export interface ICredentialDataDecryptedObject {
-	[key: string]: CredentialInformation;
 }
 
 // First array index: The output/input-index (if node has multiple inputs/outputs of the same type)
@@ -669,18 +485,6 @@ export interface IExecuteWorkflowInfo {
 	id?: string;
 }
 
-export type ICredentialTestFunction = (
-	this: ICredentialTestFunctions,
-	credential: ICredentialsDecrypted<ICredentialDataDecryptedObject>,
-) => Promise<INodeCredentialTestResult>;
-
-export interface ICredentialTestFunctions {
-	logger: Logger;
-	helpers: SSHTunnelFunctions & {
-		request: (uriOrObject: string | object, options?: object) => Promise<any>;
-	};
-}
-
 export interface BaseHelperFunctions {
 	createDeferredPromise: <T = void>() => IDeferredPromise<T>;
 	returnJsonArray(jsonData: IDataObject | IDataObject[]): INodeExecutionData[];
@@ -775,37 +579,12 @@ interface NodeHelperFunctions {
 
 export interface RequestHelperFunctions {
 	httpRequest(requestOptions: IHttpRequestOptions): Promise<any>;
-	httpRequestWithAuthentication(
-		this: IAllExecuteFunctions,
-		credentialsType: string,
-		requestOptions: IHttpRequestOptions,
-		additionalCredentialOptions?: IAdditionalCredentialOptions,
-	): Promise<any>;
-	requestWithAuthenticationPaginated(
-		this: IAllExecuteFunctions,
-		requestOptions: IRequestOptions,
-		itemIndex: number,
-		paginationOptions: PaginationOptions,
-		credentialsType?: string,
-		additionalCredentialOptions?: IAdditionalCredentialOptions,
-	): Promise<any[]>;
 
 	/**
 	 * @deprecated Use .httpRequest instead
 	 * @see RequestHelperFunctions.httpRequest
 	 */
 	request(uriOrObject: string | IRequestOptions, options?: IRequestOptions): Promise<any>;
-	/**
-	 * @deprecated Use .httpRequestWithAuthentication instead
-	 * @see RequestHelperFunctions.requestWithAuthentication
-	 */
-	requestWithAuthentication(
-		this: IAllExecuteFunctions,
-		credentialsType: string,
-		requestOptions: IRequestOptions,
-		additionalCredentialOptions?: IAdditionalCredentialOptions,
-		itemIndex?: number,
-	): Promise<any>;
 	/**
 	 * @deprecated Use .httpRequestWithAuthentication instead
 	 * @see RequestHelperFunctions.requestWithAuthentication
@@ -892,11 +671,6 @@ export type NodeTypeAndVersion = {
 
 export interface FunctionsBase {
 	logger: Logger;
-	getCredentials<T extends object = ICredentialDataDecryptedObject>(
-		type: string,
-		itemIndex?: number,
-	): Promise<T>;
-	getCredentialsProperties(type: string): INodeProperties[];
 	getExecutionId(): string;
 	getNode(): INode;
 	getWorkflow(): IWorkflowMetadata;
@@ -1200,15 +974,6 @@ export interface IWebhookFunctions extends FunctionsBaseWithRequiredKeys<'getMod
 	helpers: RequestHelperFunctions & BaseHelperFunctions & BinaryHelperFunctions;
 }
 
-export interface INodeCredentialsDetails {
-	id: string | null;
-	name: string;
-}
-
-export interface INodeCredentials {
-	[key: string]: INodeCredentialsDetails;
-}
-
 export type OnError = 'continueErrorOutput' | 'continueRegularOutput' | 'stopWorkflow';
 export interface INode {
 	id: string;
@@ -1227,9 +992,7 @@ export interface INode {
 	onError?: OnError;
 	continueOnFail?: boolean;
 	parameters: INodeParameters;
-	credentials?: INodeCredentials;
 	webhookId?: string;
-	extendsCredential?: string;
 	rewireOutputLogTo?: NodeConnectionType;
 
 	// forces the node to execute a particular custom operation
@@ -1527,17 +1290,6 @@ export interface IDisplayOptions {
 
 	hideOnCloud?: boolean;
 }
-export interface ICredentialsDisplayOptions {
-	hide?: {
-		[key: string]: NodeParameterValue[] | undefined;
-	};
-	show?: {
-		'@version'?: number[];
-		[key: string]: NodeParameterValue[] | undefined;
-	};
-
-	hideOnCloud?: boolean;
-}
 
 export interface INodeProperties {
 	displayName: string;
@@ -1576,10 +1328,6 @@ export interface INodePropertyModeTypeOptions {
 	searchListMethod?: string; // Supported by: options
 	searchFilterRequired?: boolean;
 	searchable?: boolean;
-	/**
-	 * If true, the resource locator will not show an error if the credentials are not selected
-	 */
-	skipCredentialsCheckInRLC?: boolean;
 	allowNewResource?: {
 		label: string;
 	} & (
@@ -1637,8 +1385,6 @@ export interface INodePropertyOptions {
 	outputConnectionType?: NodeConnectionType;
 	inputSchema?: any;
 	displayOptions?: IDisplayOptions;
-	// disabledOptions added for compatibility with INodeProperties and INodeCredentialDescription types
-	// it needs to be implemented, if needed
 	disabledOptions?: undefined;
 }
 
@@ -1754,10 +1500,6 @@ export interface INodeType {
 				filter?: string,
 				paginationToken?: string,
 			) => Promise<INodeListSearchResult>;
-		};
-		credentialTest?: {
-			// Contains a group of functions that test credentials.
-			[functionName: string]: ICredentialTestFunction;
 		};
 		resourceMapping?: {
 			[functionName: string]: (this: ILoadOptionsFunctions) => Promise<ResourceMapperFields>;
@@ -1899,25 +1641,8 @@ export interface IVersionedNodeType {
 	description: INodeTypeBaseDescription;
 	getNodeType: (version?: number) => INodeType;
 }
-export interface INodeCredentialTestResult {
-	status: 'OK' | 'Error';
-	message: string;
-}
 
-export interface INodeCredentialTestRequest {
-	credentials: ICredentialsDecrypted;
-}
-
-export interface INodeCredentialDescription {
-	name: string;
-	required?: boolean;
-	displayName?: string;
-	disabledOptions?: ICredentialsDisplayOptions;
-	displayOptions?: ICredentialsDisplayOptions;
-	testedBy?: ICredentialTestRequest | string; // Name of a function inside `loadOptions.credentialTest`
-}
-
-export type INodeIssueTypes = 'credentials' | 'execution' | 'input' | 'parameters' | 'typeUnknown';
+export type INodeIssueTypes = 'execution' | 'input' | 'parameters' | 'typeUnknown';
 
 export interface INodeIssueObjectProperty {
 	[key: string]: string[];
@@ -1931,7 +1656,6 @@ export interface INodeIssueData {
 
 export interface INodeIssues {
 	execution?: boolean;
-	credentials?: INodeIssueObjectProperty;
 	input?: INodeIssueObjectProperty;
 	parameters?: INodeIssueObjectProperty;
 	typeUnknown?: boolean;
@@ -2176,7 +1900,6 @@ export interface INodeTypeDescription extends INodeTypeBaseDescription {
 	outputs: Array<NodeConnectionType | INodeOutputConfiguration> | ExpressionString;
 	outputNames?: string[];
 	properties: INodeProperties[];
-	credentials?: INodeCredentialDescription[];
 	maxNodes?: number; // How many nodes of that type can be created in a workflow
 	polling?: true | undefined;
 	supportsCORS?: true | undefined;
@@ -2191,7 +1914,6 @@ export interface INodeTypeDescription extends INodeTypeBaseDescription {
 	translation?: { [key: string]: object };
 	mockManualExecution?: true;
 	triggerPanel?: TriggerPanelDefinition | boolean;
-	extendsCredential?: string;
 	hints?: NodeHint[];
 	communityNodePackageVersion?: string;
 	waitingNodeTooltip?: string;
@@ -2373,7 +2095,6 @@ export type KnownNodesAndCredentials = {
 
 export interface LoadedNodesAndCredentials {
 	nodes: INodeTypeData;
-	credentials: ICredentialTypeData;
 }
 
 export interface LoadedClass<T> {
@@ -2382,7 +2103,6 @@ export interface LoadedClass<T> {
 }
 
 type LoadedData<T> = Record<string, LoadedClass<T>>;
-export type ICredentialTypeData = LoadedData<ICredentialType>;
 export type INodeTypeData = LoadedData<INodeType | IVersionedNodeType>;
 
 export interface IRun {
@@ -2593,12 +2313,6 @@ export interface IWorkflowBase {
 	meta?: WorkflowFEMeta;
 }
 
-export interface IWorkflowCredentials {
-	[credentialType: string]: {
-		[id: string]: ICredentialsEncrypted;
-	};
-}
-
 export interface IWorkflowExecutionDataProcess {
 	destinationNode?: string;
 	restartExecutionId?: string;
@@ -2674,7 +2388,6 @@ export interface AiAgentRequest {
 }
 
 export interface IWorkflowExecuteAdditionalData {
-	credentialsHelper: ICredentialsHelper;
 	executeWorkflow: (
 		workflowInfo: IExecuteWorkflowInfo,
 		additionalData: IWorkflowExecuteAdditionalData,
@@ -2803,7 +2516,6 @@ export interface WorkflowTestData {
 		mode: WorkflowExecuteMode;
 		input: INodeExecutionData;
 	};
-	credentials?: Record<string, ICredentialDataDecryptedObject>;
 }
 
 export type LogLevel = (typeof LOG_LEVELS)[number];

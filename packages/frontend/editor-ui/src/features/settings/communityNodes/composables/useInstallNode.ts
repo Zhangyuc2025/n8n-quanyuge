@@ -1,5 +1,4 @@
 import { useCommunityNodesStore } from '../communityNodes.store';
-import { useCredentialsStore } from '@/features/credentials/credentials.store';
 import { useNodeTypesStore } from '@/app/stores/nodeTypes.store';
 import { useUsersStore } from '@/features/settings/users/users.store';
 import { computed, nextTick, ref } from 'vue';

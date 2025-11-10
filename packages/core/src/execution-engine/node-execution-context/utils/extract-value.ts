@@ -33,9 +33,10 @@ function findPropertyFromParameterName(
 		return options.find(
 			(i) =>
 				i.name === name &&
+				'type' in i &&
 				NodeHelpers.displayParameterPath(
 					nodeParameters,
-					i,
+					i as INodeProperties | INodePropertyOptions,
 					currentParamPath,
 					node,
 					nodeType.description,

@@ -47,8 +47,6 @@ export type RelayEventMap = {
 		workflowId: string;
 		nodeType: string;
 		nodeId: string;
-		credentialType?: string;
-		credentialId?: string;
 	};
 
 	// #endregion
@@ -299,41 +297,6 @@ export type RelayEventMap = {
 			| 'Credentials shared'
 			| 'Project shared';
 		publicApi: boolean;
-	};
-
-	// #endregion
-
-	// #region Credentials
-
-	'credentials-created': {
-		user: UserLike;
-		credentialType: string;
-		credentialId: string;
-		publicApi: boolean;
-		projectId?: string;
-		projectType?: string;
-		uiContext?: string;
-	};
-
-	'credentials-shared': {
-		user: UserLike;
-		credentialType: string;
-		credentialId: string;
-		userIdSharer: string;
-		userIdsShareesAdded: string[];
-		shareesRemoved: number | null;
-	};
-
-	'credentials-updated': {
-		user: UserLike;
-		credentialType: string;
-		credentialId: string;
-	};
-
-	'credentials-deleted': {
-		user: UserLike;
-		credentialType: string;
-		credentialId: string;
 	};
 
 	// #endregion

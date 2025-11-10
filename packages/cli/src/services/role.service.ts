@@ -1,9 +1,7 @@
 import { CreateRoleDto, UpdateRoleDto } from '@n8n/api-types';
 import {
-	CredentialsEntity,
 	User,
 	ListQueryDb,
-	ScopesField,
 	ProjectRelation,
 	RoleRepository,
 	Role,
@@ -191,36 +189,8 @@ export class RoleService {
 		rawWorkflow: ListQueryDb.Workflow.WithSharing | ListQueryDb.Workflow.WithOwnedByAndSharedWith,
 		user: User,
 		userProjectRelations: ProjectRelation[],
-	): ListQueryDb.Workflow.WithScopes;
-	addScopes(
-		rawCredential: CredentialsEntity,
-		user: User,
-		userProjectRelations: ProjectRelation[],
-	): CredentialsEntity & ScopesField;
-	addScopes(
-		rawCredential:
-			| ListQueryDb.Credentials.WithSharing
-			| ListQueryDb.Credentials.WithOwnedByAndSharedWith,
-		user: User,
-		userProjectRelations: ProjectRelation[],
-	): ListQueryDb.Credentials.WithScopes;
-	addScopes(
-		rawEntity:
-			| CredentialsEntity
-			| ListQueryDb.Workflow.WithSharing
-			| ListQueryDb.Credentials.WithOwnedByAndSharedWith
-			| ListQueryDb.Credentials.WithSharing
-			| ListQueryDb.Workflow.WithOwnedByAndSharedWith,
-		user: User,
-		userProjectRelations: ProjectRelation[],
-	):
-		| (CredentialsEntity & ScopesField)
-		| ListQueryDb.Workflow.WithScopes
-		| ListQueryDb.Credentials.WithScopes {
-		const entity = rawEntity as
-			| (CredentialsEntity & ScopesField)
-			| ListQueryDb.Workflow.WithScopes
-			| ListQueryDb.Credentials.WithScopes;
+	): ListQueryDb.Workflow.WithScopes {
+		const entity = rawWorkflow as ListQueryDb.Workflow.WithScopes;
 
 		entity.scopes = [];
 
@@ -228,7 +198,7 @@ export class RoleService {
 		// Build a "shared" array for compatibility with combineResourceScopes
 		const shared: Array<{ projectId: string; project?: { id: string } }> = [];
 
-		if ('projectId' in entity && entity.projectId) {
+		if ('projectId' in entity && entity.projectId && typeof entity.projectId === 'string') {
 			shared.push({ projectId: entity.projectId });
 		}
 
@@ -245,22 +215,17 @@ export class RoleService {
 			return entity;
 		}
 
-		if (!('active' in entity) && !('type' in entity)) {
-			throw new UnexpectedError('Cannot detect if entity is a workflow or credential.');
+		if (!('active' in entity)) {
+			throw new UnexpectedError('Cannot detect if entity is a workflow.');
 		}
 
-		entity.scopes = this.combineResourceScopes(
-			'active' in entity ? 'workflow' : 'credential',
-			user,
-			shared,
-			userProjectRelations,
-		);
+		entity.scopes = this.combineResourceScopes('workflow', user, shared, userProjectRelations);
 
 		return entity;
 	}
 
 	combineResourceScopes(
-		type: 'workflow' | 'credential',
+		type: 'workflow',
 		user: User,
 		shared: Array<{ projectId: string; project?: { id: string } }>,
 		userProjectRelations: ProjectRelation[],

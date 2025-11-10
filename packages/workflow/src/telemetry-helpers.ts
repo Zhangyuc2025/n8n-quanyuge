@@ -300,7 +300,7 @@ export function generateNodesGraph(
 				predefinedCredentialType: node.parameters.nodeCredentialType as string,
 			}[authentication];
 
-			nodeItem.credential_set = node.credentials ? Object.keys(node.credentials).length > 0 : false;
+			nodeItem.credential_set = false;
 
 			const { url } = node.parameters as { url: string };
 
@@ -581,46 +581,10 @@ export function generateNodesGraph(
 export function extractLastExecutedNodeCredentialData(
 	runData: IRun,
 ): null | { credentialId: string; credentialType: string } {
-	const nodeCredentials = runData?.data?.executionData?.nodeExecutionStack?.[0]?.node?.credentials;
-
-	if (!nodeCredentials) return null;
-
-	const credentialType = Object.keys(nodeCredentials)[0] ?? null;
-
-	if (!credentialType) return null;
-
-	const { id } = nodeCredentials[credentialType];
-
-	if (!id) return null;
-
-	return { credentialId: id, credentialType };
+	return null;
 }
 
 export const userInInstanceRanOutOfFreeAiCredits = (runData: IRun): boolean => {
-	const credentials = extractLastExecutedNodeCredentialData(runData);
-
-	if (!credentials) return false;
-
-	if (credentials.credentialType !== OPEN_AI_API_CREDENTIAL_TYPE) return false;
-
-	const { error } = runData.data.resultData;
-
-	if (!isNodeApiError(error) || !error.messages[0]) return false;
-
-	const rawErrorResponse = error.messages[0].replace(`${error.httpCode} -`, '');
-
-	try {
-		const errorResponse = jsonParse<{ error: { code: number; type: string } }>(rawErrorResponse);
-		if (
-			errorResponse?.error?.type === FREE_AI_CREDITS_ERROR_TYPE &&
-			errorResponse.error.code === FREE_AI_CREDITS_USED_ALL_CREDITS_ERROR_CODE
-		) {
-			return true;
-		}
-	} catch {
-		return false;
-	}
-
 	return false;
 };
 

@@ -14,8 +14,6 @@ import {
 	NodeConnectionTypes,
 } from 'n8n-workflow';
 import type {
-	ICredentialDataDecryptedObject,
-	ICredentialsDecrypted,
 	IHttpRequestOptions,
 	IN8nHttpFullResponse,
 	INodeExecutionData,
@@ -34,7 +32,6 @@ import type {
 	NodeParameterValueType,
 	PostReceiveAction,
 	JsonObject,
-	INodeCredentialDescription,
 	IExecutePaginationFunctions,
 } from 'n8n-workflow';
 import url from 'node:url';
@@ -45,12 +42,11 @@ export class RoutingNode {
 	constructor(
 		private readonly context: ExecuteContext,
 		private readonly nodeType: INodeType,
-		private readonly credentialsDecrypted?: ICredentialsDecrypted,
 	) {}
 
 	// eslint-disable-next-line complexity
 	async runNode(): Promise<INodeExecutionData[][] | undefined> {
-		const { context, nodeType, credentialsDecrypted } = this;
+		const { context, nodeType } = this;
 		const {
 			additionalData,
 			executeData,
@@ -67,8 +63,6 @@ export class RoutingNode {
 		const items = (inputData[NodeConnectionTypes.Main] ??
 			inputData[NodeConnectionTypes.AiTool])[0] as INodeExecutionData[];
 		const returnData: INodeExecutionData[] = [];
-
-		const { credentials, credentialDescription } = await this.prepareCredentials();
 
 		const { batching } = context.getNodeParameter('requestOptions', 0, {}) as {
 			batching: { batch: { batchSize: number; batchInterval: number } };
@@ -142,7 +136,7 @@ export class RoutingNode {
 						itemIndex,
 						runIndex,
 						executeData,
-						{ $credentials: credentials, $version: node.typeVersion },
+						{ $version: node.typeVersion },
 						false,
 					) as string;
 					// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -158,7 +152,7 @@ export class RoutingNode {
 					itemIndex,
 					runIndex,
 					executeData,
-					{ $credentials: credentials, $version: node.typeVersion },
+					{ $version: node.typeVersion },
 					false,
 				) as string | NodeParameterValue;
 
@@ -168,7 +162,7 @@ export class RoutingNode {
 					itemIndex,
 					runIndex,
 					'',
-					{ $credentials: credentials, $value: value, $version: node.typeVersion },
+					{ $value: value, $version: node.typeVersion },
 				);
 
 				this.mergeOptions(itemContext[itemIndex].requestData, tempOptions);
@@ -224,9 +218,8 @@ export class RoutingNode {
 					itemContext[itemIndex].thisArgs,
 					itemIndex,
 					runIndex,
-					credentialDescription?.name,
+					undefined,
 					itemContext[itemIndex].requestData.requestOperations,
-					credentialsDecrypted,
 				),
 			);
 		}
@@ -336,7 +329,6 @@ export class RoutingNode {
 
 		if (action.type === 'filter') {
 			const passValue = action.properties.pass;
-			const { credentials } = await this.prepareCredentials();
 
 			inputData = inputData.filter((item) => {
 				// If the value is an expression resolve it
@@ -346,7 +338,6 @@ export class RoutingNode {
 					runIndex,
 					executeSingleFunctions.getExecuteData(),
 					{
-						$credentials: credentials,
 						$response: responseData,
 						$responseItem: item.json,
 						$value: parameterValue,
@@ -522,23 +513,12 @@ export class RoutingNode {
 	private async rawRoutingRequest(
 		executeSingleFunctions: IExecuteSingleFunctions,
 		requestData: DeclarativeRestApiSettings.ResultOptions,
-		credentialType?: string,
-		credentialsDecrypted?: ICredentialsDecrypted,
 	): Promise<IN8nHttpFullResponse> {
 		let responseData: IN8nHttpFullResponse;
 		requestData.options.returnFullResponse = true;
-		if (credentialType) {
-			responseData = (await executeSingleFunctions.helpers.httpRequestWithAuthentication.call(
-				executeSingleFunctions,
-				credentialType,
-				requestData.options as IHttpRequestOptions,
-				{ credentialsDecrypted },
-			)) as IN8nHttpFullResponse;
-		} else {
-			responseData = (await executeSingleFunctions.helpers.httpRequest(
-				requestData.options as IHttpRequestOptions,
-			)) as IN8nHttpFullResponse;
-		}
+		responseData = (await executeSingleFunctions.helpers.httpRequest(
+			requestData.options as IHttpRequestOptions,
+		)) as IN8nHttpFullResponse;
 
 		return responseData;
 	}
@@ -550,7 +530,6 @@ export class RoutingNode {
 		runIndex: number,
 		credentialType?: string,
 		requestOperations?: IN8nRequestOperations,
-		credentialsDecrypted?: ICredentialsDecrypted,
 	): Promise<INodeExecutionData[]> {
 		let responseData: INodeExecutionData[];
 		for (const preSendMethod of requestData.preSend) {
@@ -561,12 +540,7 @@ export class RoutingNode {
 		}
 
 		const makeRoutingRequest = async (requestOptions: DeclarativeRestApiSettings.ResultOptions) => {
-			return await this.rawRoutingRequest(
-				executeSingleFunctions,
-				requestOptions,
-				credentialType,
-				credentialsDecrypted,
-			).then(
+			return await this.rawRoutingRequest(executeSingleFunctions, requestOptions).then(
 				async (data) =>
 					await this.postProcessResponseData(
 						executeSingleFunctions,
@@ -625,12 +599,10 @@ export class RoutingNode {
 						) as object as IHttpRequestOptions;
 
 						// Make the HTTP request
-						tempResponseData = await this.rawRoutingRequest(
-							executeSingleFunctions,
-							{ ...requestData, options: { ...requestData.options, ...paginateRequestData } },
-							credentialType,
-							credentialsDecrypted,
-						);
+						tempResponseData = await this.rawRoutingRequest(executeSingleFunctions, {
+							...requestData,
+							options: { ...requestData.options, ...paginateRequestData },
+						});
 
 						additionalKeys.$response = tempResponseData;
 
@@ -679,8 +651,6 @@ export class RoutingNode {
 						tempResponseData = await this.rawRoutingRequest(
 							executeSingleFunctions,
 							requestData,
-							credentialType,
-							credentialsDecrypted,
 						).then(
 							async (data) =>
 								await this.postProcessResponseData(
@@ -722,12 +692,7 @@ export class RoutingNode {
 			}
 		} else {
 			// No pagination
-			responseData = await this.rawRoutingRequest(
-				executeSingleFunctions,
-				requestData,
-				credentialType,
-				credentialsDecrypted,
-			).then(
+			responseData = await this.rawRoutingRequest(executeSingleFunctions, requestData).then(
 				async (data) =>
 					await this.postProcessResponseData(
 						executeSingleFunctions,
@@ -1070,53 +1035,5 @@ export class RoutingNode {
 			}
 		}
 		return returnData;
-	}
-
-	private async prepareCredentials() {
-		const { context, nodeType, credentialsDecrypted } = this;
-		const { node } = context;
-
-		let credentialDescription: INodeCredentialDescription | undefined;
-
-		if (nodeType.description.credentials?.length) {
-			if (nodeType.description.credentials.length === 1) {
-				credentialDescription = nodeType.description.credentials[0];
-			} else {
-				const authenticationMethod = context.getNodeParameter('authentication', 0) as string;
-				credentialDescription = nodeType.description.credentials.find((x) =>
-					x.displayOptions?.show?.authentication?.includes(authenticationMethod),
-				);
-				if (!credentialDescription) {
-					throw new NodeOperationError(
-						node,
-						`Node type "${node.type}" does not have any credentials of type "${authenticationMethod}" defined`,
-						{ level: 'warning' },
-					);
-				}
-			}
-		}
-
-		let credentials: ICredentialDataDecryptedObject | undefined;
-		if (credentialsDecrypted) {
-			credentials = credentialsDecrypted.data;
-		} else if (credentialDescription) {
-			try {
-				credentials =
-					(await context.getCredentials<ICredentialDataDecryptedObject>(
-						credentialDescription.name,
-						0,
-					)) || {};
-			} catch (error) {
-				if (credentialDescription.required) {
-					// Only throw error if credential is mandatory
-					throw error;
-				} else {
-					// Do not request cred type since it doesn't exist
-					credentialDescription = undefined;
-				}
-			}
-		}
-
-		return { credentials, credentialDescription };
 	}
 }

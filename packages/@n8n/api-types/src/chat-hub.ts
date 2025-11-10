@@ -148,7 +148,6 @@ export class ChatHubEditMessageRequest extends Z.class({
 
 export class ChatHubUpdateConversationRequest extends Z.class({
 	title: z.string().optional(),
-	credentialId: z.string().max(36).optional(),
 	provider: chatHubProviderSchema.optional(),
 	model: z.string().max(64).optional(),
 	workflowId: z.string().max(36).optional(),
@@ -166,7 +165,6 @@ export interface ChatHubSessionDto {
 	title: string;
 	ownerId: string;
 	lastMessageAt: string | null;
-	credentialId: string | null;
 	provider: ChatHubProvider | null;
 	model: string | null;
 	workflowId: string | null;
@@ -213,7 +211,6 @@ export interface ChatHubAgentDto {
 	description: string | null;
 	systemPrompt: string;
 	ownerId: string;
-	credentialId: string | null;
 	provider: ChatHubLLMProvider;
 	model: string;
 	createdAt: string;
@@ -224,7 +221,6 @@ export class ChatHubCreateAgentRequest extends Z.class({
 	name: z.string().min(1).max(128),
 	description: z.string().max(512).optional(),
 	systemPrompt: z.string().min(1),
-	credentialId: z.string(),
 	provider: chatHubProviderSchema.exclude(['n8n', 'custom-agent']),
 	model: z.string().max(64),
 }) {}
@@ -233,7 +229,6 @@ export class ChatHubUpdateAgentRequest extends Z.class({
 	name: z.string().min(1).max(128).optional(),
 	description: z.string().max(512).optional(),
 	systemPrompt: z.string().min(1).optional(),
-	credentialId: z.string().optional(),
 	provider: chatHubProviderSchema.optional(),
 	model: z.string().max(64).optional(),
 }) {}

@@ -27,7 +27,6 @@ import type {
 	IExecutionsListResponse,
 	IExecutionFlattedResponse,
 } from '@/features/execution/executions/executions.types';
-import type { IUsedCredential } from '@/features/credentials/credentials.types';
 import type { IWorkflowTemplateNode } from '@n8n/rest-api-client/api/templates';
 import type {
 	WorkflowMetadata,
@@ -76,7 +75,6 @@ import {
 } from '@/features/execution/executions/executions.utils';
 import { useNDVStore } from '@/features/ndv/shared/ndv.store';
 import { useNodeTypesStore } from '@/app/stores/nodeTypes.store';
-import { getCredentialOnlyNodeTypeName } from '@/app/utils/credentialOnlyNodes';
 import { i18n } from '@n8n/i18n';
 
 import { computed, ref, watch } from 'vue';
@@ -109,7 +107,6 @@ const defaults: Omit<IWorkflowDb, 'id'> & { settings: NonNullable<IWorkflowDb['s
 	tags: [],
 	pinData: {},
 	versionId: '',
-	usedCredentials: [],
 };
 
 const createEmptyWorkflow = (): IWorkflowDb => ({
@@ -136,7 +133,6 @@ export const useWorkflowsStore = defineStore(STORES.WORKFLOWS, () => {
 
 	// For paginated workflow lists
 	const totalWorkflowCount = ref(0);
-	const usedCredentials = ref<Record<string, IUsedCredential>>({});
 
 	const activeWorkflows = ref<string[]>([]);
 	const currentWorkflowExecutions = ref<ExecutionSummary[]>([]);
@@ -700,92 +696,8 @@ export const useWorkflowsStore = defineStore(STORES.WORKFLOWS, () => {
 		workflow.value = createEmptyWorkflow();
 	}
 
-	function setUsedCredentials(data: IUsedCredential[]) {
-		workflow.value.usedCredentials = data;
-		usedCredentials.value = data.reduce<{ [name: string]: IUsedCredential }>((accu, credential) => {
-			accu[credential.id] = credential;
-			return accu;
-		}, {});
-	}
-
 	function setWorkflowVersionId(versionId: string) {
 		workflow.value.versionId = versionId;
-	}
-
-	// replace invalid credentials in workflow
-	function replaceInvalidWorkflowCredentials(data: {
-		credentials: INodeCredentialsDetails;
-		invalid: INodeCredentialsDetails;
-		type: string;
-	}) {
-		workflow.value.nodes.forEach((node: INodeUi) => {
-			const nodeCredentials: INodeCredentials | undefined = (node as unknown as INode).credentials;
-			if (!nodeCredentials?.[data.type]) {
-				return;
-			}
-
-			const nodeCredentialDetails: INodeCredentialsDetails | string = nodeCredentials[data.type];
-
-			if (
-				typeof nodeCredentialDetails === 'string' &&
-				nodeCredentialDetails === data.invalid.name
-			) {
-				(node.credentials as INodeCredentials)[data.type] = data.credentials;
-				return;
-			}
-
-			if (nodeCredentialDetails.id === null) {
-				if (nodeCredentialDetails.name === data.invalid.name) {
-					(node.credentials as INodeCredentials)[data.type] = data.credentials;
-				}
-				return;
-			}
-
-			if (nodeCredentialDetails.id === data.invalid.id) {
-				(node.credentials as INodeCredentials)[data.type] = data.credentials;
-			}
-		});
-	}
-
-	// Assign credential to all nodes that support it but don't have it set
-	function assignCredentialToMatchingNodes(data: {
-		credentials: INodeCredentialsDetails;
-		type: string;
-		currentNodeName: string;
-	}): number {
-		let updatedNodesCount = 0;
-
-		workflow.value.nodes.forEach((node: INodeUi) => {
-			// Skip the current node (it was just set)
-			if (node.name === data.currentNodeName) {
-				return;
-			}
-
-			// Skip if node already has credential set
-			if (node.credentials && Object.keys(node.credentials).length > 0) {
-				return;
-			}
-
-			// Get node type to check if it supports this credential
-			const nodeType = nodeTypesStore.getNodeType(node.type, node.typeVersion);
-			if (!nodeType?.credentials) {
-				return;
-			}
-
-			// Check if this node type supports the credential type
-			const supportsCredential = nodeType.credentials.some((cred) => cred.name === data.type);
-			if (!supportsCredential) {
-				return;
-			}
-
-			// Assign the same credential to the node
-			node.credentials ??= {} satisfies INodeCredentials;
-			node.credentials[data.type] = data.credentials;
-
-			updatedNodesCount++;
-		});
-
-		return updatedNodesCount;
 	}
 
 	function setWorkflows(workflows: IWorkflowDb[]) {
@@ -1277,9 +1189,9 @@ export const useWorkflowsStore = defineStore(STORES.WORKFLOWS, () => {
 				nodeHelpers.assignNodeId(node);
 			}
 
-			if (node.extendsCredential) {
-				node.type = getCredentialOnlyNodeTypeName(node.extendsCredential);
-			}
+			// if (node.extendsCredential) {
+			// 	node.type = getCredentialOnlyNodeTypeName(node.extendsCredential);
+			// }
 
 			if (node.position) {
 				node.position = snapPositionToGrid(node.position);
@@ -1817,7 +1729,6 @@ export const useWorkflowsStore = defineStore(STORES.WORKFLOWS, () => {
 
 	return {
 		workflow,
-		usedCredentials,
 		activeWorkflows,
 		currentWorkflowExecutions,
 		workflowExecutionData,
@@ -1892,10 +1803,7 @@ export const useWorkflowsStore = defineStore(STORES.WORKFLOWS, () => {
 		fetchWorkflowsWithNodesIncluded,
 		resetWorkflow,
 		addNodeExecutionStartedData,
-		setUsedCredentials,
 		setWorkflowVersionId,
-		replaceInvalidWorkflowCredentials,
-		assignCredentialToMatchingNodes,
 		setWorkflows,
 		deleteWorkflow,
 		archiveWorkflow,

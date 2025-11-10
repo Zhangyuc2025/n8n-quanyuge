@@ -9,7 +9,6 @@ import {
 	IConnections,
 	IExecuteData,
 	INode,
-	INodeCredentials,
 	IRunExecutionData,
 	IWorkflowBase,
 	MEMORY_BUFFER_WINDOW_NODE_TYPE,
@@ -41,7 +40,6 @@ export class ChatHubWorkflowService {
 		projectId: string,
 		history: ChatHubMessage[],
 		humanMessage: string,
-		credentials: INodeCredentials,
 		model: ChatHubConversationModel,
 		systemMessage?: string,
 		trx?: EntityManager,
@@ -56,7 +54,6 @@ export class ChatHubWorkflowService {
 				sessionId,
 				history,
 				humanMessage,
-				credentials,
 				model,
 				systemMessage,
 			});
@@ -83,7 +80,6 @@ export class ChatHubWorkflowService {
 		sessionId: ChatSessionId,
 		projectId: string,
 		humanMessage: string,
-		credentials: INodeCredentials,
 		model: ChatHubConversationModel,
 		trx?: EntityManager,
 	): Promise<{ workflowData: IWorkflowBase; executionData: IRunExecutionData }> {
@@ -95,7 +91,6 @@ export class ChatHubWorkflowService {
 			const { nodes, connections, executionData } = this.buildTitleGenerationWorkflow(
 				userId,
 				sessionId,
-				credentials,
 				model,
 				humanMessage,
 			);
@@ -122,7 +117,6 @@ export class ChatHubWorkflowService {
 		sessionId,
 		history,
 		humanMessage,
-		credentials,
 		model,
 		systemMessage,
 	}: {
@@ -130,13 +124,12 @@ export class ChatHubWorkflowService {
 		sessionId: ChatSessionId;
 		history: ChatHubMessage[];
 		humanMessage: string;
-		credentials: INodeCredentials;
 		model: ChatHubConversationModel;
 		systemMessage?: string;
 	}) {
 		const chatTriggerNode = this.buildChatTriggerNode();
 		const toolsAgentNode = this.buildToolsAgentNode(model, systemMessage);
-		const modelNode = this.buildModelNode(credentials, model);
+		const modelNode = this.buildModelNode(model);
 		const memoryNode = this.buildMemoryNode(20);
 		const restoreMemoryNode = this.buildRestoreMemoryNode(history);
 		const clearMemoryNode = this.buildClearMemoryNode();
@@ -230,13 +223,12 @@ export class ChatHubWorkflowService {
 	private buildTitleGenerationWorkflow(
 		userId: string,
 		sessionId: ChatSessionId,
-		credentials: INodeCredentials,
 		model: ChatHubConversationModel,
 		humanMessage: string,
 	) {
 		const chatTriggerNode = this.buildChatTriggerNode();
 		const titleGeneratorAgentNode = this.buildTitleGeneratorAgentNode();
-		const modelNode = this.buildModelNode(credentials, model);
+		const modelNode = this.buildModelNode(model);
 
 		const nodes: INode[] = [chatTriggerNode, titleGeneratorAgentNode, modelNode];
 
@@ -333,20 +325,18 @@ export class ChatHubWorkflowService {
 		};
 	}
 
-	private buildModelNode(
-		credentials: INodeCredentials,
-		conversationModel: ChatHubConversationModel,
-	): INode {
+	private buildModelNode(conversationModel: ChatHubConversationModel): INode {
 		if (conversationModel.provider === 'n8n' || conversationModel.provider === 'custom-agent') {
 			throw new OperationalError('Custom agent workflows do not require a model node');
 		}
 
+		// TODO: Implement pay-per-use authentication for model nodes
 		const { provider, model } = conversationModel;
 		const common = {
 			position: [600, 300] satisfies [number, number],
 			id: uuidv4(),
 			name: NODE_NAMES.CHAT_MODEL,
-			credentials,
+			credentials: {}, // TODO: Add API key credentials for pay-per-use
 			type: PROVIDER_NODE_TYPE_MAP[provider].name,
 			typeVersion: PROVIDER_NODE_TYPE_MAP[provider].version,
 		};

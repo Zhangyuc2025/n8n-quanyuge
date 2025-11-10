@@ -11,7 +11,6 @@ import type {
 import { workflowDetailsOutputSchema } from './schemas';
 import { getWebhookDetails, type WebhookEndpoints } from './webhook-utils';
 
-import type { CredentialsService } from '@/credentials/credentials.service';
 import type { Telemetry } from '@/telemetry';
 import type { WorkflowFinderService } from '@/workflows/workflow-finder.service';
 
@@ -30,7 +29,6 @@ export const createWorkflowDetailsTool = (
 	user: User,
 	baseWebhookUrl: string,
 	workflowFinderService: WorkflowFinderService,
-	credentialsService: CredentialsService,
 	endpoints: WebhookEndpoints,
 	telemetry: Telemetry,
 ): ToolDefinition<typeof inputSchema> => {
@@ -54,7 +52,6 @@ export const createWorkflowDetailsTool = (
 					user,
 					baseWebhookUrl,
 					workflowFinderService,
-					credentialsService,
 					endpoints,
 					{ workflowId },
 				);
@@ -92,7 +89,6 @@ export async function getWorkflowDetails(
 	user: User,
 	baseWebhookUrl: string,
 	workflowFinderService: WorkflowFinderService,
-	credentialsService: CredentialsService,
 	endpoints: WebhookEndpoints,
 	{ workflowId }: { workflowId: string },
 ): Promise<WorkflowDetailsResult> {
@@ -107,13 +103,7 @@ export async function getWorkflowDetails(
 		(node) => node.type === WEBHOOK_NODE_TYPE && node.disabled !== true,
 	);
 
-	let triggerNotice = await getWebhookDetails(
-		user,
-		webhooks,
-		baseWebhookUrl,
-		credentialsService,
-		endpoints,
-	);
+	let triggerNotice = await getWebhookDetails(webhooks, baseWebhookUrl, endpoints);
 
 	triggerNotice += `${
 		workflow.active
@@ -132,7 +122,7 @@ export async function getWorkflowDetails(
 		updatedAt: workflow.updatedAt.toISOString(),
 		settings: workflow.settings ?? null,
 		connections: workflow.connections,
-		nodes: workflow.nodes.map(({ credentials: _credentials, ...node }) => node),
+		nodes: workflow.nodes.map((node) => ({ ...node })),
 		tags: (workflow.tags ?? []).map((tag) => ({ id: tag.id, name: tag.name })),
 		meta: workflow.meta ?? null,
 		parentFolderId: workflow.parentFolder?.id ?? null,

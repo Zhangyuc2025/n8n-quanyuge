@@ -4,7 +4,6 @@ import { Container } from '@n8n/di';
 import { z } from 'zod';
 
 import { N8N_VERSION } from '@/constants';
-import { CredentialsOverwrites } from '@/credentials-overwrites';
 import { DeprecationService } from '@/deprecation/deprecation.service';
 import { EventMessageGeneric } from '@/eventbus/event-message-classes/event-message-generic';
 import { MessageEventBus } from '@/eventbus/message-event-bus/message-event-bus';
@@ -89,8 +88,6 @@ export class Worker extends BaseCommand<z.infer<typeof flagsSchema>> {
 
 		Container.get(DeprecationService).warn();
 
-		await Container.get(CredentialsOverwrites).init();
-		this.logger.debug('Credentials overwrites init complete');
 		await this.initBinaryDataService();
 		this.logger.debug('Binary data service init complete');
 		await this.initDataDeduplicationService();
@@ -167,7 +164,6 @@ export class Worker extends BaseCommand<z.infer<typeof flagsSchema>> {
 
 		const endpointsConfig: WorkerServerEndpointsConfig = {
 			health: this.globalConfig.queue.health.active,
-			overwrites: this.globalConfig.credentials.overwrite.endpoint !== '',
 			metrics: this.globalConfig.endpoints.metrics.enable,
 		};
 

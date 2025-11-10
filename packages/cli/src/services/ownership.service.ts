@@ -128,18 +128,8 @@ export class OwnershipService {
 
 	addOwnedByAndSharedWith(
 		rawWorkflow: ListQueryDb.Workflow.WithSharing,
-	): ListQueryDb.Workflow.WithOwnedByAndSharedWith;
-	addOwnedByAndSharedWith(
-		rawCredential: ListQueryDb.Credentials.WithSharing,
-	): ListQueryDb.Credentials.WithOwnedByAndSharedWith;
-	addOwnedByAndSharedWith(
-		rawEntity: ListQueryDb.Workflow.WithSharing | ListQueryDb.Credentials.WithSharing,
-	):
-		| ListQueryDb.Workflow.WithOwnedByAndSharedWith
-		| ListQueryDb.Credentials.WithOwnedByAndSharedWith {
-		const entity = rawEntity as
-			| ListQueryDb.Workflow.WithOwnedByAndSharedWith
-			| ListQueryDb.Credentials.WithOwnedByAndSharedWith;
+	): ListQueryDb.Workflow.WithOwnedByAndSharedWith {
+		const entity = rawWorkflow as ListQueryDb.Workflow.WithOwnedByAndSharedWith;
 
 		// Initialize with defaults
 		Object.assign(entity, {
@@ -148,13 +138,20 @@ export class OwnershipService {
 		});
 
 		// The entity should have a project relation loaded
-		if ('project' in rawEntity && rawEntity.project) {
+		if ('project' in entity && entity.project && typeof entity.project === 'object') {
+			const project = entity.project as {
+				id: string;
+				type: 'personal' | 'team';
+				name?: string;
+				icon?: { type: 'emoji' | 'icon'; value: string } | null;
+			};
 			// Set the home project (owner project)
+			// name should always be present, but we handle the case where it might not be loaded
 			entity.homeProject = {
-				id: rawEntity.project.id,
-				type: rawEntity.project.type,
-				name: rawEntity.project.name,
-				icon: rawEntity.project.icon,
+				id: project.id,
+				type: project.type,
+				name: project.name ?? '',
+				icon: project.icon ?? null,
 			};
 		}
 

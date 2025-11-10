@@ -1,20 +1,13 @@
 import { Logger, safeJoinPath } from '@n8n/backend-common';
-import type { TagEntity, ICredentialsDb, IWorkflowDb } from '@n8n/db';
-import {
-	Project,
-	WorkflowEntity,
-	WorkflowTagMapping,
-	CredentialsRepository,
-	TagRepository,
-} from '@n8n/db';
+import type { TagEntity, IWorkflowDb } from '@n8n/db';
+import { Project, WorkflowEntity, WorkflowTagMapping, TagRepository } from '@n8n/db';
 // eslint-disable-next-line n8n-local-rules/misplaced-n8n-typeorm-import
 import { DataSource, EntityManager } from '@n8n/typeorm';
 import { Service } from '@n8n/di';
-import { type INode, type INodeCredentialsDetails, type IWorkflowBase } from 'n8n-workflow';
+import { type IWorkflowBase } from 'n8n-workflow';
 import { v4 as uuid } from 'uuid';
 import { readdir, readFile } from 'fs/promises';
 
-import { replaceInvalidCredentials } from '@/workflow-helpers';
 import { validateDbTypeForImportEntities } from '@/utils/validate-database-type';
 import { Cipher } from 'n8n-core';
 import { decompressFolder } from '@/utils/compression.util';
@@ -25,8 +18,6 @@ import { DatabaseConfig } from '@n8n/config';
 
 @Service()
 export class ImportService {
-	private dbCredentials: ICredentialsDb[] = [];
-
 	private dbTags: TagEntity[] = [];
 
 	private foreignKeyCommands: Record<'enable' | 'disable', Record<string, string>> = {
@@ -48,7 +39,6 @@ export class ImportService {
 
 	constructor(
 		private readonly logger: Logger,
-		private readonly credentialsRepository: CredentialsRepository,
 		private readonly tagRepository: TagRepository,
 		private readonly dataSource: DataSource,
 		private readonly cipher: Cipher,
@@ -58,7 +48,6 @@ export class ImportService {
 	) {}
 
 	async initRecords() {
-		this.dbCredentials = await this.credentialsRepository.find();
 		this.dbTags = await this.tagRepository.find();
 	}
 
@@ -67,14 +56,8 @@ export class ImportService {
 
 		for (const workflow of workflows) {
 			workflow.nodes.forEach((node) => {
-				this.toNewCredentialFormat(node);
-
 				if (!node.id) node.id = uuid();
 			});
-
-			const hasInvalidCreds = workflow.nodes.some((node) => !node.credentials?.id);
-
-			if (hasInvalidCreds) await this.replaceInvalidCreds(workflow);
 
 			// Remove workflows from ActiveWorkflowManager BEFORE transaction to prevent orphaned trigger listeners
 			if (workflow.id) {
@@ -83,7 +66,7 @@ export class ImportService {
 		}
 
 		const insertedWorkflows: IWorkflowBase[] = [];
-		const { manager: dbManager } = this.credentialsRepository;
+		const { manager: dbManager } = this.tagRepository;
 		await dbManager.transaction(async (tx) => {
 			for (const workflow of workflows) {
 				if (workflow.active) {
@@ -124,14 +107,6 @@ export class ImportService {
 			for (const workflow of insertedWorkflows) {
 				await this.workflowIndexService.updateIndexFor(workflow);
 			}
-		}
-	}
-
-	async replaceInvalidCreds(workflow: IWorkflowBase) {
-		try {
-			await replaceInvalidCredentials(workflow);
-		} catch (e) {
-			this.logger.error('Failed to replace invalid credential', { error: e });
 		}
 	}
 
@@ -434,26 +409,6 @@ export class ImportService {
 		this.logger.info(`   Total entities imported: ${totalEntitiesImported}`);
 		this.logger.info(`   Entity types processed: ${entityNames.length}`);
 		this.logger.info('✅ Import completed successfully!');
-	}
-
-	/**
-	 * Convert a node's credentials from old format `{ <nodeType>: <credentialName> }`
-	 * to new format: `{ <nodeType>: { id: string | null, name: <credentialName> } }`
-	 */
-	private toNewCredentialFormat(node: INode) {
-		if (!node.credentials) return;
-
-		for (const [type, name] of Object.entries(node.credentials)) {
-			if (typeof name !== 'string') continue;
-
-			const nodeCredential: INodeCredentialsDetails = { id: null, name };
-
-			const match = this.dbCredentials.find((c) => c.name === name && c.type === type);
-
-			if (match) nodeCredential.id = match.id;
-
-			node.credentials[type] = nodeCredential;
-		}
 	}
 
 	async disableForeignKeyConstraints(transactionManager: EntityManager) {

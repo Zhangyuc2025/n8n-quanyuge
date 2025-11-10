@@ -13,7 +13,6 @@ import {
 	User,
 	AuthIdentity,
 	ProjectRepository,
-	CredentialsRepository,
 	WorkflowRepository,
 	UserRepository,
 	AuthenticatedRequest,
@@ -34,7 +33,6 @@ import { hasGlobalScope } from '@n8n/permissions';
 import { Response } from 'express';
 
 import { AuthService } from '@/auth/auth.service';
-import { CredentialsService } from '@/credentials/credentials.service';
 import { BadRequestError } from '@/errors/response-errors/bad-request.error';
 import { ForbiddenError } from '@/errors/response-errors/forbidden.error';
 import { NotFoundError } from '@/errors/response-errors/not-found.error';
@@ -42,7 +40,6 @@ import { EventService } from '@/events/event.service';
 import { ExternalHooks } from '@/external-hooks';
 import { UserRequest } from '@/requests';
 import { FolderService } from '@/services/folder.service';
-import { ProjectService } from '@/services/project.service.ee';
 import { UserService } from '@/services/user.service';
 import { WorkflowService } from '@/workflows/workflow.service';
 
@@ -51,15 +48,12 @@ export class UsersController {
 	constructor(
 		private readonly logger: Logger,
 		private readonly externalHooks: ExternalHooks,
-		private readonly credentialsRepository: CredentialsRepository,
 		private readonly workflowRepository: WorkflowRepository,
 		private readonly userRepository: UserRepository,
 		private readonly authService: AuthService,
 		private readonly userService: UserService,
 		private readonly projectRepository: ProjectRepository,
 		private readonly workflowService: WorkflowService,
-		private readonly credentialsService: CredentialsService,
-		private readonly projectService: ProjectService,
 		private readonly eventService: EventService,
 		private readonly folderService: FolderService,
 	) {}
@@ -185,7 +179,7 @@ export class UsersController {
 	}
 
 	/**
-	 * Delete a user. Optionally, designate a transferee for their workflows and credentials.
+	 * Delete a user. Optionally, designate a transferee for their workflows.
 	 */
 	@Delete('/:id')
 	@GlobalScope('user:delete')
@@ -252,11 +246,6 @@ export class UsersController {
 					transfereeProject.id,
 					trx,
 				);
-				await this.credentialsService.transferAll(
-					personalProjectToDelete.id,
-					transfereeProject.id,
-					trx,
-				);
 
 				await this.folderService.transferAllFoldersToProject(
 					personalProjectToDelete.id,
@@ -264,27 +253,15 @@ export class UsersController {
 					trx,
 				);
 			});
-
-			await this.projectService.clearCredentialCanUseExternalSecretsCache(transfereeProject.id);
 		}
 
-		const [ownedWorkflows, ownedCredentials] = await Promise.all([
-			this.workflowRepository.find({
-				select: { id: true },
-				where: { projectId: personalProjectToDelete.id },
-			}),
-			this.credentialsRepository.find({
-				select: { id: true },
-				where: { projectId: personalProjectToDelete.id },
-			}),
-		]);
+		const ownedWorkflows = await this.workflowRepository.find({
+			select: { id: true },
+			where: { projectId: personalProjectToDelete.id },
+		});
 
 		for (const workflow of ownedWorkflows) {
 			await this.workflowService.delete(userToDelete, workflow.id, true);
-		}
-
-		for (const credential of ownedCredentials) {
-			await this.credentialsService.delete(userToDelete, credential.id);
 		}
 
 		await this.userService.getManager().transaction(async (trx) => {
@@ -348,13 +325,6 @@ export class UsersController {
 			targetUserNewRole: payload.newRoleName,
 			publicApi: false,
 		});
-
-		const projects = await this.projectService.getUserOwnedOrAdminProjects(targetUser.id);
-		await Promise.all(
-			projects.map(
-				async (p) => await this.projectService.clearCredentialCanUseExternalSecretsCache(p.id),
-			),
-		);
 
 		return { success: true };
 	}

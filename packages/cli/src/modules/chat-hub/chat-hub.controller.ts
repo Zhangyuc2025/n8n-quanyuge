@@ -45,9 +45,9 @@ export class ChatHubController {
 	async getModels(
 		req: AuthenticatedRequest,
 		_res: Response,
-		@Body payload: ChatModelsRequestDto,
+		@Body _payload: ChatModelsRequestDto,
 	): Promise<ChatModelsResponse> {
-		return await this.chatService.getModels(req.user, payload.credentials);
+		return await this.chatService.getModels(req.user);
 	}
 
 	@Get('/conversations')

@@ -142,7 +142,7 @@ export class UserNodeConfigService {
 		// 3. 第三方节点：总是使用个人配置
 		const userConfig = await this.getUserNodeConfig(userId, nodeType);
 		if (!userConfig) {
-			throw new UserError(`Please configure this node first`);
+			throw new UserError('Please configure this node first');
 		}
 
 		return userConfig;

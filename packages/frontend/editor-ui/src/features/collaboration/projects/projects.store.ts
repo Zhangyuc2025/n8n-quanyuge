@@ -6,14 +6,11 @@ import * as dataTableApi from '@/features/core/dataTable/dataTable.api';
 import * as projectsApi from './projects.api';
 import * as workflowsApi from '@/app/api/workflows';
 import * as workflowsEEApi from '@/app/api/workflows.ee';
-import * as credentialsApi from '@/features/credentials/credentials.api';
-import * as credentialsEEApi from '@/features/credentials/credentials.ee.api';
 import type { Project, ProjectListItem, ProjectsCount } from './projects.types';
 import { ProjectTypes } from './projects.types';
 import { useSettingsStore } from '@/app/stores/settings.store';
 import { hasPermission } from '@/app/utils/rbac/permissions';
 import type { IWorkflowDb } from '@/Interface';
-import { useCredentialsStore } from '@/features/credentials/credentials.store';
 import { STORES } from '@n8n/stores';
 import { useUsersStore } from '@/features/settings/users/users.store';
 import { getResourcePermissions } from '@n8n/permissions';
@@ -21,7 +18,6 @@ import type { CreateProjectDto, UpdateProjectDto } from '@n8n/api-types';
 import { useSourceControlStore } from '@/features/integrations/sourceControl.ee/sourceControl.store';
 
 export type ResourceCounts = {
-	credentials: number;
 	workflows: number;
 	dataTables: number;
 };
@@ -30,7 +26,6 @@ export const useProjectsStore = defineStore(STORES.PROJECTS, () => {
 	const route = useRoute();
 	const rootStore = useRootStore();
 	const settingsStore = useSettingsStore();
-	const credentialsStore = useCredentialsStore();
 	const usersStore = useUsersStore();
 	const sourceControlStore = useSourceControlStore();
 
@@ -231,37 +226,26 @@ export const useProjectsStore = defineStore(STORES.PROJECTS, () => {
 	};
 
 	const moveResourceToProject = async (
-		resourceType: 'workflow' | 'credential',
+		resourceType: 'workflow',
 		resourceId: string,
 		projectId: string,
 		parentFolderId?: string,
 		shareCredentials?: string[],
 	) => {
-		if (resourceType === 'workflow') {
-			await workflowsEEApi.moveWorkflowToProject(rootStore.restApiContext, resourceId, {
-				destinationProjectId: projectId,
-				destinationParentFolderId: parentFolderId,
-				shareCredentials,
-			});
-		} else {
-			await credentialsEEApi.moveCredentialToProject(
-				rootStore.restApiContext,
-				resourceId,
-				projectId,
-			);
-			await credentialsStore.fetchAllCredentials(currentProjectId.value);
-		}
+		await workflowsEEApi.moveWorkflowToProject(rootStore.restApiContext, resourceId, {
+			destinationProjectId: projectId,
+			destinationParentFolderId: parentFolderId,
+			shareCredentials,
+		});
 	};
 
 	const getResourceCounts = async (projectId: string): Promise<ResourceCounts> => {
-		const [credentials, workflows, dataTables] = await Promise.all([
-			credentialsApi.getAllCredentials(rootStore.restApiContext, { projectId }),
+		const [workflows, dataTables] = await Promise.all([
 			workflowsApi.getWorkflows(rootStore.restApiContext, { projectId }),
 			dataTableApi.fetchDataTablesApi(rootStore.restApiContext, projectId),
 		]);
 
 		return {
-			credentials: credentials.length,
 			workflows: workflows.count,
 			dataTables: dataTables.count,
 		};

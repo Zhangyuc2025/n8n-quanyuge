@@ -1,7 +1,6 @@
 import { ProjectRepository, WorkflowRepository } from '@n8n/db';
 import {
 	type AuthenticatedRequest,
-	type CredentialsEntity,
 	type Folder,
 	type Project,
 	type WorkflowEntity,
@@ -138,19 +137,15 @@ export class SourceControlScopedService {
 		};
 	}
 
+	/**
+	 * Credential import/export is no longer supported in Source Control.
+	 * Enterprise Git integration now focuses on workflow synchronization only.
+	 * This method is retained for backward compatibility but returns an empty filter.
+	 */
 	getCredentialsInAdminProjectsFromContextFilter(
-		context: SourceControlContext,
-	): FindOptionsWhere<CredentialsEntity> {
-		if (context.hasAccessToAllProjects()) {
-			// In case the user is a global admin or owner, we don't need a filter
-			return {};
-		}
-
-		// We build a filter to only select credentials, that belong to a team project
-		// that the user is an admin off
-		return {
-			project: this.getProjectsWithPushScopeByContextFilter(context),
-		};
+		_context: SourceControlContext,
+	): Record<string, never> {
+		return {};
 	}
 
 	getWorkflowTagMappingInAdminProjectsFromContextFilter(

@@ -1,5 +1,5 @@
 import type { User } from '@n8n/db';
-import { CredentialsRepository, ProjectRepository, WorkflowRepository } from '@n8n/db';
+import { ProjectRepository, WorkflowRepository } from '@n8n/db';
 import { Container } from '@n8n/di';
 import { hasGlobalScope, type Scope } from '@n8n/permissions';
 import { UnexpectedError } from 'n8n-workflow';
@@ -18,11 +18,7 @@ export async function userHasScopes(
 	user: User,
 	scopes: Scope[],
 	globalOnly: boolean,
-	{
-		credentialId,
-		workflowId,
-		projectId,
-	}: { credentialId?: string; workflowId?: string; projectId?: string } /* only one */,
+	{ workflowId, projectId }: { workflowId?: string; projectId?: string } /* only one */,
 ): Promise<boolean> {
 	if (hasGlobalScope(user, scopes, { mode: 'allOf' })) return true;
 
@@ -45,19 +41,6 @@ export async function userHasScopes(
 	).map((row: { id: string }) => row.id);
 
 	// Check if the user has access through the project
-	if (credentialId) {
-		const credential = await Container.get(CredentialsRepository).findOne({
-			where: { id: credentialId },
-			select: ['id', 'projectId'],
-		});
-
-		if (!credential) {
-			throw new NotFoundError(`Credential with ID "${credentialId}" not found.`);
-		}
-
-		return userProjectIds.includes(credential.projectId);
-	}
-
 	if (workflowId) {
 		const workflow = await Container.get(WorkflowRepository).findOne({
 			where: { id: workflowId },
@@ -74,6 +57,6 @@ export async function userHasScopes(
 	if (projectId) return userProjectIds.includes(projectId);
 
 	throw new UnexpectedError(
-		"`@ProjectScope` decorator was used but does not have a `credentialId`, `workflowId`, or `projectId` in its URL parameters. This is likely an implementation error. If you're a developer, please check your URL is correct or that this should be using `@GlobalScope`.",
+		"`@ProjectScope` decorator was used but does not have a `workflowId` or `projectId` in its URL parameters. This is likely an implementation error. If you're a developer, please check your URL is correct or that this should be using `@GlobalScope`.",
 	);
 }

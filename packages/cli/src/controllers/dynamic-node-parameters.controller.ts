@@ -23,15 +23,8 @@ export class DynamicNodeParametersController {
 	): Promise<INodePropertyOptions[]> {
 		await this.service.scrubInaccessibleProjectId(req.user, payload);
 
-		const {
-			credentials,
-			currentNodeParameters,
-			nodeTypeAndVersion,
-			path,
-			methodName,
-			loadOptions,
-			projectId,
-		} = payload;
+		const { currentNodeParameters, nodeTypeAndVersion, path, methodName, loadOptions, projectId } =
+			payload;
 
 		const additionalData = await getBase({
 			userId: req.user.id,
@@ -47,7 +40,6 @@ export class DynamicNodeParametersController {
 				additionalData,
 				nodeTypeAndVersion,
 				currentNodeParameters,
-				credentials,
 			);
 		}
 
@@ -57,7 +49,6 @@ export class DynamicNodeParametersController {
 				additionalData,
 				nodeTypeAndVersion,
 				currentNodeParameters,
-				credentials,
 			);
 		}
 
@@ -77,7 +68,6 @@ export class DynamicNodeParametersController {
 			methodName,
 			filter,
 			paginationToken,
-			credentials,
 			currentNodeParameters,
 			nodeTypeAndVersion,
 			projectId,
@@ -96,7 +86,7 @@ export class DynamicNodeParametersController {
 			additionalData,
 			nodeTypeAndVersion,
 			currentNodeParameters,
-			credentials,
+			undefined, // credentials removed
 			filter,
 			paginationToken,
 		);
@@ -110,8 +100,7 @@ export class DynamicNodeParametersController {
 	) {
 		await this.service.scrubInaccessibleProjectId(req.user, payload);
 
-		const { path, methodName, credentials, currentNodeParameters, nodeTypeAndVersion, projectId } =
-			payload;
+		const { path, methodName, currentNodeParameters, nodeTypeAndVersion, projectId } = payload;
 
 		const additionalData = await getBase({
 			userId: req.user.id,
@@ -126,7 +115,6 @@ export class DynamicNodeParametersController {
 			additionalData,
 			nodeTypeAndVersion,
 			currentNodeParameters,
-			credentials,
 		);
 	}
 
@@ -166,7 +154,6 @@ export class DynamicNodeParametersController {
 			currentNodeParameters,
 			nodeTypeAndVersion,
 			path,
-			credentials,
 			handler,
 			payload: actionPayload,
 			projectId,
@@ -185,7 +172,6 @@ export class DynamicNodeParametersController {
 			nodeTypeAndVersion,
 			currentNodeParameters,
 			actionPayload,
-			credentials,
 		);
 	}
 }

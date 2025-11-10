@@ -34,7 +34,6 @@ import * as workflowUtils from 'n8n-workflow/common';
 
 import type { INodeTypesMaxCount, INodeUi, IWorkflowDb, TargetItem, XYPosition } from '@/Interface';
 import type { IExecutionResponse } from '@/features/execution/executions/executions.types';
-import type { ICredentialsResponse } from '@/features/credentials/credentials.types';
 import type { ITag } from '@n8n/rest-api-client/api/tags';
 import type { WorkflowData, WorkflowDataUpdate } from '@n8n/rest-api-client/api/workflows';
 
@@ -49,7 +48,6 @@ import { useNodeTypesStore } from '@/app/stores/nodeTypes.store';
 import { useUIStore } from '@/app/stores/ui.store';
 import { useWorkflowsStore } from '@/app/stores/workflows.store';
 import { getSourceItems } from '@/app/utils/pairedItemUtils';
-import { getCredentialTypeName, isCredentialOnlyNodeType } from '@/app/utils/credentialOnlyNodes';
 import { useI18n } from '@n8n/i18n';
 import { useProjectsStore } from '@/features/collaboration/projects/projects.store';
 import { useTagsStore } from '@/features/shared/tags/tags.store';
@@ -638,12 +636,7 @@ export function useWorkflowHelpers() {
 		const nodeType = nodeTypesStore.getNodeType(node.type, node.typeVersion);
 
 		if (nodeType !== null) {
-			const isCredentialOnly = isCredentialOnlyNodeType(nodeType.name);
-
-			if (isCredentialOnly) {
-				nodeData.type = HTTP_REQUEST_NODE_TYPE;
-				nodeData.extendsCredential = getCredentialTypeName(nodeType.name);
-			}
+			const isCredentialOnly = false;
 
 			// Node-Type is known so we can save the parameters correctly
 			const nodeParameters = NodeHelpers.getNodeParameters(
@@ -674,12 +667,10 @@ export function useWorkflowHelpers() {
 						.find((c) => c.name === nodeCredentialTypeName);
 
 					if (credentialTypeDescription === undefined) {
-						// Credential type is not know so do not save
 						continue;
 					}
 
 					if (!nodeHelpers.displayParameter(node.parameters, credentialTypeDescription, '', node)) {
-						// Credential should not be displayed so do also not save
 						continue;
 					}
 

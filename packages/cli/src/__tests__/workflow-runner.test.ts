@@ -29,7 +29,6 @@ import PCancelable from 'p-cancelable';
 import { ActiveExecutions } from '@/active-executions';
 import { ExecutionNotFoundError } from '@/errors/execution-not-found-error';
 import * as ExecutionLifecycleHooks from '@/execution-lifecycle/execution-lifecycle-hooks';
-import { CredentialsPermissionChecker } from '@/executions/pre-execution-checks';
 import { ManualExecutionService } from '@/manual-execution.service';
 import { OwnershipService } from '@/services/ownership.service';
 import { Telemetry } from '@/telemetry';
@@ -142,8 +141,6 @@ describe('run', () => {
 		const activeExecutions = Container.get(ActiveExecutions);
 		jest.spyOn(activeExecutions, 'add').mockResolvedValue('1');
 		jest.spyOn(activeExecutions, 'attachWorkflowExecution').mockReturnValueOnce();
-		const permissionChecker = Container.get(CredentialsPermissionChecker);
-		jest.spyOn(permissionChecker, 'check').mockResolvedValueOnce();
 
 		jest.spyOn(WorkflowExecute.prototype, 'processRunExecutionData').mockReturnValueOnce(
 			new PCancelable(() => {
@@ -182,8 +179,6 @@ describe('run', () => {
 		const activeExecutions = Container.get(ActiveExecutions);
 		jest.spyOn(activeExecutions, 'add').mockResolvedValue('1');
 		jest.spyOn(activeExecutions, 'attachWorkflowExecution').mockReturnValueOnce();
-		const permissionChecker = Container.get(CredentialsPermissionChecker);
-		jest.spyOn(permissionChecker, 'check').mockResolvedValueOnce();
 
 		jest.spyOn(WorkflowExecute.prototype, 'run').mockReturnValueOnce(
 			new PCancelable(() => {
@@ -215,8 +210,6 @@ describe('run', () => {
 		const activeExecutions = Container.get(ActiveExecutions);
 		jest.spyOn(activeExecutions, 'add').mockResolvedValue('1');
 		jest.spyOn(activeExecutions, 'attachWorkflowExecution').mockReturnValueOnce();
-		const permissionChecker = Container.get(CredentialsPermissionChecker);
-		jest.spyOn(permissionChecker, 'check').mockResolvedValueOnce();
 		jest.spyOn(WorkflowExecute.prototype, 'processRunExecutionData').mockReturnValueOnce(
 			new PCancelable(() => {
 				return mock<IRun>();
@@ -335,8 +328,6 @@ describe('workflow timeout with startedAt', () => {
 		const activeExecutions = Container.get(ActiveExecutions);
 		jest.spyOn(activeExecutions, 'add').mockResolvedValue('1');
 		jest.spyOn(activeExecutions, 'attachWorkflowExecution').mockReturnValueOnce();
-		const permissionChecker = Container.get(CredentialsPermissionChecker);
-		jest.spyOn(permissionChecker, 'check').mockResolvedValueOnce();
 
 		const mockStopExecution = jest.spyOn(activeExecutions, 'stopExecution');
 
@@ -391,8 +382,6 @@ describe('workflow timeout with startedAt', () => {
 		const activeExecutions = Container.get(ActiveExecutions);
 		jest.spyOn(activeExecutions, 'add').mockResolvedValue('1');
 		jest.spyOn(activeExecutions, 'attachWorkflowExecution').mockReturnValueOnce();
-		const permissionChecker = Container.get(CredentialsPermissionChecker);
-		jest.spyOn(permissionChecker, 'check').mockResolvedValueOnce();
 
 		const mockStopExecution = jest.spyOn(activeExecutions, 'stopExecution');
 
@@ -438,8 +427,6 @@ describe('workflow timeout with startedAt', () => {
 		const activeExecutions = Container.get(ActiveExecutions);
 		jest.spyOn(activeExecutions, 'add').mockResolvedValue('1');
 		jest.spyOn(activeExecutions, 'attachWorkflowExecution').mockReturnValueOnce();
-		const permissionChecker = Container.get(CredentialsPermissionChecker);
-		jest.spyOn(permissionChecker, 'check').mockResolvedValueOnce();
 
 		const mockStopExecution = jest.spyOn(activeExecutions, 'stopExecution');
 
@@ -484,8 +471,6 @@ describe('workflow timeout with startedAt', () => {
 		const activeExecutions = Container.get(ActiveExecutions);
 		jest.spyOn(activeExecutions, 'add').mockResolvedValue('1');
 		jest.spyOn(activeExecutions, 'attachWorkflowExecution').mockReturnValueOnce();
-		const permissionChecker = Container.get(CredentialsPermissionChecker);
-		jest.spyOn(permissionChecker, 'check').mockResolvedValueOnce();
 
 		const mockStopExecution = jest.spyOn(activeExecutions, 'stopExecution');
 
@@ -543,8 +528,6 @@ describe('streaming functionality', () => {
 		const activeExecutions = Container.get(ActiveExecutions);
 		jest.spyOn(activeExecutions, 'add').mockResolvedValue('1');
 		jest.spyOn(activeExecutions, 'attachWorkflowExecution').mockReturnValueOnce();
-		const permissionChecker = Container.get(CredentialsPermissionChecker);
-		jest.spyOn(permissionChecker, 'check').mockResolvedValueOnce();
 
 		const mockResponse = mock<Response>();
 
@@ -583,8 +566,6 @@ describe('streaming functionality', () => {
 		const activeExecutions = Container.get(ActiveExecutions);
 		jest.spyOn(activeExecutions, 'add').mockResolvedValue('1');
 		jest.spyOn(activeExecutions, 'attachWorkflowExecution').mockReturnValueOnce();
-		const permissionChecker = Container.get(CredentialsPermissionChecker);
-		jest.spyOn(permissionChecker, 'check').mockResolvedValueOnce();
 
 		const mockResponse = mock<Response>();
 

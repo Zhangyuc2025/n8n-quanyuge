@@ -1,5 +1,4 @@
 import { HTTP_REQUEST_NODE_TYPE, SPLIT_IN_BATCHES_NODE_TYPE } from '@/app/constants';
-import { CREDENTIAL_EDIT_MODAL_KEY } from '@/features/credentials/credentials.constants';
 import { useWorkflowsStore } from '@/app/stores/workflows.store';
 import { resolveParameter } from '@/app/composables/useWorkflowHelpers';
 import { useNDVStore } from '@/features/ndv/shared/ndv.store';
@@ -187,7 +186,7 @@ export function resolveAutocompleteExpression(expression: string, contextNodeNam
 //        state-based utils
 // ----------------------------------
 
-export const isCredentialsModalOpen = () => useUIStore().modalsById[CREDENTIAL_EDIT_MODAL_KEY].open;
+export const isCredentialsModalOpen = () => false;
 
 export const isInHttpNodePagination = (targetNodeParameterContext?: TargetNodeParameterContext) => {
 	let nodeType: string | undefined;

@@ -4,7 +4,6 @@ import { N8nIcon } from '@n8n/design-system';
 import { useI18n } from '@n8n/i18n';
 import { ProjectTypes } from '@/features/collaboration/projects/projects.types';
 import { useNodeTypesStore } from '@/app/stores/nodeTypes.store';
-import { useCredentialsStore } from '@/features/credentials/credentials.store';
 import { useActionsGenerator } from '@/features/shared/nodeCreator/composables/useActionsGeneration';
 import debounce from 'lodash/debounce';
 import { VIEWS } from '@/app/constants';
@@ -33,7 +32,6 @@ export function useWorkflowNavigationCommands(options: {
 	const i18n = useI18n();
 	const { lastQuery, activeNodeId, currentProjectName } = options;
 	const nodeTypesStore = useNodeTypesStore();
-	const credentialsStore = useCredentialsStore();
 	const workflowsStore = useWorkflowsStore();
 	const projectsStore = useProjectsStore();
 	const tagsStore = useTagsStore();
@@ -66,9 +64,8 @@ export function useWorkflowNavigationCommands(options: {
 			const trimmedLower = trimmed.toLowerCase();
 
 			// Find matching node types from available nodes
-			const httpOnlyCredentials = credentialsStore.httpOnlyCredentialTypes;
 			const visibleNodeTypes = nodeTypesStore.allNodeTypes;
-			const { mergedNodes } = generateMergedNodesAndActions(visibleNodeTypes, httpOnlyCredentials);
+			const { mergedNodes } = generateMergedNodesAndActions(visibleNodeTypes);
 			const matchedNodes = mergedNodes.filter(
 				(node) => node.displayName?.toLowerCase() === trimmedLower,
 			);

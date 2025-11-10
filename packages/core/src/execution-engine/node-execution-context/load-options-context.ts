@@ -1,6 +1,5 @@
 import get from 'lodash/get';
 import type {
-	ICredentialDataDecryptedObject,
 	IGetNodeParameterOptions,
 	INode,
 	ILoadOptionsFunctions,
@@ -31,10 +30,6 @@ export class LoadOptionsContext extends NodeExecutionContext implements ILoadOpt
 			...getRequestHelperFunctions(workflow, node, additionalData),
 			...getDataTableHelperFunctions(additionalData, workflow, node),
 		};
-	}
-
-	async getCredentials<T extends object = ICredentialDataDecryptedObject>(type: string) {
-		return await this._getCredentials<T>(type);
 	}
 
 	getCurrentNodeParameter(

@@ -1,6 +1,5 @@
 import { ApplicationError } from '@n8n/errors';
 import type {
-	ICredentialDataDecryptedObject,
 	INode,
 	IHookFunctions,
 	IWorkflowExecuteAdditionalData,
@@ -33,10 +32,6 @@ export class HookContext extends NodeExecutionContext implements IHookFunctions 
 
 	getActivationMode() {
 		return this.activation;
-	}
-
-	async getCredentials<T extends object = ICredentialDataDecryptedObject>(type: string) {
-		return await this._getCredentials<T>(type);
 	}
 
 	getNodeWebhookUrl(name: WebhookType): string | undefined {

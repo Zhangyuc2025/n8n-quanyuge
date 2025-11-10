@@ -34,7 +34,7 @@ export class PackageDirectoryLoader extends DirectoryLoader {
 		const { n8n, version, name } = this.packageJson;
 		if (!n8n) return;
 
-		const { nodes, credentials } = n8n;
+		const { nodes } = n8n;
 
 		const packageVersion = !['n8n-nodes-base', '@n8n/n8n-nodes-langchain'].includes(name)
 			? version
@@ -46,47 +46,9 @@ export class PackageDirectoryLoader extends DirectoryLoader {
 			}
 		}
 
-		if (Array.isArray(credentials)) {
-			for (const credentialPath of credentials) {
-				this.loadCredentialFromFile(credentialPath);
-			}
-		}
-
-		this.inferSupportedNodes();
-
-		this.logger.debug(`Loaded all credentials and nodes from ${this.packageName}`, {
-			credentials: credentials?.length ?? 0,
+		this.logger.debug(`Loaded all nodes from ${this.packageName}`, {
 			nodes: nodes?.length ?? 0,
 		});
-	}
-
-	private inferSupportedNodes() {
-		const knownCredentials = this.known.credentials;
-		for (const { type: credentialType } of Object.values(this.credentialTypes)) {
-			const supportedNodes = knownCredentials[credentialType.name].supportedNodes ?? [];
-			if (supportedNodes.length > 0 && credentialType.httpRequestNode) {
-				credentialType.httpRequestNode.hidden = true;
-			}
-
-			credentialType.supportedNodes = supportedNodes;
-
-			if (!credentialType.iconUrl && !credentialType.icon) {
-				for (const supportedNode of supportedNodes) {
-					const nodeDescription = this.nodeTypes[supportedNode]?.type.description;
-
-					if (!nodeDescription) continue;
-					if (nodeDescription.icon) {
-						credentialType.icon = nodeDescription.icon;
-						credentialType.iconColor = nodeDescription.iconColor;
-						break;
-					}
-					if (nodeDescription.iconUrl) {
-						credentialType.iconUrl = nodeDescription.iconUrl;
-						break;
-					}
-				}
-			}
-		}
 	}
 
 	private parseJSON<T>(fileString: string, filePath: string): T {

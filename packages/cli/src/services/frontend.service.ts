@@ -9,17 +9,14 @@ import { GlobalConfig, SecurityConfig } from '@n8n/config';
 import { Container, Service } from '@n8n/di';
 import { createWriteStream } from 'fs';
 import { mkdir } from 'fs/promises';
-import uniq from 'lodash/uniq';
 import { BinaryDataConfig, InstanceSettings } from 'n8n-core';
-import type { ICredentialType, INodeTypeBaseDescription } from 'n8n-workflow';
+import type { INodeTypeBaseDescription } from 'n8n-workflow';
 import path from 'path';
 
 import { UrlService } from './url.service';
 
 import config from '@/config';
 import { inE2ETests, N8N_VERSION } from '@/constants';
-import { CredentialTypes } from '@/credential-types';
-import { CredentialsOverwrites } from '@/credentials-overwrites';
 import { getLdapLoginLabel } from '@/ldap.ee/helpers.ee';
 import { LoadNodesAndCredentials } from '@/load-nodes-and-credentials';
 import { MfaService } from '@/mfa/mfa.service';
@@ -61,8 +58,6 @@ export class FrontendService {
 	constructor(
 		private readonly globalConfig: GlobalConfig,
 		private readonly loadNodesAndCredentials: LoadNodesAndCredentials,
-		private readonly credentialTypes: CredentialTypes,
-		private readonly credentialsOverwrites: CredentialsOverwrites,
 		private readonly mailer: UserManagementMailer,
 		private readonly instanceSettings: InstanceSettings,
 		private readonly urlService: UrlService,
@@ -151,9 +146,10 @@ export class FrontendService {
 				secure: this.globalConfig.auth.cookie.secure,
 			},
 			releaseChannel: this.globalConfig.generic.releaseChannel,
+			// OAuth callback URLs removed - credential system disabled
 			oauthCallbackUrls: {
-				oauth1: `${instanceBaseUrl}/${restEndpoint}/oauth1-credential/callback`,
-				oauth2: `${instanceBaseUrl}/${restEndpoint}/oauth2-credential/callback`,
+				oauth1: '',
+				oauth2: '',
 			},
 			instanceId: this.instanceSettings.instanceId,
 			telemetry: telemetrySettings,
@@ -297,14 +293,11 @@ export class FrontendService {
 	}
 
 	async generateTypes() {
-		this.overwriteCredentialsProperties();
-
 		const { staticCacheDir } = this.instanceSettings;
-		// pre-render all the node and credential types as static json files
+		// pre-render all the node types as static json files
 		await mkdir(path.join(staticCacheDir, 'types'), { recursive: true });
-		const { credentials, nodes } = this.loadNodesAndCredentials.types;
+		const { nodes } = this.loadNodesAndCredentials.types;
 		this.writeStaticJSON('nodes', nodes);
-		this.writeStaticJSON('credentials', credentials);
 	}
 
 	getSettings(): FrontendSettings {
@@ -314,9 +307,10 @@ export class FrontendService {
 		const instanceBaseUrl = this.urlService.getInstanceBaseUrl();
 		this.settings.urlBaseWebhook = this.urlService.getWebhookBaseUrl();
 		this.settings.urlBaseEditor = instanceBaseUrl;
+		// OAuth callback URLs removed - credential system disabled
 		this.settings.oauthCallbackUrls = {
-			oauth1: `${instanceBaseUrl}/${restEndpoint}/oauth1-credential/callback`,
-			oauth2: `${instanceBaseUrl}/${restEndpoint}/oauth2-credential/callback`,
+			oauth1: '',
+			oauth2: '',
 		};
 
 		// refresh user management status
@@ -479,7 +473,7 @@ export class FrontendService {
 		return Object.fromEntries(this.moduleRegistry.settings);
 	}
 
-	private writeStaticJSON(name: string, data: INodeTypeBaseDescription[] | ICredentialType[]) {
+	private writeStaticJSON(name: string, data: INodeTypeBaseDescription[]) {
 		const { staticCacheDir } = this.instanceSettings;
 		const filePath = path.join(staticCacheDir, `types/${name}.json`);
 		const stream = createWriteStream(filePath, 'utf-8');
@@ -491,28 +485,5 @@ export class FrontendService {
 		});
 		stream.write(']\n');
 		stream.end();
-	}
-
-	private overwriteCredentialsProperties() {
-		const { credentials } = this.loadNodesAndCredentials.types;
-		const credentialsOverwrites = this.credentialsOverwrites.getAll();
-		for (const credential of credentials) {
-			const overwrittenProperties = [];
-			this.credentialTypes
-				.getParentTypes(credential.name)
-				.reverse()
-				.map((name) => credentialsOverwrites[name])
-				.forEach((overwrite) => {
-					if (overwrite) overwrittenProperties.push(...Object.keys(overwrite));
-				});
-
-			if (credential.name in credentialsOverwrites) {
-				overwrittenProperties.push(...Object.keys(credentialsOverwrites[credential.name]));
-			}
-
-			if (overwrittenProperties.length) {
-				credential.__overwrittenProperties = uniq(overwrittenProperties);
-			}
-		}
 	}
 }

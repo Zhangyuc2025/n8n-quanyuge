@@ -1,7 +1,5 @@
 import type { DateTime } from 'luxon';
 
-import type { INodeCredentials } from './interfaces';
-
 // ===============================
 // General Enums And Interfaces
 // ===============================
@@ -61,7 +59,6 @@ export interface MessageEventBusDestinationOptions {
 	label?: string;
 	enabled?: boolean;
 	subscribedEvents?: string[];
-	credentials?: INodeCredentials;
 	anonymizeAuditMessages?: boolean;
 }
 
@@ -146,7 +143,6 @@ export const defaultMessageEventBusDestinationOptions: MessageEventBusDestinatio
 	label: 'New Event Destination',
 	enabled: true,
 	subscribedEvents: ['n8n.audit', 'n8n.workflow'],
-	credentials: {},
 	anonymizeAuditMessages: false,
 };
 
@@ -168,7 +164,6 @@ export const defaultMessageEventBusDestinationWebhookOptions: MessageEventBusDes
 	{
 		...defaultMessageEventBusDestinationOptions,
 		__type: MessageEventBusDestinationTypeNames.webhook,
-		credentials: {},
 		label: 'Webhook Endpoint',
 		expectedStatusCode: 200,
 		responseCodeMustMatch: false,

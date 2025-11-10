@@ -1,5 +1,4 @@
 import type {
-	ICredentialDataDecryptedObject,
 	INode,
 	IPollFunctions,
 	IWorkflowExecuteAdditionalData,
@@ -48,9 +47,5 @@ export class PollContext extends NodeExecutionContext implements IPollFunctions 
 
 	getActivationMode() {
 		return this.activation;
-	}
-
-	async getCredentials<T extends object = ICredentialDataDecryptedObject>(type: string) {
-		return await this._getCredentials<T>(type);
 	}
 }

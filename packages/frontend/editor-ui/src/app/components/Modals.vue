@@ -61,8 +61,6 @@ import ChatEmbedModal from '@/app/components/ChatEmbedModal.vue';
 import CommunityPackageInstallModal from '@/features/settings/communityNodes/components/CommunityPackageInstallModal.vue';
 import CommunityPackageManageConfirmModal from '@/features/settings/communityNodes/components/CommunityPackageManageConfirmModal.vue';
 import ContactPromptModal from '@/app/components/ContactPromptModal.vue';
-import CredentialEdit from '@/features/credentials/components/CredentialEdit/CredentialEdit.vue';
-import CredentialsSelectModal from '@/features/credentials/components/CredentialsSelectModal.vue';
 import DeleteFolderModal from '@/features/core/folders/components/DeleteFolderModal.vue';
 import MoveToFolderModal from '@/features/core/folders/components/MoveToFolderModal.vue';
 import DeleteUserModal from '@/features/settings/users/components/DeleteUserModal.vue';
@@ -106,12 +104,6 @@ import VariableModal from '@/features/settings/environments.ee/components/Variab
 			</template>
 		</ModalRoot>
 
-		<ModalRoot :name="CREDENTIAL_EDIT_MODAL_KEY">
-			<template #default="{ modalName, activeId, mode }">
-				<CredentialEdit :modal-name="modalName" :mode="mode" :active-id="activeId" />
-			</template>
-		</ModalRoot>
-
 		<ModalRoot :name="API_KEY_CREATE_OR_EDIT_MODAL_KEY">
 			<template
 				#default="{
@@ -132,10 +124,6 @@ import VariableModal from '@/features/settings/environments.ee/components/Variab
 
 		<ModalRoot :name="CHAT_EMBED_MODAL_KEY">
 			<ChatEmbedModal />
-		</ModalRoot>
-
-		<ModalRoot :name="CREDENTIAL_SELECT_MODAL_KEY">
-			<CredentialsSelectModal />
 		</ModalRoot>
 
 		<ModalRoot :name="DUPLICATE_MODAL_KEY">

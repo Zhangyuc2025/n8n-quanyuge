@@ -7,7 +7,6 @@ import {
 	ProjectRepository,
 	SettingsRepository,
 	WorkflowRepository,
-	CredentialsRepository,
 	UserRepository,
 } from '@n8n/db';
 import { Command } from '@n8n/decorators';
@@ -18,31 +17,26 @@ import { UserError } from 'n8n-workflow';
 import { z } from 'zod';
 
 import { UM_FIX_INSTRUCTION } from '@/constants';
-import { CredentialsService } from '@/credentials/credentials.service';
 import { WorkflowService } from '@/workflows/workflow.service';
 
 import { BaseCommand } from '../base-command';
 
 const wrongFlagsError =
-	'You must use exactly one of `--userId`, `--projectId` or `--deleteWorkflowsAndCredentials`.';
+	'You must use exactly one of `--userId`, `--projectId` or `--deleteWorkflows`.';
 
 const flagsSchema = z.object({
 	userId: z
 		.string()
-		.describe(
-			'The ID of the user to assign the workflows and credentials owned by the deleted LDAP users to',
-		)
+		.describe('The ID of the user to assign the workflows owned by the deleted LDAP users to')
 		.optional(),
 	projectId: z
 		.string()
-		.describe(
-			'The ID of the project to assign the workflows and credentials owned by the deleted LDAP users to',
-		)
+		.describe('The ID of the project to assign the workflows owned by the deleted LDAP users to')
 		.optional(),
-	deleteWorkflowsAndCredentials: z
+	deleteWorkflows: z
 		.boolean()
 		.describe(
-			'Delete all workflows and credentials owned by the users that were created by the users managed via LDAP.',
+			'Delete all workflows owned by the users that were created by the users managed via LDAP.',
 		)
 		.optional(),
 });
@@ -54,7 +48,7 @@ const flagsSchema = z.object({
 	examples: [
 		'--userId=1d64c3d2-85fe-4a83-a649-e446b07b3aae',
 		'--projectId=Ox8O54VQrmBrb4qL',
-		'--deleteWorkflowsAndCredentials',
+		'--deleteWorkflows',
 	],
 	flagsSchema,
 })
@@ -62,9 +56,7 @@ export class Reset extends BaseCommand<z.infer<typeof flagsSchema>> {
 	async run(): Promise<void> {
 		const { flags } = this;
 		const numberOfOptions =
-			Number(!!flags.userId) +
-			Number(!!flags.projectId) +
-			Number(!!flags.deleteWorkflowsAndCredentials);
+			Number(!!flags.userId) + Number(!!flags.projectId) + Number(!!flags.deleteWorkflows);
 
 		if (numberOfOptions !== 1) {
 			throw new UserError(wrongFlagsError);
@@ -79,17 +71,17 @@ export class Reset extends BaseCommand<z.infer<typeof flagsSchema>> {
 			ProjectRelationRepository,
 		).getPersonalProjectsForUsers(ldapIdentities.map((i) => i.userId));
 
-		// Migrate all workflows and credentials to another project.
+		// Migrate all workflows to another project.
 		if (flags.projectId ?? flags.userId) {
 			if (flags.userId && ldapIdentities.some((i) => i.userId === flags.userId)) {
 				throw new UserError(
-					`Can't migrate workflows and credentials to the user with the ID ${flags.userId}. That user was created via LDAP and will be deleted as well.`,
+					`Can't migrate workflows to the user with the ID ${flags.userId}. That user was created via LDAP and will be deleted as well.`,
 				);
 			}
 
 			if (flags.projectId && personalProjectIds.includes(flags.projectId)) {
 				throw new UserError(
-					`Can't migrate workflows and credentials to the project with the ID ${flags.projectId}. That project is a personal project belonging to a user that was created via LDAP and will be deleted as well.`,
+					`Can't migrate workflows to the project with the ID ${flags.projectId}. That project is a personal project belonging to a user that was created via LDAP and will be deleted as well.`,
 				);
 			}
 
@@ -98,28 +90,17 @@ export class Reset extends BaseCommand<z.infer<typeof flagsSchema>> {
 			await Container.get(UserRepository).manager.transaction(async (trx) => {
 				for (const projectId of personalProjectIds) {
 					await Container.get(WorkflowService).transferAll(projectId, project.id, trx);
-					await Container.get(CredentialsService).transferAll(projectId, project.id, trx);
 				}
 			});
 		}
 
-		const [ownedWorkflows, ownedCredentials] = await Promise.all([
-			Container.get(WorkflowRepository).find({
-				select: { id: true },
-				where: { projectId: In(personalProjectIds) },
-			}),
-			Container.get(CredentialsRepository).find({
-				select: { id: true },
-				where: { projectId: In(personalProjectIds) },
-			}),
-		]);
+		const ownedWorkflows = await Container.get(WorkflowRepository).find({
+			select: { id: true },
+			where: { projectId: In(personalProjectIds) },
+		});
 
 		for (const workflow of ownedWorkflows) {
 			await Container.get(WorkflowService).delete(owner, workflow.id, true);
-		}
-
-		for (const credential of ownedCredentials) {
-			await Container.get(CredentialsService).delete(owner, credential.id);
 		}
 
 		await Container.get(AuthProviderSyncHistoryRepository).delete({ providerType: 'ldap' });

@@ -1,4 +1,3 @@
-import type { IUsedCredential } from '@/features/credentials/credentials.types';
 import type {
 	ChangeLocationSearchResponseItem,
 	FolderCreateResponse,

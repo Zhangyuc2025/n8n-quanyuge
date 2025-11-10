@@ -1,5 +1,4 @@
 import type {
-	ICredentialDataDecryptedObject,
 	IGetNodeParameterOptions,
 	INode,
 	INodeExecutionData,
@@ -101,10 +100,6 @@ export class ExecuteSingleContext extends BaseExecuteContext implements IExecute
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	getNodeParameter(parameterName: string, fallbackValue?: any, options?: IGetNodeParameterOptions) {
 		return this._getNodeParameter(parameterName, this.itemIndex, fallbackValue, options);
-	}
-
-	async getCredentials<T extends object = ICredentialDataDecryptedObject>(type: string) {
-		return await super.getCredentials<T>(type, this.itemIndex);
 	}
 
 	getWorkflowDataProxy() {

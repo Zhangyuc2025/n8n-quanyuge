@@ -6,7 +6,6 @@ import { Service } from '@n8n/di';
 import { createWorkflowDetailsTool } from './tools/get-workflow-details.tool';
 import { createSearchWorkflowsTool } from './tools/search-workflows.tool';
 
-import { CredentialsService } from '@/credentials/credentials.service';
 import { UrlService } from '@/services/url.service';
 import { Telemetry } from '@/telemetry';
 import { WorkflowFinderService } from '@/workflows/workflow-finder.service';
@@ -18,7 +17,6 @@ export class McpService {
 		private readonly workflowFinderService: WorkflowFinderService,
 		private readonly workflowService: WorkflowService,
 		private readonly urlService: UrlService,
-		private readonly credentialsService: CredentialsService,
 		private readonly globalConfig: GlobalConfig,
 		private readonly telemetry: Telemetry,
 	) {}
@@ -44,7 +42,6 @@ export class McpService {
 			user,
 			this.urlService.getWebhookBaseUrl(),
 			this.workflowFinderService,
-			this.credentialsService,
 			{
 				webhook: this.globalConfig.endpoints.webhook,
 				webhookTest: this.globalConfig.endpoints.webhookTest,

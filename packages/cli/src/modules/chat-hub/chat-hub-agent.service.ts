@@ -8,14 +8,12 @@ import { NotFoundError } from '@/errors/response-errors/not-found.error';
 
 import type { ChatHubAgent } from './chat-hub-agent.entity';
 import { ChatHubAgentRepository } from './chat-hub-agent.repository';
-import { ChatHubCredentialsService } from './chat-hub-credentials.service';
 
 @Service()
 export class ChatHubAgentService {
 	constructor(
 		private readonly logger: Logger,
 		private readonly chatAgentRepository: ChatHubAgentRepository,
-		private readonly chatHubCredentialsService: ChatHubCredentialsService,
 	) {}
 
 	async getAgentsByUserIdAsModels(userId: string): Promise<ChatModelsResponse['custom-agent']> {
@@ -53,14 +51,11 @@ export class ChatHubAgentService {
 			name: string;
 			description?: string;
 			systemPrompt: string;
-			credentialId: string;
 			provider: ChatHubAgent['provider'];
 			model: string;
 		},
 	): Promise<ChatHubAgent> {
-		// Ensure user has access to credentials if provided
-		await this.chatHubCredentialsService.ensureCredentialById(user, data.credentialId);
-
+		// TODO: Validate API key for pay-per-use model
 		const id = uuidv4();
 
 		const agent = await this.chatAgentRepository.createAgent({
@@ -69,7 +64,6 @@ export class ChatHubAgentService {
 			description: data.description ?? null,
 			systemPrompt: data.systemPrompt,
 			ownerId: user.id,
-			credentialId: data.credentialId,
 			provider: data.provider,
 			model: data.model,
 		});
@@ -85,7 +79,6 @@ export class ChatHubAgentService {
 			name?: string;
 			description?: string;
 			systemPrompt?: string;
-			credentialId?: string;
 			provider?: string;
 			model?: string;
 		},
@@ -96,16 +89,12 @@ export class ChatHubAgentService {
 			throw new NotFoundError('Chat agent not found');
 		}
 
-		// Ensure user has access to credentials if provided
-		if (updates.credentialId !== undefined && updates.credentialId !== null) {
-			await this.chatHubCredentialsService.ensureCredentialById(user, updates.credentialId);
-		}
+		// TODO: Validate API key for pay-per-use model when provider/model changes
 
 		const updateData: Partial<ChatHubAgent> = {};
 		if (updates.name !== undefined) updateData.name = updates.name;
 		if (updates.description !== undefined) updateData.description = updates.description ?? null;
 		if (updates.systemPrompt !== undefined) updateData.systemPrompt = updates.systemPrompt;
-		if (updates.credentialId !== undefined) updateData.credentialId = updates.credentialId ?? null;
 		if (updates.provider !== undefined)
 			updateData.provider = updates.provider as ChatHubAgent['provider'];
 		if (updates.model !== undefined) updateData.model = updates.model ?? null;

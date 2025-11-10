@@ -1,8 +1,10 @@
 import type { AuthenticatedRequest, TagEntity, WorkflowEntity } from '@n8n/db';
-import type { ExecutionStatus, ICredentialDataDecryptedObject } from 'n8n-workflow';
+import type { ExecutionStatus } from 'n8n-workflow';
 
 import type { AuthlessRequest } from '@/requests';
 import type { Risk } from '@/security-audit/types';
+
+type ICredentialDataDecryptedObject = Record<string, any>;
 
 export type PaginatedRequest = AuthenticatedRequest<
 	{},

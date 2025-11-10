@@ -8,7 +8,6 @@ import {
 	ProjectRelationRepository,
 	ProjectRepository,
 	WorkflowRepository,
-	CredentialsRepository,
 } from '@n8n/db';
 import { Container, Service } from '@n8n/di';
 import {
@@ -68,7 +67,6 @@ export class ProjectService {
 		private readonly projectRepository: ProjectRepository,
 		private readonly projectRelationRepository: ProjectRelationRepository,
 		private readonly roleService: RoleService,
-		private readonly credentialsRepository: CredentialsRepository,
 		private readonly cacheService: CacheService,
 		private readonly databaseConfig: DatabaseConfig,
 		private readonly moduleRegistry: ModuleRegistry,
@@ -77,12 +75,6 @@ export class ProjectService {
 	private get workflowService() {
 		return import('@/workflows/workflow.service').then(({ WorkflowService }) =>
 			Container.get(WorkflowService),
-		);
-	}
-
-	private get credentialsService() {
-		return import('@/credentials/credentials.service').then(({ CredentialsService }) =>
-			Container.get(CredentialsService),
 		);
 	}
 
@@ -104,7 +96,6 @@ export class ProjectService {
 		{ migrateToProject }: { migrateToProject?: string } = {},
 	) {
 		const workflowService = await this.workflowService;
-		const credentialsService = await this.credentialsService;
 
 		if (projectId === migrateToProject) {
 			throw new BadRequestError(
@@ -118,14 +109,13 @@ export class ProjectService {
 		let targetProject: Project | null = null;
 		if (migrateToProject) {
 			targetProject = await this.getProjectWithScope(user, migrateToProject, [
-				'credential:create',
 				'workflow:create',
 				'dataTable:create',
 			]);
 
 			if (!targetProject) {
 				throw new NotFoundError(
-					`Could not find project to migrate to. ID: ${targetProject}. You may lack permissions to create workflow, credentials or data tables in the target project.`,
+					`Could not find project to migrate to. ID: ${targetProject}. You may lack permissions to create workflows or data tables in the target project.`,
 				);
 			}
 		}
@@ -153,25 +143,6 @@ export class ProjectService {
 			// Delete workflows
 			for (const workflow of ownedWorkflows) {
 				await workflowService.delete(user, workflow.id, true);
-			}
-		}
-
-		// 2. delete or migrate credentials owned by this project
-		const ownedCredentials = await this.credentialsRepository.find({
-			where: { projectId: project.id },
-			select: ['id'],
-		});
-
-		if (targetProject) {
-			// Migrate credentials to target project
-			await this.credentialsRepository.update(
-				{ projectId: project.id },
-				{ projectId: targetProject.id },
-			);
-		} else {
-			// Delete credentials
-			for (const credential of ownedCredentials) {
-				await credentialsService.delete(user, credential.id);
 			}
 		}
 
@@ -452,16 +423,8 @@ export class ProjectService {
 		await this.projectRelationRepository.update({ projectId, userId }, { role: { slug: role } });
 	}
 
-	async clearCredentialCanUseExternalSecretsCache(projectId: string) {
-		const credentials = await this.credentialsRepository.find({
-			where: { projectId },
-			select: ['id'],
-		});
-		if (credentials.length) {
-			await this.cacheService.deleteMany(
-				credentials.map((cred) => `credential-can-use-secrets:${cred.id}`),
-			);
-		}
+	async clearCredentialCanUseExternalSecretsCache(_projectId: string) {
+		// Credential system removed - this is a no-op
 	}
 
 	async pruneRelations(em: EntityManager, project: Project) {

@@ -12,7 +12,6 @@ import {
 	CustomDirectoryLoader,
 	PackageDirectoryLoader,
 	LazyPackageDirectoryLoader,
-	UnrecognizedCredentialTypeError,
 	UnrecognizedNodeTypeError,
 } from 'n8n-core';
 import type {
@@ -20,7 +19,6 @@ import type {
 	INodeTypeBaseDescription,
 	INodeTypeDescription,
 	LoadedClass,
-	ICredentialType,
 	INodeType,
 	IVersionedNodeType,
 	INodeProperties,
@@ -46,11 +44,11 @@ export class LoadNodesAndCredentials {
 	private known: KnownNodesAndCredentials = { nodes: {}, credentials: {} };
 
 	// This contains the actually loaded objects, and their source paths
-	loaded: LoadedNodesAndCredentials = { nodes: {}, credentials: {} };
+	loaded: LoadedNodesAndCredentials = { nodes: {} };
 
 	// For nodes, this only contains the descriptions, loaded from either the
 	// actual file, or the lazy loaded json
-	types: Types = { nodes: [], credentials: [] };
+	types: Types = { nodes: [] };
 
 	loaders: Record<string, DirectoryLoader> = {};
 
@@ -114,16 +112,8 @@ export class LoadNodesAndCredentials {
 		return type in this.known.nodes;
 	}
 
-	get loadedCredentials() {
-		return this.loaded.credentials;
-	}
-
 	get loadedNodes() {
 		return this.loaded.nodes;
-	}
-
-	get knownCredentials() {
-		return this.known.credentials;
 	}
 
 	get knownNodes() {
@@ -238,26 +228,9 @@ export class LoadNodesAndCredentials {
 	 * Whether any of the node's credential types may be used to
 	 * make a request from a node other than itself.
 	 */
-	private supportsProxyAuth(description: INodeTypeDescription) {
-		if (!description.credentials) return false;
-
-		return description.credentials.some(({ name }) => {
-			const credType = this.types.credentials.find((t) => t.name === name);
-			if (!credType) {
-				this.logger.warn(
-					`Failed to load Custom API options for the node "${description.name}": Unknown credential name "${name}"`,
-				);
-				return false;
-			}
-			if (credType.authenticate !== undefined) return true;
-
-			return (
-				Array.isArray(credType.extends) &&
-				credType.extends.some((parentType) =>
-					['oAuth2Api', 'googleOAuth2Api', 'oAuth1Api'].includes(parentType),
-				)
-			);
-		});
+	private supportsProxyAuth(_description: INodeTypeDescription) {
+		// Credential system removed - always return false
+		return false;
 	}
 
 	/**
@@ -331,24 +304,16 @@ export class LoadNodesAndCredentials {
 
 			this.types.nodes.push(wrapped);
 			this.known.nodes[wrapped.name] = { ...this.known.nodes[usableNode.name] };
-
-			const credentialNames = Object.entries(this.known.credentials)
-				.filter(([_, credential]) => credential?.supportedNodes?.includes(usableNode.name))
-				.map(([credentialName]) => credentialName);
-
-			credentialNames.forEach((name) =>
-				this.known.credentials[name]?.supportedNodes?.push(wrapped.name),
-			);
 		}
 	}
 
 	async postProcessLoaders() {
 		this.known = { nodes: {}, credentials: {} };
-		this.loaded = { nodes: {}, credentials: {} };
-		this.types = { nodes: [], credentials: [] };
+		this.loaded = { nodes: {} };
+		this.types = { nodes: [] };
 
 		for (const loader of Object.values(this.loaders)) {
-			// list of node & credential types that will be sent to the frontend
+			// list of node types that will be sent to the frontend
 			const { known, types, directory, packageName } = loader;
 			this.types.nodes = this.types.nodes.concat(
 				types.nodes.map(({ name, ...rest }) => ({
@@ -357,65 +322,11 @@ export class LoadNodesAndCredentials {
 				})),
 			);
 
-			const processedCredentials = types.credentials.map((credential) => {
-				if (this.shouldAddDomainRestrictions(credential)) {
-					const clonedCredential = { ...credential };
-					clonedCredential.properties = this.injectDomainRestrictionFields([
-						...(clonedCredential.properties ?? []),
-					]);
-					return {
-						...clonedCredential,
-						supportedNodes:
-							loader instanceof PackageDirectoryLoader
-								? credential.supportedNodes?.map((nodeName) => `${loader.packageName}.${nodeName}`)
-								: undefined,
-					};
-				}
-				return {
-					...credential,
-					supportedNodes:
-						loader instanceof PackageDirectoryLoader
-							? credential.supportedNodes?.map((nodeName) => `${loader.packageName}.${nodeName}`)
-							: undefined,
-				};
-			});
-
-			this.types.credentials = this.types.credentials.concat(processedCredentials);
-
-			// Add domain restriction fields to loaded credentials
-			for (const credentialTypeName in loader.credentialTypes) {
-				const credentialType = loader.credentialTypes[credentialTypeName];
-				if (this.shouldAddDomainRestrictions(credentialType)) {
-					// Access properties through the type field
-					credentialType.type.properties = this.injectDomainRestrictionFields([
-						...(credentialType.type.properties ?? []),
-					]);
-				}
-			}
-
 			for (const type in known.nodes) {
 				const { className, sourcePath } = known.nodes[type];
 				this.known.nodes[`${packageName}.${type}`] = {
 					className,
 					sourcePath: path.join(directory, sourcePath),
-				};
-			}
-
-			for (const type in known.credentials) {
-				const {
-					className,
-					sourcePath,
-					supportedNodes,
-					extends: extendsArr,
-				} = known.credentials[type];
-				this.known.credentials[type] = {
-					className,
-					sourcePath: path.join(directory, sourcePath),
-					supportedNodes:
-						loader instanceof PackageDirectoryLoader
-							? supportedNodes?.map((nodeName) => `${loader.packageName}.${nodeName}`)
-							: undefined,
-					extends: extendsArr,
 				};
 			}
 		}
@@ -447,23 +358,6 @@ export class LoadNodesAndCredentials {
 			throw new UnrecognizedNodeTypeError(packageName, nodeType);
 		}
 		return loader.getNode(nodeType);
-	}
-
-	getCredential(credentialType: string): LoadedClass<ICredentialType> {
-		const { loadedCredentials } = this;
-
-		for (const loader of Object.values(this.loaders)) {
-			if (credentialType in loader.known.credentials) {
-				const loaded = loader.getCredential(credentialType);
-				loadedCredentials[credentialType] = loaded;
-			}
-		}
-
-		if (credentialType in loadedCredentials) {
-			return loadedCredentials[credentialType];
-		}
-
-		throw new UnrecognizedCredentialTypeError(credentialType);
 	}
 
 	/**
@@ -634,69 +528,6 @@ export class LoadNodesAndCredentials {
 				await subscribe(watchPath, onFileEvent, { ignore });
 			}
 		}
-	}
-
-	private shouldAddDomainRestrictions(
-		credential: ICredentialType | LoadedClass<ICredentialType>,
-	): boolean {
-		// Handle both credential types by extracting the actual ICredentialType
-		const credentialType = 'type' in credential ? credential.type : credential;
-
-		return (
-			credentialType.authenticate !== undefined ||
-			credentialType.genericAuth === true ||
-			(Array.isArray(credentialType.extends) &&
-				(credentialType.extends.includes('oAuth2Api') ||
-					credentialType.extends.includes('oAuth1Api') ||
-					credentialType.extends.includes('googleOAuth2Api')))
-		);
-	}
-
-	private injectDomainRestrictionFields(properties: INodeProperties[]): INodeProperties[] {
-		// Check if fields already exist to avoid duplicates
-		if (properties.some((prop) => prop.name === 'allowedHttpRequestDomains')) {
-			return properties;
-		}
-		const domainFields: INodeProperties[] = [
-			{
-				displayName: 'Allowed HTTP Request Domains',
-				name: 'allowedHttpRequestDomains',
-				type: 'options',
-				options: [
-					{
-						name: 'All',
-						value: 'all',
-						description: 'Allow all requests when used in the HTTP Request node',
-					},
-					{
-						name: 'Specific Domains',
-						value: 'domains',
-						description: 'Restrict requests to specific domains',
-					},
-					{
-						name: 'None',
-						value: 'none',
-						description: 'Block all requests when used in the HTTP Request node',
-					},
-				],
-				default: 'all',
-				description: 'Control which domains this credential can be used with in HTTP Request nodes',
-			},
-			{
-				displayName: 'Allowed Domains',
-				name: 'allowedDomains',
-				type: 'string',
-				default: '',
-				placeholder: 'example.com, *.subdomain.com',
-				description: 'Comma-separated list of allowed domains (supports wildcards with *)',
-				displayOptions: {
-					show: {
-						allowedHttpRequestDomains: ['domains'],
-					},
-				},
-			},
-		];
-		return [...properties, ...domainFields];
 	}
 
 	/**

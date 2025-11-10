@@ -6,7 +6,6 @@ import { MOVE_FOLDER_MODAL_KEY } from '../folders.constants';
 import { useFoldersStore } from '../folders.store';
 import { useProjectsStore } from '@/features/collaboration/projects/projects.store';
 import { useUIStore } from '@/app/stores/ui.store';
-import { useCredentialsStore } from '@/features/credentials/credentials.store';
 import { type EventBus, createEventBus } from '@n8n/utils/event-bus';
 import { ProjectTypes } from '@/features/collaboration/projects/projects.types';
 import type {
@@ -14,14 +13,9 @@ import type {
 	ProjectSharingData,
 } from '@/features/collaboration/projects/projects.types';
 import type { ChangeLocationSearchResult } from '../folders.types';
-import type {
-	ICredentialsResponse,
-	IUsedCredential,
-} from '@/features/credentials/credentials.types';
 import { getResourcePermissions } from '@n8n/permissions';
 import Modal from '@/app/components/Modal.vue';
 import MoveToFolderDropdown from './MoveToFolderDropdown.vue';
-import ProjectMoveResourceModalCredentialsList from '@/features/collaboration/projects/components/ProjectMoveResourceModalCredentialsList.vue';
 import ProjectSharing from '@/features/collaboration/projects/components/ProjectSharing.vue';
 import {
 	ResourceType,
@@ -64,7 +58,6 @@ const moveToFolderDropdown = ref<InstanceType<typeof MoveToFolderDropdown>>();
 const foldersStore = useFoldersStore();
 const projectsStore = useProjectsStore();
 const uiStore = useUIStore();
-const credentialsStore = useCredentialsStore();
 const workflowsStore = useWorkflowsStore();
 
 const selectedFolder = ref<ChangeLocationSearchResult | null>(null);
@@ -84,35 +77,6 @@ const isTransferringOwnership = computed(() => {
 
 const workflowCount = ref(0);
 const subFolderCount = ref(0);
-
-const shareUsedCredentials = ref(false);
-const usedCredentials = ref<IUsedCredential[]>([]);
-const allCredentials = ref<ICredentialsResponse[]>([]);
-const shareableCredentials = computed(() =>
-	allCredentials.value.filter(
-		(credential) =>
-			isTransferringOwnership.value &&
-			getResourcePermissions(credential.scopes).credential.share &&
-			usedCredentials.value.find((uc) => uc.id === credential.id),
-	),
-);
-const unShareableCredentials = computed(() =>
-	usedCredentials.value.reduce(
-		(acc, uc) => {
-			const credential = credentialsStore.getCredentialById(uc.id);
-			const credentialPermissions = getResourcePermissions(credential?.scopes).credential;
-			if (!credentialPermissions.share) {
-				if (credentialPermissions.read) {
-					acc.push(credential);
-				} else {
-					acc.push(uc);
-				}
-			}
-			return acc;
-		},
-		[] as Array<IUsedCredential | ICredentialsResponse>,
-	),
-);
 
 const availableProjects = computed<ProjectListItem[]>(() =>
 	sortByProperty(
@@ -227,9 +191,6 @@ const onSubmit = () => {
 					},
 					canAccess: isFolderSelectable.value,
 				},
-				shareCredentials: shareUsedCredentials.value
-					? shareableCredentials.value.map((c) => c.id)
-					: undefined,
 			});
 		} else {
 			props.data.workflowListEventBus.emit('folder-moved', {
@@ -261,9 +222,6 @@ const onSubmit = () => {
 					},
 					canAccess: isFolderSelectable.value,
 				},
-				shareCredentials: shareUsedCredentials.value
-					? shareableCredentials.value.map((c) => c.id)
-					: undefined,
 			});
 		} else {
 			props.data.workflowListEventBus.emit('workflow-moved', {
@@ -315,30 +273,7 @@ const isFolderSelectable = computed(() => {
 	return isOwnPersonalProject.value || !isPersonalProject.value;
 });
 
-onMounted(async () => {
-	if (isResourceWorkflow.value) {
-		const [workflow, credentials] = await Promise.all([
-			workflowsStore.fetchWorkflow(props.data.resource.id),
-			credentialsStore.fetchAllCredentials(),
-		]);
-
-		usedCredentials.value = workflow?.usedCredentials ?? [];
-		allCredentials.value = credentials;
-	} else {
-		if (projectsStore.currentProject?.id && currentFolder.value?.id) {
-			const [used, credentials] = await Promise.all([
-				await foldersStore.fetchFolderUsedCredentials(
-					projectsStore.currentProject.id,
-					currentFolder.value.id,
-				),
-				credentialsStore.fetchAllCredentials(),
-			]);
-
-			usedCredentials.value = used;
-			allCredentials.value = credentials;
-		}
-	}
-});
+onMounted(async () => {});
 </script>
 
 <template>
@@ -413,68 +348,6 @@ onMounted(async () => {
 					/>
 				</div>
 			</template>
-			<N8nCheckbox
-				v-if="shareableCredentials.length"
-				v-model="shareUsedCredentials"
-				:class="$style.textBlock"
-				data-test-id="move-modal-share-credentials-checkbox"
-			>
-				<I18nT
-					:keypath="
-						data.resourceType === 'workflow'
-							? 'folders.move.modal.message.usedCredentials.workflow'
-							: 'folders.move.modal.message.usedCredentials.folder'
-					"
-					scope="global"
-				>
-					<template #usedCredentials>
-						<N8nTooltip placement="top">
-							<span :class="$style.tooltipText">
-								{{
-									i18n.baseText('projects.move.resource.modal.message.usedCredentials.number', {
-										adjustToNumber: shareableCredentials.length,
-										interpolate: { count: shareableCredentials.length },
-									})
-								}}
-							</span>
-							<template #content>
-								<ProjectMoveResourceModalCredentialsList
-									:current-project-id="projectsStore.currentProjectId"
-									:credentials="shareableCredentials"
-								/>
-							</template>
-						</N8nTooltip>
-					</template>
-				</I18nT>
-			</N8nCheckbox>
-			<N8nCallout
-				v-if="shareableCredentials.length && !shareUsedCredentials"
-				:class="$style.credentialsCallout"
-				theme="warning"
-				data-test-id="move-modal-used-credentials-warning"
-			>
-				{{ i18n.baseText('folders.move.modal.message.usedCredentials.warning') }}
-			</N8nCallout>
-			<span v-if="unShareableCredentials.length" :class="$style.textBlock">
-				<I18nT
-					keypath="projects.move.resource.modal.message.unAccessibleCredentials.note"
-					scope="global"
-				>
-					<template #credentials>
-						<N8nTooltip placement="top">
-							<span :class="$style.tooltipText">{{
-								i18n.baseText('projects.move.resource.modal.message.unAccessibleCredentials')
-							}}</span>
-							<template #content>
-								<ProjectMoveResourceModalCredentialsList
-									:current-project-id="projectsStore.currentProjectId"
-									:credentials="unShareableCredentials"
-								/>
-							</template>
-						</N8nTooltip>
-					</template>
-				</I18nT>
-			</span>
 		</template>
 		<template #footer="{ close }">
 			<div :class="$style.footer">

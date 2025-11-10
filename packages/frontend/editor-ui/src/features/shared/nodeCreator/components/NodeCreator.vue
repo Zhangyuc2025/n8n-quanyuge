@@ -9,7 +9,6 @@ import { useViewStacks } from '../composables/useViewStacks';
 import { useKeyboardNavigation } from '../composables/useKeyboardNavigation';
 import { useActionsGenerator } from '../composables/useActionsGeneration';
 import NodesListPanel from './Panel/NodesListPanel.vue';
-import { useCredentialsStore } from '@/features/credentials/credentials.store';
 import { useUIStore } from '@/app/stores/ui.store';
 import { DRAG_EVENT_DATA_KEY } from '@/app/constants';
 import { useChatPanelStore } from '@/features/ai/assistant/chatPanel.store';
@@ -139,12 +138,9 @@ registerKeyHook('NodeCreatorCloseTab', {
 });
 
 watch(
-	() => ({
-		httpOnlyCredentials: useCredentialsStore().httpOnlyCredentialTypes,
-		nodeTypes: useNodeTypesStore().visibleNodeTypes,
-	}),
-	({ nodeTypes, httpOnlyCredentials }) => {
-		const { actions, mergedNodes } = generateMergedNodesAndActions(nodeTypes, httpOnlyCredentials);
+	() => useNodeTypesStore().visibleNodeTypes,
+	(nodeTypes) => {
+		const { actions, mergedNodes } = generateMergedNodesAndActions(nodeTypes);
 
 		setActions(actions);
 		setMergeNodes(mergedNodes);

@@ -2,7 +2,6 @@ import { type Component, computed, type Ref } from 'vue';
 import { useI18n } from '@n8n/i18n';
 import { N8nIcon } from '@n8n/design-system';
 import { useNodeTypesStore } from '@/app/stores/nodeTypes.store';
-import { useCredentialsStore } from '@/features/credentials/credentials.store';
 import { useCanvasOperations } from '@/app/composables/useCanvasOperations';
 import { useActionsGenerator } from '@/features/shared/nodeCreator/composables/useActionsGeneration';
 import { canvasEventBus } from '@/features/workflows/canvas/canvas.eventBus';
@@ -30,7 +29,6 @@ export function useNodeCommands(options: {
 
 	const { addNodes, setNodeActive, editableWorkflow } = useCanvasOperations();
 	const nodeTypesStore = useNodeTypesStore();
-	const credentialsStore = useCredentialsStore();
 	const sourceControlStore = useSourceControlStore();
 	const workflowsStore = useWorkflowsStore();
 	const { generateMergedNodesAndActions } = useActionsGenerator();
@@ -47,9 +45,8 @@ export function useNodeCommands(options: {
 		workflowsStore.isNewWorkflow;
 
 	const mergedNodes = computed(() => {
-		const httpOnlyCredentials = credentialsStore.httpOnlyCredentialTypes;
 		const nodeTypes = nodeTypesStore.visibleNodeTypes;
-		return generateMergedNodesAndActions(nodeTypes, httpOnlyCredentials).mergedNodes;
+		return generateMergedNodesAndActions(nodeTypes).mergedNodes;
 	});
 
 	const buildAddNodeCommand = (node: SimplifiedNodeType, isRoot: boolean): CommandBarItem => {

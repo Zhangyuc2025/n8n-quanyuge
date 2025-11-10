@@ -2,7 +2,6 @@ import type { Scope } from '@n8n/permissions';
 import type { FindOperator } from '@n8n/typeorm';
 import type express from 'express';
 import type {
-	ICredentialsEncrypted,
 	IRunExecutionData,
 	IWorkflowBase,
 	WorkflowExecuteMode,
@@ -18,7 +17,6 @@ import type {
 } from 'n8n-workflow';
 import { z } from 'zod';
 
-import type { CredentialsEntity } from './credentials-entity';
 import type { Folder } from './folder';
 import type { Project } from './project';
 import type { TagEntity } from './tag-entity';
@@ -79,10 +77,11 @@ export interface IWorkflowDb extends IWorkflowBase {
 	parentFolder?: Folder | null;
 }
 
-export interface ICredentialsDb extends ICredentialsBase, ICredentialsEncrypted {
-	id: string;
-	name: string;
-}
+// Credential system has been removed
+// export interface ICredentialsDb extends ICredentialsBase, ICredentialsEncrypted {
+// 	id: string;
+// 	name: string;
+// }
 
 export interface IExecutionResponse extends IExecutionBase {
 	id: string;
@@ -242,18 +241,6 @@ export namespace ListQueryDb {
 		export type WithOwnedByAndSharedWith = BaseFields & OwnedByField & SharedWithField;
 
 		export type WithScopes = BaseFields & ScopesField;
-	}
-
-	export namespace Credentials {
-		type OwnedByField = { homeProject: SlimProject | null };
-
-		type SharedWithField = { sharedWithProjects: SlimProject[] };
-
-		export type WithSharing = CredentialsEntity;
-
-		export type WithOwnedByAndSharedWith = CredentialsEntity & OwnedByField & SharedWithField;
-
-		export type WithScopes = CredentialsEntity & ScopesField;
 	}
 }
 

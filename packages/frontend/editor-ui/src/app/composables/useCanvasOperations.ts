@@ -13,7 +13,6 @@ import type {
 	XYPosition,
 } from '@/Interface';
 import type { IExecutionResponse } from '@/features/execution/executions/executions.types';
-import type { IUsedCredential } from '@/features/credentials/credentials.types';
 import type { ITag } from '@n8n/rest-api-client/api/tags';
 import type { IWorkflowTemplate } from '@n8n/rest-api-client/api/templates';
 import type { WorkflowData, WorkflowDataUpdate } from '@n8n/rest-api-client/api/workflows';
@@ -44,7 +43,6 @@ import {
 	ReplaceNodeParametersCommand,
 } from '@/app/models/history';
 import { useCanvasStore } from '@/app/stores/canvas.store';
-import { useCredentialsStore } from '@/features/credentials/credentials.store';
 import { useExecutionsStore } from '@/features/execution/executions/executions.store';
 import { useHistoryStore } from '@/app/stores/history.store';
 import { useNDVStore } from '@/features/ndv/shared/ndv.store';
@@ -90,7 +88,6 @@ import type {
 	IDataObject,
 	INode,
 	INodeConnections,
-	INodeCredentials,
 	INodeInputConfiguration,
 	INodeOutputConfiguration,
 	INodeTypeDescription,
@@ -164,7 +161,6 @@ export function useCanvasOperations() {
 	const rootStore = useRootStore();
 	const workflowsStore = useWorkflowsStore();
 	const workflowState = injectWorkflowState();
-	const credentialsStore = useCredentialsStore();
 	const historyStore = useHistoryStore();
 	const uiStore = useUIStore();
 	const ndvStore = useNDVStore();
@@ -1799,22 +1795,6 @@ export function useCanvasOperations() {
 	 * Import operations
 	 */
 
-	function removeUnknownCredentials(workflow: WorkflowDataUpdate) {
-		if (!workflow?.nodes) return;
-
-		for (const node of workflow.nodes) {
-			if (!node.credentials) continue;
-
-			for (const [name, credential] of Object.entries(node.credentials)) {
-				if (typeof credential === 'string' || credential.id === null) continue;
-
-				if (!credentialsStore.getCredentialById(credential.id)) {
-					delete node.credentials[name];
-				}
-			}
-		}
-	}
-
 	async function addImportedNodesToWorkflow(
 		data: WorkflowDataUpdate,
 		{ trackBulk = true, trackHistory = false, viewport = DEFAULT_VIEWPORT_BOUNDARIES } = {},
@@ -2060,8 +2040,6 @@ export function useCanvasOperations() {
 				});
 			}
 
-			removeUnknownCredentials(workflowData);
-
 			try {
 				if (trackEvents) {
 					const nodeGraph = JSON.stringify(
@@ -2199,36 +2177,13 @@ export function useCanvasOperations() {
 				data.pinData[node.name] = pinDataForNode;
 			}
 
-			if (nodeSaveData.credentials && true) {
-				nodeSaveData.credentials = filterAllowedCredentials(
-					nodeSaveData.credentials,
-					workflowsStore.usedCredentials,
-				);
-			}
-
 			data.nodes.push(nodeSaveData);
 			exportedNodeNames.add(node.name);
 		}
 
 		data.connections = getConnectionsForNodes(data.nodes, exportedNodeNames);
 
-		workflowHelpers.removeForeignCredentialsFromWorkflow(data, credentialsStore.allCredentials);
-
 		return data;
-	}
-
-	function filterAllowedCredentials(
-		credentials: INodeCredentials,
-		usedCredentials: Record<string, IUsedCredential>,
-	): INodeCredentials {
-		return Object.fromEntries(
-			Object.entries(credentials).filter(([, credential]) => {
-				return (
-					credential.id &&
-					(!usedCredentials[credential.id] || usedCredentials[credential.id]?.currentUserHasAccess)
-				);
-			}),
-		);
 	}
 
 	function getConnectionsForNodes(

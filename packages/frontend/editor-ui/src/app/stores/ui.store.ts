@@ -36,10 +36,6 @@ import {
 } from '@/features/shared/tags/tags.constants';
 import { VARIABLE_MODAL_KEY } from '@/features/settings/environments.ee/environments.constants';
 import {
-	CREDENTIAL_EDIT_MODAL_KEY,
-	CREDENTIAL_SELECT_MODAL_KEY,
-} from '@/features/credentials/credentials.constants';
-import {
 	DELETE_USER_MODAL_KEY,
 	INVITE_USER_MODAL_KEY,
 	PERSONALIZATION_MODAL_KEY,
@@ -116,7 +112,6 @@ export const useUIStore = defineStore(STORES.UI, () => {
 				CHANGE_PASSWORD_MODAL_KEY,
 				CONFIRM_PASSWORD_MODAL_KEY,
 				CONTACT_PROMPT_MODAL_KEY,
-				CREDENTIAL_SELECT_MODAL_KEY,
 				DUPLICATE_MODAL_KEY,
 				PERSONALIZATION_MODAL_KEY,
 				NODE_PINNING_MODAL_KEY,
@@ -170,12 +165,6 @@ export const useUIStore = defineStore(STORES.UI, () => {
 				mode: '',
 			},
 		},
-		[CREDENTIAL_EDIT_MODAL_KEY]: {
-			open: false,
-			mode: '',
-			activeId: null,
-			showAuthSelector: false,
-		} as ModalState,
 		[DELETE_FOLDER_MODAL_KEY]: {
 			open: false,
 			activeId: null,
@@ -474,19 +463,6 @@ export const useUIStore = defineStore(STORES.UI, () => {
 		openModal(DELETE_USER_MODAL_KEY);
 	};
 
-	const openExistingCredential = (id: string) => {
-		setActiveId(CREDENTIAL_EDIT_MODAL_KEY, id);
-		setMode(CREDENTIAL_EDIT_MODAL_KEY, 'edit');
-		openModal(CREDENTIAL_EDIT_MODAL_KEY);
-	};
-
-	const openNewCredential = (type: string, showAuthOptions = false) => {
-		setActiveId(CREDENTIAL_EDIT_MODAL_KEY, type);
-		setShowAuthSelector(CREDENTIAL_EDIT_MODAL_KEY, showAuthOptions);
-		setMode(CREDENTIAL_EDIT_MODAL_KEY, 'new');
-		openModal(CREDENTIAL_EDIT_MODAL_KEY);
-	};
-
 	const openCommunityPackageUninstallConfirmModal = (packageName: string) => {
 		setMode(COMMUNITY_PACKAGE_CONFIRM_MODAL_KEY, COMMUNITY_PACKAGE_MANAGE_ACTIONS.UNINSTALL);
 		setActiveId(COMMUNITY_PACKAGE_CONFIRM_MODAL_KEY, packageName);
@@ -666,8 +642,6 @@ export const useUIStore = defineStore(STORES.UI, () => {
 		openModal,
 		closeModal,
 		openDeleteUserModal,
-		openExistingCredential,
-		openNewCredential,
 		openCommunityPackageUninstallConfirmModal,
 		openCommunityPackageUpdateConfirmModal,
 		addActiveAction,

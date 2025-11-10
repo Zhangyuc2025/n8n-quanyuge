@@ -1,6 +1,5 @@
 import { chatWithAssistant, replaceCode } from '@/features/ai/assistant/assistant.api';
 import { type VIEWS, PLACEHOLDER_EMPTY_WORKFLOW_ID, EDITABLE_CANVAS_VIEWS } from '@/app/constants';
-import { CREDENTIAL_EDIT_MODAL_KEY } from '@/features/credentials/credentials.constants';
 import { ASSISTANT_ENABLED_VIEWS } from './constants';
 import { STORES } from '@n8n/stores';
 import type { ChatRequest } from '@/features/ai/assistant/assistant.types';
@@ -26,7 +25,6 @@ import { useToast } from '@/app/composables/useToast';
 import { useUIStore } from '@/app/stores/ui.store';
 import AiUpdatedCodeMessage from '@/app/components/AiUpdatedCodeMessage.vue';
 import { useChatPanelStateStore } from './chatPanelState.store';
-import { useCredentialsStore } from '@/features/credentials/credentials.store';
 import { useAIAssistantHelpers } from '@/features/ai/assistant/composables/useAIAssistantHelpers';
 import type { WorkflowState } from '@/app/composables/useWorkflowState';
 
@@ -312,10 +310,8 @@ export const useAssistantStore = defineStore(STORES.ASSISTANT, () => {
 			? assistantHelpers.processNodeForAssistant(activeNode, ['position', 'parameters.notice'])
 			: null;
 		const activeModals = uiStore.activeModals;
-		const isCredentialModalActive = activeModals.includes(CREDENTIAL_EDIT_MODAL_KEY);
-		const activeCredential = isCredentialModalActive
-			? useCredentialsStore().getCredentialTypeByName(uiStore.activeCredentialType ?? '')
-			: undefined;
+		const isCredentialModalActive = false;
+		const activeCredential = undefined;
 		const executionResult = workflowsStore.workflowExecutionData?.data?.resultData;
 		const isCurrentNodeExecuted = Boolean(
 			executionResult?.runData?.hasOwnProperty(activeNode?.name ?? ''),

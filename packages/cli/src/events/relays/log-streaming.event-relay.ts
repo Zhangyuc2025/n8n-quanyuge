@@ -42,10 +42,6 @@ export class LogStreamingEventRelay extends EventRelay {
 			'public-api-key-created': (event) => this.publicApiKeyCreated(event),
 			'public-api-key-deleted': (event) => this.publicApiKeyDeleted(event),
 			'email-failed': (event) => this.emailFailed(event),
-			'credentials-created': (event) => this.credentialsCreated(event),
-			'credentials-deleted': (event) => this.credentialsDeleted(event),
-			'credentials-shared': (event) => this.credentialsShared(event),
-			'credentials-updated': (event) => this.credentialsUpdated(event),
 			'community-package-installed': (event) => this.communityPackageInstalled(event),
 			'community-package-updated': (event) => this.communityPackageUpdated(event),
 			'community-package-deleted': (event) => this.communityPackageDeleted(event),
@@ -375,42 +371,6 @@ export class LogStreamingEventRelay extends EventRelay {
 		void this.eventBus.sendAuditEvent({
 			eventName: 'n8n.audit.user.email.failed',
 			payload: { ...user, messageType },
-		});
-	}
-
-	// #endregion
-
-	// #region Credentials
-
-	@Redactable()
-	private credentialsCreated({ user, ...rest }: RelayEventMap['credentials-created']) {
-		void this.eventBus.sendAuditEvent({
-			eventName: 'n8n.audit.user.credentials.created',
-			payload: { ...user, ...rest },
-		});
-	}
-
-	@Redactable()
-	private credentialsDeleted({ user, ...rest }: RelayEventMap['credentials-deleted']) {
-		void this.eventBus.sendAuditEvent({
-			eventName: 'n8n.audit.user.credentials.deleted',
-			payload: { ...user, ...rest },
-		});
-	}
-
-	@Redactable()
-	private credentialsShared({ user, ...rest }: RelayEventMap['credentials-shared']) {
-		void this.eventBus.sendAuditEvent({
-			eventName: 'n8n.audit.user.credentials.shared',
-			payload: { ...user, ...rest },
-		});
-	}
-
-	@Redactable()
-	private credentialsUpdated({ user, ...rest }: RelayEventMap['credentials-updated']) {
-		void this.eventBus.sendAuditEvent({
-			eventName: 'n8n.audit.user.credentials.updated',
-			payload: { ...user, ...rest },
 		});
 	}
 

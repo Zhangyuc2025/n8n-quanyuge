@@ -18,12 +18,7 @@ import { MOVE_FOLDER_MODAL_KEY } from '../folders.constants';
 import { useSettingsStore } from '@/app/stores/settings.store';
 import type { FrontendSettings } from '@n8n/api-types';
 import type { Project } from '@/features/collaboration/projects/projects.types';
-import type {
-	ICredentialsResponse,
-	IUsedCredential,
-} from '@/features/credentials/credentials.types';
 import type { ChangeLocationSearchResult } from '../folders.types';
-import { useCredentialsStore } from '@/features/credentials/credentials.store';
 import { useWorkflowsStore } from '@/app/stores/workflows.store';
 import { useFoldersStore } from '../folders.store';
 import { useProjectsStore } from '@/features/collaboration/projects/projects.store';

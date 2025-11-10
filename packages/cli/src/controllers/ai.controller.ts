@@ -1,5 +1,4 @@
-import { FREE_AI_CREDITS_CREDENTIAL_NAME, STREAM_SEPARATOR } from '@/constants';
-import type { CreateCredentialDto } from '@n8n/api-types';
+import { STREAM_SEPARATOR } from '@/constants';
 import {
 	AiChatRequestDto,
 	AiApplySuggestionRequestDto,
@@ -13,18 +12,15 @@ import { AuthenticatedRequest } from '@n8n/db';
 import { Body, Get, Post, RestController } from '@n8n/decorators';
 import { type AiAssistantSDK, APIResponseError } from '@n8n_io/ai-assistant-sdk';
 import { Response } from 'express';
-import { OPEN_AI_API_CREDENTIAL_TYPE } from 'n8n-workflow';
 import { strict as assert } from 'node:assert';
 import { WritableStream } from 'node:stream/web';
 
-import { CredentialsService } from '@/credentials/credentials.service';
 import { BadRequestError } from '@/errors/response-errors/bad-request.error';
 import { ContentTooLargeError } from '@/errors/response-errors/content-too-large.error';
 import { InternalServerError } from '@/errors/response-errors/internal-server.error';
 import { TooManyRequestsError } from '@/errors/response-errors/too-many-requests.error';
 import { WorkflowBuilderService } from '@/services/ai-workflow-builder.service';
 import { AiService } from '@/services/ai.service';
-import { UserService } from '@/services/user.service';
 
 export type FlushableResponse = Response & { flush: () => void };
 
@@ -33,8 +29,6 @@ export class AiController {
 	constructor(
 		private readonly aiService: AiService,
 		private readonly workflowBuilderService: WorkflowBuilderService,
-		private readonly credentialsService: CredentialsService,
-		private readonly userService: UserService,
 	) {}
 
 	// Use usesTemplates flag to bypass the send() wrapper which would cause
@@ -179,34 +173,13 @@ export class AiController {
 	}
 
 	@Post('/free-credits')
-	async aiCredits(req: AuthenticatedRequest, _: Response, @Body payload: AiFreeCreditsRequestDto) {
-		try {
-			const aiCredits = await this.aiService.createFreeAiCredits(req.user);
-
-			const credentialProperties: CreateCredentialDto = {
-				name: FREE_AI_CREDITS_CREDENTIAL_NAME,
-				type: OPEN_AI_API_CREDENTIAL_TYPE,
-				data: {
-					apiKey: aiCredits.apiKey,
-					url: aiCredits.url,
-				},
-				projectId: payload?.projectId,
-			};
-
-			const newCredential = await this.credentialsService.createManagedCredential(
-				credentialProperties,
-				req.user,
-			);
-
-			await this.userService.updateSettings(req.user.id, {
-				userClaimedAiCredits: true,
-			});
-
-			return newCredential;
-		} catch (e) {
-			assert(e instanceof Error);
-			throw new InternalServerError(e.message, e);
-		}
+	async aiCredits(
+		_req: AuthenticatedRequest,
+		_res: Response,
+		@Body _payload: AiFreeCreditsRequestDto,
+	) {
+		// AI credits feature removed - credential system has been deleted
+		throw new BadRequestError('AI credits feature is no longer available');
 	}
 
 	@Post('/sessions', { rateLimit: { limit: 100 } })

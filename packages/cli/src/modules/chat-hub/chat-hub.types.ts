@@ -4,7 +4,6 @@ import type {
 	ChatMessageId,
 	ChatSessionId,
 } from '@n8n/api-types';
-import type { INodeCredentials } from 'n8n-workflow';
 
 export interface ModelWithCredentials {
 	provider: ChatHubProvider;
@@ -19,7 +18,8 @@ export interface BaseMessagePayload {
 	userId: string;
 	sessionId: ChatSessionId;
 	model: ChatHubConversationModel;
-	credentials: INodeCredentials;
+	// TODO: Replace with API key authentication for pay-per-use model
+	credentials: Record<string, unknown>;
 }
 
 export interface HumanMessagePayload extends BaseMessagePayload {

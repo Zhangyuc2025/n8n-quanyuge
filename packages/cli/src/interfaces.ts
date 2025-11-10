@@ -1,16 +1,13 @@
-import type { ICredentialsBase, IExecutionBase, IExecutionDb, ITagBase } from '@n8n/db';
+import type { IExecutionBase, IExecutionDb, ITagBase } from '@n8n/db';
 import type { AssignableGlobalRole } from '@n8n/permissions';
 import type { Application, Response } from 'express';
 import type {
 	ExecutionError,
-	ICredentialDataDecryptedObject,
-	ICredentialsDecrypted,
 	IDeferredPromise,
 	IExecuteResponsePromiseData,
 	IRun,
 	ITelemetryTrackProperties,
 	IWorkflowBase,
-	CredentialLoadingDetails,
 	WorkflowExecuteMode,
 	ExecutionStatus,
 	ExecutionSummary,
@@ -20,14 +17,6 @@ import type PCancelable from 'p-cancelable';
 
 import type { ActiveWorkflowManager } from '@/active-workflow-manager';
 import type { ExternalHooks } from '@/external-hooks';
-
-export interface ICredentialsTypeData {
-	[key: string]: CredentialLoadingDetails;
-}
-
-export interface ICredentialsOverwrite {
-	[key: string]: ICredentialDataDecryptedObject;
-}
 
 // ----------------------------------
 //               tags
@@ -60,14 +49,6 @@ export interface IWorkflowToImport
 		  };
 	parentFolderId: string | null;
 }
-
-// ----------------------------------
-//            credentials
-// ----------------------------------
-
-export type ICredentialsDecryptedDb = ICredentialsBase & ICredentialsDecrypted;
-
-export type ICredentialsDecryptedResponse = ICredentialsDecryptedDb;
 
 export type SaveExecutionDataType = 'all' | 'none';
 

@@ -1,5 +1,4 @@
 import type {
-	ICredentialDataDecryptedObject,
 	INode,
 	ITriggerFunctions,
 	IWorkflowExecuteAdditionalData,
@@ -50,9 +49,5 @@ export class TriggerContext extends NodeExecutionContext implements ITriggerFunc
 
 	getActivationMode() {
 		return this.activation;
-	}
-
-	async getCredentials<T extends object = ICredentialDataDecryptedObject>(type: string) {
-		return await this._getCredentials<T>(type);
 	}
 }
