@@ -1,0 +1,90 @@
+/**
+ * CSS Variables for Admin Panel Light Theme
+ * 全域阁管理后台 - 亮色主题变量定义
+ */
+
+:root {
+	// ========================================
+	// 亮色主题背景色
+	// ========================================
+	--admin-bg-primary: #f0f2f5; // 主背景色（页面容器）
+	--admin-bg-secondary: #ffffff; // 次级背景色（卡片、面板）
+	--admin-bg-tertiary: #fafafa; // 三级背景色（悬停、选中）
+	--admin-bg-elevated: #ffffff; // 浮起组件背景（模态框、下拉菜单）
+
+	// ========================================
+	// 文本颜色
+	// ========================================
+	--admin-text-primary: rgba(0, 0, 0, 0.85); // 主要文本（标题、重要信息）
+	--admin-text-secondary: rgba(0, 0, 0, 0.65); // 次要文本（描述、辅助信息）
+	--admin-text-disabled: rgba(0, 0, 0, 0.25); // 禁用文本
+	--admin-text-link: #1890ff; // 链接文本
+
+	// ========================================
+	// 边框与圆角
+	// ========================================
+	--admin-border-color: #d9d9d9; // 边框颜色
+	--admin-border-color-light: #f0f0f0; // 浅边框颜色（悬停）
+	--admin-border-radius: 8px; // 标准圆角
+	--admin-border-radius-sm: 4px; // 小圆角
+	--admin-border-radius-lg: 12px; // 大圆角
+
+	// ========================================
+	// 品牌色
+	// ========================================
+	--admin-primary: #1890ff; // 主色（按钮、链接）
+	--admin-primary-hover: #40a9ff; // 主色悬停
+	--admin-primary-active: #096dd9; // 主色激活
+	--admin-success: #52c41a; // 成功色
+	--admin-warning: #faad14; // 警告色
+	--admin-error: #f5222d; // 错误色
+	--admin-info: #1890ff; // 信息色
+
+	// ========================================
+	// 渐变（用于卡片、图表装饰）
+	// ========================================
+	--admin-gradient-blue: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	--admin-gradient-green: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+	--admin-gradient-orange: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+	--admin-gradient-purple: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+
+	// ========================================
+	// 间距
+	// ========================================
+	--admin-spacing-xs: 4px;
+	--admin-spacing-sm: 8px;
+	--admin-spacing-md: 16px;
+	--admin-spacing-lg: 24px;
+	--admin-spacing-xl: 32px;
+	--admin-spacing-2xl: 48px;
+
+	// ========================================
+	// 布局尺寸
+	// ========================================
+	--admin-header-height: 64px;
+	--admin-sidebar-width: 256px;
+	--admin-sidebar-collapsed-width: 80px;
+
+	// ========================================
+	// 阴影
+	// ========================================
+	--admin-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+	--admin-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+	--admin-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
+	--admin-shadow-card: 0 1px 4px rgba(0, 21, 41, 0.08);
+
+	// ========================================
+	// 过渡动画
+	// ========================================
+	--admin-transition-fast: 0.2s ease;
+	--admin-transition-normal: 0.3s ease;
+	--admin-transition-slow: 0.5s ease;
+
+	// ========================================
+	// Z-index 层级
+	// ========================================
+	--admin-z-index-dropdown: 1050;
+	--admin-z-index-modal: 1060;
+	--admin-z-index-notification: 1070;
+	--admin-z-index-tooltip: 1080;
+}

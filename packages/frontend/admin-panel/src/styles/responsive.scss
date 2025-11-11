@@ -1,0 +1,329 @@
+/**
+ * Responsive Design Styles
+ * 全域阁管理后台 - 响应式设计
+ */
+
+// ========================================
+// 响应式断点定义
+// ========================================
+$breakpoint-mobile: 768px;
+$breakpoint-tablet: 1024px;
+$breakpoint-desktop: 1440px;
+
+// ========================================
+// 移动端适配 (< 768px)
+// ========================================
+@media (max-width: $breakpoint-mobile) {
+	// 侧边栏自动收起
+	.admin-layout {
+		.admin-sidebar {
+			position: fixed;
+			z-index: var(--admin-z-index-dropdown);
+			transform: translateX(-100%);
+			transition: transform var(--admin-transition-normal);
+
+			&.mobile-visible {
+				transform: translateX(0);
+			}
+		}
+
+		.admin-content {
+			margin-left: 0 !important;
+			width: 100%;
+		}
+	}
+
+	// 表格横向滚动
+	.ant-table-wrapper {
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+
+		.ant-table {
+			min-width: 800px;
+		}
+	}
+
+	// 卡片单列显示
+	.admin-card-grid {
+		grid-template-columns: 1fr !important;
+	}
+
+	// 统计卡片堆叠
+	.admin-stats-row {
+		flex-direction: column;
+
+		.admin-stat-card {
+			width: 100% !important;
+			margin-bottom: var(--admin-spacing-md);
+		}
+	}
+
+	// 移动端字体缩放
+	body {
+		font-size: 14px;
+	}
+
+	h1 {
+		font-size: 24px;
+	}
+
+	h2 {
+		font-size: 20px;
+	}
+
+	h3 {
+		font-size: 18px;
+	}
+
+	// 按钮组竖向排列
+	.ant-btn-group {
+		display: flex;
+		flex-direction: column;
+
+		.ant-btn {
+			width: 100%;
+			margin-bottom: var(--admin-spacing-sm);
+		}
+	}
+
+	// 表单标签上下排列
+	.ant-form-item {
+		.ant-form-item-label {
+			text-align: left;
+		}
+	}
+
+	// 模态框占满屏幕
+	.ant-modal {
+		max-width: calc(100vw - 32px);
+		margin: 16px;
+
+		.ant-modal-body {
+			max-height: calc(100vh - 200px);
+			overflow-y: auto;
+		}
+	}
+
+	// 容器边距缩减
+	.admin-container {
+		padding: var(--admin-spacing-md);
+	}
+
+	// 隐藏移动端不必要的列
+	.hide-on-mobile {
+		display: none !important;
+	}
+}
+
+// ========================================
+// 平板适配 (768px - 1024px)
+// ========================================
+@media (min-width: $breakpoint-mobile) and (max-width: $breakpoint-tablet) {
+	// 卡片两列显示
+	.admin-card-grid {
+		grid-template-columns: repeat(2, 1fr) !important;
+		gap: var(--admin-spacing-md);
+	}
+
+	// 侧边栏可选收起
+	.admin-layout {
+		.admin-sidebar {
+			width: var(--admin-sidebar-collapsed-width);
+
+			&.expanded {
+				width: var(--admin-sidebar-width);
+			}
+		}
+
+		.admin-content {
+			margin-left: var(--admin-sidebar-collapsed-width);
+			transition: margin-left var(--admin-transition-normal);
+
+			&.sidebar-expanded {
+				margin-left: var(--admin-sidebar-width);
+			}
+		}
+	}
+
+	// 统计卡片两列
+	.admin-stats-row {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: var(--admin-spacing-md);
+	}
+
+	// 字体适中调整
+	body {
+		font-size: 14px;
+	}
+
+	h1 {
+		font-size: 28px;
+	}
+
+	h2 {
+		font-size: 22px;
+	}
+
+	// 表格适度缩放
+	.ant-table {
+		font-size: 13px;
+	}
+
+	// 隐藏平板端不必要的列
+	.hide-on-tablet {
+		display: none !important;
+	}
+}
+
+// ========================================
+// 桌面端 (> 1024px)
+// ========================================
+@media (min-width: $breakpoint-tablet) {
+	// 完整布局
+	.admin-layout {
+		.admin-sidebar {
+			width: var(--admin-sidebar-width);
+		}
+
+		.admin-content {
+			margin-left: var(--admin-sidebar-width);
+		}
+	}
+
+	// 卡片多列显示
+	.admin-card-grid {
+		grid-template-columns: repeat(3, 1fr);
+		gap: var(--admin-spacing-lg);
+	}
+
+	// 统计卡片四列
+	.admin-stats-row {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: var(--admin-spacing-lg);
+	}
+
+	// 表格正常显示
+	.ant-table {
+		font-size: 14px;
+	}
+}
+
+// ========================================
+// 超大屏幕 (> 1440px)
+// ========================================
+@media (min-width: $breakpoint-desktop) {
+	// 卡片四列显示
+	.admin-card-grid {
+		grid-template-columns: repeat(4, 1fr);
+	}
+
+	// 容器最大宽度
+	.admin-container-max {
+		max-width: 1600px;
+		margin: 0 auto;
+	}
+}
+
+// ========================================
+// 触摸设备优化
+// ========================================
+@media (pointer: coarse) {
+	// 增大可点击区域
+	.ant-btn,
+	.ant-input,
+	.ant-select-selector {
+		min-height: 44px;
+	}
+
+	// 增大复选框和单选框
+	.ant-checkbox-wrapper,
+	.ant-radio-wrapper {
+		.ant-checkbox-inner,
+		.ant-radio-inner {
+			width: 20px;
+			height: 20px;
+		}
+	}
+
+	// 禁用悬停效果（触摸设备无悬停）
+	.admin-card:hover,
+	.ant-card:hover {
+		transform: none;
+		box-shadow: var(--admin-shadow-card);
+	}
+}
+
+// ========================================
+// 打印样式优化
+// ========================================
+@media print {
+	// 隐藏不必要元素
+	.admin-sidebar,
+	.admin-header,
+	.ant-btn,
+	.ant-pagination {
+		display: none !important;
+	}
+
+	// 内容区域全宽
+	.admin-content {
+		margin-left: 0 !important;
+		width: 100% !important;
+	}
+
+	// 使用白色背景
+	body {
+		background-color: white;
+		color: black;
+	}
+
+	// 表格边框
+	.ant-table {
+		border: 1px solid #000;
+
+		th,
+		td {
+			border: 1px solid #000;
+		}
+	}
+
+	// 分页符
+	.page-break {
+		page-break-after: always;
+	}
+}
+
+// ========================================
+// 暗色模式优化（系统级）
+// ========================================
+@media (prefers-color-scheme: dark) {
+	// 默认已经是暗色主题，无需额外处理
+	// 如果需要支持亮色模式切换，在此添加逻辑
+}
+
+// ========================================
+// 高对比度模式
+// ========================================
+@media (prefers-contrast: high) {
+	.admin-theme {
+		--admin-border-color: #ffffff;
+		--admin-text-secondary: #ffffff;
+	}
+
+	.ant-btn-primary {
+		border: 2px solid #ffffff;
+	}
+}
+
+// ========================================
+// 减少动画（用户偏好）
+// ========================================
+@media (prefers-reduced-motion: reduce) {
+	* {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+}

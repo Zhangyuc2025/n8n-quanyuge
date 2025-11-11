@@ -1,0 +1,235 @@
+/**
+ * Admin Panel Light Theme Styles
+ * 全域阁管理后台 - 亮色主题样式
+ */
+
+// Import Ant Design (使用 reset.css 避免样式冲突)
+@use 'ant-design-vue/dist/reset.css';
+
+// Import Variables
+@use './variables.scss';
+
+// Import Responsive Styles
+@use './responsive.scss';
+
+// ========================================
+// 全局主题样式
+// ========================================
+body.admin-theme {
+	margin: 0;
+	padding: 0;
+	font-family:
+		-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
+		sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+	background-color: var(--admin-bg-primary);
+	color: var(--admin-text-primary);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	transition: background-color var(--admin-transition-normal);
+}
+
+// App Container
+#app {
+	height: 100vh;
+	width: 100vw;
+	overflow: hidden;
+}
+
+// ========================================
+// 覆盖 Ant Design 变量
+// ========================================
+.admin-theme {
+	// Primary Color
+	--ant-primary-color: var(--admin-primary);
+	--ant-primary-color-hover: var(--admin-primary-hover);
+	--ant-primary-color-active: var(--admin-primary-active);
+
+	// Background Colors
+	--ant-background-color-base: var(--admin-bg-primary);
+	--ant-background-color-light: var(--admin-bg-secondary);
+
+	// Border
+	--ant-border-color-base: var(--admin-border-color);
+	--ant-border-radius-base: var(--admin-border-radius);
+
+	// Text Colors
+	--ant-text-color: var(--admin-text-primary);
+	--ant-text-color-secondary: var(--admin-text-secondary);
+	--ant-disabled-color: var(--admin-text-disabled);
+
+	// Shadows
+	--ant-box-shadow-base: var(--admin-shadow-sm);
+}
+
+// ========================================
+// 自定义滚动条样式（亮色主题）
+// ========================================
+.admin-theme {
+	* {
+		scrollbar-width: thin;
+		scrollbar-color: rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0.05);
+	}
+
+	::-webkit-scrollbar {
+		width: 8px;
+		height: 8px;
+	}
+
+	::-webkit-scrollbar-track {
+		background: rgba(0, 0, 0, 0.04);
+		border-radius: 4px;
+	}
+
+	::-webkit-scrollbar-thumb {
+		background: rgba(0, 0, 0, 0.15);
+		border-radius: 4px;
+		transition: background var(--admin-transition-fast);
+
+		&:hover {
+			background: rgba(0, 0, 0, 0.3);
+		}
+	}
+
+	::-webkit-scrollbar-corner {
+		background: rgba(0, 0, 0, 0.04);
+	}
+}
+
+// ========================================
+// 通用动画类
+// ========================================
+.admin-fade-enter-active,
+.admin-fade-leave-active {
+	transition: opacity var(--admin-transition-normal);
+}
+
+.admin-fade-enter-from,
+.admin-fade-leave-to {
+	opacity: 0;
+}
+
+.admin-slide-enter-active,
+.admin-slide-leave-active {
+	transition: all var(--admin-transition-normal);
+}
+
+.admin-slide-enter-from {
+	transform: translateX(-20px);
+	opacity: 0;
+}
+
+.admin-slide-leave-to {
+	transform: translateX(20px);
+	opacity: 0;
+}
+
+// ========================================
+// 工具类
+// ========================================
+.admin-container {
+	padding: var(--admin-spacing-lg);
+}
+
+.admin-card {
+	background: var(--admin-bg-secondary);
+	border-radius: var(--admin-border-radius);
+	border: 1px solid var(--admin-border-color);
+	box-shadow: var(--admin-shadow-card);
+	transition: all var(--admin-transition-normal);
+
+	&:hover {
+		border-color: var(--admin-border-color-light);
+		box-shadow: var(--admin-shadow-md);
+	}
+}
+
+.admin-text-center {
+	text-align: center;
+}
+
+.admin-gradient-text {
+	background: var(--admin-gradient-blue);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+}
+
+// ========================================
+// 按钮通用样式增强
+// ========================================
+.ant-btn {
+	transition: all var(--admin-transition-normal);
+}
+
+// ========================================
+// 卡片通用样式增强
+// ========================================
+.ant-card {
+	background: var(--admin-bg-secondary);
+	border-color: var(--admin-border-color);
+	transition: all var(--admin-transition-normal);
+
+	&:hover {
+		border-color: var(--admin-border-color-light);
+		box-shadow: var(--admin-shadow-md);
+	}
+}
+
+// ========================================
+// 表格样式增强
+// ========================================
+.ant-table {
+	background: transparent;
+
+	.ant-table-thead > tr > th {
+		background: var(--admin-bg-tertiary);
+		border-color: var(--admin-border-color);
+		color: var(--admin-text-primary);
+		font-weight: 600;
+		transition: background var(--admin-transition-fast);
+
+		&:hover {
+			background: var(--admin-bg-elevated);
+		}
+	}
+
+	.ant-table-tbody > tr {
+		transition: background var(--admin-transition-fast);
+
+		&:hover > td {
+			background: var(--admin-bg-tertiary);
+		}
+
+		> td {
+			border-color: var(--admin-border-color);
+			transition: background var(--admin-transition-fast);
+		}
+	}
+}
+
+// ========================================
+// 模态框样式增强
+// ========================================
+.ant-modal-content {
+	background: var(--admin-bg-secondary);
+	box-shadow: var(--admin-shadow-lg);
+}
+
+.ant-modal-header {
+	background: var(--admin-bg-tertiary);
+	border-color: var(--admin-border-color);
+}
+
+.ant-modal-footer {
+	border-color: var(--admin-border-color);
+}
+
+// ========================================
+// 加载状态样式
+// ========================================
+.admin-loading {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 200px;
+}
