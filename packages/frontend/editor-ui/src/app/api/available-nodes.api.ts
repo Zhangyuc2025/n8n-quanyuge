@@ -7,6 +7,7 @@ import { makeRestApiRequest } from '@n8n/rest-api-client';
 export const enum NodeSource {
 	BUILTIN = 'builtin',
 	PLATFORM = 'platform',
+	THIRD_PARTY = 'thirdParty',
 	CUSTOM = 'custom',
 }
 

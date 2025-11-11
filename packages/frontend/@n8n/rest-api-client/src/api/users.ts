@@ -1,5 +1,6 @@
 import type {
 	LoginRequestDto,
+	RegisterRequestDto,
 	PasswordUpdateRequestDto,
 	SettingsUpdateRequestDto,
 	UsersListFilterDto,
@@ -95,6 +96,13 @@ export async function login(
 	params: LoginRequestDto,
 ): Promise<CurrentUserResponse> {
 	return await makeRestApiRequest(context, 'POST', '/login', params);
+}
+
+export async function register(
+	context: IRestApiContext,
+	params: RegisterRequestDto,
+): Promise<CurrentUserResponse> {
+	return await makeRestApiRequest(context, 'POST', '/register', params);
 }
 
 export async function logout(context: IRestApiContext): Promise<void> {

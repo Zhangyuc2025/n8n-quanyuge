@@ -26,6 +26,7 @@ import type { FrontendService } from '@/services/frontend.service';
 import '@/controllers/active-workflows.controller';
 import '@/controllers/annotation-tags.controller.ee';
 import '@/controllers/auth.controller';
+import '@/controllers/billing.controller';
 import '@/controllers/binary-data.controller';
 import '@/controllers/ai.controller';
 import '@/controllers/platform-ai-providers.controller';
@@ -44,6 +45,8 @@ import '@/controllers/node-types.controller';
 // import '@/controllers/oauth/oauth2-credential.controller';
 import '@/controllers/orchestration.controller';
 import '@/controllers/platform-admin.controller';
+import '@/controllers/admin/admin-stats.controller';
+import '@/controllers/admin/admin-workspaces.controller';
 import '@/controllers/password-reset.controller';
 import '@/controllers/project.controller';
 import '@/controllers/role.controller';
@@ -327,6 +330,30 @@ export class Server extends AbstractServer {
 				res.sendStatus(404);
 			};
 			this.app.use('/schemas/:node/:version{/:resource}{/:operation}.json', serveSchemas);
+
+			// ========================================
+			// Admin Panel 静态文件服务
+			// ========================================
+			const adminPanelPath = resolve(__dirname, '../../frontend/admin-panel/dist');
+			try {
+				await fsAccess(adminPanelPath);
+				// 提供 admin-panel 静态文件
+				this.app.use(
+					'/admin',
+					express.static(adminPanelPath, { ...cacheOptions, index: 'index.html' }),
+				);
+
+				// SPA fallback: 所有 /admin/* 路径返回 index.html
+				this.app.get('/admin/*', (_req, res) => {
+					res.sendFile(resolve(adminPanelPath, 'index.html'));
+				});
+
+				this.logger.info('Admin Panel static files served from /admin');
+			} catch {
+				this.logger.warn(
+					'Admin Panel dist directory not found. Run `pnpm --filter @n8n/admin-panel build` to build it.',
+				);
+			}
 
 			// SaaS 平台化架构：后端不提供前端静态资源（前端部署在 CDN）
 			this.app.get('{/*path}', (req, res, next) => {

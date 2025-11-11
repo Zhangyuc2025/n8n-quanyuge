@@ -51,10 +51,6 @@ const getRouteConfigs = () => {
 				name: VIEWS.PROJECTS_WORKFLOWS,
 				params: { projectId: projectId.value },
 			},
-			credentials: {
-				name: VIEWS.PROJECTS_CREDENTIALS,
-				params: { projectId: projectId.value },
-			},
 			executions: {
 				name: VIEWS.PROJECTS_EXECUTIONS,
 				params: { projectId: projectId.value },
@@ -70,7 +66,6 @@ const getRouteConfigs = () => {
 	if (props.pageType === 'shared') {
 		return {
 			workflows: { name: VIEWS.SHARED_WORKFLOWS },
-			credentials: { name: VIEWS.SHARED_CREDENTIALS },
 			executions: { name: VIEWS.NOT_FOUND },
 			variables: { name: VIEWS.NOT_FOUND },
 		};
@@ -79,7 +74,6 @@ const getRouteConfigs = () => {
 	// Overview
 	return {
 		workflows: { name: VIEWS.WORKFLOWS },
-		credentials: { name: VIEWS.CREDENTIALS },
 		executions: { name: VIEWS.EXECUTIONS },
 		variables: { name: VIEWS.HOME_VARIABLES },
 	};
@@ -101,10 +95,7 @@ const createTab = (
 // Generate the tabs configuration
 const options = computed<Array<TabOptions<string>>>(() => {
 	const routes = getRouteConfigs();
-	const tabs = [
-		createTab('mainSidebar.workflows', 'workflows', routes),
-		createTab('mainSidebar.credentials', 'credentials', routes),
-	];
+	const tabs = [createTab('mainSidebar.workflows', 'workflows', routes)];
 
 	if (props.showExecutions) {
 		tabs.push(createTab('mainSidebar.executions', 'executions', routes));

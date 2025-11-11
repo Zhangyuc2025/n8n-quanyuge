@@ -84,8 +84,34 @@ const isTemplatesExperimentEnabled = computed(() => {
 
 const mainMenuItems = computed<IMenuItem[]>(() => [
 	{
+		id: 'homepage',
+		icon: 'house',
+		label: i18n.baseText('mainSidebar.homepage'),
+		position: 'top',
+		route: { to: { name: VIEWS.HOMEPAGE } },
+		available: hasPermission(['authenticated']),
+	},
+	{
+		id: 'separator-1',
+		type: 'separator',
+		available: true,
+	},
+	{
+		id: 'workflows',
+		icon: 'workflow',
+		label: i18n.baseText('mainSidebar.workflows'),
+		position: 'top',
+		route: { to: { name: VIEWS.WORKFLOWS } },
+		available: hasPermission(['authenticated']),
+	},
+	{
+		id: 'separator-2',
+		type: 'separator',
+		available: true,
+	},
+	{
 		id: 'cloud-admin',
-		position: 'bottom',
+		position: 'top',
 		label: 'Admin Panel',
 		icon: 'cloud',
 		available: settingsStore.isCloudDeployment && hasPermission(['instanceOwner']),
@@ -94,7 +120,7 @@ const mainMenuItems = computed<IMenuItem[]>(() => [
 		id: 'chat',
 		icon: 'message-circle',
 		label: 'Chat',
-		position: 'bottom',
+		position: 'top',
 		route: { to: { name: CHAT_VIEW } },
 		available:
 			settingsStore.isChatFeatureEnabled &&
@@ -105,7 +131,7 @@ const mainMenuItems = computed<IMenuItem[]>(() => [
 		id: 'templates',
 		icon: 'package-open',
 		label: i18n.baseText('generic.templates'),
-		position: 'bottom',
+		position: 'top',
 		available:
 			settingsStore.isTemplatesEnabled &&
 			calloutHelpers.isPreBuiltAgentsCalloutVisible.value &&
@@ -117,7 +143,7 @@ const mainMenuItems = computed<IMenuItem[]>(() => [
 		id: 'templates',
 		icon: 'package-open',
 		label: i18n.baseText('generic.templates'),
-		position: 'bottom',
+		position: 'top',
 		available: settingsStore.isTemplatesEnabled && isTemplatesExperimentEnabled.value,
 	},
 	{
@@ -125,7 +151,7 @@ const mainMenuItems = computed<IMenuItem[]>(() => [
 		id: 'templates',
 		icon: 'package-open',
 		label: i18n.baseText('generic.templates'),
-		position: 'bottom',
+		position: 'top',
 		available:
 			settingsStore.isTemplatesEnabled &&
 			!calloutHelpers.isPreBuiltAgentsCalloutVisible.value &&
@@ -138,7 +164,7 @@ const mainMenuItems = computed<IMenuItem[]>(() => [
 		id: 'templates',
 		icon: 'package-open',
 		label: i18n.baseText('generic.templates'),
-		position: 'bottom',
+		position: 'top',
 		available:
 			settingsStore.isTemplatesEnabled &&
 			!calloutHelpers.isPreBuiltAgentsCalloutVisible.value &&
@@ -153,7 +179,7 @@ const mainMenuItems = computed<IMenuItem[]>(() => [
 		id: 'insights',
 		icon: 'chart-column-decreasing',
 		label: i18n.baseText('insights.heading'),
-		position: 'bottom',
+		position: 'top',
 		route: { to: { name: VIEWS.INSIGHTS } },
 		available:
 			settingsStore.isModuleActive('insights') &&
@@ -163,15 +189,23 @@ const mainMenuItems = computed<IMenuItem[]>(() => [
 		id: 'billing',
 		icon: 'folder',
 		label: i18n.baseText('mainSidebar.billing'),
-		position: 'bottom',
+		position: 'top',
 		route: { to: { name: VIEWS.BILLING } },
+		available: hasPermission(['authenticated']),
+	},
+	{
+		id: 'settings',
+		icon: 'cog',
+		label: i18n.baseText('mainSidebar.settings'),
+		position: 'top',
+		route: { to: { name: VIEWS.SETTINGS } },
 		available: hasPermission(['authenticated']),
 	},
 	{
 		id: 'help',
 		icon: 'circle-help',
 		label: i18n.baseText('mainSidebar.help'),
-		position: 'bottom',
+		position: 'top',
 		children: [
 			{
 				id: 'quickstart',
@@ -386,8 +420,9 @@ async function onResizeEnd() {
 				<div :class="$style.bottomMenu">
 					<div :class="$style.bottomMenuItems">
 						<template v-for="item in visibleMenuItems" :key="item.id">
+							<div v-if="item.type === 'separator'" :class="$style.menuSeparator"></div>
 							<N8nPopoverReka
-								v-if="item.children"
+								v-else-if="item.children"
 								:key="item.id"
 								side="right"
 								align="end"
@@ -509,11 +544,18 @@ async function onResizeEnd() {
 .bottomMenu {
 	display: flex;
 	flex-direction: column;
-	margin-top: auto;
+	flex: 1;
+	overflow-y: auto;
 }
 
 .bottomMenuItems {
 	padding: var(--spacing--xs);
+}
+
+.menuSeparator {
+	height: 1px;
+	background-color: var(--color--foreground);
+	margin: var(--spacing--sm) var(--spacing--2xs);
 }
 
 .popover {

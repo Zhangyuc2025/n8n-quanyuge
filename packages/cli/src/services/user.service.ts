@@ -1,17 +1,20 @@
-import type { RoleChangeRequestDto } from '@n8n/api-types';
+import type { RegisterRequestDto, RoleChangeRequestDto } from '@n8n/api-types';
 import { Logger } from '@n8n/backend-common';
 import type { PublicUser } from '@n8n/db';
-import { User, UserRepository } from '@n8n/db';
+import { GLOBAL_MEMBER_ROLE, User, UserRepository } from '@n8n/db';
 import { Service } from '@n8n/di';
 import { getGlobalScopes, type AssignableGlobalRole } from '@n8n/permissions';
 import type { IUserSettings } from 'n8n-workflow';
 import { UnexpectedError } from 'n8n-workflow';
 
+import { BadRequestError } from '@/errors/response-errors/bad-request.error';
 import { InternalServerError } from '@/errors/response-errors/internal-server.error';
 import { EventService } from '@/events/event.service';
 import type { Invitation } from '@/interfaces';
 import type { UserRequest } from '@/requests';
+import { PasswordUtility } from '@/services/password.utility';
 import { UrlService } from '@/services/url.service';
+import { UserOnboardingService } from '@/services/user-onboarding.service';
 import { UserManagementMailer } from '@/user-management/email';
 
 import { PublicApiKeyService } from './public-api-key.service';
@@ -29,6 +32,8 @@ export class UserService {
 		private readonly publicApiKeyService: PublicApiKeyService,
 		private readonly roleService: RoleService,
 		private readonly globalConfig: GlobalConfig,
+		private readonly passwordUtility: PasswordUtility,
+		private readonly userOnboardingService: UserOnboardingService,
 	) {}
 
 	async update(userId: string, data: Partial<User>) {
@@ -55,6 +60,48 @@ export class UserService {
 		}
 
 		await this.userRepository.save(user);
+	}
+
+	/**
+	 * Register a new user with public signup
+	 */
+	async registerUser(payload: RegisterRequestDto): Promise<User> {
+		const { email, password, firstName, lastName } = payload;
+
+		// Check if user already exists
+		const existingUser = await this.userRepository.findOne({ where: { email } });
+		if (existingUser) {
+			throw new BadRequestError('User with this email already exists');
+		}
+
+		// Hash password
+		const hashedPassword = await this.passwordUtility.hash(password);
+
+		// Create user with personal workspace
+		const { user } = await this.userRepository.createUserWithProject({
+			email,
+			password: hashedPassword,
+			firstName,
+			lastName,
+			role: GLOBAL_MEMBER_ROLE,
+		});
+
+		// Emit signup event
+		this.eventService.emit('user-signed-up', {
+			user,
+			userType: 'email',
+			wasDisabledLdapUser: false,
+		});
+
+		// Onboard new user (create personal workspace if not already created)
+		try {
+			await this.userOnboardingService.onboardNewUser(user.id);
+		} catch (error) {
+			this.logger.warn('Failed to onboard new user', { userId: user.id, error });
+			// Don't fail the registration, just log the error
+		}
+
+		return user;
 	}
 
 	async toPublic(

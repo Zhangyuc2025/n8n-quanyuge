@@ -103,7 +103,19 @@ const getNodeIconColor = (nodeType: IconNodeType): string | undefined => {
 	return typeof defaultColor === 'string' ? defaultColor : undefined;
 };
 
-const prefixBaseUrl = (url: string): string => useRootStore().baseUrl + url;
+const prefixBaseUrl = (url: string): string => {
+	// Handle absolute URLs and data URLs - return as-is
+	if (
+		url.startsWith('http://') ||
+		url.startsWith('https://') ||
+		url.startsWith('data:') ||
+		url.startsWith('//')
+	) {
+		return url;
+	}
+	// Only prefix relative paths with baseUrl
+	return useRootStore().baseUrl + url;
+};
 
 const getNodeBadgeIconSource = (nodeType: IconNodeType): BaseNodeIconSource | undefined => {
 	if (!('badgeIconUrl' in nodeType) || !nodeType.badgeIconUrl) return undefined;
@@ -168,6 +180,12 @@ export function getNodeIconSource(
 
 		const icon = getNodeIcon(fullNodeType, node);
 		if (!icon) return undefined;
+
+		// If icon is a data URI, it should have been handled by iconUrl path above
+		// This shouldn't happen in normal flow, but we add a safety check
+		if (icon.startsWith('data:')) {
+			return createFileIconSource(icon, fullNodeType);
+		}
 
 		const [type, iconName] = icon.split(':');
 

@@ -63,6 +63,18 @@ export function transformNodeType(
 		type,
 	};
 
+	// Debug: Check if source is preserved in properties
+	if (process.env.NODE_ENV === 'development' && node.name.includes('filter')) {
+		console.log(
+			'[transformNodeType] Node:',
+			node.name,
+			'Source in node:',
+			(node as any).source,
+			'Source in properties:',
+			(createElement.properties as any).source,
+		);
+	}
+
 	return type === 'action'
 		? (createElement as ActionCreateElement)
 		: (createElement as NodeCreateElement);

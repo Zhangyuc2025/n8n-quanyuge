@@ -61,6 +61,8 @@ const SettingsLogStreamingView = async () =>
 	await import('@/features/integrations/logStreaming.ee/views/SettingsLogStreamingView.vue');
 const SigninView = async () => await import('@/features/core/auth/views/SigninView.vue');
 const SignupView = async () => await import('@/features/core/auth/views/SignupView.vue');
+const RegisterView = async () => await import('@/features/core/auth/views/RegisterView.vue');
+const HomepageView = async () => await import('@/views/HomepageView.vue');
 const PlatformNotReadyView = async () =>
 	await import('@/features/core/auth/views/PlatformNotReadyView.vue');
 const TemplatesCollectionView = async () =>
@@ -109,7 +111,7 @@ function getTemplatesRedirect(defaultRedirect: VIEWS[keyof VIEWS]): { name: stri
 export const routes: RouteRecordRaw[] = [
 	{
 		path: '/',
-		redirect: '/home/workflows',
+		redirect: '/home',
 		meta: {
 			middleware: ['authenticated'],
 		},
@@ -441,6 +443,19 @@ export const routes: RouteRecordRaw[] = [
 		name: VIEWS.SIGNUP,
 		components: {
 			default: SignupView,
+		},
+		meta: {
+			telemetry: {
+				pageCategory: 'auth',
+			},
+			middleware: ['guest'],
+		},
+	},
+	{
+		path: '/register',
+		name: VIEWS.REGISTER,
+		components: {
+			default: RegisterView,
 		},
 		meta: {
 			telemetry: {

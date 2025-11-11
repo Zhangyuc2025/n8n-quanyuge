@@ -116,6 +116,9 @@ interface NodeView {
 }
 
 function getNodeView(node: INodeTypeDescription) {
+	// Extract source from node (may be added dynamically)
+	const source = (node as any).source;
+
 	return {
 		key: node.name,
 		type: 'node',
@@ -128,6 +131,7 @@ function getNodeView(node: INodeTypeDescription) {
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			icon: node.icon!,
 			iconUrl: node.iconUrl,
+			...(source && { source }), // Preserve source for node type badges
 		},
 	};
 }

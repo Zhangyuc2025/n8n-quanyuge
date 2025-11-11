@@ -1,6 +1,7 @@
 import { Service } from '@n8n/di';
 import { PlatformAIProviderRepository } from '@n8n/db';
 import { Cipher } from 'n8n-core';
+import { Logger } from '@n8n/backend-common';
 import { BillingService } from './billing.service';
 import { NotFoundError } from '@/errors/response-errors/not-found.error';
 import { UserError } from 'n8n-workflow';
@@ -55,10 +56,25 @@ interface ModelsConfig {
 }
 
 /**
- * AI 聊天请求接口
+ * 多模态内容类型
+ */
+type MessageContentPart =
+	| { type: 'text'; text: string }
+	| { type: 'image_url'; image_url: { url: string; detail?: 'low' | 'high' | 'auto' } };
+
+/**
+ * 消息内容（支持多模态）
+ *
+ * - 纯文本：string
+ * - 多模态（文本 + 图片）：MessageContentPart[]
+ */
+type MessageContent = string | MessageContentPart[];
+
+/**
+ * AI 聊天请求接口（支持多模态）
  */
 interface ChatCompletionRequest {
-	messages: Array<{ role: string; content: string }>;
+	messages: Array<{ role: string; content: MessageContent }>;
 	temperature?: number;
 	maxTokens?: number;
 }
@@ -83,17 +99,58 @@ export interface ChatCompletionResponse {
 }
 
 /**
+ * AI Provider 适配器接口
+ *
+ * 定义统一的 AI Provider 调用接口，屏蔽不同提供商的 API 差异
+ */
+interface AIProviderAdapter {
+	/**
+	 * 调用 AI Provider API
+	 *
+	 * @param apiKey - API 密钥
+	 * @param endpoint - API 端点
+	 * @param modelId - 模型 ID
+	 * @param request - 聊天请求
+	 * @returns 标准化的响应
+	 */
+	call(
+		apiKey: string,
+		endpoint: string,
+		modelId: string,
+		request: ChatCompletionRequest,
+	): Promise<ChatCompletionResponse>;
+}
+
+/**
  * 平台 AI 服务提供商管理服务
  *
  * 负责管理平台托管的 AI 服务提供商（OpenAI、Anthropic 等）的配置、调用和计费
  */
 @Service()
 export class PlatformAIProviderService {
+	/** Provider 适配器缓存 */
+	private readonly adapters: Map<string, AIProviderAdapter> = new Map();
+
 	constructor(
+		private readonly logger: Logger,
 		private readonly providerRepository: PlatformAIProviderRepository,
 		private readonly cipher: Cipher,
 		private readonly billingService: BillingService,
-	) {}
+	) {
+		// 初始化 Provider 适配器
+		this.initializeAdapters();
+	}
+
+	/**
+	 * 初始化所有 Provider 适配器
+	 */
+	private initializeAdapters() {
+		this.adapters.set('openai', new OpenAIAdapter(this.logger));
+		this.adapters.set('anthropic', new AnthropicAdapter(this.logger));
+		this.adapters.set('google', new GoogleAdapter(this.logger));
+		this.adapters.set('azure', new AzureOpenAIAdapter(this.logger));
+		// 可以继续添加其他 Provider
+	}
 
 	/**
 	 * 获取所有活跃的 AI 服务提供商
@@ -203,52 +260,125 @@ export class PlatformAIProviderService {
 	 * @returns API 响应
 	 * @throws {AIProviderError} 当 API 调用失败时
 	 */
+	/**
+	 * 调用 LiteLLM Proxy 执行 AI 请求
+	 *
+	 * LiteLLM Proxy 提供统一的 OpenAI 格式 API，自动处理：
+	 * - 不同提供商的 API 格式转换
+	 * - 请求重试和错误处理
+	 * - 负载均衡和模型回退
+	 * - 缓存和速率限制
+	 *
+	 * @param modelId - 模型 ID（配置在 config.yaml 的 model_name）
+	 * @param request - Chat completion 请求（支持多模态）
+	 * @returns AI 响应
+	 */
 	private async callProviderAPI(
-		endpoint: string,
-		apiKey: string,
+		endpoint: string, // 已废弃，保留参数为了兼容性
+		apiKey: string, // 已废弃，LiteLLM Proxy 从环境变量读取
 		modelId: string,
 		request: ChatCompletionRequest,
 	): Promise<ChatCompletionResponse> {
 		try {
-			const response = await fetch(`${endpoint}/v1/chat/completions`, {
+			// 调用 LiteLLM Proxy（标准 OpenAI 格式）
+			const response = await fetch(`${this.litellmProxyUrl}/v1/chat/completions`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
-					Authorization: `Bearer ${apiKey}`,
+					// LiteLLM Proxy 可选：设置代理 API Key（如果启用了认证）
+					// Authorization: `Bearer ${process.env.LITELLM_MASTER_KEY || ''}`,
 				},
 				body: JSON.stringify({
 					model: modelId,
 					messages: request.messages,
-					temperature: request.temperature,
+					temperature: request.temperature ?? 0.7,
 					max_tokens: request.maxTokens,
+					// 其他 OpenAI 兼容参数
+					stream: false, // 当前不支持流式响应
 				}),
 			});
 
 			if (!response.ok) {
 				const errorText = await response.text();
-				throw new AIProviderError(`Provider API error: ${response.statusText} - ${errorText}`);
+				this.logger.error('LiteLLM Proxy API error', {
+					status: response.status,
+					statusText: response.statusText,
+					error: errorText,
+					model: modelId,
+				});
+				throw new AIProviderError(
+					`LiteLLM Proxy error (${response.status}): ${response.statusText} - ${errorText}`,
+				);
 			}
 
-			return (await response.json()) as ChatCompletionResponse;
+			const result = (await response.json()) as ChatCompletionResponse;
+
+			this.logger.debug('LiteLLM Proxy call successful', {
+				model: modelId,
+				promptTokens: result.usage.promptTokens,
+				completionTokens: result.usage.completionTokens,
+			});
+
+			return result;
 		} catch (error) {
 			if (error instanceof AIProviderError) {
 				throw error;
 			}
-			throw new AIProviderError(`Failed to call AI provider: ${(error as Error).message}`);
+
+			this.logger.error('Failed to call LiteLLM Proxy', {
+				error: error instanceof Error ? error.message : 'Unknown error',
+				model: modelId,
+				proxyUrl: this.litellmProxyUrl,
+			});
+
+			throw new AIProviderError(
+				`Failed to call AI model through LiteLLM Proxy: ${(error as Error).message}`,
+			);
 		}
 	}
 
 	/**
-	 * 预估 token 数量（简单实现）
+	 * 预估 token 数量（支持多模态）
 	 *
-	 * 粗略估算：平均 1 个 token ≈ 0.75 个单词 ≈ 4 个字符
+	 * 文本估算：平均 1 个 token ≈ 0.75 个单词 ≈ 4 个字符
+	 * 图片估算：
+	 * - detail=low: 85 tokens
+	 * - detail=high: 根据图片尺寸，512px 方块约 170 tokens，最多 1280 tokens
+	 * - detail=auto: 默认按 high 估算（保守）
 	 *
 	 * @param messages - 消息列表
 	 * @returns 估算的 token 数量
 	 */
-	private estimateTokens(messages: Array<{ role: string; content: string }>): number {
-		const totalChars = messages.reduce((sum, msg) => sum + msg.content.length, 0);
-		return Math.ceil(totalChars / 4);
+	private estimateTokens(messages: Array<{ role: string; content: MessageContent }>): number {
+		let totalTokens = 0;
+
+		for (const msg of messages) {
+			if (typeof msg.content === 'string') {
+				// 纯文本消息
+				totalTokens += Math.ceil(msg.content.length / 4);
+			} else {
+				// 多模态消息（数组）
+				for (const part of msg.content) {
+					if (part.type === 'text') {
+						totalTokens += Math.ceil(part.text.length / 4);
+					} else if (part.type === 'image_url') {
+						// 图片 token 估算
+						const detail = part.image_url.detail || 'auto';
+						if (detail === 'low') {
+							totalTokens += 85;
+						} else {
+							// high 或 auto：保守估算 800 tokens（中等尺寸图片）
+							totalTokens += 800;
+						}
+					}
+				}
+			}
+		}
+
+		// 加上角色和格式开销（每条消息约 4 个 token）
+		totalTokens += messages.length * 4;
+
+		return totalTokens;
 	}
 
 	/**
@@ -364,6 +494,19 @@ export class PlatformAIProviderService {
 		provider.enabled = false;
 
 		await this.providerRepository.save(provider);
+	}
+
+	/**
+	 * 硬删除 AI 服务提供商（管理员功能，永久删除）
+	 *
+	 * @param providerKey - 提供商标识
+	 * @throws {ProviderNotFoundError} 当提供商不存在时
+	 */
+	async hardDeleteProvider(providerKey: string) {
+		const provider = await this.getProvider(providerKey);
+
+		// 硬删除：从数据库中永久删除
+		await this.providerRepository.remove(provider);
 	}
 
 	/**

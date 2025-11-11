@@ -19,7 +19,21 @@ onMounted(async () => {
 
 	// If no current workspace is set, default to personal workspace
 	if (!projectsStore.currentProject && projectsStore.personalProject) {
+		console.log('[WorkspaceSwitcher] Setting personal project as current workspace');
 		projectsStore.setCurrentProject(projectsStore.personalProject);
+		console.log(
+			'[WorkspaceSwitcher] After setting - currentProject:',
+			projectsStore.currentProject,
+		);
+		console.log(
+			'[WorkspaceSwitcher] After setting - currentWorkspaceId:',
+			projectsStore.currentWorkspaceId,
+		);
+	} else {
+		console.log('[WorkspaceSwitcher] Condition not met:', {
+			hasCurrentProject: !!projectsStore.currentProject,
+			hasPersonalProject: !!projectsStore.personalProject,
+		});
 	}
 });
 

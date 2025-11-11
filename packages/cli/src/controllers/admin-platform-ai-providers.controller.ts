@@ -1,11 +1,11 @@
-import { AuthenticatedRequest, GLOBAL_ADMIN_ROLE } from '@n8n/db';
+import { AuthenticatedRequest } from '@n8n/db';
 import { RestController, Get, Post, Patch, Delete, Param, Body, Query } from '@n8n/decorators';
 import type { Response } from 'express';
 
 import { PlatformAIProviderService } from '@/services/platform-ai-provider.service';
 import { BadRequestError } from '@/errors/response-errors/bad-request.error';
-import { ForbiddenError } from '@/errors/response-errors/forbidden.error';
 import { NotFoundError } from '@/errors/response-errors/not-found.error';
+import { assertPlatformAdmin } from '@/auth/platform-admin.guard';
 
 /**
  * Query DTOs for AdminPlatformAIProvidersController
@@ -34,13 +34,11 @@ export class AdminPlatformAIProvidersController {
 	constructor(private readonly providerService: PlatformAIProviderService) {}
 
 	/**
-	 * 检查管理员权限
+	 * 检查平台管理员权限
 	 * @private
 	 */
 	private checkAdminPermission(req: AuthenticatedRequest): void {
-		if (req.user.role.slug !== GLOBAL_ADMIN_ROLE.slug) {
-			throw new ForbiddenError('Only administrators can manage AI providers');
-		}
+		assertPlatformAdmin(req.user);
 	}
 
 	/**
@@ -196,8 +194,35 @@ export class AdminPlatformAIProvidersController {
 	}
 
 	/**
+	 * PATCH /admin/platform-ai-providers/:providerKey/disable
+	 * 停用 AI 服务提供商（软删除）
+	 *
+	 * @param providerKey - 提供商标识
+	 * @returns 成功标志
+	 */
+	@Patch('/:providerKey/disable')
+	async disableProvider(
+		req: AuthenticatedRequest,
+		_res: Response,
+		@Param('providerKey') providerKey: string,
+	) {
+		this.checkAdminPermission(req);
+
+		// 获取提供商
+		const provider = await this.providerService.getProvider(providerKey);
+
+		if (!provider) {
+			throw new NotFoundError(`AI provider '${providerKey}' not found`);
+		}
+
+		await this.providerService.deleteProvider(providerKey);
+
+		return { success: true };
+	}
+
+	/**
 	 * DELETE /admin/platform-ai-providers/:providerKey
-	 * 删除/禁用 AI 服务提供商
+	 * 永久删除 AI 服务提供商（硬删除）
 	 *
 	 * @param providerKey - 提供商标识
 	 * @returns 成功标志
@@ -217,7 +242,7 @@ export class AdminPlatformAIProvidersController {
 			throw new NotFoundError(`AI provider '${providerKey}' not found`);
 		}
 
-		await this.providerService.deleteProvider(providerKey);
+		await this.providerService.hardDeleteProvider(providerKey);
 
 		return { success: true };
 	}

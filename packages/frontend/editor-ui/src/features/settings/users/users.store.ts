@@ -215,6 +215,20 @@ export const useUsersStore = defineStore(STORES.USERS, () => {
 		await setCurrentUser(user);
 	};
 
+	const registerWithCreds = async (params: {
+		email: string;
+		firstName: string;
+		lastName: string;
+		password: string;
+	}) => {
+		const user = await usersApi.register(rootStore.restApiContext, params);
+		if (!user) {
+			return;
+		}
+
+		await setCurrentUser(user);
+	};
+
 	const registerLoginHook = (hook: LoginHook) => {
 		loginHooks.value.push(hook);
 	};
@@ -449,6 +463,7 @@ export const useUsersStore = defineStore(STORES.USERS, () => {
 		initialize,
 		setPersonalizationAnswers,
 		loginWithCreds,
+		registerWithCreds,
 		logout,
 		registerLoginHook,
 		registerLogoutHook,

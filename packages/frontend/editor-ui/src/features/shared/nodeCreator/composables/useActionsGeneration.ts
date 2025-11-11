@@ -350,6 +350,21 @@ export function useActionsGenerator() {
 			codex,
 		} = node;
 
+		// Extract source from node (may be added dynamically)
+		const source = (node as any).source;
+
+		// Debug: Log nodes that don't have source
+		if (process.env.NODE_ENV === 'development' && !source) {
+			if (name.includes('langchain') || name === 'n8n-nodes-base.aiTransform') {
+				console.log(
+					'[getSimplifiedNodeType] Node WITHOUT source:',
+					name,
+					'Has source in node?',
+					(node as any).source,
+				);
+			}
+		}
+
 		return {
 			displayName,
 			defaults,
@@ -362,11 +377,25 @@ export function useActionsGenerator() {
 			badgeIconUrl,
 			outputs,
 			codex,
+			...(source && { source }),
 		};
 	}
 
 	function generateMergedNodesAndActions(nodeTypes: INodeTypeDescription[]) {
 		const evaluationStore = useEvaluationStore();
+
+		// Debug: Check if input nodeTypes have source
+		if (process.env.NODE_ENV === 'development') {
+			const sampleInputNodes = nodeTypes.filter(
+				(n) => n.name.includes('langchain.agent') || n.name === 'n8n-nodes-base.aiTransform',
+			);
+			if (sampleInputNodes.length > 0) {
+				console.log(
+					'[generateMergedNodesAndActions] INPUT nodeTypes with source?',
+					sampleInputNodes.map((n) => ({ name: n.name, source: (n as any).source })),
+				);
+			}
+		}
 
 		const visibleNodeTypes = nodeTypes.filter((node) => {
 			if (evaluationStore.isEvaluationEnabled) {

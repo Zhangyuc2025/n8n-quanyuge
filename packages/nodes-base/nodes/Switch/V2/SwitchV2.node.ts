@@ -19,7 +19,7 @@ export class SwitchV2 implements INodeType {
 			...baseDescription,
 			version: [2],
 			defaults: {
-				name: '分支',
+				name: 'Switch',
 				color: '#506000',
 			},
 			inputs: [NodeConnectionTypes.Main],

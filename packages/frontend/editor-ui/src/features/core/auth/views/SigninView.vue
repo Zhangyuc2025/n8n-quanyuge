@@ -54,6 +54,7 @@ const emailLabel = computed(() => {
 const formConfig: IFormBoxConfig = reactive({
 	title: locale.baseText('auth.signin'),
 	buttonText: locale.baseText('auth.signin'),
+	secondaryButtonText: locale.baseText('auth.register.noAccount'),
 	redirectText: locale.baseText('forgotPassword'),
 	redirectLink: '/forgot-password',
 	inputs: [
@@ -196,6 +197,10 @@ const cacheCredentials = (form: EmailOrLdapLoginIdAndPassword) => {
 	emailOrLdapLoginId.value = form.emailOrLdapLoginId;
 	password.value = form.password;
 };
+
+const onSecondaryClick = () => {
+	void router.push('/register');
+};
 </script>
 
 <template>
@@ -207,6 +212,7 @@ const cacheCredentials = (form: EmailOrLdapLoginIdAndPassword) => {
 			:with-sso="true"
 			data-test-id="signin-form"
 			@submit="onEmailPasswordSubmitted"
+			@secondary-click="onSecondaryClick"
 		/>
 		<MfaView
 			v-if="showMfaView"

@@ -26,7 +26,7 @@ import {
 	shouldShowCommunityNodeDetails,
 } from '../../nodeCreator.utils';
 
-import { N8nIcon, N8nNodeCreatorNode, N8nTooltip } from '@n8n/design-system';
+import { N8nBadge, N8nIcon, N8nNodeCreatorNode, N8nTooltip } from '@n8n/design-system';
 export interface Props {
 	nodeType: SimplifiedNodeType;
 	subcategory?: string;
@@ -138,6 +138,39 @@ const tag = computed(() => {
 	return undefined;
 });
 
+const nodeSourceBadge = computed(() => {
+	// Access source from nodeType (may be on the root or nested)
+	const source = (props.nodeType as any).source;
+
+	// Debug: log source value
+	if (process.env.NODE_ENV === 'development') {
+		console.log('[NodeItem] Node:', props.nodeType.name, 'Source:', source);
+	}
+
+	if (!source) return null;
+
+	const badgeConfig = {
+		builtin: {
+			text: i18n.baseText('nodeSource.builtin'),
+			theme: 'secondary' as const,
+		},
+		platform: {
+			text: i18n.baseText('nodeSource.platform'),
+			theme: 'success' as const,
+		},
+		thirdParty: {
+			text: i18n.baseText('nodeSource.thirdParty'),
+			theme: 'warning' as const,
+		},
+		custom: {
+			text: i18n.baseText('nodeSource.custom'),
+			theme: 'primary' as const,
+		},
+	};
+
+	return badgeConfig[source] || null;
+});
+
 function onDragStart(event: DragEvent): void {
 	if (event.dataTransfer) {
 		event.dataTransfer.effectAllowed = 'copy';
@@ -168,87 +201,109 @@ function onCommunityNodeTooltipClick(event: MouseEvent) {
 
 <template>
 	<!-- Node Item is draggable only if it doesn't contain actions -->
-	<N8nNodeCreatorNode
-		:draggable="!showActionArrow"
-		:class="$style.nodeItem"
-		:description="description"
-		:title="displayName"
-		:show-action-arrow="showActionArrow"
-		:is-trigger="isTrigger"
-		:is-official="isOfficial"
-		:data-test-id="dataTestId"
-		:tag="tag"
-		@dragstart="onDragStart"
-		@dragend="onDragEnd"
-	>
-		<template #icon>
-			<div v-if="isSubNodeType" :class="$style.subNodeBackground"></div>
-			<NodeIcon
-				:class="$style.nodeIcon"
-				:node-type="nodeType"
-				color-default="var(--color--foreground--shade-2)"
-			/>
-		</template>
-
-		<template v-if="isOfficial" #extraDetails>
-			<N8nTooltip placement="top" :show-after="500">
-				<template #content>
-					{{ i18n.baseText('generic.officialNode.tooltip', { interpolate: { author: author } }) }}
-				</template>
-				<OfficialIcon :class="[$style.icon, $style.official]" />
-			</N8nTooltip>
-		</template>
-
-		<template
-			v-else-if="
-				isCommunityNode && !isCommunityNodePreview && !activeViewStack?.communityNodeDetails
-			"
-			#extraDetails
+	<div :class="$style.nodeItemWrapper">
+		<N8nNodeCreatorNode
+			:draggable="!showActionArrow"
+			:class="$style.nodeItem"
+			:description="description"
+			:title="displayName"
+			:show-action-arrow="showActionArrow"
+			:is-trigger="isTrigger"
+			:is-official="isOfficial"
+			:data-test-id="dataTestId"
+			:tag="tag"
+			@dragstart="onDragStart"
+			@dragend="onDragEnd"
 		>
-			<N8nTooltip placement="top" :show-after="500">
-				<template #content>
-					<p
-						v-n8n-html="
-							i18n.baseText('generic.communityNode.tooltip', {
-								interpolate: {
-									packageName: nodeType.name.split('.')[0],
-									docURL: COMMUNITY_NODES_INSTALLATION_DOCS_URL,
-								},
-							})
-						"
-						:class="$style.communityNodeIcon"
-						@click="onCommunityNodeTooltipClick"
-					/>
-				</template>
-				<N8nIcon size="small" :class="$style.icon" icon="box" />
-			</N8nTooltip>
-		</template>
-		<template #dragContent>
-			<div
-				v-show="dragging"
-				ref="draggableDataTransfer"
-				:class="$style.draggable"
-				:style="draggableStyle"
-			>
+			<template #icon>
+				<div v-if="isSubNodeType" :class="$style.subNodeBackground"></div>
 				<NodeIcon
+					:class="$style.nodeIcon"
 					:node-type="nodeType"
-					:size="40"
-					:shrink="false"
 					color-default="var(--color--foreground--shade-2)"
-					@click.capture.stop
 				/>
-			</div>
-		</template>
-	</N8nNodeCreatorNode>
+			</template>
+
+			<template v-if="isOfficial" #extraDetails>
+				<N8nTooltip placement="top" :show-after="500">
+					<template #content>
+						{{ i18n.baseText('generic.officialNode.tooltip', { interpolate: { author: author } }) }}
+					</template>
+					<OfficialIcon :class="[$style.icon, $style.official]" />
+				</N8nTooltip>
+			</template>
+
+			<template
+				v-else-if="
+					isCommunityNode && !isCommunityNodePreview && !activeViewStack?.communityNodeDetails
+				"
+				#extraDetails
+			>
+				<N8nTooltip placement="top" :show-after="500">
+					<template #content>
+						<p
+							v-n8n-html="
+								i18n.baseText('generic.communityNode.tooltip', {
+									interpolate: {
+										packageName: nodeType.name.split('.')[0],
+										docURL: COMMUNITY_NODES_INSTALLATION_DOCS_URL,
+									},
+								})
+							"
+							:class="$style.communityNodeIcon"
+							@click="onCommunityNodeTooltipClick"
+						/>
+					</template>
+					<N8nIcon size="small" :class="$style.icon" icon="box" />
+				</N8nTooltip>
+			</template>
+
+			<template #dragContent>
+				<div
+					v-show="dragging"
+					ref="draggableDataTransfer"
+					:class="$style.draggable"
+					:style="draggableStyle"
+				>
+					<NodeIcon
+						:node-type="nodeType"
+						:size="40"
+						:shrink="false"
+						color-default="var(--color--foreground--shade-2)"
+						@click.capture.stop
+					/>
+				</div>
+			</template>
+		</N8nNodeCreatorNode>
+
+		<!-- Source badge displayed on the right side -->
+		<N8nBadge
+			v-if="nodeSourceBadge"
+			:theme="nodeSourceBadge.theme"
+			size="small"
+			:class="$style.sourceBadge"
+		>
+			{{ nodeSourceBadge.text }}
+		</N8nBadge>
+	</div>
 </template>
 
 <style lang="scss" module>
+.nodeItemWrapper {
+	display: flex;
+	align-items: center;
+	gap: var(--spacing--xs);
+	width: 100%;
+}
+
 .nodeItem {
 	--trigger-icon--color--background: #{$trigger-icon-background-color};
 	--trigger-icon--border-color: #{$trigger-icon-border-color};
 	margin-left: 15px;
 	margin-right: 12px;
 	user-select: none;
+	flex: 1;
+	min-width: 0;
 }
 
 .nodeIcon {
@@ -296,5 +351,13 @@ function onCommunityNodeTooltipClick(event: MouseEvent) {
 	&.official {
 		width: 14px;
 	}
+}
+
+.sourceBadge {
+	font-size: var(--font-size--3xs);
+	padding: var(--spacing--5xs) var(--spacing--3xs);
+	flex-shrink: 0;
+	margin-right: var(--spacing--sm);
+	white-space: nowrap;
 }
 </style>

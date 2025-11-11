@@ -4,12 +4,11 @@ import {
 	ProjectRepository,
 	UserRepository,
 	AuthenticatedRequest,
-	GLOBAL_ADMIN_ROLE,
 } from '@n8n/db';
 import { Get, Query, RestController } from '@n8n/decorators';
 import type { Response } from 'express';
 
-import { ForbiddenError } from '@/errors/response-errors/forbidden.error';
+import { assertPlatformAdmin } from '@/auth/platform-admin.guard';
 import { BadRequestError } from '@/errors/response-errors/bad-request.error';
 
 /**
@@ -57,9 +56,7 @@ export class AdminStatsController {
 	 * @throws ForbiddenError 如果不是管理员
 	 */
 	private checkAdminPermission(req: AuthenticatedRequest): void {
-		if (req.user.role.slug !== GLOBAL_ADMIN_ROLE.slug) {
-			throw new ForbiddenError('仅管理员可访问此接口');
-		}
+		assertPlatformAdmin(req.user);
 	}
 
 	/**

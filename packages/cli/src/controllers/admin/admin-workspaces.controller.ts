@@ -3,15 +3,14 @@ import {
 	WorkspaceBalanceRepository,
 	RechargeRecordRepository,
 	AuthenticatedRequest,
-	GLOBAL_ADMIN_ROLE,
 } from '@n8n/db';
 import { Body, Get, Param, Patch, Post, Query, RestController } from '@n8n/decorators';
 // eslint-disable-next-line n8n-local-rules/misplaced-n8n-typeorm-import
 import { Like } from '@n8n/typeorm';
 import type { Response } from 'express';
 
+import { assertPlatformAdmin } from '@/auth/platform-admin.guard';
 import { BadRequestError } from '@/errors/response-errors/bad-request.error';
-import { ForbiddenError } from '@/errors/response-errors/forbidden.error';
 import { BillingService } from '@/services/billing.service';
 import { WorkspaceContextService } from '@/services/workspace-context.service';
 
@@ -101,9 +100,7 @@ export class AdminWorkspacesController {
 	 * @throws {ForbiddenError} 当用户不是管理员时
 	 */
 	private verifyAdminAccess(req: AuthenticatedRequest): void {
-		if (req.user.role.slug !== GLOBAL_ADMIN_ROLE.slug) {
-			throw new ForbiddenError('仅管理员可以访问此接口');
-		}
+		assertPlatformAdmin(req.user);
 	}
 
 	/**

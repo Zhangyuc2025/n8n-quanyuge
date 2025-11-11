@@ -1,10 +1,10 @@
-import { AuthenticatedRequest, GLOBAL_ADMIN_ROLE, PlatformRagServiceRepository } from '@n8n/db';
+import { AuthenticatedRequest, PlatformRagServiceRepository } from '@n8n/db';
 import { RestController, Get, Post, Patch, Delete, Param, Body, Query } from '@n8n/decorators';
 import type { Response } from 'express';
 
 import { BadRequestError } from '@/errors/response-errors/bad-request.error';
-import { ForbiddenError } from '@/errors/response-errors/forbidden.error';
 import { NotFoundError } from '@/errors/response-errors/not-found.error';
+import { assertPlatformAdmin } from '@/auth/platform-admin.guard';
 
 /**
  * Query DTOs for AdminRagServicesController
@@ -33,13 +33,11 @@ export class AdminRagServicesController {
 	constructor(private readonly platformRagServiceRepository: PlatformRagServiceRepository) {}
 
 	/**
-	 * 检查管理员权限
+	 * 检查平台管理员权限
 	 * @private
 	 */
 	private checkAdminPermission(req: AuthenticatedRequest): void {
-		if (req.user.role.slug !== GLOBAL_ADMIN_ROLE.slug) {
-			throw new ForbiddenError('Only administrators can manage RAG services');
-		}
+		assertPlatformAdmin(req.user);
 	}
 
 	/**

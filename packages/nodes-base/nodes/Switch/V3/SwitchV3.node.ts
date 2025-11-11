@@ -54,7 +54,7 @@ export class SwitchV3 implements INodeType {
 			subtitle: `=mode: {{(${capitalize})($parameter["mode"])}}`,
 			version: [3, 3.1, 3.2, 3.3],
 			defaults: {
-				name: '分支',
+				name: 'Switch',
 				color: '#506000',
 			},
 			inputs: [NodeConnectionTypes.Main],

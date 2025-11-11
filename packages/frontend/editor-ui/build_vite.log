@@ -1,0 +1,3 @@
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command "build:vite" not found
+
+Did you mean "pnpm build:coverage"?

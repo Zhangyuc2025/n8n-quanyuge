@@ -16,6 +16,7 @@ export const enum VIEWS {
 	WORKFLOW_ONBOARDING = 'WorkflowOnboarding',
 	SIGNIN = 'SigninView',
 	SIGNUP = 'SignupView',
+	REGISTER = 'RegisterView',
 	SIGNOUT = 'SignoutView',
 	PLATFORM_NOT_READY = 'PlatformNotReadyView',
 	FORGOT_PASSWORD = 'ForgotMyPasswordView',

@@ -92,17 +92,26 @@ export class AvailableNodesController {
 		// 4. 合并所有节点
 		const allNodes = [
 			...builtInNodes,
-			...platformNodes.map((node) => ({
-				nodeKey: node.nodeKey,
-				nodeName: node.nodeName,
-				nodeType: node.nodeType,
-				category: node.category,
-				description: node.description,
-				iconUrl: node.iconUrl,
-				version: node.version,
-				source: 'platform' as const,
-				needsConfig: node.isBillable || false,
-			})),
+			...platformNodes.map((node) => {
+				// 根据 sourceType 映射为前端使用的 source 值
+				// platform_official -> platform, third_party -> thirdParty
+				let source: 'platform' | 'thirdParty' = 'platform';
+				if (node.sourceType === 'third_party') {
+					source = 'thirdParty';
+				}
+
+				return {
+					nodeKey: node.nodeKey,
+					nodeName: node.nodeName,
+					nodeType: node.nodeType,
+					category: node.category,
+					description: node.description,
+					iconUrl: node.iconUrl,
+					version: node.version,
+					source,
+					needsConfig: node.isBillable || false,
+				};
+			}),
 			...customNodes.map((node) => ({
 				nodeKey: node.nodeKey,
 				nodeName: node.nodeName,

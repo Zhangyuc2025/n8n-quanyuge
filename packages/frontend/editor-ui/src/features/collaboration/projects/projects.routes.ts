@@ -10,6 +10,7 @@ const ProjectSettings = async () => await import('./views/ProjectSettings.vue');
 const ExecutionsView = async () =>
 	await import('@/features/execution/executions/views/ExecutionsView.vue');
 const ProjectVariables = async () => await import('./views/ProjectVariables.vue');
+const HomepageView = async () => await import('@/views/HomepageView.vue');
 
 const checkProjectAvailability = (to?: RouteLocationNormalized): boolean => {
 	if (!to?.params.projectId) {
@@ -84,9 +85,6 @@ const commonChildRouteExtensions = {
 			name: VIEWS.WORKFLOWS,
 		},
 		{
-			name: VIEWS.CREDENTIALS,
-		},
-		{
 			name: VIEWS.EXECUTIONS,
 		},
 		{
@@ -99,9 +97,6 @@ const commonChildRouteExtensions = {
 	projects: [
 		{
 			name: VIEWS.PROJECTS_WORKFLOWS,
-		},
-		{
-			name: VIEWS.PROJECTS_CREDENTIALS,
 		},
 		{
 			name: VIEWS.PROJECTS_EXECUTIONS,
@@ -163,15 +158,27 @@ export const projectsRoutes: RouteRecordRaw[] = [
 	},
 	{
 		path: '/home',
-		name: VIEWS.HOMEPAGE,
 		meta: {
 			middleware: ['authenticated'],
 		},
-		redirect: '/home/workflows',
-		children: commonChildRoutes.map((route, idx) => ({
-			...route,
-			name: commonChildRouteExtensions.home[idx].name,
-		})),
+		children: [
+			{
+				path: '',
+				name: VIEWS.HOMEPAGE,
+				components: {
+					default: HomepageView,
+					header: MainHeader,
+					sidebar: MainSidebar,
+				},
+				meta: {
+					middleware: ['authenticated'],
+				},
+			},
+			...commonChildRoutes.map((route, idx) => ({
+				...route,
+				name: commonChildRouteExtensions.home[idx].name,
+			})),
+		],
 	},
 	{
 		path: '/shared',

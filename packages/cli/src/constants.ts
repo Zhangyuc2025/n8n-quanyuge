@@ -52,6 +52,7 @@ export const RESPONSE_ERROR_MESSAGES = {
 } as const;
 
 export const AUTH_COOKIE_NAME = 'n8n-auth';
+export const ADMIN_AUTH_COOKIE_NAME = 'n8n-admin-auth';
 export const OIDC_STATE_COOKIE_NAME = 'n8n-oidc-state';
 export const OIDC_NONCE_COOKIE_NAME = 'n8n-oidc-nonce';
 

@@ -88,12 +88,25 @@ export const useNodeTypesStore = defineStore(STORES.NODE_TYPES, () => {
 	});
 
 	const allLatestNodeTypes = computed(() => {
-		return Object.values(nodeTypes.value)
+		const result = Object.values(nodeTypes.value)
 			.map((nodeVersions) => {
 				const versionNumbers = Object.keys(nodeVersions).map(Number);
 				return nodeVersions[Math.max(...versionNumbers)];
 			})
 			.filter(Boolean);
+
+		// Debug: Check if source is preserved
+		if (process.env.NODE_ENV === 'development' && result.length > 0) {
+			const sampleNode = result.find((n) => n.name.includes('filter'));
+			if (sampleNode) {
+				console.log('[allLatestNodeTypes] Sample node:', {
+					name: sampleNode.name,
+					source: (sampleNode as any).source,
+				});
+			}
+		}
+
+		return result;
 	});
 
 	// Nodes defined with `hidden: true` that are still shown if their modules are enabled
@@ -186,10 +199,44 @@ export const useNodeTypesStore = defineStore(STORES.NODE_TYPES, () => {
 	});
 
 	const visibleNodeTypes = computed(() => {
-		return allLatestNodeTypes.value
+		const beforeFilter = allLatestNodeTypes.value
 			.concat(officialCommunityNodeTypes.value)
-			.concat(moduleEnabledNodeTypes.value)
-			.filter((nodeType) => !nodeType.hidden);
+			.concat(moduleEnabledNodeTypes.value);
+
+		// Debug: Check langchain nodes BEFORE filtering
+		if (process.env.NODE_ENV === 'development') {
+			const langchainNode = beforeFilter.find((n) => n.name === '@n8n/n8n-nodes-langchain.agent');
+			if (langchainNode) {
+				console.log('[visibleNodeTypes BEFORE filter] langchain.agent found:', {
+					name: langchainNode.name,
+					hidden: langchainNode.hidden,
+					source: (langchainNode as any).source,
+				});
+			} else {
+				console.log('[visibleNodeTypes BEFORE filter] langchain.agent NOT FOUND in combined list');
+			}
+		}
+
+		const result = beforeFilter.filter((nodeType) => !nodeType.hidden);
+
+		// Debug: Check if source is preserved in visible node types AFTER filtering
+		if (process.env.NODE_ENV === 'development' && result.length > 0) {
+			const sampleNodes = [
+				result.find((n) => n.name === 'n8n-nodes-base.filter'),
+				result.find((n) => n.name === 'n8n-nodes-base.manualTrigger'),
+				result.find((n) => n.name === '@n8n/n8n-nodes-langchain.agent'),
+			].filter(Boolean);
+
+			console.log(
+				'[visibleNodeTypes AFTER filter] Found nodes:',
+				sampleNodes.map((n) => n?.name),
+			);
+			sampleNodes.forEach((node) => {
+				console.log('[visibleNodeTypes]', node?.name, 'source:', (node as any)?.source);
+			});
+		}
+
+		return result;
 	});
 
 	const nativelyNumberSuffixedDefaults = computed(() => {
@@ -332,6 +379,9 @@ export const useNodeTypesStore = defineStore(STORES.NODE_TYPES, () => {
 				Object.assign(nodeDescription, { iconUrl: availableNode.iconUrl });
 			}
 
+			// Preserve source information for displaying node type badges
+			Object.assign(nodeDescription, { source: availableNode.source });
+
 			return nodeDescription as INodeTypeDescription;
 		} catch (error) {
 			console.error(`Failed to convert available node ${availableNode.nodeName}:`, error);
@@ -390,9 +440,23 @@ export const useNodeTypesStore = defineStore(STORES.NODE_TYPES, () => {
 		const nodeTypes = await nodeTypesApi.getNodeTypes(rootStore.baseUrl);
 
 		if (nodeTypes.length) {
-			setNodeTypes(nodeTypes);
+			// Add source field to builtin nodes
+			const nodeTypesWithSource = nodeTypes.map((nodeType) => ({
+				...nodeType,
+				source: 'builtin' as const,
+			}));
+
+			// Debug: Check if source is added
+			if (process.env.NODE_ENV === 'development') {
+				console.log('[nodeTypes.store] Sample builtin node with source:', {
+					name: nodeTypesWithSource[0].name,
+					source: (nodeTypesWithSource[0] as any).source,
+				});
+			}
+
+			setNodeTypes(nodeTypesWithSource);
 			// Store builtin nodes by source
-			nodesBySource.value.set('builtin', nodeTypes);
+			nodesBySource.value.set('builtin', nodeTypesWithSource);
 		}
 
 		// 2. 加载动态 AI Chat Model 节点
@@ -426,6 +490,7 @@ export const useNodeTypesStore = defineStore(STORES.NODE_TYPES, () => {
 
 				// Convert platform and custom nodes to INodeTypeDescription
 				const platformNodes: INodeTypeDescription[] = [];
+				const thirdPartyNodes: INodeTypeDescription[] = [];
 				const customNodes: INodeTypeDescription[] = [];
 
 				for (const node of availableNodes) {
@@ -438,6 +503,8 @@ export const useNodeTypesStore = defineStore(STORES.NODE_TYPES, () => {
 					if (nodeDescription) {
 						if (node.source === 'platform') {
 							platformNodes.push(nodeDescription);
+						} else if (node.source === 'thirdParty') {
+							thirdPartyNodes.push(nodeDescription);
 						} else if (node.source === 'custom') {
 							customNodes.push(nodeDescription);
 						}
@@ -448,6 +515,12 @@ export const useNodeTypesStore = defineStore(STORES.NODE_TYPES, () => {
 				if (platformNodes.length) {
 					setNodeTypes(platformNodes);
 					nodesBySource.value.set('platform', platformNodes);
+				}
+
+				// Add third-party nodes to store
+				if (thirdPartyNodes.length) {
+					setNodeTypes(thirdPartyNodes);
+					nodesBySource.value.set('thirdParty', thirdPartyNodes);
 				}
 
 				// Add custom nodes to store
