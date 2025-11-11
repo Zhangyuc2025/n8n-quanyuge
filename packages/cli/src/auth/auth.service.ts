@@ -1,9 +1,9 @@
-import { AUTH_COOKIE_NAME } from '@/constants';
+import { AUTH_COOKIE_NAME, ADMIN_AUTH_COOKIE_NAME } from '@/constants';
 import { Logger } from '@n8n/backend-common';
 import { GlobalConfig } from '@n8n/config';
 import { Time } from '@n8n/constants';
-import type { AuthenticatedRequest, User } from '@n8n/db';
-import { InvalidAuthTokenRepository, UserRepository } from '@n8n/db';
+import type { AuthenticatedRequest, User, PlatformAdmin } from '@n8n/db';
+import { InvalidAuthTokenRepository, UserRepository, PlatformAdminRepository } from '@n8n/db';
 import { Service } from '@n8n/di';
 import { createHash } from 'crypto';
 import type { NextFunction, Response } from 'express';
@@ -24,6 +24,8 @@ interface AuthJwtPayload {
 	browserId?: string;
 	/** This indicates if mfa was used during the creation of this token */
 	usedMfa?: boolean;
+	/** Type of user: regular user or platform admin */
+	userType?: 'user' | 'platform_admin';
 }
 
 interface IssuedJWT extends AuthJwtPayload {
@@ -63,6 +65,7 @@ export class AuthService {
 		private readonly jwtService: JwtService,
 		private readonly urlService: UrlService,
 		private readonly userRepository: UserRepository,
+		private readonly platformAdminRepository: PlatformAdminRepository,
 		private readonly invalidAuthTokenRepository: InvalidAuthTokenRepository,
 		private readonly mfaService: MfaService,
 	) {
@@ -87,7 +90,10 @@ export class AuthService {
 		allowUnauthenticated,
 	}: CreateAuthMiddlewareOptions) {
 		return async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-			const token = req.cookies[AUTH_COOKIE_NAME];
+			// Determine which cookie to read based on request path
+			const isAdminPath = req.path.startsWith('/admin') || req.path.startsWith('/platform-admin');
+			const cookieName = isAdminPath ? ADMIN_AUTH_COOKIE_NAME : AUTH_COOKIE_NAME;
+			const token = req.cookies[cookieName];
 
 			if (token) {
 				try {
@@ -135,12 +141,16 @@ export class AuthService {
 		};
 	}
 
-	clearCookie(res: Response) {
-		res.clearCookie(AUTH_COOKIE_NAME);
+	clearCookie(res: Response, userType: 'user' | 'platform_admin' = 'user') {
+		const cookieName = userType === 'platform_admin' ? ADMIN_AUTH_COOKIE_NAME : AUTH_COOKIE_NAME;
+		res.clearCookie(cookieName);
 	}
 
 	async invalidateToken(req: AuthenticatedRequest) {
-		const token = req.cookies[AUTH_COOKIE_NAME];
+		// Check both user and admin cookies
+		const isAdminPath = req.path.startsWith('/admin') || req.path.startsWith('/platform-admin');
+		const cookieName = isAdminPath ? ADMIN_AUTH_COOKIE_NAME : AUTH_COOKIE_NAME;
+		const token = req.cookies[cookieName];
 		if (!token) return;
 		try {
 			const { exp } = this.jwtService.decode(token);
@@ -155,14 +165,21 @@ export class AuthService {
 		}
 	}
 
-	issueCookie(res: Response, user: User, usedMfa: boolean, browserId?: string) {
+	issueCookie(
+		res: Response,
+		user: User | PlatformAdmin,
+		usedMfa: boolean,
+		browserId?: string,
+		userType: 'user' | 'platform_admin' = 'user',
+	) {
 		// Note: Legacy n8n single-tenant user quota logic has been removed.
 		// SASA platform is multi-tenant SaaS - no global user limits exist.
 		// Each user gets their own workspace on registration with membership-based quotas.
 
-		const token = this.issueJWT(user, usedMfa, browserId);
+		const token = this.issueJWT(user, usedMfa, browserId, userType);
 		const { samesite, secure } = this.globalConfig.auth.cookie;
-		res.cookie(AUTH_COOKIE_NAME, token, {
+		const cookieName = userType === 'platform_admin' ? ADMIN_AUTH_COOKIE_NAME : AUTH_COOKIE_NAME;
+		res.cookie(cookieName, token, {
 			maxAge: this.jwtExpiration * Time.seconds.toMilliseconds,
 			httpOnly: true,
 			sameSite: samesite,
@@ -170,12 +187,18 @@ export class AuthService {
 		});
 	}
 
-	issueJWT(user: User, usedMfa: boolean = false, browserId?: string) {
+	issueJWT(
+		user: User | PlatformAdmin,
+		usedMfa: boolean = false,
+		browserId?: string,
+		userType: 'user' | 'platform_admin' = 'user',
+	) {
 		const payload: AuthJwtPayload = {
 			id: user.id,
-			hash: this.createJWTHash(user),
+			hash: this.createJWTHash(user, userType),
 			browserId: browserId && this.hash(browserId),
 			usedMfa,
+			userType,
 		};
 		return this.jwtService.sign(payload, {
 			expiresIn: this.jwtExpiration,
@@ -191,19 +214,40 @@ export class AuthService {
 			algorithms: ['HS256'],
 		});
 
-		// TODO: Use an in-memory ttl-cache to cache the User object for upto a minute
-		const user = await this.userRepository.findOne({
-			where: { id: jwtPayload.id },
-			relations: ['role'],
-		});
+		const userType = jwtPayload.userType || 'user';
+
+		// Query different tables based on user type
+		let user: User | PlatformAdmin | null = null;
+		if (userType === 'platform_admin') {
+			// Query platform_admin table
+			const admin = await this.platformAdminRepository.findOne({
+				where: { id: jwtPayload.id },
+			});
+			if (admin) {
+				// Convert platform admin to User-like object for compatibility
+				user = {
+					...admin,
+					disabled: false, // Platform admins don't have a disabled field, assume active
+					userType: 'platform_admin', // Explicit marker for platform admin
+					mfaEnabled: false,
+					mfaSecret: null,
+				} as any;
+			}
+		} else {
+			// Query user table (regular users)
+			user = await this.userRepository.findOne({
+				where: { id: jwtPayload.id },
+				relations: ['role'],
+			});
+		}
 
 		if (
 			// If not user is found
 			!user ||
 			// or, If the user has been deactivated (i.e. LDAP users)
-			user.disabled ||
+			('disabled' in user && user.disabled) ||
 			// or, If the email or password has been updated
-			jwtPayload.hash !== this.createJWTHash(user)
+			jwtPayload.hash !== this.createJWTHash(user, userType)
 		) {
 			throw new AuthError('Unauthorized');
 		}
@@ -222,10 +266,10 @@ export class AuthService {
 
 		if (jwtPayload.exp * 1000 - Date.now() < this.jwtRefreshTimeout) {
 			this.logger.debug('JWT about to expire. Will be refreshed');
-			this.issueCookie(res, user, jwtPayload.usedMfa ?? false, req.browserId);
+			this.issueCookie(res, user, jwtPayload.usedMfa ?? false, req.browserId, userType);
 		}
 
-		return [user, { usedMfa: jwtPayload.usedMfa ?? false }];
+		return [user as User, { usedMfa: jwtPayload.usedMfa ?? false }];
 	}
 
 	generatePasswordResetToken(user: User, expiresIn: TimeUnitValue = '20m') {
@@ -277,11 +321,18 @@ export class AuthService {
 		return user;
 	}
 
-	createJWTHash({ email, password, mfaEnabled, mfaSecret }: User) {
+	createJWTHash(user: User | PlatformAdmin, userType: 'user' | 'platform_admin' = 'user') {
+		const { email, password } = user;
 		const payload = [email, password];
-		if (mfaEnabled && mfaSecret) {
-			payload.push(mfaSecret.substring(0, 3));
+
+		// Only regular users have MFA support
+		if (userType === 'user' && 'mfaEnabled' in user && 'mfaSecret' in user) {
+			const { mfaEnabled, mfaSecret } = user as User;
+			if (mfaEnabled && mfaSecret) {
+				payload.push(mfaSecret.substring(0, 3));
+			}
 		}
+
 		return this.hash(payload.join(':')).substring(0, 10);
 	}
 

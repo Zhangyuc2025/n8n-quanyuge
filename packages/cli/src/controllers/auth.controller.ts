@@ -1,4 +1,4 @@
-import { LoginRequestDto, ResolveSignupTokenQueryDto } from '@n8n/api-types';
+import { LoginRequestDto, RegisterRequestDto, ResolveSignupTokenQueryDto } from '@n8n/api-types';
 import { Logger } from '@n8n/backend-common';
 import type { User, PublicUser } from '@n8n/db';
 import { UserRepository, AuthenticatedRequest, GLOBAL_OWNER_ROLE } from '@n8n/db';
@@ -113,6 +113,24 @@ export class AuthController {
 			reason: 'wrong credentials',
 		});
 		throw new AuthError('Wrong username or password. Do you have caps lock on?');
+	}
+
+	/** Register a new user */
+	@Post('/register', { skipAuth: true, rateLimit: true })
+	async register(
+		req: AuthlessRequest,
+		res: Response,
+		@Body payload: RegisterRequestDto,
+	): Promise<PublicUser> {
+		// Register the user
+		const user = await this.userService.registerUser(payload);
+
+		// Auto-login the user
+		this.authService.issueCookie(res, user, false, req.browserId);
+
+		return await this.userService.toPublic(user, {
+			withScopes: true,
+		});
 	}
 
 	/** Check if the user is already logged in */

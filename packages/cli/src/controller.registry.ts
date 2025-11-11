@@ -80,12 +80,26 @@ export class ControllerRegistry {
 					if (arg.type === 'param') args.push(req.params[arg.key]);
 					else if (['body', 'query'].includes(arg.type)) {
 						const paramType = argTypes[index] as ZodClass;
+						console.log(
+							`[ControllerRegistry] index=${index}, paramType=`,
+							paramType?.name,
+							'hasSafeParse=',
+							paramType && 'safeParse' in paramType,
+						);
 						if (paramType && 'safeParse' in paramType) {
 							const output = paramType.safeParse(req[arg.type]);
+							console.log(
+								`[ControllerRegistry] Zod validation result:`,
+								output.success ? 'success' : 'failed',
+								output.success ? '' : output.error.errors[0],
+							);
 							if (output.success) args.push(output.data);
 							else {
 								return res.status(400).json(output.error.errors[0]);
 							}
+						} else {
+							console.log(`[ControllerRegistry] No Zod validation, pushing raw data`);
+							args.push(req[arg.type]);
 						}
 					} else throw new UnexpectedError('Unknown arg type: ' + arg.type);
 				}

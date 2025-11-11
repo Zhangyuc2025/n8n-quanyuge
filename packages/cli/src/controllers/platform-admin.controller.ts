@@ -3,7 +3,7 @@ import { Logger } from '@n8n/backend-common';
 import type { PlatformAdmin, User } from '@n8n/db';
 import { AuthenticatedRequest } from '@n8n/db';
 import { Body, Get, Patch, Post, RestController, Param } from '@n8n/decorators';
-import { isEmail } from 'class-validator';
+import type { Response } from 'express';
 
 import { AuthService } from '@/auth/auth.service';
 import { AuthError } from '@/errors/response-errors/auth.error';
@@ -56,22 +56,10 @@ export class PlatformAdminController {
 	@Post('/setup', { skipAuth: true, rateLimit: true })
 	async setup(
 		req: AuthlessRequest,
+		res: Response,
 		@Body payload: PlatformAdminSetupDto,
 	): Promise<{ success: boolean; message: string; admin: Partial<PlatformAdmin> }> {
 		const { email, password, name } = payload;
-
-		// Validate input
-		if (!email || !isEmail(email)) {
-			throw new BadRequestError('Valid email address is required');
-		}
-
-		if (!password || password.length < 8) {
-			throw new BadRequestError('Password must be at least 8 characters long');
-		}
-
-		if (!name || name.trim().length === 0) {
-			throw new BadRequestError('Administrator name is required');
-		}
 
 		// Check if platform is already initialized
 		const status = await this.systemInitService.checkInitializationStatus();
@@ -132,18 +120,10 @@ export class PlatformAdminController {
 	@Post('/login', { skipAuth: true, rateLimit: true })
 	async login(
 		req: AuthlessRequest,
+		res: Response,
 		@Body payload: PlatformAdminLoginDto,
-	): Promise<{ admin: Partial<PlatformAdmin>; token: string }> {
+	): Promise<{ admin: Partial<PlatformAdmin> }> {
 		const { email, password } = payload;
-
-		// Validate input
-		if (!email || !isEmail(email)) {
-			throw new BadRequestError('Valid email address is required');
-		}
-
-		if (!password) {
-			throw new BadRequestError('Password is required');
-		}
 
 		// Validate credentials
 		const admin = await this.platformAdminService.validateLogin(
@@ -159,19 +139,15 @@ export class PlatformAdminController {
 			throw new AuthError('Invalid email or password');
 		}
 
-		// Issue JWT token (we can reuse the same mechanism as regular users)
-		// Note: Platform admins are stored separately but can share auth mechanism
-		// We create a User-like object with the required properties for JWT generation
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-		const token = this.authService.issueJWT(
-			{
-				id: admin.id,
-				email: admin.email,
-				password: admin.password,
-				mfaEnabled: false,
-			} as User,
-			false,
+		// Issue authentication cookie for platform admin
+		// Pass the platform admin object and specify userType as 'platform_admin'
+		// This will be used by the auth middleware to query the correct table
+		this.authService.issueCookie(
+			res,
+			admin,
+			false, // usedMfa
 			req.browserId,
+			'platform_admin', // userType
 		);
 
 		// Emit login event (reusing user-logged-in event for platform admins)
@@ -197,8 +173,29 @@ export class PlatformAdminController {
 		const { password: _, ...adminWithoutPassword } = admin;
 		return {
 			admin: adminWithoutPassword,
-			token,
 		};
+	}
+
+	/**
+	 * POST /platform-admin/logout
+	 * Logout platform administrator
+	 *
+	 * Clears the admin authentication cookie and invalidates the session.
+	 *
+	 * @param req - Authenticated request object
+	 * @param res - Response object
+	 * @returns Success indicator
+	 */
+	@Post('/logout')
+	async logout(req: AuthenticatedRequest, res: Response): Promise<{ success: boolean }> {
+		await this.authService.invalidateToken(req);
+		this.authService.clearCookie(res, 'platform_admin');
+
+		this.logger.info('Platform admin logged out', {
+			adminId: req.user?.id,
+		});
+
+		return { success: true };
 	}
 
 	/**
