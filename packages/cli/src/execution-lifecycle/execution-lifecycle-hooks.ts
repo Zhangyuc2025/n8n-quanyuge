@@ -1,5 +1,5 @@
 import { Logger } from '@n8n/backend-common';
-import { ExecutionRepository } from '@n8n/db';
+import { ExecutionRepository, WorkflowRepository } from '@n8n/db';
 import { LifecycleMetadata } from '@n8n/decorators';
 import { Container, Service } from '@n8n/di';
 import { stringify } from 'flatted';
@@ -14,6 +14,7 @@ import { EventService } from '@/events/event.service';
 import { ExternalHooks } from '@/external-hooks';
 import { Push } from '@/push';
 import { WorkflowStatisticsService } from '@/services/workflow-statistics.service';
+import { NodeBillingService } from '@/services/node-billing.service';
 import { isWorkflowIdValid } from '@/utils';
 import { WorkflowStaticDataService } from '@/workflows/workflow-static-data.service';
 
@@ -306,6 +307,57 @@ function hookFunctionsStatistics(hooks: ExecutionLifecycleHooks) {
 }
 
 /**
+ * Returns hook functions for node billing (per-node execution charging)
+ */
+function hookFunctionsNodeBilling(hooks: ExecutionLifecycleHooks, userId?: string) {
+	const nodeBillingService = Container.get(NodeBillingService);
+	const workflowRepository = Container.get(WorkflowRepository);
+	const logger = Container.get(Logger);
+
+	hooks.addHandler('nodeExecuteAfter', async function (nodeName, taskData) {
+		const { executionId, workflowData: workflow } = this;
+		const node = workflow.nodes.find((n) => n.name === nodeName);
+
+		if (!node) return;
+
+		try {
+			// 获取 workflow 的 projectId（workspaceId）
+			const workflowEntity = await workflowRepository.findOne({
+				where: { id: workflow.id },
+				select: ['projectId'],
+			});
+
+			if (!workflowEntity?.projectId) {
+				logger.debug('No projectId found for workflow, skipping billing', {
+					workflowId: workflow.id,
+					executionId,
+				});
+				return;
+			}
+
+			// 调用计费服务
+			await nodeBillingService.chargeForNode({
+				nodeType: node.type,
+				nodeName,
+				executionTime: taskData.executionTime || 0,
+				taskData,
+				workspaceId: workflowEntity.projectId,
+				userId: userId || '',
+				executionId,
+			});
+		} catch (error) {
+			// 计费失败不影响工作流执行，只记录日志
+			logger.error('Billing hook failed', {
+				error,
+				workflowId: workflow.id,
+				nodeName,
+				executionId,
+			});
+		}
+	});
+}
+
+/**
  * Returns hook functions to save workflow execution and call error workflow
  */
 function hookFunctionsSave(
@@ -491,6 +543,7 @@ export function getLifecycleHooksForSubExecutions(
 	hookFunctionsSaveProgress(hooks, { saveSettings });
 	hookFunctionsStatistics(hooks);
 	hookFunctionsExternalHooks(hooks);
+	hookFunctionsNodeBilling(hooks, userId);
 	return hooks;
 }
 
@@ -501,7 +554,7 @@ export function getLifecycleHooksForScalingWorker(
 	data: IWorkflowExecutionDataProcess,
 	executionId: string,
 ): ExecutionLifecycleHooks {
-	const { pushRef, retryOf, executionMode, workflowData } = data;
+	const { pushRef, retryOf, executionMode, workflowData, userId } = data;
 	const hooks = new ExecutionLifecycleHooks(executionMode, executionId, workflowData);
 	const saveSettings = toSaveSettings(workflowData.settings);
 	const optionalParameters = { pushRef, retryOf: retryOf ?? undefined, saveSettings };
@@ -511,6 +564,7 @@ export function getLifecycleHooksForScalingWorker(
 	hookFunctionsSaveProgress(hooks, optionalParameters);
 	hookFunctionsStatistics(hooks);
 	hookFunctionsExternalHooks(hooks);
+	hookFunctionsNodeBilling(hooks, userId);
 
 	if (executionMode === 'manual' && Container.get(InstanceSettings).isWorker) {
 		hookFunctionsPush(hooks, optionalParameters);
@@ -602,6 +656,7 @@ export function getLifecycleHooksForRegularMain(
 	hookFunctionsSaveProgress(hooks, optionalParameters);
 	hookFunctionsStatistics(hooks);
 	hookFunctionsExternalHooks(hooks);
+	hookFunctionsNodeBilling(hooks, userId);
 	Container.get(ModulesHooksRegistry).addHooks(hooks);
 	return hooks;
 }

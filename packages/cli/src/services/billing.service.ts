@@ -48,8 +48,8 @@ interface DeductBalanceResult {
 /**
  * 计费服务接口 - 扣费元数据
  */
-interface DeductBalanceMetadata {
-	/** 服务标识（例如：'openai-gpt4', 'anthropic-claude'） */
+export interface DeductBalanceMetadata {
+	/** 服务标识（例如：'openai-gpt4', 'anthropic-claude', 'node:xxx'） */
 	serviceKey: string;
 	/** 发起调用的用户ID */
 	userId: string;
@@ -57,6 +57,8 @@ interface DeductBalanceMetadata {
 	tokensUsed?: number;
 	/** 余额来源（可选，用于记录） */
 	balanceSource?: 'user' | 'workspace';
+	/** 额外的元数据（用于存储节点执行信息等） */
+	metadata?: Record<string, any>;
 }
 
 /**

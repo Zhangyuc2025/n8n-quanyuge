@@ -119,18 +119,41 @@ export class PlatformNode extends WithTimestamps {
 	version: string;
 
 	/**
-	 * 是否计费
-	 * Whether the node is billable (for platform-hosted services)
+	 * 是否计费（已弃用，使用 billingMode）
+	 * Whether the node is billable (deprecated, use billingMode)
+	 * @deprecated
 	 */
 	@Column({ type: 'boolean', default: false, name: 'is_billable' })
 	isBillable: boolean;
 
 	/**
-	 * 每次请求价格（人民币）
-	 * Price per request in CNY
+	 * 每次请求价格（人民币，已弃用，使用 billingConfig）
+	 * Price per request in CNY (deprecated, use billingConfig)
+	 * @deprecated
 	 */
 	@Column({ type: 'double', nullable: true, name: 'price_per_request' })
 	pricePerRequest: number | null;
+
+	/**
+	 * 计费模式
+	 * Billing mode: 'free' | 'token-based' | 'per-execution' | 'duration-based'
+	 */
+	@Column({
+		type: 'varchar',
+		length: 50,
+		nullable: true,
+		default: 'free',
+		name: 'billing_mode',
+	})
+	billingMode: 'free' | 'token-based' | 'per-execution' | 'duration-based' | null;
+
+	/**
+	 * 计费配置（JSON 对象，包含各种计费模式的价格信息）
+	 * Billing configuration (JSON object with pricing for different billing modes)
+	 * Example: { pricePerToken: 0.00001, pricePerExecution: 0.01, pricePerSecond: 0.001, currency: 'CNY' }
+	 */
+	@JsonColumn({ nullable: true, name: 'billing_config' })
+	billingConfig: Record<string, unknown> | null;
 
 	// ==================== 审核相关字段（仅第三方节点） ====================
 
