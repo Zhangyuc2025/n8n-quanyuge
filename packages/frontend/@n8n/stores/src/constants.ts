@@ -49,4 +49,5 @@ export const STORES = {
 	PLATFORM_NODES: 'platformNodes',
 	CUSTOM_NODES: 'customNodes',
 	USER_NODE_CONFIG: 'userNodeConfig',
+	SYSTEM: 'system',
 } as const;

@@ -77,7 +77,7 @@ export class TelemetryEventRelay extends EventRelay {
 			'server-started': async () => await this.serverStarted(),
 			'session-started': (event) => this.sessionStarted(event),
 			'instance-stopped': () => this.instanceStopped(),
-			'instance-owner-setup': async (event) => await this.instanceOwnerSetup(event),
+			'user-initial-setup': async (event) => await this.userInitialSetup(event),
 			'first-production-workflow-succeeded': (event) =>
 				this.firstProductionWorkflowSucceeded(event),
 			'first-workflow-data-loaded': (event) => this.firstWorkflowDataLoaded(event),
@@ -814,8 +814,8 @@ export class TelemetryEventRelay extends EventRelay {
 		this.telemetry.track('User instance stopped');
 	}
 
-	private async instanceOwnerSetup({ userId }: RelayEventMap['instance-owner-setup']) {
-		this.telemetry.track('Owner finished instance setup', { user_id: userId });
+	private async userInitialSetup({ userId }: RelayEventMap['user-initial-setup']) {
+		this.telemetry.track('User finished initial setup', { user_id: userId });
 	}
 
 	private firstProductionWorkflowSucceeded({

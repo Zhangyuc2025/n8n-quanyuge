@@ -48,7 +48,6 @@ const googleSheetsNode: LoadedClass<IVersionedNodeType> = {
 			'1': {
 				methods: {
 					loadOptions: {},
-					credentialTest: {},
 				},
 				description: {
 					displayName: 'Google Sheets ',
@@ -64,27 +63,6 @@ const googleSheetsNode: LoadedClass<IVersionedNodeType> = {
 					},
 					inputs: [NodeConnectionTypes.Main],
 					outputs: [NodeConnectionTypes.Main],
-					credentials: [
-						{
-							name: 'googleApi',
-							required: true,
-							displayOptions: {
-								show: {
-									authentication: ['serviceAccount'],
-								},
-							},
-							testedBy: 'googleApiCredentialTest',
-						},
-						{
-							name: 'googleSheetsOAuth2Api',
-							required: true,
-							displayOptions: {
-								show: {
-									authentication: ['oAuth2'],
-								},
-							},
-						},
-					],
 					properties: [
 						{
 							displayName:
@@ -259,27 +237,6 @@ const googleSheetsNode: LoadedClass<IVersionedNodeType> = {
 				description: {
 					subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
 					version: [3, 4, 4.1, 4.2],
-					credentials: [
-						{
-							displayOptions: {
-								show: {
-									authentication: ['serviceAccount'],
-								},
-							},
-							name: 'googleApi',
-							required: true,
-							testedBy: 'googleApiCredentialTest',
-						},
-						{
-							displayOptions: {
-								show: {
-									authentication: ['oAuth2'],
-								},
-							},
-							name: 'googleSheetsOAuth2Api',
-							required: true,
-						},
-					],
 					defaults: {
 						name: 'Google Sheets',
 					},

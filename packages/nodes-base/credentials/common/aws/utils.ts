@@ -2,7 +2,6 @@ import {
 	ApplicationError,
 	type IHttpRequestMethods,
 	isObjectEmpty,
-	type ICredentialTestRequest,
 	type IDataObject,
 	type IHttpRequestOptions,
 	type IRequestOptions,
@@ -64,21 +63,6 @@ export function parseAwsUrl(url: URL): { region: AWSRegion | null; service: stri
 	const [service, region] = hostname.replace(/\.amazonaws\.com.*$/, '').split('.');
 	return { service, region };
 }
-
-/**
- * AWS credentials test configuration for validating AWS credentials.
- * Uses the STS GetCallerIdentity action to verify that the provided credentials are valid.
- * Automatically handles both standard AWS regions and China regions with appropriate endpoints.
- */
-export const awsCredentialsTest: ICredentialTestRequest = {
-	request: {
-		baseURL:
-			// eslint-disable-next-line n8n-local-rules/no-interpolation-in-regular-string
-			'={{$credentials.region.startsWith("cn-") ? `https://sts.${$credentials.region}.amazonaws.com.cn` : `https://sts.${$credentials.region}.amazonaws.com`}}',
-		url: '?Action=GetCallerIdentity&Version=2011-06-15',
-		method: 'POST',
-	},
-};
 
 /**
  * Prepares AWS request options for signing by constructing the proper endpoint URL,

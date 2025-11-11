@@ -23,7 +23,6 @@ const logStreamingStore = useLogStreamingStore();
 const workflowsStore = useWorkflowsStore();
 const workflowState = injectWorkflowState();
 const uiStore = useUIStore();
-const credentialsStore = useCredentialsStore();
 const documentTitle = useDocumentTitle();
 const i18n = useI18n();
 
@@ -54,9 +53,6 @@ onMounted(async () => {
 	documentTitle.set(i18n.baseText('settings.log-streaming.heading'));
 	if (!isLicensed.value) return;
 
-	// Prepare credentialsStore so modals can pick up credentials
-	await credentialsStore.fetchCredentialTypes(false);
-	await credentialsStore.fetchAllCredentials();
 	uiStore.nodeViewInitialized = false;
 
 	// fetch Destination data from the backend

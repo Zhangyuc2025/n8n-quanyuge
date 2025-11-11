@@ -1,9 +1,28 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import type { RouteRecordRaw } from 'vue-router';
-import { useAuthStore } from '@/stores/auth.store';
+import { useSystemStore } from '@/stores/system.store';
 import MainLayout from '@/layouts/MainLayout.vue';
 
 const routes: RouteRecordRaw[] = [
+	// Admin authentication routes (no layout)
+	{
+		path: '/setup',
+		name: 'AdminSetup',
+		component: () => import('@/views/AdminSetupView.vue'),
+		meta: {
+			title: 'Platform Setup',
+			public: true,
+		},
+	},
+	{
+		path: '/login',
+		name: 'AdminLogin',
+		component: () => import('@/views/AdminLoginView.vue'),
+		meta: {
+			title: 'Admin Login',
+			public: true,
+		},
+	},
 	{
 		path: '/',
 		redirect: '/telemetry/dashboard',
@@ -11,6 +30,9 @@ const routes: RouteRecordRaw[] = [
 	{
 		path: '/',
 		component: MainLayout,
+		meta: {
+			requiresAuth: true,
+		},
 		children: [
 			// Telemetry 模块
 			{
@@ -109,16 +131,53 @@ const router = createRouter({
 });
 
 /**
- * 路由守卫：基础路由处理
- * TODO: 后续实现独立的管理员账号系统和权限验证
+ * Router Guard: System initialization and authentication check
  */
 router.beforeEach(async (to, _from, next) => {
-	// 更新页面标题
-	document.title = (to.meta.title as string) || 'n8n 管理后台';
+	// Update page title
+	document.title = (to.meta.title as string) || 'n8n Admin Panel';
 
-	// 暂时移除权限验证，允许所有人访问
-	// 等待后续实现独立的管理员账号系统
-	next();
+	const systemStore = useSystemStore();
+
+	// Allow access to public routes
+	if (to.meta.public) {
+		return next();
+	}
+
+	try {
+		// Check system initialization status
+		if (!systemStore.initializationStatus) {
+			await systemStore.checkSystemStatus();
+		}
+
+		// If system needs setup, redirect to setup page
+		if (systemStore.needsSetup) {
+			if (to.name !== 'AdminSetup') {
+				return next({ name: 'AdminSetup' });
+			}
+			return next();
+		}
+
+		// If system is initialized but not logged in, redirect to login
+		const token = localStorage.getItem('platform_admin_token');
+		if (!token) {
+			if (to.name !== 'AdminLogin') {
+				return next({ name: 'AdminLogin' });
+			}
+			return next();
+		}
+
+		// All checks passed
+		next();
+	} catch (error) {
+		console.error('[Router] Guard error:', error);
+		// On error, redirect to login
+		if (to.name !== 'AdminLogin' && to.name !== 'AdminSetup') {
+			next({ name: 'AdminLogin' });
+		} else {
+			next();
+		}
+	}
 });
 
 export default router;

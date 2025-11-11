@@ -1,5 +1,5 @@
 import { ChatHubProvider } from '@n8n/api-types';
-import { WithTimestamps, User } from '@n8n/db';
+import { WithTimestamps, User, PlatformAIProvider } from '@n8n/db';
 import { Column, Entity, ManyToOne, JoinColumn, PrimaryGeneratedColumn } from '@n8n/typeorm';
 
 @Entity({ name: 'chat_hub_agents' })
@@ -40,7 +40,6 @@ export class ChatHubAgent extends WithTimestamps {
 
 	/*
 	 * Enum value of the LLM provider to use, e.g. 'openai', 'anthropic', 'google', 'n8n' (if applicable).
-	 * TODO: Implement API key-based authentication for pay-per-use model
 	 */
 	@Column({ type: 'varchar', length: 16, nullable: true })
 	provider: ChatHubProvider;
@@ -50,4 +49,20 @@ export class ChatHubAgent extends WithTimestamps {
 	 */
 	@Column({ type: 'varchar', length: 64, nullable: true })
 	model: string;
+
+	/**
+	 * Platform AI Provider key for pay-per-use authentication (optional).
+	 * If provided, uses platform-managed API key for billing and authentication.
+	 * This is the primary method for AI model authentication in the multi-tenant architecture.
+	 */
+	@Column({ type: 'varchar', length: 100, nullable: true, name: 'platform_ai_provider_key' })
+	platformAiProviderKey: string | null;
+
+	/**
+	 * Relationship to Platform AI Provider (optional).
+	 * Used for accessing platform-managed API keys and billing configuration.
+	 */
+	@ManyToOne(() => PlatformAIProvider, { nullable: true })
+	@JoinColumn({ name: 'platform_ai_provider_key', referencedColumnName: 'providerKey' })
+	platformAiProvider?: PlatformAIProvider | null;
 }

@@ -21,7 +21,7 @@ let ownerShell: User;
 
 beforeEach(async () => {
 	ownerShell = await createUserShell(GLOBAL_OWNER_ROLE);
-	config.set('userManagement.isInstanceOwnerSetUp', false);
+	config.set('userManagement.isInitialUserSetUp', false);
 });
 
 afterEach(async () => {
@@ -29,7 +29,7 @@ afterEach(async () => {
 });
 
 describe('POST /owner/setup', () => {
-	test('should create owner and enable isInstanceOwnerSetUp', async () => {
+	test('should create owner and enable isInitialUserSetUp', async () => {
 		const newOwnerData = {
 			email: randomEmail(),
 			firstName: randomName(),
@@ -71,11 +71,11 @@ describe('POST /owner/setup', () => {
 		expect(storedOwner.firstName).toBe(newOwnerData.firstName);
 		expect(storedOwner.lastName).toBe(newOwnerData.lastName);
 
-		const isInstanceOwnerSetUpConfig = config.getEnv('userManagement.isInstanceOwnerSetUp');
-		expect(isInstanceOwnerSetUpConfig).toBe(true);
+		const isInitialUserSetUpConfig = config.getEnv('userManagement.isInitialUserSetUp');
+		expect(isInitialUserSetUpConfig).toBe(true);
 
-		const isInstanceOwnerSetUpSetting = await utils.isInstanceOwnerSetUp();
-		expect(isInstanceOwnerSetUpSetting).toBe(true);
+		const isInitialUserSetUpSetting = await utils.isInitialUserSetUp();
+		expect(isInitialUserSetUpSetting).toBe(true);
 	});
 
 	test('should create owner with lowercased email', async () => {

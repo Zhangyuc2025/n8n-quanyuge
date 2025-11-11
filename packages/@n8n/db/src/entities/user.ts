@@ -55,6 +55,14 @@ export class User extends WithTimestamps implements IUser, AuthPrincipal {
 	@JsonColumn({ nullable: true })
 	settings: IUserSettings | null;
 
+	/**
+	 * User's global role in the system.
+	 * In multi-tenant architecture:
+	 * - 'global:owner': Initial system user (legacy from single-tenant, kept for compatibility)
+	 * - 'global:admin': Workspace administrator
+	 * - 'global:member': Regular workspace member
+	 * Note: This is separate from platform admin (see platform_admin table)
+	 */
 	@ManyToOne(() => Role)
 	@JoinColumn({ name: 'roleSlug', referencedColumnName: 'slug' })
 	role: Role;
@@ -96,6 +104,28 @@ export class User extends WithTimestamps implements IUser, AuthPrincipal {
 
 	@Column({ type: 'date', nullable: true })
 	lastActiveAt?: Date | null;
+
+	/**
+	 * 个人余额（人民币）
+	 * Personal balance in CNY
+	 */
+	@Column({ type: 'double', default: 0.0 })
+	balance: number;
+
+	/**
+	 * 会员等级：'free' | 'basic' | 'pro' | 'enterprise'
+	 * Membership tier
+	 */
+	@Column({ type: 'varchar', length: 20, default: 'free', name: 'membership_tier' })
+	@Index()
+	membershipTier: string;
+
+	/**
+	 * 会员过期时间
+	 * Membership expiration date
+	 */
+	@Column({ type: 'date', nullable: true, name: 'membership_expire_at' })
+	membershipExpireAt?: Date | null;
 
 	/**
 	 * Whether the user is pending setup completion.

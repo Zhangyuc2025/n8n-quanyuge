@@ -37,7 +37,7 @@ export class Reset extends BaseCommand {
 		await Container.get(UserRepository).save(Object.assign(owner, defaultUserProps));
 
 		await Container.get(SettingsRepository).update(
-			{ key: 'userManagement.isInstanceOwnerSetUp' },
+			{ key: 'userManagement.isInitialUserSetUp' },
 			{ value: 'false' },
 		);
 

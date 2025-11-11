@@ -8,6 +8,7 @@ import type {
 import { createRouter, createWebHistory, isNavigationFailure, RouterView } from 'vue-router';
 import { useExternalHooks } from '@/app/composables/useExternalHooks';
 import { useSettingsStore } from '@/app/stores/settings.store';
+import { useSystemStore } from '@/app/stores/system.store';
 import { useTemplatesStore } from '@/features/workflows/templates/templates.store';
 import { useUIStore } from '@/app/stores/ui.store';
 import { useSSOStore } from '@/features/settings/sso/sso.store';
@@ -58,9 +59,10 @@ const SettingsApiView = async () =>
 	await import('@/features/settings/apiKeys/views/SettingsApiView.vue');
 const SettingsLogStreamingView = async () =>
 	await import('@/features/integrations/logStreaming.ee/views/SettingsLogStreamingView.vue');
-const SetupView = async () => await import('@/features/core/auth/views/SetupView.vue');
 const SigninView = async () => await import('@/features/core/auth/views/SigninView.vue');
 const SignupView = async () => await import('@/features/core/auth/views/SignupView.vue');
+const PlatformNotReadyView = async () =>
+	await import('@/features/core/auth/views/PlatformNotReadyView.vue');
 const TemplatesCollectionView = async () =>
 	await import('@/features/workflows/templates/views/TemplatesCollectionView.vue');
 const TemplatesWorkflowView = async () =>
@@ -471,16 +473,16 @@ export const routes: RouteRecordRaw[] = [
 		},
 	},
 	{
-		path: '/setup',
-		name: VIEWS.SETUP,
+		path: '/platform-not-ready',
+		name: VIEWS.PLATFORM_NOT_READY,
 		components: {
-			default: SetupView,
+			default: PlatformNotReadyView,
 		},
 		meta: {
-			middleware: ['defaultUser'],
 			telemetry: {
 				pageCategory: 'auth',
 			},
+			middleware: ['guest'],
 		},
 	},
 	{
@@ -912,16 +914,23 @@ router.beforeEach(async (to: RouteLocationNormalized, from, next) => {
 		await initializeAuthenticatedFeatures(undefined, to.name as string);
 
 		/**
-		 * Redirect to setup page. User should be redirected to this only once
+		 * Check platform initialization status
 		 */
-
-		const settingsStore = useSettingsStore();
-		if (settingsStore.showSetupPage) {
-			if (to.name === VIEWS.SETUP) {
-				return next();
+		const systemStore = useSystemStore();
+		try {
+			if (!systemStore.initializationStatus) {
+				await systemStore.checkSystemStatus();
 			}
 
-			return next({ name: VIEWS.SETUP });
+			// If platform is not initialized, redirect to platform not ready page
+			if (!systemStore.isPlatformInitialized) {
+				if (to.name === VIEWS.PLATFORM_NOT_READY) {
+					return next();
+				}
+				return next({ name: VIEWS.PLATFORM_NOT_READY });
+			}
+		} catch (error) {
+			console.error('[Router] Failed to check platform status:', error);
 		}
 
 		/**

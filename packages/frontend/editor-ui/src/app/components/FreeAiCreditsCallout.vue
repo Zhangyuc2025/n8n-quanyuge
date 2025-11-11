@@ -30,7 +30,6 @@ const showSuccessCallout = ref(false);
 const claimingCredits = ref(false);
 
 const settingsStore = useSettingsStore();
-const credentialsStore = useCredentialsStore();
 const usersStore = useUsersStore();
 const ndvStore = useNDVStore();
 const projectsStore = useProjectsStore();
@@ -39,12 +38,7 @@ const telemetry = useTelemetry();
 const i18n = useI18n();
 const toast = useToast();
 
-const userHasOpenAiCredentialAlready = computed(
-	() =>
-		!!credentialsStore.allCredentials.filter(
-			(credential) => credential.type === OPEN_AI_API_CREDENTIAL_TYPE,
-		).length,
-);
+const userHasOpenAiCredentialAlready = computed(() => false);
 
 const isEditingOpenAiCredential = computed(
 	() => props.credentialTypeName && props.credentialTypeName === OPEN_AI_API_CREDENTIAL_TYPE,
@@ -73,8 +67,6 @@ const onClaimCreditsClicked = async () => {
 	claimingCredits.value = true;
 
 	try {
-		await credentialsStore.claimFreeAiCredits(projectsStore.currentProject?.id);
-
 		if (usersStore?.currentUser?.settings) {
 			usersStore.currentUser.settings.userClaimedAiCredits = true;
 		}

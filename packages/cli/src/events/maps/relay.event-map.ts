@@ -32,9 +32,12 @@ export type RelayEventMap = {
 
 	'instance-stopped': {};
 
-	'instance-owner-setup': {
+	// Emitted when a user completes their initial setup (formerly 'instance-owner-setup' in single-tenant mode)
+	'user-initial-setup': {
 		userId: string;
 	};
+
+	'platform-initialized': {};
 
 	'first-production-workflow-succeeded': {
 		projectId: string;
@@ -47,6 +50,25 @@ export type RelayEventMap = {
 		workflowId: string;
 		nodeType: string;
 		nodeId: string;
+	};
+
+	// #endregion
+
+	// #region Platform Admin
+
+	'platform-admin-created': {
+		adminId: string;
+		email: string;
+	};
+
+	'platform-admin-login': {
+		adminId: string;
+		email: string;
+	};
+
+	'platform-admin-deactivated': {
+		adminId: string;
+		email: string;
 	};
 
 	// #endregion
@@ -233,6 +255,30 @@ export type RelayEventMap = {
 		publicApi: boolean;
 	};
 
+	'user-onboarded': {
+		userId: string;
+		workspaceId: string;
+		initialBalance?: number;
+	};
+
+	'personal-workspace-created': {
+		userId: string;
+		workspaceId: string;
+		workspaceName?: string;
+	};
+
+	'membership-upgraded': {
+		userId: string;
+		oldTier: string;
+		newTier: string;
+		expiresAt: Date;
+	};
+
+	'membership-expired': {
+		userId: string;
+		tier: string;
+	};
+
 	// #endregion
 
 	// #region Click
@@ -374,6 +420,14 @@ export type RelayEventMap = {
 		userId: string;
 		role: string;
 		uiContext?: string;
+	};
+
+	'project-billing-mode-changed': {
+		userId: string;
+		role: string;
+		projectId: string;
+		oldBillingMode?: 'executor' | 'shared-pool';
+		newBillingMode: 'executor' | 'shared-pool';
 	};
 
 	// #endregion

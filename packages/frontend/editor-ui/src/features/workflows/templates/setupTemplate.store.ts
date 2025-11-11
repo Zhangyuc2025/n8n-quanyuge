@@ -44,7 +44,6 @@ export const useSetupTemplateStore = defineStore('setupTemplate', () => {
 
 	const templatesStore = useTemplatesStore();
 	const nodeTypesStore = useNodeTypesStore();
-	const credentialsStore = useCredentialsStore();
 	const rootStore = useRootStore();
 	const workflowsStore = useWorkflowsStore();
 
@@ -78,32 +77,8 @@ export const useSetupTemplateStore = defineStore('setupTemplate', () => {
 		templateId.value = id;
 	};
 
-	const ignoredAutoFillCredentialTypes = new Set([
-		'httpBasicAuth',
-		'httpCustomAuth',
-		'httpDigestAuth',
-		'httpHeaderAuth',
-		'oAuth1Api',
-		'oAuth2Api',
-		'httpQueryAuth',
-	]);
-
-	/**
-	 * Selects initial credentials for the template. Credentials
-	 * need to be loaded before this.
-	 */
 	const setInitialCredentialSelection = () => {
-		for (const credUsage of credentialUsages.value) {
-			if (ignoredAutoFillCredentialTypes.has(credUsage.credentialType)) {
-				continue;
-			}
-
-			const availableCreds = credentialsStore.getCredentialsByType(credUsage.credentialType);
-
-			if (availableCreds.length === 1) {
-				selectedCredentialIdByKey.value[credUsage.key] = availableCreds[0].id;
-			}
-		}
+		selectedCredentialIdByKey.value = {};
 	};
 
 	/**
@@ -119,20 +94,12 @@ export const useSetupTemplateStore = defineStore('setupTemplate', () => {
 		setInitialCredentialSelection();
 	};
 
-	/**
-	 * Initializes the store for a specific template.
-	 */
 	const init = async () => {
 		isLoading.value = true;
 		try {
 			selectedCredentialIdByKey.value = {};
 
-			await Promise.all([
-				credentialsStore.fetchAllCredentials(),
-				credentialsStore.fetchCredentialTypes(false),
-				nodeTypesStore.loadNodeTypesIfNotLoaded(),
-				loadTemplateIfNeeded(),
-			]);
+			await Promise.all([nodeTypesStore.loadNodeTypesIfNotLoaded(), loadTemplateIfNeeded()]);
 
 			setInitialCredentialSelection();
 		} finally {

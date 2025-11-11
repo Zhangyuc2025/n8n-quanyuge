@@ -1,0 +1,318 @@
+
+> n8n@1.119.0 typecheck /home/zhang/n8n-quanyuge/packages/cli
+> tsc --noEmit
+
+src/__tests__/external-hooks.test.ts(5,2): error TS2305: Module '"@n8n/db"' has no exported member 'CredentialsRepository'.
+src/__tests__/external-hooks.test.ts(40,4): error TS2554: Expected 6 arguments, but got 7.
+src/__tests__/workflow-execute-additional-data.test.ts(19,35): error TS2307: Cannot find module '@/credentials-helper' or its corresponding type declarations.
+src/commands/__tests__/community-node.test.ts(1,15): error TS2305: Module '"@n8n/db"' has no exported member 'CredentialsEntity'.
+src/commands/__tests__/community-node.test.ts(13,17): error TS2339: Property 'deleteCredential' does not exist on type 'CommunityNode'.
+src/commands/__tests__/community-node.test.ts(14,17): error TS2339: Property 'findCredentialsByType' does not exist on type 'CommunityNode'.
+src/commands/__tests__/community-node.test.ts(15,17): error TS2339: Property 'findUserById' does not exist on type 'CommunityNode'.
+src/commands/__tests__/community-node.test.ts(33,17): error TS2339: Property 'findCredentialsByType' does not exist on type 'CommunityNode'.
+src/commands/__tests__/community-node.test.ts(34,17): error TS2339: Property 'findUserById' does not exist on type 'CommunityNode'.
+src/commands/__tests__/community-node.test.ts(36,54): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(object: CommunityNode, method: never): SpyInstance<never, never, any>', gave the following error.
+    Argument of type '"deleteCredential"' is not assignable to parameter of type 'never'.
+  Overload 2 of 3, '(object: CommunityNode, method: "init" | "run" | "catch" | "finally" | "uninstallPackage" | "pruneDependencies" | "deleteCommunityNode" | "removeCommunityPackage" | ... 5 more ... | "cleanupTestRunner"): SpyInstance<...>', gave the following error.
+    Argument of type '"deleteCredential"' is not assignable to parameter of type '"init" | "run" | "catch" | "finally" | "uninstallPackage" | "pruneDependencies" | "deleteCommunityNode" | "removeCommunityPackage" | "findCommunityPackage" | "initObjectStoreService" | "initBinaryDataService" | "initExternalHooks" | "initWorkflowHistory" | "cleanupTestRunner"'.
+src/commands/__tests__/community-node.test.ts(37,59): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(object: CommunityNode, method: never): SpyInstance<never, never, any>', gave the following error.
+    Argument of type '"findCredentialsByType"' is not assignable to parameter of type 'never'.
+  Overload 2 of 3, '(object: CommunityNode, method: "init" | "run" | "catch" | "finally" | "uninstallPackage" | "pruneDependencies" | "deleteCommunityNode" | "removeCommunityPackage" | ... 5 more ... | "cleanupTestRunner"): SpyInstance<...>', gave the following error.
+    Argument of type '"findCredentialsByType"' is not assignable to parameter of type '"init" | "run" | "catch" | "finally" | "uninstallPackage" | "pruneDependencies" | "deleteCommunityNode" | "removeCommunityPackage" | "findCommunityPackage" | "initObjectStoreService" | "initBinaryDataService" | "initExternalHooks" | "initWorkflowHistory" | "cleanupTestRunner"'.
+src/commands/__tests__/community-node.test.ts(38,50): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(object: CommunityNode, method: never): SpyInstance<never, never, any>', gave the following error.
+    Argument of type '"findUserById"' is not assignable to parameter of type 'never'.
+  Overload 2 of 3, '(object: CommunityNode, method: "init" | "run" | "catch" | "finally" | "uninstallPackage" | "pruneDependencies" | "deleteCommunityNode" | "removeCommunityPackage" | ... 5 more ... | "cleanupTestRunner"): SpyInstance<...>', gave the following error.
+    Argument of type '"findUserById"' is not assignable to parameter of type '"init" | "run" | "catch" | "finally" | "uninstallPackage" | "pruneDependencies" | "deleteCommunityNode" | "removeCommunityPackage" | "findCommunityPackage" | "initObjectStoreService" | "initBinaryDataService" | "initExternalHooks" | "initWorkflowHistory" | "cleanupTestRunner"'.
+src/commands/__tests__/community-node.test.ts(60,17): error TS2339: Property 'findUserById' does not exist on type 'CommunityNode'.
+src/commands/__tests__/community-node.test.ts(62,54): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(object: CommunityNode, method: never): SpyInstance<never, never, any>', gave the following error.
+    Argument of type '"deleteCredential"' is not assignable to parameter of type 'never'.
+  Overload 2 of 3, '(object: CommunityNode, method: "init" | "run" | "catch" | "finally" | "uninstallPackage" | "pruneDependencies" | "deleteCommunityNode" | "removeCommunityPackage" | ... 5 more ... | "cleanupTestRunner"): SpyInstance<...>', gave the following error.
+    Argument of type '"deleteCredential"' is not assignable to parameter of type '"init" | "run" | "catch" | "finally" | "uninstallPackage" | "pruneDependencies" | "deleteCommunityNode" | "removeCommunityPackage" | "findCommunityPackage" | "initObjectStoreService" | "initBinaryDataService" | "initExternalHooks" | "initWorkflowHistory" | "cleanupTestRunner"'.
+src/commands/__tests__/community-node.test.ts(63,59): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(object: CommunityNode, method: never): SpyInstance<never, never, any>', gave the following error.
+    Argument of type '"findCredentialsByType"' is not assignable to parameter of type 'never'.
+  Overload 2 of 3, '(object: CommunityNode, method: "init" | "run" | "catch" | "finally" | "uninstallPackage" | "pruneDependencies" | "deleteCommunityNode" | "removeCommunityPackage" | ... 5 more ... | "cleanupTestRunner"): SpyInstance<...>', gave the following error.
+    Argument of type '"findCredentialsByType"' is not assignable to parameter of type '"init" | "run" | "catch" | "finally" | "uninstallPackage" | "pruneDependencies" | "deleteCommunityNode" | "removeCommunityPackage" | "findCommunityPackage" | "initObjectStoreService" | "initBinaryDataService" | "initExternalHooks" | "initWorkflowHistory" | "cleanupTestRunner"'.
+src/commands/__tests__/community-node.test.ts(64,50): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(object: CommunityNode, method: never): SpyInstance<never, never, any>', gave the following error.
+    Argument of type '"findUserById"' is not assignable to parameter of type 'never'.
+  Overload 2 of 3, '(object: CommunityNode, method: "init" | "run" | "catch" | "finally" | "uninstallPackage" | "pruneDependencies" | "deleteCommunityNode" | "removeCommunityPackage" | ... 5 more ... | "cleanupTestRunner"): SpyInstance<...>', gave the following error.
+    Argument of type '"findUserById"' is not assignable to parameter of type '"init" | "run" | "catch" | "finally" | "uninstallPackage" | "pruneDependencies" | "deleteCommunityNode" | "removeCommunityPackage" | "findCommunityPackage" | "initObjectStoreService" | "initBinaryDataService" | "initExternalHooks" | "initWorkflowHistory" | "cleanupTestRunner"'.
+src/commands/__tests__/community-node.test.ts(83,17): error TS2339: Property 'findUserById' does not exist on type 'CommunityNode'.
+src/commands/__tests__/community-node.test.ts(84,17): error TS2339: Property 'findCredentialsByType' does not exist on type 'CommunityNode'.
+src/commands/__tests__/community-node.test.ts(86,54): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(object: CommunityNode, method: never): SpyInstance<never, never, any>', gave the following error.
+    Argument of type '"deleteCredential"' is not assignable to parameter of type 'never'.
+  Overload 2 of 3, '(object: CommunityNode, method: "init" | "run" | "catch" | "finally" | "uninstallPackage" | "pruneDependencies" | "deleteCommunityNode" | "removeCommunityPackage" | ... 5 more ... | "cleanupTestRunner"): SpyInstance<...>', gave the following error.
+    Argument of type '"deleteCredential"' is not assignable to parameter of type '"init" | "run" | "catch" | "finally" | "uninstallPackage" | "pruneDependencies" | "deleteCommunityNode" | "removeCommunityPackage" | "findCommunityPackage" | "initObjectStoreService" | "initBinaryDataService" | "initExternalHooks" | "initWorkflowHistory" | "cleanupTestRunner"'.
+src/commands/__tests__/community-node.test.ts(87,59): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(object: CommunityNode, method: never): SpyInstance<never, never, any>', gave the following error.
+    Argument of type '"findCredentialsByType"' is not assignable to parameter of type 'never'.
+  Overload 2 of 3, '(object: CommunityNode, method: "init" | "run" | "catch" | "finally" | "uninstallPackage" | "pruneDependencies" | "deleteCommunityNode" | "removeCommunityPackage" | ... 5 more ... | "cleanupTestRunner"): SpyInstance<...>', gave the following error.
+    Argument of type '"findCredentialsByType"' is not assignable to parameter of type '"init" | "run" | "catch" | "finally" | "uninstallPackage" | "pruneDependencies" | "deleteCommunityNode" | "removeCommunityPackage" | "findCommunityPackage" | "initObjectStoreService" | "initBinaryDataService" | "initExternalHooks" | "initWorkflowHistory" | "cleanupTestRunner"'.
+src/commands/__tests__/community-node.test.ts(88,50): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(object: CommunityNode, method: never): SpyInstance<never, never, any>', gave the following error.
+    Argument of type '"findUserById"' is not assignable to parameter of type 'never'.
+  Overload 2 of 3, '(object: CommunityNode, method: "init" | "run" | "catch" | "finally" | "uninstallPackage" | "pruneDependencies" | "deleteCommunityNode" | "removeCommunityPackage" | ... 5 more ... | "cleanupTestRunner"): SpyInstance<...>', gave the following error.
+    Argument of type '"findUserById"' is not assignable to parameter of type '"init" | "run" | "catch" | "finally" | "uninstallPackage" | "pruneDependencies" | "deleteCommunityNode" | "removeCommunityPackage" | "findCommunityPackage" | "initObjectStoreService" | "initBinaryDataService" | "initExternalHooks" | "initWorkflowHistory" | "cleanupTestRunner"'.
+src/commands/__tests__/community-node.test.ts(115,17): error TS2339: Property 'findCredentialsByType' does not exist on type 'CommunityNode'.
+src/commands/__tests__/community-node.test.ts(116,17): error TS2339: Property 'findUserById' does not exist on type 'CommunityNode'.
+src/commands/__tests__/community-node.test.ts(118,54): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(object: CommunityNode, method: never): SpyInstance<never, never, any>', gave the following error.
+    Argument of type '"deleteCredential"' is not assignable to parameter of type 'never'.
+  Overload 2 of 3, '(object: CommunityNode, method: "init" | "run" | "catch" | "finally" | "uninstallPackage" | "pruneDependencies" | "deleteCommunityNode" | "removeCommunityPackage" | ... 5 more ... | "cleanupTestRunner"): SpyInstance<...>', gave the following error.
+    Argument of type '"deleteCredential"' is not assignable to parameter of type '"init" | "run" | "catch" | "finally" | "uninstallPackage" | "pruneDependencies" | "deleteCommunityNode" | "removeCommunityPackage" | "findCommunityPackage" | "initObjectStoreService" | "initBinaryDataService" | "initExternalHooks" | "initWorkflowHistory" | "cleanupTestRunner"'.
+src/commands/__tests__/community-node.test.ts(119,59): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(object: CommunityNode, method: never): SpyInstance<never, never, any>', gave the following error.
+    Argument of type '"findCredentialsByType"' is not assignable to parameter of type 'never'.
+  Overload 2 of 3, '(object: CommunityNode, method: "init" | "run" | "catch" | "finally" | "uninstallPackage" | "pruneDependencies" | "deleteCommunityNode" | "removeCommunityPackage" | ... 5 more ... | "cleanupTestRunner"): SpyInstance<...>', gave the following error.
+    Argument of type '"findCredentialsByType"' is not assignable to parameter of type '"init" | "run" | "catch" | "finally" | "uninstallPackage" | "pruneDependencies" | "deleteCommunityNode" | "removeCommunityPackage" | "findCommunityPackage" | "initObjectStoreService" | "initBinaryDataService" | "initExternalHooks" | "initWorkflowHistory" | "cleanupTestRunner"'.
+src/commands/__tests__/community-node.test.ts(120,50): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(object: CommunityNode, method: never): SpyInstance<never, never, any>', gave the following error.
+    Argument of type '"findUserById"' is not assignable to parameter of type 'never'.
+  Overload 2 of 3, '(object: CommunityNode, method: "init" | "run" | "catch" | "finally" | "uninstallPackage" | "pruneDependencies" | "deleteCommunityNode" | "removeCommunityPackage" | ... 5 more ... | "cleanupTestRunner"): SpyInstance<...>', gave the following error.
+    Argument of type '"findUserById"' is not assignable to parameter of type '"init" | "run" | "catch" | "finally" | "uninstallPackage" | "pruneDependencies" | "deleteCommunityNode" | "removeCommunityPackage" | "findCommunityPackage" | "initObjectStoreService" | "initBinaryDataService" | "initExternalHooks" | "initWorkflowHistory" | "cleanupTestRunner"'.
+src/controllers/__tests__/ai.controller.test.ts(22,73): error TS2554: Expected 2 arguments, but got 4.
+src/controllers/__tests__/owner.controller.test.ts(34,21): error TS2554: Expected 9 arguments, but got 7.
+src/controllers/__tests__/translation.controller.test.ts(4,15): error TS2305: Module '"@/controllers/translation.controller"' has no exported member 'TranslationRequest'.
+src/controllers/__tests__/translation.controller.test.ts(7,2): error TS2305: Module '"@/controllers/translation.controller"' has no exported member 'CREDENTIAL_TRANSLATIONS_DIR'.
+src/controllers/__tests__/translation.controller.test.ts(9,38): error TS2307: Cannot find module '@/credential-types' or its corresponding type declarations.
+src/controllers/__tests__/translation.controller.test.ts(15,3): error TS2554: Expected 0 arguments, but got 2.
+src/controllers/__tests__/translation.controller.test.ts(25,28): error TS2339: Property 'getCredentialTranslation' does not exist on type 'TranslationController'.
+src/controllers/__tests__/translation.controller.test.ts(39,28): error TS2339: Property 'getCredentialTranslation' does not exist on type 'TranslationController'.
+src/controllers/__tests__/users.controller.test.ts(25,3): error TS2554: Expected 10 arguments, but got 13.
+src/controllers/platform-admin.controller.ts(73,3): error TS6133: 'res' is declared but its value is never read.
+src/controllers/platform-admin.controller.ts(150,3): error TS6133: 'res' is declared but its value is never read.
+src/controllers/platform-admin.controller.ts(183,26): error TS2345: Argument of type '"platform-admin-logged-in"' is not assignable to parameter of type '"user-signed-up" | "server-started" | "session-started" | "instance-stopped" | "instance-owner-setup" | "platform-initialized" | "first-production-workflow-succeeded" | ... 81 more ... | "job-counts-updated"'.
+src/environments.ee/source-control/__tests__/source-control-export.service.test.ts(3,2): error TS2305: Module '"@n8n/db"' has no exported member 'CredentialsRepository'.
+src/environments.ee/source-control/__tests__/source-control-export.service.test.ts(53,3): error TS2554: Expected 9 arguments, but got 10.
+src/environments.ee/source-control/__tests__/source-control-import.service.ee.test.ts(67,3): error TS2554: Expected 15 arguments, but got 17.
+src/modules/mcp/__tests__/get-workflow-details.tool.test.ts(7,36): error TS2307: Cannot find module '@/credentials/credentials.service' or its corresponding type declarations.
+src/modules/mcp/__tests__/get-workflow-details.tool.test.ts(36,5): error TS2554: Expected 5 arguments, but got 6.
+src/modules/mcp/__tests__/get-workflow-details.tool.test.ts(62,5): error TS2554: Expected 5 arguments, but got 6.
+src/modules/mcp/__tests__/get-workflow-details.tool.test.ts(85,5): error TS2554: Expected 5 arguments, but got 6.
+src/modules/mcp/__tests__/get-workflow-details.tool.test.ts(102,88): error TS2554: Expected 5 arguments, but got 6.
+src/modules/mcp/__tests__/get-workflow-details.tool.test.ts(111,88): error TS2554: Expected 5 arguments, but got 6.
+src/modules/mcp/__tests__/get-workflow-details.tool.test.ts(120,88): error TS2554: Expected 5 arguments, but got 6.
+src/modules/mcp/__tests__/webhook-utils.test.ts(5,2): error TS2305: Module '"n8n-workflow"' has no exported member 'INodeCredentials'.
+src/modules/mcp/__tests__/webhook-utils.test.ts(7,2): error TS2305: Module '"n8n-workflow"' has no exported member 'ICredentialDataDecryptedObject'.
+src/modules/mcp/__tests__/webhook-utils.test.ts(13,36): error TS2307: Cannot find module '@/credentials/credentials.service' or its corresponding type declarations.
+src/modules/mcp/__tests__/webhook-utils.test.ts(89,4): error TS2554: Expected 3 arguments, but got 5.
+src/modules/mcp/__tests__/webhook-utils.test.ts(104,4): error TS2554: Expected 3 arguments, but got 5.
+src/modules/mcp/__tests__/webhook-utils.test.ts(122,4): error TS2554: Expected 3 arguments, but got 5.
+src/modules/mcp/__tests__/webhook-utils.test.ts(135,4): error TS2554: Expected 3 arguments, but got 5.
+src/modules/mcp/__tests__/webhook-utils.test.ts(150,62): error TS2554: Expected 3 arguments, but got 5.
+src/modules/mcp/__tests__/webhook-utils.test.ts(163,62): error TS2554: Expected 3 arguments, but got 5.
+src/modules/mcp/__tests__/webhook-utils.test.ts(176,62): error TS2554: Expected 3 arguments, but got 5.
+src/modules/mcp/__tests__/webhook-utils.test.ts(186,4): error TS2554: Expected 3 arguments, but got 5.
+src/modules/mcp/__tests__/webhook-utils.test.ts(200,4): error TS2554: Expected 3 arguments, but got 5.
+src/modules/mcp/__tests__/webhook-utils.test.ts(212,4): error TS2554: Expected 3 arguments, but got 5.
+src/modules/mcp/__tests__/webhook-utils.test.ts(224,4): error TS2554: Expected 3 arguments, but got 5.
+src/modules/mcp/__tests__/webhook-utils.test.ts(234,4): error TS2554: Expected 3 arguments, but got 5.
+src/modules/workflow-index/__tests__/workflow-index.service.test.ts(73,6): error TS2353: Object literal may only specify known properties, and 'credentials' does not exist in type 'Partial<INode> & { id: string; type: string; }'.
+src/modules/workflow-index/__tests__/workflow-index.service.test.ts(211,6): error TS2353: Object literal may only specify known properties, and 'credentials' does not exist in type 'Partial<INode> & { id: string; type: string; }'.
+src/permissions.ee/__tests__/check-access.test.ts(4,2): error TS2305: Module '"@n8n/db"' has no exported member 'CredentialsRepository'.
+src/permissions.ee/__tests__/check-access.test.ts(115,62): error TS2353: Object literal may only specify known properties, and 'credentialId' does not exist in type '{ workflowId?: string | undefined; projectId?: string | undefined; }'.
+src/permissions.ee/__tests__/check-access.test.ts(157,62): error TS2353: Object literal may only specify known properties, and 'credentialId' does not exist in type '{ workflowId?: string | undefined; projectId?: string | undefined; }'.
+src/permissions.ee/__tests__/check-access.test.ts(178,54): error TS2353: Object literal may only specify known properties, and 'credentialId' does not exist in type '{ workflowId?: string | undefined; projectId?: string | undefined; }'.
+src/permissions.ee/__tests__/check-access.test.ts(198,60): error TS2353: Object literal may only specify known properties, and 'credentialId' does not exist in type '{ workflowId?: string | undefined; projectId?: string | undefined; }'.
+src/permissions.ee/__tests__/check-access.test.ts(237,62): error TS2353: Object literal may only specify known properties, and 'credentialId' does not exist in type '{ workflowId?: string | undefined; projectId?: string | undefined; }'.
+src/permissions.ee/__tests__/check-access.test.ts(257,62): error TS2353: Object literal may only specify known properties, and 'credentialId' does not exist in type '{ workflowId?: string | undefined; projectId?: string | undefined; }'.
+src/permissions.ee/__tests__/check-access.test.ts(275,62): error TS2353: Object literal may only specify known properties, and 'credentialId' does not exist in type '{ workflowId?: string | undefined; projectId?: string | undefined; }'.
+src/permissions.ee/__tests__/check-access.test.ts(294,62): error TS2353: Object literal may only specify known properties, and 'credentialId' does not exist in type '{ workflowId?: string | undefined; projectId?: string | undefined; }'.
+src/permissions.ee/__tests__/check-access.test.ts(335,62): error TS2353: Object literal may only specify known properties, and 'credentialId' does not exist in type '{ workflowId?: string | undefined; projectId?: string | undefined; }'.
+src/permissions.ee/__tests__/check-access.test.ts(385,42): error TS2353: Object literal may only specify known properties, and 'credentialId' does not exist in type '{ workflowId?: string | undefined; projectId?: string | undefined; }'.
+src/permissions.ee/__tests__/check-access.test.ts(386,42): error TS2353: Object literal may only specify known properties, and 'credentialId' does not exist in type '{ workflowId?: string | undefined; projectId?: string | undefined; }'.
+src/scaling/__tests__/job-processor.service.test.ts(20,35): error TS2307: Cannot find module '@/credentials-helper' or its corresponding type declarations.
+src/scaling/__tests__/worker-server.test.ts(15,44): error TS2307: Cannot find module '@/credentials-overwrites' or its corresponding type declarations.
+src/scaling/__tests__/worker-server.test.ts(48,4): error TS2554: Expected 7 arguments, but got 8.
+src/scaling/__tests__/worker-server.test.ts(75,7): error TS2554: Expected 7 arguments, but got 8.
+src/scaling/__tests__/worker-server.test.ts(117,44): error TS2353: Object literal may only specify known properties, and 'overwrites' does not exist in type 'WorkerServerEndpointsConfig'.
+src/scaling/__tests__/worker-server.test.ts(148,44): error TS2353: Object literal may only specify known properties, and 'overwrites' does not exist in type 'WorkerServerEndpointsConfig'.
+src/scaling/__tests__/worker-server.test.ts(171,44): error TS2353: Object literal may only specify known properties, and 'overwrites' does not exist in type 'WorkerServerEndpointsConfig'.
+src/scaling/__tests__/worker-server.test.ts(184,40): error TS2353: Object literal may only specify known properties, and 'overwrites' does not exist in type 'WorkerServerEndpointsConfig'.
+src/scaling/__tests__/worker-server.test.ts(200,44): error TS2353: Object literal may only specify known properties, and 'overwrites' does not exist in type 'WorkerServerEndpointsConfig'.
+src/services/__tests__/hooks.service.test.ts(5,2): error TS2305: Module '"@n8n/db"' has no exported member 'CredentialsRepository'.
+src/services/__tests__/hooks.service.test.ts(39,3): error TS2554: Expected 5 arguments, but got 6.
+src/services/__tests__/hooks.service.test.ts(117,39): error TS2554: Expected 0 arguments, but got 1.
+src/services/__tests__/import.service.test.ts(9,15): error TS2305: Module '"@n8n/db"' has no exported member 'CredentialsRepository'.
+src/services/__tests__/import.service.test.ts(104,4): error TS2554: Expected 7 arguments, but got 8.
+src/services/__tests__/naming.service.test.ts(2,15): error TS2305: Module '"@n8n/db"' has no exported member 'CredentialsEntity'.
+src/services/__tests__/naming.service.test.ts(3,10): error TS2305: Module '"@n8n/db"' has no exported member 'CredentialsRepository'.
+src/services/__tests__/naming.service.test.ts(11,62): error TS2554: Expected 1 arguments, but got 2.
+src/services/__tests__/naming.service.test.ts(53,26): error TS2339: Property 'findStartingWith' does not exist on type '{}'.
+src/services/__tests__/naming.service.test.ts(55,37): error TS2339: Property 'getUniqueCredentialName' does not exist on type 'NamingService'.
+src/services/__tests__/naming.service.test.ts(61,26): error TS2339: Property 'findStartingWith' does not exist on type '{}'.
+src/services/__tests__/naming.service.test.ts(65,37): error TS2339: Property 'getUniqueCredentialName' does not exist on type 'NamingService'.
+src/services/__tests__/naming.service.test.ts(73,26): error TS2339: Property 'findStartingWith' does not exist on type '{}'.
+src/services/__tests__/naming.service.test.ts(75,37): error TS2339: Property 'getUniqueCredentialName' does not exist on type 'NamingService'.
+src/services/__tests__/naming.service.test.ts(81,38): error TS2339: Property 'getUniqueCredentialName' does not exist on type 'NamingService'.
+src/services/__tests__/workflow-statistics.service.integration.test.ts(321,71): error TS2353: Object literal may only specify known properties, and 'credentials' does not exist in type '{ id?: string | undefined; name?: string | undefined; typeVersion?: number | undefined; type?: string | undefined; position?: [(number | undefined)?, (number | undefined)?] | undefined; ... 13 more ...; forceCustomOperation?: { ...; } | undefined; }'.
+src/services/__tests__/workflow-statistics.service.integration.test.ts(323,64): error TS2345: Argument of type '{ [K in keyof T]: T[K] extends (...args: infer A) => infer B ? CalledWithMock<B, A> : T[K]; } & T' is not assignable to parameter of type 'INode'.
+  Type '{ [K in keyof T]: T[K] extends (...args: infer A) => infer B ? CalledWithMock<B, A> : T[K]; }' is missing the following properties from type 'INode': id, name, typeVersion, type, and 2 more.
+src/services/__tests__/workflow-statistics.service.integration.test.ts(329,20): error TS2339: Property 'type' does not exist on type '{ [K in keyof T]: T[K] extends (...args: infer A) => infer B ? CalledWithMock<B, A> : T[K]; } & T'.
+src/services/__tests__/workflow-statistics.service.integration.test.ts(330,18): error TS2339: Property 'id' does not exist on type '{ [K in keyof T]: T[K] extends (...args: infer A) => infer B ? CalledWithMock<B, A> : T[K]; } & T'.
+src/services/dynamic-node-parameters.service.ts(299,3): error TS6133: 'credentials' is declared but its value is never read.
+src/services/frontend.service.ts(304,9): error TS6133: 'restEndpoint' is declared but its value is never read.
+src/services/platform-admin.service.ts(4,1): error TS6133: 'UserError' is declared but its value is never read.
+src/services/platform-admin.service.ts(72,26): error TS2345: Argument of type '"platform-admin-created"' is not assignable to parameter of type '"server-started" | "session-started" | "instance-stopped" | "instance-owner-setup" | "platform-initialized" | "first-production-workflow-succeeded" | "first-workflow-data-loaded" | ... 81 more ... | "job-counts-updated"'.
+src/services/platform-admin.service.ts(116,26): error TS2345: Argument of type '"platform-admin-login"' is not assignable to parameter of type '"server-started" | "session-started" | "instance-stopped" | "instance-owner-setup" | "platform-initialized" | "first-production-workflow-succeeded" | "first-workflow-data-loaded" | ... 81 more ... | "job-counts-updated"'.
+src/services/platform-admin.service.ts(177,26): error TS2345: Argument of type '"platform-admin-deactivated"' is not assignable to parameter of type '"server-started" | "session-started" | "instance-stopped" | "instance-owner-setup" | "platform-initialized" | "first-production-workflow-succeeded" | "first-workflow-data-loaded" | ... 81 more ... | "job-counts-updated"'.
+src/services/project.service.ee.ts(70,20): error TS6138: Property 'cacheService' is declared but its value is never read.
+src/services/user-onboarding.service.ts(77,27): error TS2345: Argument of type '"user-onboarded"' is not assignable to parameter of type '"server-started" | "session-started" | "instance-stopped" | "instance-owner-setup" | "platform-initialized" | "first-production-workflow-succeeded" | "first-workflow-data-loaded" | ... 81 more ... | "job-counts-updated"'.
+src/services/user-onboarding.service.ts(142,27): error TS2345: Argument of type '"personal-workspace-created"' is not assignable to parameter of type '"server-started" | "session-started" | "instance-stopped" | "instance-owner-setup" | "platform-initialized" | "first-production-workflow-succeeded" | "first-workflow-data-loaded" | ... 81 more ... | "job-counts-updated"'.
+src/workflow-runner.ts(60,20): error TS6138: Property 'executionDataService' is declared but its value is never read.
+test/integration/active-workflow-manager.test.ts(7,29): error TS2307: Cannot find module 'n8n-nodes-base/nodes/Form/FormTrigger.node' or its corresponding type declarations.
+test/integration/ai/ai.api.test.ts(3,10): error TS2305: Module '"@n8n/db"' has no exported member 'CredentialsRepository'.
+test/integration/ai/ai.api.test.ts(36,25): error TS2322: Type '"CredentialsEntity"' is not assignable to type 'EntityName'.
+test/integration/ai/ai.api.test.ts(76,28): error TS2571: Object is of type 'unknown'.
+test/integration/commands/credentials.cmd.test.ts(5,42): error TS2307: Cannot find module '@/commands/import/credentials' or its corresponding type declarations.
+test/integration/commands/credentials.cmd.test.ts(16,25): error TS2322: Type '"CredentialsEntity"' is not assignable to type 'EntityName'.
+test/integration/commands/ldap/reset.test.ts(9,10): error TS2305: Module '"@n8n/db"' has no exported member 'CredentialsRepository'.
+test/integration/commands/ldap/reset.test.ts(89,4): error TS2571: Object is of type 'unknown'.
+test/integration/commands/ldap/reset.test.ts(98,4): error TS2571: Object is of type 'unknown'.
+test/integration/commands/ldap/reset.test.ts(210,36): error TS2571: Object is of type 'unknown'.
+test/integration/commands/ldap/reset.test.ts(222,4): error TS2571: Object is of type 'unknown'.
+test/integration/commands/ldap/reset.test.ts(286,37): error TS2571: Object is of type 'unknown'.
+test/integration/commands/ldap/reset.test.ts(298,4): error TS2571: Object is of type 'unknown'.
+test/integration/commands/ldap/reset.test.ts(342,37): error TS2571: Object is of type 'unknown'.
+test/integration/commands/ldap/reset.test.ts(354,4): error TS2571: Object is of type 'unknown'.
+test/integration/commands/reset.cmd.test.ts(9,2): error TS2305: Module '"@n8n/db"' has no exported member 'CredentialsEntity'.
+test/integration/commands/reset.cmd.test.ts(11,2): error TS2305: Module '"@n8n/db"' has no exported member 'CredentialsRepository'.
+test/integration/commands/reset.cmd.test.ts(52,35): error TS2571: Object is of type 'unknown'.
+test/integration/commands/reset.cmd.test.ts(95,3): error TS2571: Object is of type 'unknown'.
+test/integration/commands/reset.cmd.test.ts(100,3): error TS2571: Object is of type 'unknown'.
+test/integration/controllers/oauth/oauth2.api.test.ts(2,15): error TS2305: Module '"@n8n/db"' has no exported member 'CredentialsEntity'.
+test/integration/controllers/oauth/oauth2.api.test.ts(8,44): error TS2307: Cannot find module '@/controllers/oauth/oauth2-credential.controller' or its corresponding type declarations.
+test/integration/controllers/oauth/oauth2.api.test.ts(9,35): error TS2307: Cannot find module '@/credentials-helper' or its corresponding type declarations.
+test/integration/controllers/oauth/oauth2.api.test.ts(30,66): error TS7006: Parameter '_' implicitly has an 'any' type.
+test/integration/controllers/oauth/oauth2.api.test.ts(30,69): error TS7006: Parameter 'decryptedDataOriginal' implicitly has an 'any' type.
+test/integration/controllers/oauth/oauth2.api.test.ts(40,26): error TS2322: Type '"CredentialsEntity"' is not assignable to type 'EntityName'.
+test/integration/controllers/oauth/oauth2.api.test.ts(56,30): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(object: {}, method: never): SpyInstance<never, never, any>', gave the following error.
+    Argument of type 'unknown' is not assignable to parameter of type '{}'.
+  Overload 2 of 3, '(object: {}, method: never): SpyInstance<never, never, any>', gave the following error.
+    Argument of type 'unknown' is not assignable to parameter of type '{}'.
+test/integration/controllers/oauth/oauth2.api.test.ts(56,61): error TS2339: Property 'mockClear' does not exist on type 'never'.
+test/integration/controllers/oauth/oauth2.api.test.ts(80,30): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(object: {}, method: never): SpyInstance<never, never, any>', gave the following error.
+    Argument of type 'unknown' is not assignable to parameter of type '{}'.
+  Overload 2 of 3, '(object: {}, method: never): SpyInstance<never, never, any>', gave the following error.
+    Argument of type 'unknown' is not assignable to parameter of type '{}'.
+test/integration/controllers/oauth/oauth2.api.test.ts(80,61): error TS2339: Property 'mockClear' does not exist on type 'never'.
+test/integration/controllers/oauth/oauth2.api.test.ts(102,30): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(object: {}, method: never): SpyInstance<never, never, any>', gave the following error.
+    Argument of type 'unknown' is not assignable to parameter of type '{}'.
+  Overload 2 of 3, '(object: {}, method: never): SpyInstance<never, never, any>', gave the following error.
+    Argument of type 'unknown' is not assignable to parameter of type '{}'.
+test/integration/controllers/oauth/oauth2.api.test.ts(102,61): error TS2339: Property 'mockClear' does not exist on type 'never'.
+test/integration/controllers/oauth/oauth2.api.test.ts(120,35): error TS2571: Object is of type 'unknown'.
+test/integration/credentials-helper.test.ts(10,35): error TS2307: Cannot find module '@/credentials-helper' or its corresponding type declarations.
+test/integration/credentials/credentials-overwrites.integration.test.ts(7,39): error TS2307: Cannot find module '@/credentials-overwrites' or its corresponding type declarations.
+test/integration/credentials/credentials-overwrites.integration.test.ts(8,33): error TS2307: Cannot find module '@/credential-types' or its corresponding type declarations.
+test/integration/credentials/credentials-overwrites.integration.test.ts(9,15): error TS2305: Module '"@/interfaces"' has no exported member 'ICredentialsOverwrite'.
+test/integration/credentials/credentials.api.test.ts(12,10): error TS2305: Module '"@n8n/db"' has no exported member 'CredentialsRepository'.
+test/integration/credentials/credentials.api.test.ts(17,10): error TS2305: Module '"n8n-core"' has no exported member 'Credentials'.
+test/integration/credentials/credentials.api.test.ts(18,15): error TS2305: Module '"n8n-workflow"' has no exported member 'ICredentialDataDecryptedObject'.
+test/integration/credentials/credentials.api.test.ts(22,36): error TS2307: Cannot find module '@/credentials/credentials.service' or its corresponding type declarations.
+test/integration/credentials/credentials.api.test.ts(23,35): error TS2307: Cannot find module '@/services/credentials-tester.service' or its corresponding type declarations.
+test/integration/credentials/credentials.api.test.ts(55,25): error TS2322: Type '"CredentialsEntity"' is not assignable to type 'EntityName'.
+test/integration/credentials/credentials.api.test.ts(76,51): error TS2694: Namespace '"/home/zhang/n8n-quanyuge/packages/@n8n/db/dist/entities/types-db".ListQueryDb' has no exported member 'Credentials'.
+test/integration/credentials/credentials.api.test.ts(94,55): error TS2694: Namespace '"/home/zhang/n8n-quanyuge/packages/@n8n/db/dist/entities/types-db".ListQueryDb' has no exported member 'Credentials'.
+test/integration/credentials/credentials.api.test.ts(867,28): error TS2571: Object is of type 'unknown'.
+test/integration/credentials/credentials.api.test.ts(889,28): error TS2571: Object is of type 'unknown'.
+test/integration/credentials/credentials.api.test.ts(934,35): error TS2571: Object is of type 'unknown'.
+test/integration/credentials/credentials.api.test.ts(952,35): error TS2571: Object is of type 'unknown'.
+test/integration/credentials/credentials.api.test.ts(970,35): error TS2571: Object is of type 'unknown'.
+test/integration/credentials/credentials.api.test.ts(987,33): error TS2571: Object is of type 'unknown'.
+test/integration/credentials/credentials.api.test.ts(1006,33): error TS2571: Object is of type 'unknown'.
+test/integration/credentials/credentials.api.test.ts(1053,28): error TS2571: Object is of type 'unknown'.
+test/integration/credentials/credentials.api.test.ts(1073,28): error TS2571: Object is of type 'unknown'.
+test/integration/credentials/credentials.api.test.ts(1108,28): error TS2571: Object is of type 'unknown'.
+test/integration/credentials/credentials.api.test.ts(1128,33): error TS2571: Object is of type 'unknown'.
+test/integration/credentials/credentials.api.test.ts(1149,33): error TS2571: Object is of type 'unknown'.
+test/integration/credentials/credentials.api.test.ts(1170,33): error TS2571: Object is of type 'unknown'.
+test/integration/credentials/credentials.api.test.ts(1206,27): error TS2571: Object is of type 'unknown'.
+test/integration/credentials/credentials.api.test.ts(1321,32): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(object: {}, method: never): SpyInstance<never, never, any>', gave the following error.
+    Argument of type 'unknown' is not assignable to parameter of type '{}'.
+  Overload 2 of 3, '(object: {}, method: never): SpyInstance<never, never, any>', gave the following error.
+    Argument of type 'unknown' is not assignable to parameter of type '{}'.
+test/integration/credentials/credentials.api.test.ts(1600,61): error TS2694: Namespace '"/home/zhang/n8n-quanyuge/packages/@n8n/db/dist/entities/types-db".ListQueryDb' has no exported member 'Credentials'.
+test/integration/credentials/credentials.api.test.ts(1621,26): error TS2694: Namespace '"/home/zhang/n8n-quanyuge/packages/@n8n/db/dist/entities/types-db".ListQueryDb' has no exported member 'Credentials'.
+test/integration/credentials/credentials.service.test.ts(7,15): error TS2305: Module '"@n8n/db"' has no exported member 'CredentialsEntity'.
+test/integration/credentials/credentials.service.test.ts(10,42): error TS2307: Cannot find module '@/credentials/credentials-finder.service' or its corresponding type declarations.
+test/integration/credentials/credentials.service.test.ts(11,36): error TS2307: Cannot find module '@/credentials/credentials.service' or its corresponding type declarations.
+test/integration/credentials/credentials.service.test.ts(37,35): error TS2571: Object is of type 'unknown'.
+test/integration/credentials/credentials.service.test.ts(43,26): error TS2571: Object is of type 'unknown'.
+test/integration/credentials/credentials.service.test.ts(52,10): error TS2571: Object is of type 'unknown'.
+test/integration/credentials/credentials.service.test.ts(70,42): error TS2571: Object is of type 'unknown'.
+test/integration/credentials/credentials.service.test.ts(76,26): error TS2571: Object is of type 'unknown'.
+test/integration/credentials/credentials.service.test.ts(85,10): error TS2571: Object is of type 'unknown'.
+test/integration/credentials/credentials.service.test.ts(103,42): error TS2571: Object is of type 'unknown'.
+test/integration/credentials/credentials.service.test.ts(109,26): error TS2571: Object is of type 'unknown'.
+test/integration/credentials/credentials.service.test.ts(119,10): error TS2571: Object is of type 'unknown'.
+test/integration/deduplication/deduplication-helper.test.ts(24,3): error TS2353: Object literal may only specify known properties, and 'credentials' does not exist in type '{ nodes?: { [x: string]: { sourcePath?: string | undefined; type?: { description?: { version?: number | (number | undefined)[] | undefined; defaults?: { color?: string | undefined; name?: string | undefined; } | undefined; ... 37 more ...; usableAsTool?: true | ... 1 more ... | undefined; } | undefined; ... 8 more ....'.
+test/integration/environments/source-control-export.service.test.ts(4,2): error TS2305: Module '"@n8n/db"' has no exported member 'CredentialsEntity'.
+test/integration/environments/source-control-export.service.test.ts(5,2): error TS2305: Module '"@n8n/db"' has no exported member 'CredentialsRepository'.
+test/integration/environments/source-control-export.service.test.ts(82,26): error TS2322: Type '"CredentialsEntity"' is not assignable to type 'EntityName'.
+test/integration/environments/source-control-import.service.test.ts(12,7): error TS2305: Module '"@n8n/db"' has no exported member 'CredentialsEntity'.
+test/integration/environments/source-control-import.service.test.ts(13,2): error TS2305: Module '"@n8n/db"' has no exported member 'CredentialsRepository'.
+test/integration/environments/source-control-import.service.test.ts(86,4): error TS2554: Expected 15 arguments, but got 17.
+test/integration/environments/source-control-import.service.test.ts(92,26): error TS2322: Type '"CredentialsEntity"' is not assignable to type 'EntityName'.
+test/integration/environments/source-control.service.test.ts(4,2): error TS2305: Module '"@n8n/db"' has no exported member 'CredentialsEntity'.
+test/integration/import.service.test.ts(10,21): error TS2305: Module '"@n8n/db"' has no exported member 'CredentialsRepository'.
+test/integration/import.service.test.ts(52,4): error TS2554: Expected 7 arguments, but got 8.
+test/integration/import.service.test.ts(132,5): error TS2353: Object literal may only specify known properties, and 'credentials' does not exist in type 'INode'.
+test/integration/import.service.test.ts(144,34): error TS2339: Property 'credentials' does not exist on type 'INode'.
+test/integration/license-metrics.repository.test.ts(23,4): error TS2322: Type '"CredentialsEntity"' is not assignable to type 'EntityName'.
+test/integration/public-api/credentials.test.ts(4,10): error TS2305: Module '"@n8n/db"' has no exported member 'CredentialsRepository'.
+test/integration/public-api/credentials.test.ts(39,25): error TS2322: Type '"CredentialsEntity"' is not assignable to type 'EntityName'.
+test/integration/public-api/credentials.test.ts(62,28): error TS2571: Object is of type 'unknown'.
+test/integration/public-api/credentials.test.ts(95,35): error TS2571: Object is of type 'unknown'.
+test/integration/public-api/credentials.test.ts(109,35): error TS2571: Object is of type 'unknown'.
+test/integration/public-api/credentials.test.ts(128,35): error TS2571: Object is of type 'unknown'.
+test/integration/public-api/credentials.test.ts(153,35): error TS2571: Object is of type 'unknown'.
+test/integration/public-api/credentials.test.ts(161,39): error TS2571: Object is of type 'unknown'.
+test/integration/public-api/credentials.test.ts(177,33): error TS2571: Object is of type 'unknown'.
+test/integration/security-audit/credentials-risk-reporter.test.ts(5,2): error TS2305: Module '"@n8n/db"' has no exported member 'CredentialsRepository'.
+test/integration/security-audit/credentials-risk-reporter.test.ts(33,43): error TS2322: Type '"CredentialsEntity"' is not assignable to type 'EntityName'.
+test/integration/security-audit/credentials-risk-reporter.test.ts(66,3): error TS2571: Object is of type 'unknown'.
+test/integration/security-audit/credentials-risk-reporter.test.ts(93,27): error TS2571: Object is of type 'unknown'.
+test/integration/security-audit/credentials-risk-reporter.test.ts(137,27): error TS2571: Object is of type 'unknown'.
+test/integration/security-audit/credentials-risk-reporter.test.ts(206,27): error TS2571: Object is of type 'unknown'.
+test/integration/shared/db/credentials.ts(2,30): error TS2724: '"@n8n/db"' has no exported member named 'ICredentialsDb'. Did you mean 'ICredentialsBase'?
+test/integration/shared/db/credentials.ts(3,10): error TS2305: Module '"@n8n/db"' has no exported member 'CredentialsEntity'.
+test/integration/shared/db/credentials.ts(3,29): error TS2305: Module '"@n8n/db"' has no exported member 'CredentialsRepository'.
+test/integration/shared/db/credentials.ts(10,66): error TS2307: Cannot find module '@/credentials-helper' or its corresponding type declarations.
+test/integration/shared/db/credentials.ts(20,66): error TS2307: Cannot find module '@/credentials-helper' or its corresponding type declarations.
+test/integration/shared/db/credentials.ts(52,28): error TS18046: 'credentialsRepository' is of type 'unknown'.
+test/integration/shared/db/credentials.ts(53,3): error TS18046: 'credentialsRepository' is of type 'unknown'.
+test/integration/shared/db/credentials.ts(88,32): error TS2571: Object is of type 'unknown'.
+test/integration/shared/db/credentials.ts(130,15): error TS2571: Object is of type 'unknown'.
+test/integration/shared/db/credentials.ts(134,8): error TS2571: Object is of type 'unknown'.
+test/integration/shared/types.ts(2,15): error TS2305: Module '"@n8n/db"' has no exported member 'CredentialsEntity'.
+test/integration/shared/types.ts(2,49): error TS2724: '"@n8n/db"' has no exported member named 'ICredentialsDb'. Did you mean 'ICredentialsBase'?
+test/integration/shared/utils/index.ts(12,21): error TS2307: Cannot find module 'n8n-nodes-base/credentials/Ftp.credentials' or its corresponding type declarations.
+test/integration/shared/utils/index.ts(13,27): error TS2307: Cannot find module 'n8n-nodes-base/credentials/GithubApi.credentials' or its corresponding type declarations.
+test/integration/shared/utils/index.ts(15,29): error TS2307: Cannot find module 'n8n-nodes-base/nodes/Form/FormTrigger.node' or its corresponding type declarations.
+test/integration/shared/utils/index.ts(56,48): error TS2339: Property 'credentials' does not exist on type 'LoadedNodesAndCredentials'.
+test/integration/shared/utils/index.ts(190,8): error TS2339: Property 'credentials' does not exist on type 'INode'.
+test/integration/shared/utils/test-server.ts(150,20): error TS2307: Cannot find module '@/credentials/credentials.controller' or its corresponding type declarations.
+test/integration/shared/utils/test-server.ts(182,20): error TS2307: Cannot find module '@/controllers/oauth/oauth2-credential.controller' or its corresponding type declarations.
+test/integration/shared/workflow.ts(18,2): error TS2353: Object literal may only specify known properties, and 'credentials' does not exist in type 'INode'.
+test/integration/shared/workflow.ts(28,2): error TS2353: Object literal may only specify known properties, and 'credentials' does not exist in type 'INode'.
+test/integration/shared/workflow.ts(43,2): error TS2353: Object literal may only specify known properties, and 'credentials' does not exist in type 'INode'.
+test/integration/workflows/workflow.service.ee.test.ts(2,10): error TS2305: Module '"@n8n/db"' has no exported member 'CredentialsEntity'.
+test/integration/workflows/workflow.service.ee.test.ts(2,29): error TS2305: Module '"@n8n/db"' has no exported member 'CredentialsRepository'.
+test/integration/workflows/workflow.service.ee.test.ts(32,4): error TS2554: Expected 8 arguments, but got 12.
+test/integration/workflows/workflows.controller.test.ts(569,5): error TS2353: Object literal may only specify known properties, and 'credentials' does not exist in type 'INode'.
+test/integration/workflows/workflows.controller.test.ts(653,5): error TS2353: Object literal may only specify known properties, and 'credentials' does not exist in type 'INode'.
+test/integration/workflows/workflows.controller.test.ts(1502,5): error TS2353: Object literal may only specify known properties, and 'credentials' does not exist in type 'INode'.
+test/integration/workflows/workflows.controller.test.ts(1606,5): error TS2353: Object literal may only specify known properties, and 'credentials' does not exist in type 'INode'.
+test/shared/mock-objects.ts(7,10): error TS2305: Module '"@n8n/db"' has no exported member 'CredentialsEntity'.
+ ELIFECYCLE  Command failed with exit code 2.

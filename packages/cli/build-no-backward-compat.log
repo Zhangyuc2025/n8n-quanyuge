@@ -1,0 +1,8 @@
+
+> n8n@1.119.0 build /home/zhang/n8n-quanyuge/packages/cli
+> tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json && pnpm run build:data
+
+
+> n8n@1.119.0 build:data /home/zhang/n8n-quanyuge/packages/cli
+> node scripts/build.mjs
+

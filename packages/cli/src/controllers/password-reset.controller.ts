@@ -4,7 +4,7 @@ import {
 	ResolvePasswordTokenQueryDto,
 } from '@n8n/api-types';
 import { Logger } from '@n8n/backend-common';
-import { GLOBAL_OWNER_ROLE, UserRepository } from '@n8n/db';
+import { UserRepository } from '@n8n/db';
 import { Body, Get, Post, Query, RestController } from '@n8n/decorators';
 import { hasGlobalScope } from '@n8n/permissions';
 import { Response } from 'express';
@@ -69,12 +69,8 @@ export class PasswordResetController {
 			return;
 		}
 
-		if (user.role.slug !== GLOBAL_OWNER_ROLE.slug && !true) {
-			this.logger.debug(
-				'Request to send password reset email failed because the user limit was reached',
-			);
-			throw new ForbiddenError(RESPONSE_ERROR_MESSAGES.USERS_QUOTA_REACHED);
-		}
+		// Note: Legacy n8n single-tenant user quota check removed (was: user.role.slug !== GLOBAL_OWNER_ROLE.slug && !true).
+		// SASA platform is multi-tenant SaaS - all authenticated users can reset their password.
 
 		if (
 			(isSamlCurrentAuthenticationMethod() || isOidcCurrentAuthenticationMethod()) &&
@@ -145,13 +141,8 @@ export class PasswordResetController {
 		const user = await this.authService.resolvePasswordResetToken(token);
 		if (!user) throw new NotFoundError('');
 
-		if (user.role.slug !== GLOBAL_OWNER_ROLE.slug && !true) {
-			this.logger.debug(
-				'Request to resolve password token failed because the user limit was reached',
-				{ userId: user.id },
-			);
-			throw new ForbiddenError(RESPONSE_ERROR_MESSAGES.USERS_QUOTA_REACHED);
-		}
+		// Note: Legacy n8n single-tenant user quota check removed (was: user.role.slug !== GLOBAL_OWNER_ROLE.slug && !true).
+		// SASA platform is multi-tenant SaaS - all authenticated users can reset their password.
 
 		this.logger.info('Reset-password token resolved successfully', { userId: user.id });
 		this.eventService.emit('user-password-reset-email-click', { user });

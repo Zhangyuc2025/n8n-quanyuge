@@ -11,7 +11,6 @@ import type {
 	RBACPermissionOptions,
 	RolePermissionOptions,
 	PermissionType,
-	DefaultUserMiddlewareOptions,
 } from '@/app/types/rbac';
 
 export type RouterMiddlewareType = Exclude<PermissionType, 'instanceOwner'>;
@@ -23,7 +22,6 @@ export type CustomMiddlewareOptions = CustomPermissionOptions<{
 export type MiddlewareOptions = {
 	authenticated: AuthenticatedPermissionOptions;
 	custom: CustomMiddlewareOptions;
-	defaultUser: DefaultUserMiddlewareOptions;
 	enterprise: EnterprisePermissionOptions;
 	guest: GuestPermissionOptions;
 	rbac: RBACPermissionOptions;

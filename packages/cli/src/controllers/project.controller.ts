@@ -183,7 +183,7 @@ export class ProjectController {
 		_res: Response,
 		@Param('projectId') projectId: string,
 	): Promise<ProjectRequest.ProjectWithRelations> {
-		const [{ id, name, icon, type, description }, relations] = await Promise.all([
+		const [{ id, name, icon, type, description, billingMode }, relations] = await Promise.all([
 			this.projectsService.getProject(projectId),
 			this.projectsService.getProjectRelations(projectId),
 		]);
@@ -195,6 +195,7 @@ export class ProjectController {
 			icon,
 			type,
 			description,
+			billingMode,
 			relations: relations.map((r) => ({
 				id: r.user.id,
 				email: r.user.email,
@@ -211,15 +212,44 @@ export class ProjectController {
 		};
 	}
 
+	@Get('/:projectId/billing-mode')
+	@ProjectScope('project:read')
+	async getProjectBillingMode(
+		_req: AuthenticatedRequest,
+		_res: Response,
+		@Param('projectId') projectId: string,
+	) {
+		const project = await this.projectsService.getProject(projectId);
+		return {
+			projectId: project.id,
+			billingMode: project.billingMode,
+			projectType: project.type,
+		};
+	}
+
 	@Patch('/:projectId')
 	@ProjectScope('project:update')
 	async updateProject(
-		_req: AuthenticatedRequest,
+		req: AuthenticatedRequest,
 		_res: Response,
 		@Body payload: UpdateProjectDto,
 		@Param('projectId') projectId: string,
 	) {
-		await this.projectsService.updateProject(projectId, payload);
+		const { billingModeChanged, oldBillingMode } = await this.projectsService.updateProject(
+			projectId,
+			payload,
+		);
+
+		// Emit event if billingMode changed
+		if (billingModeChanged && payload.billingMode) {
+			this.eventService.emit('project-billing-mode-changed', {
+				userId: req.user.id,
+				role: req.user.role.slug,
+				projectId,
+				oldBillingMode,
+				newBillingMode: payload.billingMode,
+			});
+		}
 	}
 
 	@Post('/:projectId/users')

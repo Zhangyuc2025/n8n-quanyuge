@@ -181,7 +181,6 @@ const workflowsStore = useWorkflowsStore();
 const sourceControlStore = useSourceControlStore();
 const nodeCreatorStore = useNodeCreatorStore();
 const settingsStore = useSettingsStore();
-const credentialsStore = useCredentialsStore();
 const environmentsStore = useEnvironmentsStore();
 const externalSecretsStore = useExternalSecretsStore();
 const rootStore = useRootStore();
@@ -321,11 +320,7 @@ async function initializeData() {
 	const loadPromises = (() => {
 		if (settingsStore.isPreviewMode && isDemoRoute.value) return [];
 
-		const promises: Array<Promise<unknown>> = [
-			workflowsStore.fetchActiveWorkflows(),
-			credentialsStore.fetchAllCredentials(),
-			credentialsStore.fetchCredentialTypes(true),
-		];
+		const promises: Array<Promise<unknown>> = [workflowsStore.fetchActiveWorkflows()];
 
 		if (true) {
 			promises.push(environmentsStore.fetchAllVariables());
@@ -421,10 +416,6 @@ async function initializeRoute(force = false) {
 	} else if (isWorkflowRoute.value) {
 		if (!isAlreadyInitialized) {
 			historyStore.reset();
-
-			if (!isDemoRoute.value) {
-				await loadCredentials();
-			}
 
 			// If there is no workflow id, treat it as a new workflow
 			if (isNewWorkflowRoute.value || !workflowId.value) {
@@ -900,31 +891,6 @@ function onClickNodeAdd(source: string, sourceHandle: string) {
 		},
 		eventSource: NODE_CREATOR_OPEN_SOURCES.PLUS_ENDPOINT,
 	});
-}
-
-/**
- * Credentials
- */
-
-async function loadCredentials() {
-	let options: { workflowId: string } | { projectId: string };
-
-	if (workflowId.value) {
-		options = { workflowId: workflowId.value };
-	} else {
-		const queryParam =
-			typeof route.query?.projectId === 'string' ? route.query?.projectId : undefined;
-		const projectId = queryParam ?? projectsStore.personalProject?.id;
-		if (projectId === undefined) {
-			throw new Error(
-				'Could not find projectId in the query nor could I find the personal project in the project store',
-			);
-		}
-
-		options = { projectId };
-	}
-
-	await credentialsStore.fetchAllCredentialsForWorkflow(options);
 }
 
 /**
@@ -1447,7 +1413,6 @@ async function onSourceControlPull() {
 		await Promise.all([
 			environmentsStore.fetchAllVariables(),
 			tagsStore.fetchAll(),
-			loadCredentials(),
 			projectsStore.getAvailableProjects(),
 		]);
 

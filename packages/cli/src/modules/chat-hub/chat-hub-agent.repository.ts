@@ -12,7 +12,9 @@ export class ChatHubAgentRepository extends Repository<ChatHubAgent> {
 
 	async createAgent(agent: Partial<ChatHubAgent>, trx?: EntityManager) {
 		return await withTransaction(this.manager, trx, async (em) => {
-			await em.insert(ChatHubAgent, agent);
+			// Exclude relation properties for insert - only use column values
+			const { platformAiProvider, owner, ...agentData } = agent;
+			await em.insert(ChatHubAgent, agentData);
 			return await em.findOneOrFail(ChatHubAgent, {
 				where: { id: agent.id },
 			});

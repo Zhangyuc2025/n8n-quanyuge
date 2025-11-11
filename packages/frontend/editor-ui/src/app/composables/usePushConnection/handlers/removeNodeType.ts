@@ -8,12 +8,8 @@ import type { INodeTypeDescription, INodeTypeNameVersion } from 'n8n-workflow';
  */
 export async function removeNodeType({ data }: RemoveNodeType) {
 	const nodeTypesStore = useNodeTypesStore();
-	const credentialsStore = useCredentialsStore();
 
 	const nodesToBeRemoved: INodeTypeNameVersion[] = [data];
 
-	// Force reload of all credential types
-	await credentialsStore.fetchCredentialTypes(false).then(() => {
-		nodeTypesStore.removeNodeTypes(nodesToBeRemoved as INodeTypeDescription[]);
-	});
+	nodeTypesStore.removeNodeTypes(nodesToBeRemoved as INodeTypeDescription[]);
 }

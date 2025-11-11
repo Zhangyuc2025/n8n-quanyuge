@@ -55,7 +55,7 @@ test('user-management:reset should reset DB to default user state', async () => 
 
 	// mark instance as set up
 	await Container.get(SettingsRepository).update(
-		{ key: 'userManagement.isInstanceOwnerSetUp' },
+		{ key: 'userManagement.isInitialUserSetUp' },
 		{ value: 'true' },
 	);
 
@@ -102,6 +102,6 @@ test('user-management:reset should reset DB to default user state', async () => 
 
 	// the instance is marked as not set up:
 	await expect(
-		Container.get(SettingsRepository).findBy({ key: 'userManagement.isInstanceOwnerSetUp' }),
+		Container.get(SettingsRepository).findBy({ key: 'userManagement.isInitialUserSetUp' }),
 	).resolves.toMatchObject([{ value: 'false' }]);
 });

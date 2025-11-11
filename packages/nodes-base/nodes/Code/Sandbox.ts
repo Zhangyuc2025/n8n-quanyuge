@@ -27,8 +27,6 @@ export function getSandboxContext(
 ): SandboxContext {
 	const helpers = {
 		...this.helpers,
-		httpRequestWithAuthentication: this.helpers.httpRequestWithAuthentication.bind(this),
-		requestWithAuthenticationPaginated: this.helpers.requestWithAuthenticationPaginated.bind(this),
 	};
 	return {
 		// from NodeExecuteFunctions

@@ -5,7 +5,6 @@ export type AuthenticatedPermissionOptions = {
 	bypass?: () => boolean;
 };
 export type CustomPermissionOptions<C = {}> = RBACPermissionCheck<C>;
-export type DefaultUserMiddlewareOptions = {};
 export type InstanceOwnerMiddlewareOptions = {};
 export type EnterprisePermissionOptions = {
 	mode?: 'oneOf' | 'allOf';
@@ -23,7 +22,6 @@ export type RolePermissionOptions = Role[];
 export type PermissionType =
 	| 'authenticated'
 	| 'custom'
-	| 'defaultUser'
 	| 'instanceOwner'
 	| 'enterprise'
 	| 'guest'
@@ -32,7 +30,6 @@ export type PermissionType =
 export type PermissionTypeOptions = {
 	authenticated: AuthenticatedPermissionOptions;
 	custom: CustomPermissionOptions;
-	defaultUser: DefaultUserMiddlewareOptions;
 	instanceOwner: InstanceOwnerMiddlewareOptions;
 	enterprise: EnterprisePermissionOptions;
 	guest: GuestPermissionOptions;

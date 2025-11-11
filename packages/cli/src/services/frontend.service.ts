@@ -167,7 +167,7 @@ export class FrontendService {
 			defaultLocale: this.globalConfig.defaultLocale,
 			userManagement: {
 				quota: -1,
-				showSetupOnFirstLoad: !config.getEnv('userManagement.isInstanceOwnerSetUp'),
+				showSetupOnFirstLoad: false, // Removed: User setup page no longer exists in SASA multi-tenant architecture
 				smtpSetup: this.mailer.isEmailSetUp,
 				authenticationMethod: getCurrentAuthenticationMethod(),
 			},
@@ -317,7 +317,7 @@ export class FrontendService {
 		Object.assign(this.settings.userManagement, {
 			quota: -1,
 			authenticationMethod: getCurrentAuthenticationMethod(),
-			showSetupOnFirstLoad: !config.getEnv('userManagement.isInstanceOwnerSetUp'),
+			showSetupOnFirstLoad: false, // Removed: User setup page no longer exists
 		});
 
 		try {

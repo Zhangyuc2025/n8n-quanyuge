@@ -4,7 +4,6 @@ import { guestMiddleware } from '@/app/utils/rbac/middleware/guest';
 import { rbacMiddleware } from '@/app/utils/rbac/middleware/rbac';
 import { roleMiddleware } from '@/app/utils/rbac/middleware/role';
 import { customMiddleware } from '@/app/utils/rbac/middleware/custom';
-import { defaultUserMiddleware } from '@/app/utils/rbac/middleware/defaultUser';
 
 type Middleware = {
 	[key in RouterMiddlewareType]: RouterMiddleware<MiddlewareOptions[key]>;
@@ -13,7 +12,6 @@ type Middleware = {
 export const middleware: Middleware = {
 	authenticated: authenticatedMiddleware,
 	custom: customMiddleware,
-	defaultUser: defaultUserMiddleware,
 	// Enterprise features always enabled - no license check needed
 	enterprise: async () => undefined,
 	guest: guestMiddleware,

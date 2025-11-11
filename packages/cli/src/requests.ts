@@ -305,6 +305,7 @@ export declare namespace ProjectRequest {
 		icon: ProjectIcon | null;
 		type: ProjectType;
 		description: string | null;
+		billingMode: 'executor' | 'shared-pool';
 		relations: ProjectRelationResponse[];
 		scopes: Scope[];
 	};

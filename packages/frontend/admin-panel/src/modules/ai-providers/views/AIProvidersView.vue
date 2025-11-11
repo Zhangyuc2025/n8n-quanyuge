@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 import {
 	N8nCard,
 	N8nButton,
@@ -14,6 +15,8 @@ import { ElSwitch, ElMessageBox, ElMessage } from 'element-plus';
 import { useAIProvidersStore } from '../stores/ai-providers.store';
 import type { AdminAIProvider } from '../stores/ai-providers.store';
 import ProviderDialog from '../components/ProviderDialog.vue';
+
+const { t } = useI18n();
 
 const aiProvidersStore = useAIProvidersStore();
 
@@ -54,7 +57,7 @@ async function loadProviders() {
 	try {
 		await aiProvidersStore.fetchProviders();
 	} catch (error) {
-		ElMessage.error('加载 AI 提供商列表失败');
+		ElMessage.error(t('adminPanel.common.loadError'));
 		console.error('Failed to load providers:', error);
 	}
 }
@@ -74,20 +77,20 @@ function onEditProvider(provider: AdminAIProvider) {
 async function onDeleteProvider(provider: AdminAIProvider) {
 	try {
 		await ElMessageBox.confirm(
-			`确定要删除 AI 提供商 "${provider.providerName}" 吗？此操作不可恢复。`,
-			'确认删除',
+			t('adminPanel.aiProviders.deleteConfirm', { name: provider.providerName }),
+			t('adminPanel.common.confirmDelete'),
 			{
-				confirmButtonText: '删除',
-				cancelButtonText: '取消',
+				confirmButtonText: t('adminPanel.common.confirmDeleteButton'),
+				cancelButtonText: t('adminPanel.common.cancel'),
 				type: 'warning',
 			},
 		);
 
 		await aiProvidersStore.deleteProvider(provider.providerKey);
-		ElMessage.success('删除成功');
+		ElMessage.success(t('adminPanel.common.deleteSuccess'));
 	} catch (error) {
 		if (error !== 'cancel') {
-			ElMessage.error('删除失败');
+			ElMessage.error(t('adminPanel.common.deleteError'));
 			console.error('Failed to delete provider:', error);
 		}
 	}
@@ -96,9 +99,9 @@ async function onDeleteProvider(provider: AdminAIProvider) {
 async function onToggleProvider(provider: AdminAIProvider, enabled: boolean) {
 	try {
 		await aiProvidersStore.toggleProvider(provider.providerKey, enabled);
-		ElMessage.success(enabled ? '已启用' : '已禁用');
+		ElMessage.success(enabled ? t('adminPanel.filters.enabled') : t('adminPanel.filters.disabled'));
 	} catch (error) {
-		ElMessage.error('切换状态失败');
+		ElMessage.error(t('adminPanel.common.updateError'));
 		console.error('Failed to toggle provider:', error);
 	}
 }
@@ -127,11 +130,11 @@ async function onDialogSave() {
 function getProviderActions(provider: AdminAIProvider) {
 	return [
 		{
-			label: '编辑',
+			label: t('adminPanel.common.edit'),
 			value: 'edit',
 		},
 		{
-			label: '删除',
+			label: t('adminPanel.common.delete'),
 			value: 'delete',
 		},
 	];
@@ -156,8 +159,8 @@ onMounted(() => {
 		<!-- Header -->
 		<div :class="$style.header">
 			<div>
-				<N8nHeading tag="h1" size="2xlarge">AI 提供商管理</N8nHeading>
-				<p :class="$style.subtitle">配置和管理平台 AI 服务提供商</p>
+				<N8nHeading tag="h1" size="2xlarge">{{ $t('adminPanel.aiProviders.title') }}</N8nHeading>
+				<p :class="$style.subtitle">{{ $t('adminPanel.aiProviders.subtitle') }}</p>
 			</div>
 			<div :class="$style.headerActions">
 				<N8nButton
@@ -166,9 +169,11 @@ onMounted(() => {
 					:loading="aiProvidersStore.loading"
 					@click="loadProviders"
 				>
-					刷新
+					{{ $t('adminPanel.common.refresh') }}
 				</N8nButton>
-				<N8nButton icon="plus" type="primary" @click="onCreateProvider"> 创建提供商 </N8nButton>
+				<N8nButton icon="plus" type="primary" @click="onCreateProvider">
+					{{ $t('adminPanel.aiProviders.createProvider') }}
+				</N8nButton>
 			</div>
 		</div>
 
@@ -177,7 +182,7 @@ onMounted(() => {
 			<div :class="$style.filters">
 				<N8nInput
 					v-model="searchQuery"
-					placeholder="搜索提供商名称或标识..."
+					:placeholder="$t('adminPanel.common.searchPlaceholder')"
 					clearable
 					:class="$style.searchInput"
 				>
@@ -191,21 +196,21 @@ onMounted(() => {
 						size="small"
 						@click="filterStatus = 'all'"
 					>
-						全部
+						{{ $t('adminPanel.filters.all') }}
 					</N8nButton>
 					<N8nButton
 						:type="filterStatus === 'enabled' ? 'primary' : 'secondary'"
 						size="small"
 						@click="filterStatus = 'enabled'"
 					>
-						已启用
+						{{ $t('adminPanel.filters.enabled') }}
 					</N8nButton>
 					<N8nButton
 						:type="filterStatus === 'disabled' ? 'primary' : 'secondary'"
 						size="small"
 						@click="filterStatus = 'disabled'"
 					>
-						已禁用
+						{{ $t('adminPanel.filters.disabled') }}
 					</N8nButton>
 				</div>
 			</div>
@@ -221,7 +226,7 @@ onMounted(() => {
 		<N8nCard v-else-if="!hasProviders && !aiProvidersStore.loading" :class="$style.emptyState">
 			<N8nIcon icon="cloud-off" size="xlarge" />
 			<N8nText color="text-light" size="large" align="center">
-				暂无 AI 提供商，点击上方按钮创建
+				{{ $t('adminPanel.aiProviders.noProviders') }}
 			</N8nText>
 		</N8nCard>
 

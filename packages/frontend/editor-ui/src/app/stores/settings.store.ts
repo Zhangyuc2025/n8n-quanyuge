@@ -95,7 +95,8 @@ export const useSettingsStore = defineStore(STORES.SETTINGS, () => {
 		() => isAiAssistantEnabled.value || isAiBuilderEnabled.value,
 	);
 
-	const showSetupPage = computed(() => userManagement.value.showSetupOnFirstLoad);
+	// Note: User setup page has been removed in SASA multi-tenant architecture.
+	// Users are created via /signup (with auto onboarding) or admin invitation.
 
 	const deploymentType = computed(() => settings.value.deployment?.type || 'default');
 
@@ -298,10 +299,6 @@ export const useSettingsStore = defineStore(STORES.SETTINGS, () => {
 		initialized.value = true;
 	};
 
-	const stopShowingSetupPage = () => {
-		userManagement.value.showSetupOnFirstLoad = false;
-	};
-
 	const disableTemplates = () => {
 		settings.value = {
 			...settings.value,
@@ -355,7 +352,6 @@ export const useSettingsStore = defineStore(STORES.SETTINGS, () => {
 		isPreviewMode,
 		publicApiLatestVersion,
 		publicApiPath,
-		showSetupPage,
 		deploymentType,
 		isCloudDeployment,
 		isSmtpSetup,
@@ -393,7 +389,6 @@ export const useSettingsStore = defineStore(STORES.SETTINGS, () => {
 		getTimezones,
 		testTemplatesEndpoint,
 		disableTemplates,
-		stopShowingSetupPage,
 		getSettings,
 		setSettings,
 		initialize,

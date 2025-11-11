@@ -34,7 +34,6 @@ const { showMessage, showError } = useToast();
 const i18n = useI18n();
 const telemetry = useTelemetry();
 
-const credentialsStore = useCredentialsStore();
 const settingsStore = useSettingsStore();
 const workflowsStore = useWorkflowsStore();
 
@@ -98,11 +97,6 @@ const save = async (): Promise<void> => {
 				...workflow
 			} = await workflowsStore.fetchWorkflow(props.data.id);
 			workflowToUpdate = workflow;
-
-			workflowHelpers.removeForeignCredentialsFromWorkflow(
-				workflowToUpdate,
-				credentialsStore.allCredentials,
-			);
 		}
 
 		const workflowId = await workflowSaving.saveAsNewWorkflow({

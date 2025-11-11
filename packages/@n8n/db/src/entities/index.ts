@@ -3,6 +3,7 @@ import { AnnotationTagMapping } from './annotation-tag-mapping.ee';
 import { ApiKey } from './api-key';
 import { AuthIdentity } from './auth-identity';
 import { AuthProviderSyncHistory } from './auth-provider-sync-history';
+import { BalanceTransferRecord } from './balance-transfer-record.entity';
 import { CustomNode } from './custom-node.entity';
 import { EventDestinations } from './event-destinations';
 import { ExecutionAnnotation } from './execution-annotation.ee';
@@ -12,6 +13,7 @@ import { ExecutionMetadata } from './execution-metadata';
 import { Folder } from './folder';
 import { FolderTagMapping } from './folder-tag-mapping';
 import { InvalidAuthToken } from './invalid-auth-token';
+import { PlatformAdmin } from './platform-admin.entity';
 import { PlatformAIProvider } from './platform-ai-provider.entity';
 import { PlatformFeatureConfig } from './platform-feature-config.entity';
 import { PlatformNode } from './platform-node.entity';
@@ -23,6 +25,7 @@ import { RechargeRecord } from './recharge-record.entity';
 import { Role } from './role';
 import { Scope } from './scope';
 import { Settings } from './settings';
+import { SystemConfig } from './system-config.entity';
 import { TagEntity } from './tag-entity';
 import { TelemetryEvent } from './telemetry-event';
 import { TelemetrySession } from './telemetry-session';
@@ -41,14 +44,17 @@ import { WorkflowTagMapping } from './workflow-tag-mapping';
 import { WorkspaceBalance } from './workspace-balance.entity';
 
 export {
+	BalanceTransferRecord,
 	EventDestinations,
 	InvalidAuthToken,
+	PlatformAdmin,
 	PlatformAIProvider,
 	PlatformFeatureConfig,
 	PlatformNode,
 	PlatformRagService,
 	ProcessedData,
 	Settings,
+	SystemConfig,
 	Variables,
 	ApiKey,
 	WebhookEntity,
@@ -85,14 +91,17 @@ export {
 };
 
 export const entities = {
+	BalanceTransferRecord,
 	EventDestinations,
 	InvalidAuthToken,
+	PlatformAdmin,
 	PlatformAIProvider,
 	PlatformFeatureConfig,
 	PlatformNode,
 	PlatformRagService,
 	ProcessedData,
 	Settings,
+	SystemConfig,
 	Variables,
 	ApiKey,
 	WebhookEntity,

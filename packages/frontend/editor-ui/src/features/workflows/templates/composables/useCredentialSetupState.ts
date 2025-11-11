@@ -7,7 +7,6 @@ import {
 	keyFromCredentialTypeAndName,
 	normalizeTemplateNodeCredentials,
 } from '../utils/templateTransforms';
-import type { INodeCredentialsDetails } from 'n8n-workflow';
 import type { NodeTypeProvider } from '@/app/utils/nodeTypes/nodeTypeTransforms';
 import { getNodeTypeDisplayableCredentials } from '@/app/utils/nodes/nodeTransforms';
 import sortBy from 'lodash/sortBy';
@@ -103,10 +102,9 @@ export const useCredentialSetupState = <TNode extends BaseNode>(nodes: Ref<TNode
 	 * Credentials user has selected from the UI. Map from credential
 	 * name in the template to the credential ID.
 	 */
-	const selectedCredentialIdByKey = ref<Record<CredentialUsages<TNode>['key']['id']>>({});
+	const selectedCredentialIdByKey = ref<Record<string, string>>({});
 
 	const nodeTypesStore = useNodeTypesStore();
-	const credentialsStore = useCredentialsStore();
 
 	const appNameByNodeType = (nodeTypeName: string, version?: number) => {
 		const nodeType = nodeTypesStore.getNodeType(nodeTypeName, version);
@@ -138,22 +136,7 @@ export const useCredentialSetupState = <TNode extends BaseNode>(nodes: Ref<TNode
 	});
 
 	const credentialOverrides = computed(() => {
-		const overrides: Record<TemplateCredentialKey, INodeCredentialsDetails> = {};
-
-		for (const [key, credentialId] of Object.entries(selectedCredentialIdByKey.value)) {
-			const credential = credentialsStore.getCredentialById(credentialId);
-			if (!credential) {
-				continue;
-			}
-
-			// Object.entries fails to give the more accurate key type
-			overrides[key as TemplateCredentialKey] = {
-				id: credentialId,
-				name: credential.name,
-			};
-		}
-
-		return overrides;
+		return {};
 	});
 
 	const numFilledCredentials = computed(() => {

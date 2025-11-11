@@ -5,19 +5,16 @@ import { computed, onMounted, useCssModule, useTemplateRef } from 'vue';
 import LogoIcon from './logo-icon.svg';
 import LogoText from './logo-text.svg';
 
-const props = defineProps<
-	(
-		| {
-				size: 'large';
-		  }
-		| {
-				size: 'small';
-				collapsed: boolean;
-		  }
-	) & {
+const props = withDefaults(
+	defineProps<{
+		size: 'large' | 'small';
+		collapsed?: boolean;
 		releaseChannel: 'stable' | 'beta' | 'nightly' | 'dev';
-	}
->();
+	}>(),
+	{
+		collapsed: false,
+	},
+);
 
 const { size, releaseChannel } = props;
 

@@ -2,9 +2,22 @@
 
 此文件为 Claude Code (claude.ai/code) 在处理 n8n 代码仓库中的代码时提供指导。
 
-## 项目概述
+## 🎯 项目概述
 
-n8n 是一个用 TypeScript 编写的 工作流自动化平台，使用由 pnpm 工作空间管理的单仓库结构。它由 Node.js 后端、Vue.js 前端和可扩展的基于节点的工作流引擎组成。
+**SASA 平台**是基于 n8n 进行激进二次开发的多租户 SaaS 平台，对标 Coze 商业版。
+
+**核心改造**：
+- ✅ 多租户架构（Project = Workspace）
+- ✅ 三层节点系统（内置 + 平台 + 自定义）
+- ✅ AI 平台托管 + 按量计费（RMB）
+- ✅ 完全去除许可证限制
+- ✅ 完整中文本地化（3,795+ 翻译）
+
+**技术栈**：TypeScript + pnpm 单仓库 + Node.js + Vue 3 + TypeORM + PostgreSQL
+
+**重要**：这是二次开发项目，很多 n8n 原有代码已删除（SharedWorkflow、SharedCredentials、许可证验证等），开发时参考 `改造方案文档/` 目录，不要盲目参考原版 n8n。
+
+---
 
 ## 一般准则
 
@@ -14,125 +27,296 @@ n8n 是一个用 TypeScript 编写的 工作流自动化平台，使用由 pnpm 
 - 开始处理新工单时 - 从最新的 master 创建新分支，使用 Linear 工单中指定的名称
 - 为 Linear 中的工单创建新分支时 - 使用 linear 建议的分支名称
 - 当需要可视化某些内容时，在 MD 文件中使用 mermaid 图表
+- **在获得用户同意之前不要擅自创建 .md 或 .txt 文档**
+- **涉及多租户时，确保正确使用 `projectId`/`workspaceId` 隔离**
+- **新增节点使用三层架构，不要直接修改文件系统节点**
+
+---
+
+## 智能辅助系统
+
+### 自动调用 .claude 工作流
+
+本项目配置了智能工作流命令（位于 `.claude/commands/`），在合适场景下应**主动自动调用**：
+
+#### 1. `/Initialize` - 项目初始化
+**自动触发**：用户首次询问项目结构/架构，或 `.claude/guide/` 不存在时
+**不要问用户**，直接调用生成项目知识库
+
+#### 2. `/task` - 规范化任务执行
+**自动触发**：用户提出任何开发需求（添加功能、修复 bug、重构等）
+**重要**：会自动引用 `.claude/guide/` 和 `改造方案文档/`
+
+#### 3. `/sync-kb` - 知识库同步
+**自动触发**：完成代码修改后（由 `/task` 自动调用）
+
+#### 4. `/shencha` - 代码审查
+**自动触发**：准备提交 PR、完成大功能后
+**检查**：多租户隔离、三层节点架构、计费集成
+
+### 子代理使用策略
+
+**重要**：为避免上下文不足，**积极主动使用子代理**：
+
+1. **代码探索和搜索** - 使用 Explore 子代理
+   - 查找功能实现位置、搜索 @ProjectScope 装饰器等
+
+2. **复杂分析** - 使用 general-purpose 子代理
+   - 多次搜索、跨包分析、理解改造方案文档
+
+3. **并行处理** - 同时启动多个子代理
+   ```
+   示例：分析多租户实现
+   - 子代理 A：数据库层（@n8n/db）
+   - 子代理 B：后端 Service 层（packages/cli）
+   - 子代理 C：前端 Store 层（packages/editor-ui）
+   - 在单个消息中同时调用
+   ```
+
+**原则**：
+- 不要犹豫，任务复杂立即使用子代理
+- 可独立任务必须并行调用
+- 让子代理读取大文档提取关键信息
+
+### 上下文管理
+
+**避免上下文不足**：
+1. 优先读取 `.claude/guide/` 和 `改造方案文档/00-总览与导航.md`
+2. 将搜索任务委托给子代理
+3. 优先使用 `/task` 管理复杂任务
+4. 改造文档很大，按需读取具体模块
+
+---
+
+## SASA 平台核心概念
+
+**必须理解的 3 个核心改造**：
+
+1. **Project = Workspace（多租户）**
+   - 所有数据操作必须考虑 `projectId` 隔离
+   - 使用 `@ProjectScope` 装饰器自动隔离
+
+2. **三层节点架构**
+   ```
+   Layer 1: 内置节点（53个，文件系统，只读）
+   Layer 2: 平台节点（数据库，VM2 沙箱，所有用户可见）
+   Layer 3: 自定义节点（数据库，VM2 沙箱，工作空间私有）
+   ```
+
+3. **计费系统**
+   - AI 服务调用必须检查余额并扣费
+   - 使用悲观锁防止余额透支
+
+**已删除的 n8n 功能**（不要参考）：
+- ❌ SharedWorkflow 表和代码（147 处引用已删除）
+- ❌ SharedCredentials 表和代码（95 处引用已删除）
+- ❌ 许可证验证系统
+- ❌ 用户端 npm 节点安装
+
+**详细说明**：参考 `改造方案文档/00-总览与导航.md`
+
+---
 
 ## 必要命令
 
 ### 构建
-使用 `pnpm build` 构建所有包。始终将构建命令的输出重定向到文件：
-
 ```bash
 pnpm build > build.log 2>&1
+tail -n 20 build.log
 ```
 
-您可以检查构建日志文件的最后几行以查看错误：
+### 开发模式（前后端分离）
 ```bash
-tail -n 20 build.log
+pnpm dev:be        # 后端 API (5678)
+pnpm dev:fe:main   # 主应用前端 (8080)
+pnpm dev:fe:admin  # 管理后台 (5679)
 ```
 
 ### 测试
 - `pnpm test` - 运行所有测试
-- `pnpm test:affected` - 基于上次提交以来的更改运行测试
-
-运行特定测试文件需要进入该测试的目录并运行：`pnpm test <test-file>`。
-
-在切换目录时，使用 `pushd` 导航到目录，`popd` 返回上一个目录。如果有疑问，使用 `pwd` 检查当前目录。
+- `pnpm test:affected` - 基于变更运行测试
+- **重点**：多租户数据隔离测试
 
 ### 代码质量
 - `pnpm lint` - 代码检查
-- `pnpm typecheck` - 运行类型检查
+- `pnpm typecheck` - 类型检查
+- 提交前必须运行
 
-在提交代码之前始终运行 lint 和 typecheck 以确保质量。从您正在处理的特定包目录内执行这些命令（例如，`cd packages/cli && pnpm lint`）。仅在准备最终 PR 时运行完整仓库检查。当您的更改影响类型定义、`@n8n/api-types` 中的接口或跨包依赖时，在运行 lint 和 typecheck 之前构建系统。
+### 数据库迁移
+```bash
+pnpm --filter=@n8n/db migration:generate MigrationName
+pnpm --filter=@n8n/db migration:run
+```
+**注意**：所有迁移必须支持多租户（project_id 字段）
+
+---
 
 ## 架构概述
 
 **单仓库结构：** pnpm 工作空间和 Turbo 构建编排
 
-### 包结构
+### 关键包（SASA 改造）
 
-单仓库组织为这些关键包：
+- **`packages/@n8n/api-types`** - 共享类型（新增多租户类型）
+- **`packages/cli`** - Express API（Service 层重构，@ProjectScope）
+- **`packages/editor-ui`** - Vue 3 前端（ProjectsStore，工作空间切换）
+- **`packages/admin-panel`** - **新增**：管理后台
+- **`packages/@n8n/i18n`** - 国际化（3,795+ 中文翻译）
+- **`packages/@n8n/db`** - 数据库（+11 新表，-2 旧表）
+- **`packages/@n8n/nodes-langchain`** - AI 节点（LmChatPlatform 统一节点）
 
-- **`packages/@n8n/api-types`**：前端和后端之间共享的 TypeScript 接口
-- **`packages/workflow`**：核心工作流接口和类型
-- **`packages/core`**：工作流执行引擎
-- **`packages/cli`**：Express 服务器、REST API 和 CLI 命令
-- **`packages/editor-ui`**：Vue 3 前端应用程序
-- **`packages/@n8n/i18n`**：UI 文本的国际化
-- **`packages/nodes-base`**：集成的内置节点
-- **`packages/@n8n/nodes-langchain`**：AI/LangChain 节点
-- **`@n8n/design-system`**：用于 UI 一致性的 Vue 组件库
-- **`@n8n/config`**：集中式配置管理
+---
 
 ## 技术栈
 
-- **前端：** Vue 3 + TypeScript + Vite + Pinia + Storybook UI 库
+- **前端：** Vue 3 + TypeScript + Vite + Pinia
 - **后端：** Node.js + TypeScript + Express + TypeORM
 - **测试：** Jest（单元）+ Playwright（E2E）
-- **数据库：** TypeORM 支持 SQLite/PostgreSQL/MySQL
-- **代码质量：** Biome（用于格式化）+ ESLint + lefthook git hooks
+- **数据库：** PostgreSQL（推荐）
+- **SASA 特有：** VM2 沙箱、悲观锁、WebSocket 房间隔离
 
 ### 关键架构模式
 
-1. **依赖注入**：使用 `@n8n/di` 作为 IoC 容器
-2. **控制器-服务-仓库**：后端遵循类似 MVC 的模式
-3. **事件驱动**：内部事件总线用于解耦通信
-4. **基于上下文的执行**：不同节点类型使用不同上下文
-5. **状态管理**：前端使用 Pinia stores
-6. **设计系统**：可重用组件和设计令牌集中在
-   `@n8n/design-system` 中，所有纯 Vue 组件都应放置在这里
-   确保一致性和可重用性
+1. **依赖注入** - `@n8n/di` IoC 容器
+2. **控制器-服务-仓库** - MVC 模式
+3. **事件驱动** - 内部事件总线
+4. **状态管理** - Pinia stores
+5. **@ProjectScope 装饰器** - **SASA 新增**：自动工作空间隔离
+6. **三层节点加载** - **SASA 新增**：文件系统 + 数据库 + VM2
+
+---
 
 ## 关键开发模式
 
-- 每个包都有独立的构建配置，可以独立开发
-- 开发期间热重载在整个堆栈中工作
-- 节点开发使用专用的 `node-dev` CLI 工具
-- 工作流测试基于 JSON 用于集成测试
-- AI 功能有专用的开发工作流（`pnpm dev:ai`）
+### SASA 开发流程（推荐）
+
+**所有开发任务优先使用 `/task` 命令**：
+
+```
+用户："添加新功能"
+你：立即调用 /task
+```
+
+`/task` 自动执行：
+1. 多源分析（读取改造文档 + 知识库 + 搜索代码）
+2. 任务制定（确保多租户隔离 + 三层节点 + 计费集成）
+3. 任务执行（逐步实现 + 实时反馈）
+4. 任务验证（质量检查 + 自动更新知识库）
+
+### 多租户开发原则
+
+```typescript
+// ✅ 正确
+@Get('/workflows')
+@ProjectScope()
+async getWorkflows(req) {
+  // 自动过滤当前工作空间数据
+}
+
+// ❌ 错误
+async getWorkflows() {
+  return this.repository.find(); // 返回所有工作空间数据！
+}
+```
 
 ### TypeScript 最佳实践
-- **切勿使用 `any` 类型** - 使用适当的类型或 `unknown`
-- **避免使用 `as` 进行类型转换** - 使用类型守卫或类型谓词代替
-- **在 `@n8n/api-types` 包中定义共享接口** 用于 FE/BE 通信
+- 切勿使用 `any` 类型
+- 避免使用 `as` 类型转换
+- 在 `@n8n/api-types` 中定义共享接口
+- **SASA**：多租户类型必须包含 `projectId`
 
 ### 错误处理
-- 不要在 CLI 和节点中使用 `ApplicationError` 类抛出错误，
-  因为它已被弃用。相反使用 `UnexpectedError`、`OperationalError` 或
-  `UserError`。
-- 从每个包中的适当错误类导入
+- 使用 `UnexpectedError`、`OperationalError` 或 `UserError`
+- **SASA**：余额不足抛出 `InsufficientBalanceError`
+- **SASA**：权限不足抛出 `WorkspaceAccessDeniedError`
 
 ### 前端开发
-- **所有 UI 文本必须使用 i18n** - 将翻译添加到 `@n8n/i18n` 包
-- **直接使用 CSS 变量** - 永远不要硬编码为 px 值的间距
-- **data-test-id 必须是单个值**（无空格或多个值）
-
-在实现 CSS 时，参考 @packages/frontend/CLAUDE.md 获取 CSS 变量和样式约定指南。
+- 所有 UI 文本使用 i18n
+- 直接使用 CSS 变量（参考 `packages/frontend/CLAUDE.md`）
+- **SASA**：工作空间切换时必须刷新数据
+  ```typescript
+  watch(() => projectsStore.currentWorkspaceId, async () => {
+    await workflowsStore.fetchWorkflows();
+  });
+  ```
 
 ### 测试指南
-- **运行测试时始终从包目录内工作**
-- **在单元测试中模拟所有外部依赖**
-- **编写单元测试前与用户确认测试用例**
-- **提交前类型检查至关重要** - 始终运行 `pnpm typecheck`
-- **修改 pinia stores 时**，检查未使用的计算属性
+- 从包目录内运行测试
+- 单元测试模拟所有外部依赖
+- 提交前运行 `pnpm typecheck`
+- **SASA**：多租户数据隔离测试最高优先级
 
-我们用于测试和编写测试的内容：
-- 对于测试节点和其他后端组件，我们使用 Jest 进行单元测试。示例可以在 `packages/nodes-base/nodes/**/*test*` 中找到。
-- 我们使用 `nock` 进行服务器模拟
-- 前端我们使用 `vitest`
-- 对于 E2E 测试，我们使用 Playwright。使用 `pnpm --filter=n8n-playwright test:local` 运行。
-  详细信息请参见 `packages/testing/playwright/README.md`。
+---
 
-### 常见开发任务
+## 核心行为原则（必须遵守）
 
-实现功能时：
-1. 在 `packages/@n8n/api-types` 中定义 API 类型
-2. 在 `packages/cli` 模块中实现后端逻辑，遵循
-   `@packages/cli/scripts/backend-module/backend-module.guide.md`
-3. 通过控制器添加 API 端点
-4. 在 `packages/editor-ui` 中更新前端，添加 i18n 支持
-5. 编写带有适当模拟的测试
-6. 运行 `pnpm typecheck` 验证类型
+### 1. 智能工作流优先
+- ✅ 开发需求立即调用 `/task`
+- ✅ 没有知识库立即调用 `/Initialize`
+- ✅ 需要搜索立即使用子代理
+- ❌ 不要手动执行复杂多步骤任务
 
-## 内部指南
-- 遵循团队的代码审查流程
-- 与团队成员保持良好沟通
-- 定期同步代码避免冲突
+### 2. 子代理积极使用
+- ✅ 任何搜索都使用 Explore 子代理
+- ✅ 复杂分析同时启动多个子代理
+- ✅ 在单个消息中并行调用
+- ❌ 不要手动执行 Grep/Glob
+
+### 3. SASA 平台特定
+- ✅ 所有数据操作考虑 `projectId` 隔离
+- ✅ 新增节点使用三层架构
+- ✅ AI 服务调用集成计费
+- ❌ 不要参考 SharedWorkflow 代码（已删除）
+- ❌ 不要使用许可证验证逻辑（已删除）
+
+### 4. 质量保证
+- ✅ 使用正确类型
+- ✅ 添加 i18n
+- ✅ 使用 CSS 变量
+- ✅ 运行 `pnpm typecheck`
+- ✅ 调用 `/sync-kb` 更新知识库
+- ✅ **SASA**：正确实现工作空间隔离
+- ✅ **SASA**：集成计费系统
+- ✅ **SASA**：前端处理工作空间切换
+
+---
+
+## 快速参考
+
+| 场景 | 操作 | 工具 |
+|------|------|------|
+| 首次接触项目 | 初始化知识库 | `/Initialize` |
+| 开发需求 | 启动任务流程 | `/task` |
+| 搜索代码 | 使用子代理 | Task (Explore) |
+| 理解改造 | 读取改造文档 | `改造方案文档/00-总览与导航.md` |
+| 分析多模块 | 并行子代理 | 多个 Task 并行 |
+| 代码审查 | 审查代码 | `/shencha` |
+
+---
+
+## 重要文档路径
+
+- **改造总览**：`改造方案文档/00-总览与导航.md`
+- **多租户架构**：`改造方案文档/modules/01-多租户架构.md`
+- **节点架构**：`改造方案文档/modules/04-节点架构.md`
+- **数据库设计**：`改造方案文档/modules/03-数据库设计.md`
+- **知识库**：`.claude/guide/`（由 `/Initialize` 生成）
+
+---
+
+## 核心差异提醒
+
+**这是 SASA 平台，不是原版 n8n**
+
+| 概念 | 原版 n8n | SASA 平台 |
+|------|----------|-----------|
+| Workspace | 无 | Project（personal/team） |
+| SharedWorkflow | 存在 | ❌ 已删除 |
+| Credentials | 表驱动 | ❌ 改用 user_node_config |
+| 节点加载 | 文件系统 + npm | 三层架构 |
+| AI 节点 | 用户配置 Key | 平台托管 + 计费 |
+| 许可证 | 需要验证 | ❌ 完全移除 |
+
+---
+
+**记住**：`/task` + 子代理 + 改造文档 = 高效开发 + 避免上下文不足

@@ -200,9 +200,12 @@ export class ProjectService {
 		data: CreateProjectDto,
 		trx: EntityManager,
 	) {
+		// Default billingMode to 'executor' if not provided
+		const billingMode = data.billingMode ?? 'executor';
+
 		const project = await trx.save(
 			Project,
-			this.projectRepository.create({ ...data, type: 'team' }),
+			this.projectRepository.create({ ...data, type: 'team', billingMode }),
 		);
 
 		// Link admin
@@ -231,15 +234,36 @@ export class ProjectService {
 
 	async updateProject(
 		projectId: string,
-		{ name, icon, description }: UpdateProjectDto,
-	): Promise<void> {
+		{ name, icon, description, billingMode }: UpdateProjectDto,
+	): Promise<{ billingModeChanged: boolean; oldBillingMode?: 'executor' | 'shared-pool' }> {
+		// Get current project to check type and current billingMode
+		const currentProject = await this.projectRepository.findOne({
+			where: { id: projectId },
+			select: ['id', 'type', 'billingMode'],
+		});
+
+		if (!currentProject) {
+			throw new ProjectNotFoundError(projectId);
+		}
+
+		// Validate billingMode change for personal projects
+		if (billingMode && currentProject.type === 'personal' && billingMode === 'shared-pool') {
+			throw new ForbiddenError('Personal projects cannot use shared-pool billing mode');
+		}
+
+		const billingModeChanged = !!(billingMode && billingMode !== currentProject.billingMode);
+		const oldBillingMode = billingModeChanged ? currentProject.billingMode : undefined;
+
 		const result = await this.projectRepository.update(
 			{ id: projectId, type: 'team' },
-			{ name, icon, description },
+			{ name, icon, description, billingMode },
 		);
+
 		if (!result.affected) {
 			throw new ProjectNotFoundError(projectId);
 		}
+
+		return { billingModeChanged, oldBillingMode };
 	}
 
 	async getPersonalProject(user: User): Promise<Project | null> {

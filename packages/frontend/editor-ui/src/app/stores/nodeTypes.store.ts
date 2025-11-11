@@ -379,8 +379,7 @@ export const useNodeTypesStore = defineStore(STORES.NODE_TYPES, () => {
 		nodesToBeFetched: INodeTypeNameVersion[],
 		replaceNodeTypes = true,
 	) => {
-		const credentialsStore = useCredentialsStore();
-		await credentialsStore.fetchCredentialTypes(true);
+		// Credential types fetching removed - credential system disabled
 		if (replaceNodeTypes) {
 			await getNodesInformation(nodesToBeFetched);
 		}

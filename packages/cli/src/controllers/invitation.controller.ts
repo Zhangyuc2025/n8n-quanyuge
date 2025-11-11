@@ -14,6 +14,8 @@ import { EventService } from '@/events/event.service';
 import { ExternalHooks } from '@/external-hooks';
 import { AuthlessRequest } from '@/requests';
 import { PasswordUtility } from '@/services/password.utility';
+import { SystemInitService } from '@/services/system-init.service';
+import { UserOnboardingService } from '@/services/user-onboarding.service';
 import { UserService } from '@/services/user.service';
 
 @RestController('/invitations')
@@ -26,6 +28,8 @@ export class InvitationController {
 		private readonly passwordUtility: PasswordUtility,
 		private readonly userRepository: UserRepository,
 		private readonly eventService: EventService,
+		private readonly systemInitService: SystemInitService,
+		private readonly userOnboardingService: UserOnboardingService,
 	) {}
 
 	/**
@@ -41,20 +45,16 @@ export class InvitationController {
 	) {
 		if (invitations.length === 0) return [];
 
-		const isWithinUsersLimit = true;
+		// Note: Legacy n8n single-tenant user quota check removed.
+		// SASA platform is multi-tenant SaaS - workspace member limits are enforced at the workspace level
+		// based on the owner's membership tier (free/basic/pro/enterprise).
 
-		if (!isWithinUsersLimit) {
+		const platformInitialized = await this.systemInitService.isPlatformInitialized();
+		if (!platformInitialized) {
 			this.logger.debug(
-				'Request to send email invite(s) to user(s) failed because the user limit quota has been reached',
+				'Request to send email invite(s) to user(s) failed because platform is not initialized',
 			);
-			throw new ForbiddenError(RESPONSE_ERROR_MESSAGES.USERS_QUOTA_REACHED);
-		}
-
-		if (!config.getEnv('userManagement.isInstanceOwnerSetUp')) {
-			this.logger.debug(
-				'Request to send email invite(s) to user(s) failed because the owner account is not set up',
-			);
-			throw new BadRequestError('You must set up your own account before inviting others');
+			throw new BadRequestError('Platform not initialized. Please complete admin setup first.');
 		}
 
 		const attributes = invitations.map(({ email, role }) => {
@@ -124,6 +124,20 @@ export class InvitationController {
 			userType: 'email',
 			wasDisabledLdapUser: false,
 		});
+
+		// Check system initialization status
+		const initStatus = await this.systemInitService.checkInitializationStatus();
+		if (!initStatus.initialized) {
+			throw new ForbiddenError('Platform not initialized. Please contact administrator.');
+		}
+
+		// Onboard the new user (create personal workspace)
+		try {
+			await this.userOnboardingService.onboardNewUser(updatedUser.id);
+		} catch (error) {
+			this.logger.warn('Failed to onboard new user', { userId: updatedUser.id, error });
+			// Don't fail the registration, just log the error
+		}
 
 		const publicInvitee = await this.userService.toPublic(invitee);
 

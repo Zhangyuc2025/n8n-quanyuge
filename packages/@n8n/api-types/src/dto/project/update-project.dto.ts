@@ -6,12 +6,14 @@ import {
 	projectIconSchema,
 	projectNameSchema,
 	projectRelationSchema,
+	billingModeSchema,
 } from '../../schemas/project.schema';
 
 const updateProjectShape = {
 	name: projectNameSchema.optional(),
 	icon: projectIconSchema.optional(),
 	description: projectDescriptionSchema.optional(),
+	billingMode: billingModeSchema.optional(),
 };
 
 export class UpdateProjectDto extends Z.class(updateProjectShape) {}

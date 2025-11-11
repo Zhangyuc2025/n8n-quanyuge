@@ -144,19 +144,19 @@ export function getAuthToken(response: request.Response, authCookieName = AUTH_C
 //            settings
 // ----------------------------------
 
-export async function isInstanceOwnerSetUp() {
+export async function isInitialUserSetUp() {
 	const { value } = await Container.get(SettingsRepository).findOneByOrFail({
-		key: 'userManagement.isInstanceOwnerSetUp',
+		key: 'userManagement.isInitialUserSetUp',
 	});
 
 	return Boolean(value);
 }
 
 export const setInstanceOwnerSetUp = async (value: boolean) => {
-	config.set('userManagement.isInstanceOwnerSetUp', value);
+	config.set('userManagement.isInitialUserSetUp', value);
 
 	await Container.get(SettingsRepository).update(
-		{ key: 'userManagement.isInstanceOwnerSetUp' },
+		{ key: 'userManagement.isInitialUserSetUp' },
 		{ value: JSON.stringify(value) },
 	);
 };

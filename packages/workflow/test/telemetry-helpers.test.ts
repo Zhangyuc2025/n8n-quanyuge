@@ -905,12 +905,6 @@ describe('generateNodesGraph', () => {
 					type: 'n8n-nodes-base.httpRequest',
 					typeVersion: 4.1,
 					position: [780, 120],
-					credentials: {
-						httpBasicAuth: {
-							id: 'yuuJAO2Ang5B64wd',
-							name: 'Unnamed credential',
-						},
-					},
 				},
 			],
 			connections: {},
@@ -956,16 +950,6 @@ describe('generateNodesGraph', () => {
 					type: 'n8n-nodes-base.httpRequest',
 					typeVersion: 4.1,
 					position: [320, 220],
-					credentials: {
-						httpBasicAuth: {
-							id: 'yuuJAO2Ang5B64wd',
-							name: 'Unnamed credential',
-						},
-						activeCampaignApi: {
-							id: 'SFCbnfgRBuSzRu6N',
-							name: 'ActiveCampaign account',
-						},
-					},
 				},
 			],
 			connections: {},
@@ -1844,7 +1828,7 @@ describe('extractLastExecutedNodeCredentialData', () => {
 		[
 			'no credentials',
 			mock<IRun>({
-				data: { executionData: { nodeExecutionStack: [{ node: { credentials: undefined } }] } },
+				data: { executionData: { nodeExecutionStack: [{ node: {} }] } },
 			}),
 		],
 	];
@@ -1860,14 +1844,12 @@ describe('extractLastExecutedNodeCredentialData', () => {
 		const runData = mock<IRun>({
 			data: {
 				executionData: {
-					nodeExecutionStack: [{ node: { credentials: { openAiApi: { id: 'nhu-l8E4hX' } } } }],
+					nodeExecutionStack: [{ node: {} }],
 				},
 			},
 		});
 
-		expect(extractLastExecutedNodeCredentialData(runData)).toMatchObject(
-			expect.objectContaining({ credentialId: 'nhu-l8E4hX', credentialType: 'openAiApi' }),
-		);
+		expect(extractLastExecutedNodeCredentialData(runData)).toBeNull();
 	});
 });
 
@@ -1882,7 +1864,7 @@ describe('userInInstanceRanOutOfFreeAiCredits', () => {
 					runNodeFilter: ['OpenAI'],
 				},
 				executionData: {
-					nodeExecutionStack: [{ node: { credentials: {} } }],
+					nodeExecutionStack: [{ node: {} }],
 				},
 				resultData: {
 					runData: {},

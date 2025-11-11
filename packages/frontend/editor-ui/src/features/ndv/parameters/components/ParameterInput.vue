@@ -147,7 +147,6 @@ const workflowHelpers = useWorkflowHelpers();
 const nodeSettingsParameters = useNodeSettingsParameters();
 const telemetry = useTelemetry();
 
-const credentialsStore = useCredentialsStore();
 const ndvStore = useNDVStore();
 const workflowsStore = useWorkflowsStore();
 const workflowState = injectWorkflowState();
@@ -330,10 +329,7 @@ const displayValue = computed(() => {
 	}
 
 	if (props.parameter.type === 'credentialsSelect' && typeof props.modelValue === 'string') {
-		const credType = credentialsStore.getCredentialTypeByName(props.modelValue);
-		if (credType) {
-			returnValue = credType.displayName;
-		}
+		returnValue = props.modelValue;
 	}
 
 	if (

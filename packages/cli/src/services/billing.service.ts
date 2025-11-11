@@ -3,6 +3,11 @@ import {
 	WorkspaceBalanceRepository,
 	UsageRecordRepository,
 	RechargeRecordRepository,
+	UserRepository,
+	ProjectRepository,
+	BalanceTransferRecordRepository,
+	User,
+	WorkspaceBalance,
 } from '@n8n/db';
 import { UserError } from 'n8n-workflow';
 
@@ -50,6 +55,8 @@ interface DeductBalanceMetadata {
 	userId: string;
 	/** 使用的token数量（可选） */
 	tokensUsed?: number;
+	/** 余额来源（可选，用于记录） */
+	balanceSource?: 'user' | 'workspace';
 }
 
 /**
@@ -79,6 +86,9 @@ export class BillingService {
 		private readonly workspaceBalanceRepository: WorkspaceBalanceRepository,
 		private readonly usageRecordRepository: UsageRecordRepository,
 		private readonly rechargeRecordRepository: RechargeRecordRepository,
+		private readonly userRepository: UserRepository,
+		private readonly projectRepository: ProjectRepository,
+		private readonly balanceTransferRecordRepository: BalanceTransferRecordRepository,
 	) {}
 
 	/**
@@ -222,5 +232,253 @@ export class BillingService {
 	 */
 	async getUsageStats(workspaceId: string, startDate: Date, endDate: Date): Promise<UsageStats> {
 		return await this.usageRecordRepository.getWorkspaceUsageStats(workspaceId, startDate, endDate);
+	}
+
+	/**
+	 * 根据计费模式扣除余额（双层扣费逻辑）
+	 *
+	 * 根据工作空间的计费模式（billingMode）决定从哪里扣费：
+	 * - 'executor': 从执行者的个人余额扣费
+	 * - 'shared-pool': 从工作空间的共享余额池扣费
+	 *
+	 * 操作流程：
+	 * 1. 查询工作空间的计费模式
+	 * 2. 根据计费模式选择扣费来源
+	 * 3. 使用悲观锁进行余额扣除
+	 * 4. 创建使用记录（记录 balanceSource）
+	 * 5. 提交事务
+	 *
+	 * @param workspaceId - 工作空间ID
+	 * @param executorUserId - 执行者用户ID
+	 * @param amount - 扣除金额（CNY，必须为正数）
+	 * @param metadata - 扣费元数据（服务标识、用户ID、token数等）
+	 * @returns 扣费结果对象，包含成功状态、新余额或错误信息
+	 * @throws {UserError} 当工作空间不存在时
+	 * @throws {InsufficientBalanceError} 当余额不足时
+	 */
+	async deductBalanceWithMode(
+		workspaceId: string,
+		executorUserId: string,
+		amount: number,
+		metadata: DeductBalanceMetadata,
+	): Promise<DeductBalanceResult> {
+		// 获取工作空间信息（包含 billingMode）
+		const project = await this.projectRepository.findOne({
+			where: { id: workspaceId },
+		});
+
+		if (!project) {
+			throw new UserError(`Workspace not found: ${workspaceId}`);
+		}
+
+		let result: DeductBalanceResult;
+		let balanceSource: 'user' | 'workspace';
+
+		// 根据计费模式选择扣费来源
+		if (project.billingMode === 'executor') {
+			// 从执行者个人余额扣费
+			result = await this.deductUserBalance(executorUserId, amount);
+			balanceSource = 'user';
+		} else {
+			// 从工作空间共享余额池扣费
+			result = await this.workspaceBalanceRepository.deductBalance(workspaceId, amount);
+			balanceSource = 'workspace';
+		}
+
+		// 如果扣费成功，创建使用记录
+		if (result.success && result.newBalance !== undefined) {
+			try {
+				await this.usageRecordRepository.createRecord({
+					workspaceId,
+					userId: metadata.userId,
+					serviceKey: metadata.serviceKey,
+					amountCny: amount,
+					tokensUsed: metadata.tokensUsed ?? 0,
+					balanceSource, // 记录余额来源
+				});
+			} catch (error) {
+				// 使用记录创建失败不影响扣费结果
+				// 但应该记录日志以便后续处理
+				console.error('Failed to create usage record:', error);
+			}
+		}
+
+		return result;
+	}
+
+	/**
+	 * 从用户个人余额扣费
+	 *
+	 * 使用悲观锁（pessimistic write lock）进行余额扣除，确保并发安全。
+	 *
+	 * 操作流程：
+	 * 1. 在 SERIALIZABLE 事务中锁定用户记录
+	 * 2. 验证余额是否充足
+	 * 3. 扣除指定金额
+	 * 4. 保存更新后的用户记录
+	 * 5. 提交事务
+	 *
+	 * @param userId - 用户ID
+	 * @param amount - 扣除金额（CNY，必须为正数）
+	 * @returns 扣费结果对象，包含成功状态、新余额或错误信息
+	 */
+	async deductUserBalance(userId: string, amount: number): Promise<DeductBalanceResult> {
+		const queryRunner = this.userRepository.manager.connection.createQueryRunner();
+
+		await queryRunner.connect();
+		await queryRunner.startTransaction('SERIALIZABLE');
+
+		try {
+			// Lock the row with pessimistic_write to prevent concurrent modifications
+			const user = await queryRunner.manager.findOne(User, {
+				where: { id: userId },
+				lock: { mode: 'pessimistic_write' },
+			});
+
+			// Check if user exists
+			if (!user) {
+				await queryRunner.rollbackTransaction();
+				return {
+					success: false,
+					error: `User not found: ${userId}`,
+				};
+			}
+
+			// Check if balance is sufficient
+			if (user.balance < amount) {
+				await queryRunner.rollbackTransaction();
+				return {
+					success: false,
+					error: `Insufficient balance. Current: ${user.balance}, Required: ${amount}`,
+				};
+			}
+
+			// Deduct the amount
+			user.balance -= amount;
+
+			// Save the updated user
+			await queryRunner.manager.save(user);
+
+			// Commit the transaction
+			await queryRunner.commitTransaction();
+
+			return {
+				success: true,
+				newBalance: user.balance,
+			};
+		} catch (error) {
+			await queryRunner.rollbackTransaction();
+			return {
+				success: false,
+				error: error instanceof Error ? error.message : 'Unknown error occurred',
+			};
+		} finally {
+			await queryRunner.release();
+		}
+	}
+
+	/**
+	 * 获取用户个人余额
+	 *
+	 * 查询指定用户的当前可用余额（人民币）。
+	 *
+	 * @param userId - 用户ID
+	 * @returns 当前余额（CNY），如果用户不存在则返回 0
+	 */
+	async getUserBalance(userId: string): Promise<number> {
+		const user = await this.userRepository.findOne({
+			where: { id: userId },
+			select: ['balance'],
+		});
+		return user?.balance ?? 0;
+	}
+
+	/**
+	 * 从用户余额转账到工作空间共享余额池
+	 *
+	 * 使用事务确保原子性操作：
+	 * 1. 扣除用户个人余额
+	 * 2. 增加工作空间共享余额
+	 * 3. 创建余额转账记录
+	 *
+	 * 操作流程：
+	 * 1. 在事务中扣除用户余额（带悲观锁）
+	 * 2. 增加工作空间余额
+	 * 3. 创建 BalanceTransferRecord 记录
+	 * 4. 提交事务
+	 *
+	 * @param userId - 转出用户ID
+	 * @param workspaceId - 转入工作空间ID
+	 * @param amount - 转账金额（CNY，必须为正数）
+	 * @throws {UserError} 当用户不存在时
+	 * @throws {InsufficientBalanceError} 当用户余额不足时
+	 * @throws {Error} 当转账过程中发生其他错误时
+	 */
+	async transferBalanceToWorkspace(
+		userId: string,
+		workspaceId: string,
+		amount: number,
+	): Promise<void> {
+		const queryRunner = this.userRepository.manager.connection.createQueryRunner();
+
+		await queryRunner.connect();
+		await queryRunner.startTransaction('SERIALIZABLE');
+
+		try {
+			// 1. 扣除用户余额（带悲观锁）
+			const user = await queryRunner.manager.findOne(User, {
+				where: { id: userId },
+				lock: { mode: 'pessimistic_write' },
+			});
+
+			if (!user) {
+				throw new UserError(`User not found: ${userId}`);
+			}
+
+			if (user.balance < amount) {
+				throw new InsufficientBalanceError(amount, user.balance);
+			}
+
+			user.balance -= amount;
+			await queryRunner.manager.save(user);
+
+			// 2. 增加工作空间余额（带悲观锁）
+			let workspaceBalance = await queryRunner.manager.findOne(WorkspaceBalance, {
+				where: { workspaceId },
+				lock: { mode: 'pessimistic_write' },
+			});
+
+			if (workspaceBalance) {
+				workspaceBalance.balanceCny += amount;
+			} else {
+				// Create new balance record if it doesn't exist
+				workspaceBalance = queryRunner.manager.create(WorkspaceBalance, {
+					workspaceId,
+					balanceCny: amount,
+					lowBalanceThresholdCny: 10.0,
+					currency: 'CNY',
+				});
+			}
+
+			await queryRunner.manager.save(workspaceBalance);
+
+			// 3. 创建余额转账记录
+			await this.balanceTransferRecordRepository.createTransfer(
+				{
+					fromUserId: userId,
+					toWorkspaceId: workspaceId,
+					amount,
+				},
+				queryRunner.manager,
+			);
+
+			// 4. 提交事务
+			await queryRunner.commitTransaction();
+		} catch (error) {
+			await queryRunner.rollbackTransaction();
+			throw error;
+		} finally {
+			await queryRunner.release();
+		}
 	}
 }

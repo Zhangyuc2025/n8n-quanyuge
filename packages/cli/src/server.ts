@@ -43,7 +43,7 @@ import '@/controllers/node-types.controller';
 // import '@/controllers/oauth/oauth1-credential.controller';
 // import '@/controllers/oauth/oauth2-credential.controller';
 import '@/controllers/orchestration.controller';
-import '@/controllers/owner.controller';
+import '@/controllers/platform-admin.controller';
 import '@/controllers/password-reset.controller';
 import '@/controllers/project.controller';
 import '@/controllers/role.controller';

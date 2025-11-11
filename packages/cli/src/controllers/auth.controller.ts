@@ -134,15 +134,9 @@ export class AuthController {
 		@Query payload: ResolveSignupTokenQueryDto,
 	) {
 		const { inviterId, inviteeId } = payload;
-		const isWithinUsersLimit = true;
 
-		if (!isWithinUsersLimit) {
-			this.logger.debug('Request to resolve signup token failed because of users quota reached', {
-				inviterId,
-				inviteeId,
-			});
-			throw new ForbiddenError(RESPONSE_ERROR_MESSAGES.USERS_QUOTA_REACHED);
-		}
+		// Note: Legacy n8n single-tenant user quota check removed.
+		// SASA platform is multi-tenant SaaS - user invitations are governed by workspace membership quotas.
 
 		const users = await this.userRepository.findManyByIds([inviterId, inviteeId], {
 			includeRole: true,

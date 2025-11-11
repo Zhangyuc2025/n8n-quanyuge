@@ -2,7 +2,6 @@ import {
 	hasRole,
 	hasScope,
 	isAuthenticated,
-	isDefaultUser,
 	isInstanceOwner,
 	isGuest,
 	isValid,
@@ -16,7 +15,6 @@ type Permissions = {
 export const permissions: Permissions = {
 	authenticated: isAuthenticated,
 	custom: isValid,
-	defaultUser: isDefaultUser,
 	instanceOwner: isInstanceOwner,
 	// Enterprise features are always enabled - license restrictions removed
 	enterprise: () => true,

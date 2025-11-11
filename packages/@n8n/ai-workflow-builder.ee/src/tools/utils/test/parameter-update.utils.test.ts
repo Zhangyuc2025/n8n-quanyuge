@@ -207,12 +207,10 @@ describe('parameter-update.utils', () => {
 		it('should preserve all other node properties', () => {
 			const nodeWithExtra = {
 				...mockNode,
-				credentials: { httpAuth: { id: '123', name: 'Auth' } },
 				disabled: true,
 			};
 
 			const updated = updateNodeWithParameters(nodeWithExtra, { new: 'params' });
-			expect(updated.credentials).toEqual(nodeWithExtra.credentials);
 			expect(updated.disabled).toBe(true);
 		});
 	});

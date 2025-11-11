@@ -17,7 +17,7 @@ export const enum VIEWS {
 	SIGNIN = 'SigninView',
 	SIGNUP = 'SignupView',
 	SIGNOUT = 'SignoutView',
-	SETUP = 'SetupView',
+	PLATFORM_NOT_READY = 'PlatformNotReadyView',
 	FORGOT_PASSWORD = 'ForgotMyPasswordView',
 	CHANGE_PASSWORD = 'ChangePasswordView',
 	SETTINGS = 'Settings',

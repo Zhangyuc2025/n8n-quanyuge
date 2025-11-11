@@ -86,6 +86,17 @@ export class UsageRecord extends WithStringId {
 	amountCny: number;
 
 	/**
+	 * 余额来源：'user' | 'workspace'
+	 * user: 从用户个人余额扣费
+	 * workspace: 从工作空间共享余额池扣费
+	 * Balance source: 'user' | 'workspace'
+	 * user: Deducted from user's personal balance
+	 * workspace: Deducted from workspace shared balance pool
+	 */
+	@Column({ type: 'varchar', length: 20, default: 'user', name: 'balance_source' })
+	balanceSource: 'user' | 'workspace';
+
+	/**
 	 * 元数据（JSON格式，存储额外信息）
 	 * Metadata in JSON format for additional information
 	 */

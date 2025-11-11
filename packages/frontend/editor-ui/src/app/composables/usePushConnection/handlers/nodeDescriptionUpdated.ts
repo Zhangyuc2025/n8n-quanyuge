@@ -8,8 +8,6 @@ import { useNodeTypesStore } from '@/app/stores/nodeTypes.store';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function nodeDescriptionUpdated(_event: NodeDescriptionUpdated) {
 	const nodeTypesStore = useNodeTypesStore();
-	const credentialsStore = useCredentialsStore();
 
 	await nodeTypesStore.getNodeTypes();
-	await credentialsStore.fetchCredentialTypes(true);
 }

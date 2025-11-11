@@ -31,7 +31,6 @@ type InstallNodeResult = {
 export function useInstallNode() {
 	const communityNodesStore = useCommunityNodesStore();
 	const nodeTypesStore = useNodeTypesStore();
-	const credentialsStore = useCredentialsStore();
 	const workflowsStore = useWorkflowsStore();
 	const isOwner = computed(() => useUsersStore().isInstanceOwner);
 	const loading = ref(false);
@@ -68,7 +67,6 @@ export function useInstallNode() {
 
 			// refresh store information about installed nodes
 			await nodeTypesStore.getNodeTypes();
-			await credentialsStore.fetchCredentialTypes(true);
 			await nextTick();
 
 			// update parameters and webhooks for freshly installed nodes

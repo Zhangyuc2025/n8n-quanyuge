@@ -119,7 +119,7 @@ export const setupTestServer = ({ endpointGroups, modules }: SetupProps): TestSe
 		await testDb.init();
 
 		Container.get(GlobalConfig).userManagement.jwtSecret = 'My JWT secret';
-		config.set('userManagement.isInstanceOwnerSetUp', true);
+		config.set('userManagement.isInitialUserSetUp', true);
 
 		if (!endpointGroups) return;
 
@@ -219,7 +219,7 @@ export const setupTestServer = ({ endpointGroups, modules }: SetupProps): TestSe
 						break;
 
 					case 'owner':
-						await import('@/controllers/owner.controller');
+						await import('@/controllers/user-setup.controller');
 						break;
 
 					case 'users':

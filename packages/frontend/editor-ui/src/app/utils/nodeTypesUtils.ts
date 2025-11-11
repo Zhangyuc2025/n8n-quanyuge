@@ -214,23 +214,9 @@ export const getNodeAuthOptions = (
 				field.options.map((option) => {
 					const optionValue = 'value' in option ? `${option.value}` : '';
 
-					// Check if credential type associated with this auth option has overwritten properties
-					let hasOverrides = false;
-					const cred = getNodeCredentialForSelectedAuthType(nodeType, optionValue);
-					if (cred) {
-						hasOverrides =
-							useCredentialsStore().getCredentialTypeByName(cred.name)?.__overwrittenProperties !==
-							undefined;
-					}
-
 					return {
-						name:
-							// Add recommended suffix if credentials have overrides and option is not already recommended
-							hasOverrides && !option.name.endsWith(recommendedSuffix)
-								? `${option.name} ${recommendedSuffix}`
-								: option.name,
+						name: option.name,
 						value: optionValue,
-						// Also add in the display options so we can hide/show the option if necessary
 						displayOptions: field.displayOptions,
 					};
 				}) || [],

@@ -239,19 +239,6 @@ export const useUsersStore = defineStore(STORES.USERS, () => {
 		localStorage.removeItem(BROWSER_ID_STORAGE_KEY);
 	};
 
-	const createOwner = async (params: {
-		firstName: string;
-		lastName: string;
-		email: string;
-		password: string;
-	}) => {
-		const user = await usersApi.setupOwner(rootStore.restApiContext, params);
-		if (user) {
-			await setCurrentUser(user);
-			settingsStore.stopShowingSetupPage();
-		}
-	};
-
 	const validateSignupToken = async (params: { inviteeId: string; inviterId: string }) => {
 		return await usersApi.validateSignupToken(rootStore.restApiContext, params);
 	};
@@ -465,7 +452,6 @@ export const useUsersStore = defineStore(STORES.USERS, () => {
 		logout,
 		registerLoginHook,
 		registerLogoutHook,
-		createOwner,
 		validateSignupToken,
 		acceptInvitation,
 		sendForgotPasswordEmail,

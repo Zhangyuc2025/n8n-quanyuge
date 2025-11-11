@@ -6,12 +6,9 @@ import { Container } from '@n8n/di';
  */
 export const schema = {
 	userManagement: {
-		/**
-		 * @important Do not remove until after cloud hooks are updated to stop using convict config.
-		 */
-		isInstanceOwnerSetUp: {
+		isInitialUserSetUp: {
 			// n8n loads this setting from DB on startup
-			doc: "Whether the instance owner's account has been set up",
+			doc: "Whether the initial user's account has been set up",
 			format: Boolean,
 			default: false,
 		},

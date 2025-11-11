@@ -61,15 +61,11 @@ const usersTableState = ref<TableOptions>({
 		{ id: 'email', desc: false },
 	],
 });
-const showUMSetupWarning = computed(() => hasPermission(['defaultUser']));
 const isEnforceMFAEnabled = computed(() => true);
 
 onMounted(async () => {
 	documentTitle.set(i18n.baseText('settings.users'));
-
-	if (!showUMSetupWarning.value) {
-		await updateUsersTableData(usersTableState.value);
-	}
+	await updateUsersTableData(usersTableState.value);
 });
 
 const usersListActions = computed((): Array<UserAction<IUser>> => {
@@ -367,7 +363,7 @@ async function onUpdateMfaEnforced(value: string | number | boolean) {
 	<div :class="$style.container">
 		<N8nHeading tag="h1" size="2xlarge" class="mb-xl">
 			{{ i18n.baseText('settings.users') }}
-			<N8nText v-if="!showUMSetupWarning" :class="$style.userCount" color="text-light">{{
+			<N8nText :class="$style.userCount" color="text-light">{{
 				i18n.baseText('settings.users.count', {
 					interpolate: {
 						count: usersStore.usersList.state.count,
@@ -424,7 +420,7 @@ async function onUpdateMfaEnforced(value: string | number | boolean) {
 				/>
 			</div>
 		</div>
-		<div v-if="!showUMSetupWarning" :class="$style.buttonContainer">
+		<div :class="$style.buttonContainer">
 			<N8nInput
 				:class="$style.search"
 				:model-value="search"

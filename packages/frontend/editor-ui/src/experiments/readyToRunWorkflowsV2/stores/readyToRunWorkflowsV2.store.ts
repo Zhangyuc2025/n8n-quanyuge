@@ -24,7 +24,6 @@ export const useReadyToRunWorkflowsV2Store = defineStore(
 		const i18n = useI18n();
 		const toast = useToast();
 		const router = useRouter();
-		const credentialsStore = useCredentialsStore();
 		const usersStore = useUsersStore();
 		const settingsStore = useSettingsStore();
 		const workflowsStore = useWorkflowsStore();
@@ -37,12 +36,7 @@ export const useReadyToRunWorkflowsV2Store = defineStore(
 
 		const claimingCredits = ref(false);
 
-		const userHasOpenAiCredentialAlready = computed(
-			() =>
-				!!credentialsStore.allCredentials.filter(
-					(credential) => credential.type === OPEN_AI_API_CREDENTIAL_TYPE,
-				).length,
-		);
+		const userHasOpenAiCredentialAlready = computed(() => false);
 
 		const userHasClaimedAiCreditsAlready = computed(
 			() => !!usersStore.currentUser?.settings?.userClaimedAiCredits,
@@ -80,12 +74,7 @@ export const useReadyToRunWorkflowsV2Store = defineStore(
 			claimingCredits.value = true;
 
 			try {
-				const credential = await credentialsStore.claimFreeAiCredits(projectId);
-
-				claimedCredentialIdRef.value = credential.id;
-
 				telemetry.track('User claimed OpenAI credits');
-				return credential;
 			} catch (e) {
 				toast.showError(
 					e,

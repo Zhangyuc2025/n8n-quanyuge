@@ -19,3 +19,6 @@ export const projectRelationSchema = z.object({
 	role: assignableProjectRoleSchema,
 });
 export type ProjectRelation = z.infer<typeof projectRelationSchema>;
+
+export const billingModeSchema = z.enum(['executor', 'shared-pool']);
+export type BillingMode = z.infer<typeof billingModeSchema>;
