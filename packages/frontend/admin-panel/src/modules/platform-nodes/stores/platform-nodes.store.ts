@@ -7,6 +7,14 @@ import { ref, computed } from 'vue';
 export type NodeType = 'platform' | 'third-party';
 export type SubmissionStatus = 'pending' | 'approved' | 'rejected';
 export type ConfigMode = 'none' | 'user' | 'team';
+export type BillingMode = 'free' | 'token-based' | 'per-execution' | 'duration-based';
+
+export interface BillingConfig {
+	pricePerToken?: number;
+	pricePerExecution?: number;
+	pricePerSecond?: number;
+	currency: string;
+}
 
 export interface AdminPlatformNode {
 	id: string;
@@ -27,6 +35,8 @@ export interface AdminPlatformNode {
 	reviewedBy?: string;
 	reviewedAt?: string;
 	reviewNotes?: string;
+	billingMode?: BillingMode;
+	billingConfig?: BillingConfig;
 	createdAt: string;
 	updatedAt: string;
 }
@@ -43,6 +53,8 @@ export interface CreatePlatformNodeRequest {
 	description?: string;
 	iconUrl?: string;
 	version?: string;
+	billingMode?: BillingMode;
+	billingConfig?: BillingConfig;
 }
 
 export interface UpdatePlatformNodeRequest {
@@ -55,6 +67,8 @@ export interface UpdatePlatformNodeRequest {
 	description?: string;
 	iconUrl?: string;
 	version?: string;
+	billingMode?: BillingMode;
+	billingConfig?: BillingConfig;
 }
 
 export interface ListNodesFilters {

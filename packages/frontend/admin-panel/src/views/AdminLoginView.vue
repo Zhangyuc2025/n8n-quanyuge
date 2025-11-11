@@ -1,37 +1,37 @@
 <template>
 	<div class="login-container">
 		<div class="login-card">
-			<h1 class="login-title">Platform Administrator</h1>
-			<p class="login-subtitle">Sign in to access the admin panel</p>
+			<h1 class="login-title">{{ $t('adminPanel.login.title') }}</h1>
+			<p class="login-subtitle">{{ $t('adminPanel.login.subtitle') }}</p>
 
 			<form @submit.prevent="handleSubmit" class="login-form">
 				<div class="form-group">
-					<label for="email">Email Address</label>
+					<label for="email">{{ $t('adminPanel.login.email') }}</label>
 					<input
 						id="email"
 						v-model="formData.email"
 						type="email"
 						required
-						placeholder="admin@example.com"
+						:placeholder="$t('adminPanel.login.emailPlaceholder')"
 						autocomplete="email"
 					/>
 				</div>
 
 				<div class="form-group">
-					<label for="password">Password</label>
+					<label for="password">{{ $t('adminPanel.login.password') }}</label>
 					<input
 						id="password"
 						v-model="formData.password"
 						type="password"
 						required
-						placeholder="Enter your password"
+						:placeholder="$t('adminPanel.login.passwordPlaceholder')"
 						autocomplete="current-password"
 					/>
 				</div>
 
 				<button type="submit" class="submit-button" :disabled="loading">
-					<span v-if="loading">Signing in...</span>
-					<span v-else>Sign In</span>
+					<span v-if="loading">{{ $t('adminPanel.login.submitting') }}</span>
+					<span v-else>{{ $t('adminPanel.login.submit') }}</span>
 				</button>
 
 				<p v-if="error" class="error-message">{{ error }}</p>
@@ -43,10 +43,12 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { useSystemStore } from '@/stores/system.store';
 
 const router = useRouter();
 const systemStore = useSystemStore();
+const { t } = useI18n();
 
 const formData = ref({
 	email: '',
@@ -66,7 +68,7 @@ const handleSubmit = async () => {
 		// Redirect to dashboard after successful login
 		await router.push({ name: 'TelemetryDashboard' });
 	} catch (err) {
-		error.value = err instanceof Error ? err.message : 'Login failed';
+		error.value = err instanceof Error ? err.message : t('adminPanel.login.errorMessage');
 	} finally {
 		loading.value = false;
 	}

@@ -46,7 +46,8 @@ export const useSystemStore = defineStore('system', () => {
 				throw new Error('Failed to check system status');
 			}
 
-			const status = (await response.json()) as SystemInitStatus;
+			const result = (await response.json()) as { data: SystemInitStatus };
+			const status = result.data;
 			initializationStatus.value = status;
 			lastCheckedAt.value = new Date();
 
@@ -89,7 +90,6 @@ export const useSystemStore = defineStore('system', () => {
 
 	async function loginAdmin(data: { email: string; password: string }): Promise<{
 		admin: unknown;
-		token: string;
 	}> {
 		try {
 			const response = await fetch('/rest/platform-admin/login', {
@@ -106,10 +106,16 @@ export const useSystemStore = defineStore('system', () => {
 				throw new Error(error.message || 'Login failed');
 			}
 
-			const result = (await response.json()) as { admin: unknown; token: string };
+			const responseData = (await response.json()) as {
+				data: { admin: unknown };
+			};
+			const result = responseData.data;
 
-			// Store admin token in localStorage
-			localStorage.setItem('platform_admin_token', result.token);
+			// Cookie is automatically set by the backend via Set-Cookie header
+			// No need to store token in localStorage
+
+			// Refresh system status after successful login
+			await checkSystemStatus();
 
 			return result;
 		} catch (error) {

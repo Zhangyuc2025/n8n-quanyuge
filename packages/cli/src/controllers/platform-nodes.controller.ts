@@ -1,10 +1,11 @@
-import { AuthenticatedRequest, GLOBAL_ADMIN_ROLE } from '@n8n/db';
+import { AuthenticatedRequest } from '@n8n/db';
 import { RestController, Get, Post, Patch, Delete, Param, Body, Query } from '@n8n/decorators';
 import type { Response } from 'express';
 
+import { assertPlatformAdmin } from '@/auth/platform-admin.guard';
 import { PlatformNodeService, NodeType } from '@/services/platform-node.service';
 import { BadRequestError } from '@/errors/response-errors/bad-request.error';
-import { ForbiddenError } from '@/errors/response-errors/forbidden.error';
+import { NodeValidator } from '@/utils/node-validator';
 
 /**
  * Query DTOs for PlatformNodesController
@@ -126,9 +127,7 @@ export class PlatformNodesController {
 		@Body body: { reviewNotes?: string },
 	) {
 		// 检查管理员权限
-		if (req.user.role.slug !== GLOBAL_ADMIN_ROLE.slug) {
-			throw new ForbiddenError('Only administrators can approve nodes');
-		}
+		assertPlatformAdmin(req.user);
 
 		await this.platformNodeService.reviewThirdPartyNode(
 			nodeKey,
@@ -156,9 +155,7 @@ export class PlatformNodesController {
 		@Body body: { reviewNotes?: string },
 	) {
 		// 检查管理员权限
-		if (req.user.role.slug !== GLOBAL_ADMIN_ROLE.slug) {
-			throw new ForbiddenError('Only administrators can reject nodes');
-		}
+		assertPlatformAdmin(req.user);
 
 		await this.platformNodeService.reviewThirdPartyNode(
 			nodeKey,
@@ -186,9 +183,7 @@ export class PlatformNodesController {
 		@Body body: { enabled: boolean },
 	) {
 		// 检查管理员权限
-		if (req.user.role.slug !== GLOBAL_ADMIN_ROLE.slug) {
-			throw new ForbiddenError('Only administrators can toggle nodes');
-		}
+		assertPlatformAdmin(req.user);
 
 		await this.platformNodeService.toggleNode(nodeKey, body.enabled);
 
@@ -225,9 +220,7 @@ export class PlatformNodesController {
 		@Query query: AdminListNodesQueryDto,
 	) {
 		// 检查管理员权限
-		if (req.user.role.slug !== GLOBAL_ADMIN_ROLE.slug) {
-			throw new ForbiddenError('Only administrators can view all nodes');
-		}
+		assertPlatformAdmin(req.user);
 
 		const filters: {
 			nodeType?: NodeType;
@@ -269,9 +262,7 @@ export class PlatformNodesController {
 	@Get('/admin/submissions')
 	async getSubmissions(req: AuthenticatedRequest, _res: Response) {
 		// 检查管理员权限
-		if (req.user.role.slug !== GLOBAL_ADMIN_ROLE.slug) {
-			throw new ForbiddenError('Only administrators can view submissions');
-		}
+		assertPlatformAdmin(req.user);
 
 		// Note: In the new architecture, we don't have pending submissions anymore
 		// All nodes are either approved or rejected
@@ -305,9 +296,7 @@ export class PlatformNodesController {
 		},
 	) {
 		// 检查管理员权限
-		if (req.user.role.slug !== GLOBAL_ADMIN_ROLE.slug) {
-			throw new ForbiddenError('Only administrators can create platform nodes');
-		}
+		assertPlatformAdmin(req.user);
 
 		// 验证必需字段
 		if (!body.nodeKey) {
@@ -326,10 +315,25 @@ export class PlatformNodesController {
 			throw new BadRequestError('nodeDefinition is required');
 		}
 
+		// 验证 nodeDefinition 结构
+		const validationResult = NodeValidator.validateNodeDefinition(body.nodeDefinition);
+		if (!validationResult.valid) {
+			const errorMessage = NodeValidator.formatErrors(validationResult);
+			throw new BadRequestError(`节点定义验证失败：\n${errorMessage}`);
+		}
+
 		// 调用 service 创建节点
-		// 注意：这里需要在 PlatformNodeService 中实现 createPlatformNode 方法
-		// 暂时抛出未实现错误
-		throw new BadRequestError('Platform node creation not yet implemented in PlatformNodeService');
+		return await this.platformNodeService.createNode({
+			nodeKey: body.nodeKey,
+			nodeName: body.nodeName,
+			nodeType: body.nodeType,
+			nodeDefinition: body.nodeDefinition,
+			nodeCode: body.nodeCode,
+			category: body.category,
+			description: body.description,
+			iconUrl: body.iconUrl,
+			version: body.version || '1.0.0',
+		});
 	}
 
 	/**
@@ -346,9 +350,7 @@ export class PlatformNodesController {
 		@Param('nodeKey') _nodeKey: string,
 	) {
 		// 检查管理员权限
-		if (req.user.role.slug !== GLOBAL_ADMIN_ROLE.slug) {
-			throw new ForbiddenError('Only administrators can delete platform nodes');
-		}
+		assertPlatformAdmin(req.user);
 
 		// 调用 service 删除节点
 		// 注意：这里需要在 PlatformNodeService 中实现 deleteNode 方法

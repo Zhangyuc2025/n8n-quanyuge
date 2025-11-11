@@ -158,17 +158,29 @@ router.beforeEach(async (to, _from, next) => {
 			return next();
 		}
 
-		// If system is initialized but not logged in, redirect to login
-		const token = localStorage.getItem('platform_admin_token');
-		if (!token) {
-			if (to.name !== 'AdminLogin') {
-				return next({ name: 'AdminLogin' });
-			}
-			return next();
-		}
+		// System is initialized, check authentication by testing an API call
+		// Use a lightweight endpoint that requires authentication
+		try {
+			const testResponse = await fetch('/rest/telemetry/stats/overview?days=1', {
+				credentials: 'include',
+			});
 
-		// All checks passed
-		next();
+			if (testResponse.status === 401) {
+				// Not authenticated (401 Unauthorized), redirect to login
+				console.log('[Router] Not authenticated, redirecting to login');
+				if (to.name !== 'AdminLogin') {
+					return next({ name: 'AdminLogin' });
+				}
+				return next();
+			}
+
+			// Authenticated successfully or other status (proceed)
+			next();
+		} catch (authError) {
+			// Network error, allow access anyway (fail-open for development)
+			console.warn('[Router] Auth check error:', authError);
+			next();
+		}
 	} catch (error) {
 		console.error('[Router] Guard error:', error);
 		// On error, redirect to login

@@ -14,6 +14,8 @@ import type {
 	CreatePlatformNodeRequest,
 	UpdatePlatformNodeRequest,
 	NodeType,
+	BillingMode,
+	BillingConfig,
 } from '../stores/platform-nodes.store';
 import { usePlatformNodesStore } from '../stores/platform-nodes.store';
 
@@ -46,8 +48,13 @@ const formData = ref({
 	description: '',
 	iconUrl: '',
 	version: '1.0.0',
-	isBillable: false,
-	pricePerRequest: 0,
+	billingMode: 'free' as BillingMode,
+	billingConfig: {
+		pricePerToken: 0,
+		pricePerExecution: 0,
+		pricePerSecond: 0,
+		currency: 'CNY',
+	} as BillingConfig,
 });
 
 const saving = ref(false);
@@ -105,13 +112,14 @@ function loadNodeData() {
 		formData.value.iconUrl = props.node.iconUrl || '';
 		formData.value.version = props.node.version || '1.0.0';
 
-		// Load billing info if available (this would need to be added to the type)
-		const nodeWithBilling = props.node as unknown as {
-			isBillable?: boolean;
-			pricePerRequest?: number;
+		// Load billing config
+		formData.value.billingMode = props.node.billingMode || 'free';
+		formData.value.billingConfig = props.node.billingConfig || {
+			pricePerToken: 0,
+			pricePerExecution: 0,
+			pricePerSecond: 0,
+			currency: 'CNY',
 		};
-		formData.value.isBillable = nodeWithBilling.isBillable || false;
-		formData.value.pricePerRequest = nodeWithBilling.pricePerRequest || 0;
 	}
 }
 
@@ -153,6 +161,9 @@ async function onSave() {
 				description: formData.value.description || undefined,
 				iconUrl: formData.value.iconUrl || undefined,
 				version: formData.value.version || undefined,
+				billingMode: formData.value.billingMode,
+				billingConfig:
+					formData.value.billingMode !== 'free' ? formData.value.billingConfig : undefined,
 			};
 			await platformNodesStore.createPlatformNode(createData);
 			ElMessage.success('创建成功');
@@ -169,6 +180,9 @@ async function onSave() {
 				description: formData.value.description || undefined,
 				iconUrl: formData.value.iconUrl || undefined,
 				version: formData.value.version || undefined,
+				billingMode: formData.value.billingMode,
+				billingConfig:
+					formData.value.billingMode !== 'free' ? formData.value.billingConfig : undefined,
 			};
 			await platformNodesStore.updatePlatformNode(formData.value.nodeKey, updateData);
 			ElMessage.success('更新成功');
@@ -340,22 +354,77 @@ watch(
 						</N8nInputLabel>
 					</div>
 
-					<!-- Billing Options -->
+					<!-- Billing Configuration -->
+					<div :class="$style.sectionDivider">
+						<N8nHeading tag="h3" size="medium">计费配置</N8nHeading>
+					</div>
+
+					<!-- Billing Mode -->
 					<div :class="$style.formGroup">
-						<N8nInputLabel label="是否计费">
-							<ElSwitch v-model="formData.isBillable" :disabled="saving" />
+						<N8nInputLabel label="计费模式" required>
+							<ElSelect
+								v-model="formData.billingMode"
+								:disabled="saving"
+								placeholder="选择计费模式"
+								style="width: 100%"
+							>
+								<ElOption label="免费" value="free" />
+								<ElOption label="Token计费（适合AI节点）" value="token-based" />
+								<ElOption label="按次计费（适合API调用）" value="per-execution" />
+								<ElOption label="时长计费（适合计算密集型）" value="duration-based" />
+							</ElSelect>
 						</N8nInputLabel>
 					</div>
 
-					<!-- Price Per Request (only if billable) -->
-					<div v-if="formData.isBillable" :class="$style.formGroup">
-						<N8nInputLabel label="每次请求价格">
+					<!-- Token-based Price -->
+					<div v-if="formData.billingMode === 'token-based'" :class="$style.formGroup">
+						<N8nInputLabel label="每Token价格（元）">
 							<N8nInput
-								v-model.number="formData.pricePerRequest"
+								v-model.number="formData.billingConfig.pricePerToken"
 								type="number"
-								step="0.01"
-								placeholder="0.00"
+								step="0.00001"
+								placeholder="0.00001"
 								:disabled="saving"
+							/>
+							<template #hint> 例如：0.00001 元/token（相当于 ¥0.01/1K tokens） </template>
+						</N8nInputLabel>
+					</div>
+
+					<!-- Per-execution Price -->
+					<div v-if="formData.billingMode === 'per-execution'" :class="$style.formGroup">
+						<N8nInputLabel label="每次执行价格（元）">
+							<N8nInput
+								v-model.number="formData.billingConfig.pricePerExecution"
+								type="number"
+								step="0.001"
+								placeholder="0.01"
+								:disabled="saving"
+							/>
+							<template #hint> 例如：0.01 元/次 </template>
+						</N8nInputLabel>
+					</div>
+
+					<!-- Duration-based Price -->
+					<div v-if="formData.billingMode === 'duration-based'" :class="$style.formGroup">
+						<N8nInputLabel label="每秒价格（元）">
+							<N8nInput
+								v-model.number="formData.billingConfig.pricePerSecond"
+								type="number"
+								step="0.0001"
+								placeholder="0.001"
+								:disabled="saving"
+							/>
+							<template #hint> 例如：0.001 元/秒 </template>
+						</N8nInputLabel>
+					</div>
+
+					<!-- Currency (readonly, always CNY) -->
+					<div v-if="formData.billingMode !== 'free'" :class="$style.formGroup">
+						<N8nInputLabel label="货币">
+							<N8nInput
+								v-model="formData.billingConfig.currency"
+								:disabled="true"
+								placeholder="CNY"
 							/>
 						</N8nInputLabel>
 					</div>
@@ -421,6 +490,12 @@ watch(
 	&:last-child {
 		margin-bottom: 0;
 	}
+}
+
+.sectionDivider {
+	margin: var(--spacing--lg) 0 var(--spacing--md) 0;
+	padding-top: var(--spacing--md);
+	border-top: var(--border);
 }
 
 .dialogFooter {
