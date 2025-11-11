@@ -1,5 +1,4 @@
 {
-	"extends": "../../../tsconfig.json",
 	"compilerOptions": {
 		"target": "ES2020",
 		"useDefineForClassFields": true,
@@ -21,10 +20,10 @@
 		"noUnusedParameters": true,
 		"noFallthroughCasesInSwitch": true,
 
-		/* Path aliases */
+		/* Path mapping */
 		"baseUrl": ".",
 		"paths": {
-			"@/*": ["./src/*"]
+			"@/*": ["src/*"]
 		}
 	},
 	"include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],

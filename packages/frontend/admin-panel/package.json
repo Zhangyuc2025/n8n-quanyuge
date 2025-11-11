@@ -1,30 +1,32 @@
 {
-	"name": "@n8n/admin-panel",
-	"version": "1.0.0",
-	"description": "n8n Admin Panel - Modular Management System",
-	"license": "SEE LICENSE IN LICENSE.md",
-	"type": "module",
-	"scripts": {
-		"dev": "vite --port 5679",
-		"build": "vite build",
-		"preview": "vite preview",
-		"typecheck": "vue-tsc --noEmit"
-	},
-	"dependencies": {
-		"vue": "catalog:frontend",
-		"vue-router": "catalog:frontend",
-		"pinia": "catalog:frontend",
-		"@n8n/design-system": "workspace:*",
-		"@n8n/i18n": "workspace:*",
-		"@n8n/api-types": "workspace:*",
-		"chart.js": "catalog:frontend",
-		"vue-chartjs": "catalog:frontend",
-		"date-fns": "^2.30.0"
-	},
-	"devDependencies": {
-		"@vitejs/plugin-vue": "catalog:frontend",
-		"typescript": "catalog:",
-		"vite": "catalog:",
-		"vue-tsc": "catalog:frontend"
-	}
+  "name": "@n8n/admin-panel",
+  "version": "2.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 5679 --mode development",
+    "build": "vue-tsc --noEmit && vite build --mode production",
+    "build:prod": "NODE_ENV=production vue-tsc --noEmit && vite build --mode production",
+    "preview": "vite preview --port 5679",
+    "typecheck": "vue-tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0",
+    "pinia": "^2.2.4",
+    "ant-design-vue": "^4.0.0",
+    "echarts": "^5.4.0",
+    "dayjs": "^1.11.0",
+    "@n8n/shared": "workspace:*",
+    "@n8n/i18n": "workspace:*",
+    "@n8n/api-types": "workspace:*",
+    "@ant-design/icons-vue": "^7.0.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.4",
+    "vite": "npm:rolldown-vite@latest",
+    "typescript": "^5.9.2",
+    "vue-tsc": "^2.2.8",
+    "sass": "^1.70.0"
+  }
 }

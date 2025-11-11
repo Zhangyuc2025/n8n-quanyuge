@@ -1,49 +1,53 @@
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
+import Antd from 'ant-design-vue';
+import { i18nInstance } from '@n8n/i18n';
 import App from './App.vue';
 import router from './router';
-import '@n8n/design-system/css/index.scss';
+import { useAdminAuthStore } from './stores/adminAuth.store';
 
-// Import i18n
-import { i18nInstance, setLanguage } from '@n8n/i18n';
-import { i18n as designSystemI18n } from '@n8n/design-system/locale';
+// Import global styles
+import './styles/theme.scss';
 
+console.log('[Admin Panel] 应用初始化开始...');
+
+// Create Vue app
 const app = createApp(App);
+console.log('[Admin Panel] Vue 应用已创建');
 
-app.use(createPinia());
+// Create Pinia store
+const pinia = createPinia();
+console.log('[Admin Panel] Pinia store 已创建');
+
+// Register plugins
+app.use(pinia);
+console.log('[Admin Panel] Pinia 已注册');
+
 app.use(router);
+console.log('[Admin Panel] Router 已注册');
 
-// Initialize i18n
+app.use(Antd);
+console.log('[Admin Panel] Ant Design Vue 已注册');
+
 app.use(i18nInstance);
+console.log('[Admin Panel] i18n 已注册');
 
-// Initialize locale from localStorage before mounting
-const initLocale = () => {
-	try {
-		const savedLocale = localStorage.getItem('n8n-locale') || 'zh';
-		if (savedLocale !== i18nInstance.global.locale.value) {
-			setLanguage(savedLocale);
-		}
-	} catch (e) {
-		console.warn('Failed to read saved locale from localStorage', e);
-	}
-};
-initLocale();
+// Initialize admin auth store (restore session from localStorage)
+const adminAuthStore = useAdminAuthStore();
+adminAuthStore.init();
+console.log('[Admin Panel] Auth store 已初始化, 已认证:', adminAuthStore.isAuthenticated);
 
-// Hook design-system's i18n to use the same translations as the main app
-designSystemI18n((key: string) => {
-	return i18nInstance.global.t(key);
-});
-
-// Load design-system locale based on current language
-const initDesignSystemLocale = async () => {
-	const currentLocale = i18nInstance.global.locale.value;
-	try {
-		const { use } = await import('@n8n/design-system/locale');
-		await use(currentLocale);
-	} catch (e) {
-		console.warn(`Design system locale ${currentLocale} not found, using English`, e);
-	}
-};
-void initDesignSystemLocale();
-
+// Mount app
 app.mount('#app');
+console.log('[Admin Panel] 应用已挂载到 #app');
+
+// Apply admin theme class to body
+document.body.classList.add('admin-theme');
+console.log('[Admin Panel] 主题类已应用');
+
+// Add global error handler
+app.config.errorHandler = (err, instance, info) => {
+	console.error('[Admin Panel] Vue 错误捕获:', err);
+	console.error('[Admin Panel] 组件实例:', instance);
+	console.error('[Admin Panel] 错误信息:', info);
+};
