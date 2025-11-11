@@ -70,7 +70,6 @@ const props = withDefaults(
 		dragging: boolean;
 		pushRef: string;
 		readOnly: boolean;
-		foreignCredentials: string[];
 		blockUI: boolean;
 		executable: boolean;
 		inputSize?: number;
@@ -151,16 +150,7 @@ const subConnections = ref<InstanceType<typeof NDVSubConnections> | null>(null);
 const isDemoRoute = computed(() => route?.name === VIEWS.DEMO);
 const { isPreviewMode } = useSettingsStore();
 const isDemoPreview = computed(() => isDemoRoute.value && isPreviewMode);
-const currentWorkflow = computed(
-	() => workflowsStore.getWorkflowById(workflowsStore.workflowObject.id), // @TODO check if we actually need workflowObject here
-);
-const hasForeignCredential = computed(() => props.foreignCredentials.length > 0);
-const isHomeProjectTeam = computed(
-	() => currentWorkflow.value?.homeProject?.type === ProjectTypes.Team,
-);
-const isReadOnly = computed(
-	() => props.readOnly || (hasForeignCredential.value && !isHomeProjectTeam.value),
-);
+const isReadOnly = computed(() => props.readOnly);
 const node = computed(() => props.activeNode ?? ndvStore.activeNode);
 
 const nodeType = computed(() =>
@@ -176,9 +166,7 @@ const isTriggerNode = computed(() => !!node.value && nodeTypesStore.isTriggerNod
 
 const isToolNode = computed(() => !!node.value && nodeTypesStore.isToolNode(node.value.type));
 
-const isExecutable = computed(() =>
-	nodeHelpers.isNodeExecutable(node.value, props.executable, props.foreignCredentials),
-);
+const isExecutable = computed(() => nodeHelpers.isNodeExecutable(node.value, props.executable, []));
 
 const nodeTypeVersions = computed(() => {
 	if (!node.value) return [];
@@ -368,7 +356,6 @@ const valueChanged = (parameterData: IUpdateInformation) => {
 			workflowState.setNodeParameters(updateInformation);
 
 			nodeHelpers.updateNodeParameterIssuesByName(_node.name);
-			nodeHelpers.updateNodeCredentialIssuesByName(_node.name);
 		}
 	} else if (nameIsParameter(parameterData)) {
 		// A node parameter changed

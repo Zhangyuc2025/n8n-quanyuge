@@ -197,19 +197,6 @@ export const useFoldersStore = defineStore(STORES.FOLDERS, () => {
 		return allFolders;
 	}
 
-	async function fetchFolderUsedCredentials(
-		projectId: string,
-		folderId: string,
-	): Promise<IUsedCredential[]> {
-		const usedCredentials = await foldersApi.getFolderUsedCredentials(
-			rootStore.restApiContext,
-			projectId,
-			folderId,
-		);
-
-		return usedCredentials;
-	}
-
 	async function moveFolder(
 		projectId: string,
 		folderId: string,
@@ -358,6 +345,5 @@ export const useFoldersStore = defineStore(STORES.FOLDERS, () => {
 		getHiddenBreadcrumbsItems,
 		draggedElement,
 		activeDropTarget,
-		fetchFolderUsedCredentials,
 	};
 });

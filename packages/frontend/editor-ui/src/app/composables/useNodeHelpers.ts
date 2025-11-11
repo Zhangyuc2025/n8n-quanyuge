@@ -63,6 +63,7 @@ export function useNodeHelpers(opts: { workflowState?: WorkflowState } = {}) {
 	const isInsertingNodes = ref(false);
 	const isProductionExecutionPreview = ref(false);
 	const pullConnActiveNodeName = ref<string | null>(null);
+	const credentialsUpdated = ref(false);
 
 	const workflowObject = computed(() => workflowsStore.workflowObject as Workflow);
 
@@ -122,29 +123,7 @@ export function useNodeHelpers(opts: { workflowState?: WorkflowState } = {}) {
 			}
 		}
 
-		return Boolean(executable || foreignCredentials.length > 0);
-	}
-
-	/**
-	 * Returns a list of credential IDs that the current user does not have access to,
-	 * if the Sharing feature is enabled.
-	 *
-	 * These are considered "foreign" credentials: the user can't view or manage them,
-	 * but can still execute workflows that use them.
-	 */
-	function getForeignCredentialsIfSharingEnabled(
-		credentials: INodeCredentials | undefined,
-	): string[] {
-		if (!credentials) {
-			return [];
-		}
-
-		const usedCredentials = workflowsStore.usedCredentials;
-
-		return Object.values(credentials)
-			.map(({ id }) => id)
-			.filter((id) => id !== null)
-			.filter((id) => id in usedCredentials && !usedCredentials[id]?.currentUserHasAccess);
+		return Boolean(executable);
 	}
 
 	// Returns if the given parameter should be displayed or not
@@ -777,7 +756,6 @@ export function useNodeHelpers(opts: { workflowState?: WorkflowState } = {}) {
 		hasProxyAuth,
 		isCustomApiCallSelected,
 		isNodeExecutable,
-		getForeignCredentialsIfSharingEnabled,
 		displayParameter,
 		getNodeIssues,
 		updateNodesInputIssues,
@@ -803,5 +781,6 @@ export function useNodeHelpers(opts: { workflowState?: WorkflowState } = {}) {
 		getNodeHints,
 		nodeIssuesToString,
 		getDefaultNodeName,
+		credentialsUpdated,
 	};
 }

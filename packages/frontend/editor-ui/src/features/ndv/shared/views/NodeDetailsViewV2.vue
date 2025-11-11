@@ -306,12 +306,6 @@ const isExecutionWaitingForWebhook = computed(() => workflowsStore.executionWait
 
 const blockUi = computed(() => isWorkflowRunning.value || isExecutionWaitingForWebhook.value);
 
-const foreignCredentials = computed(() =>
-	nodeHelpers.getForeignCredentialsIfSharingEnabled(activeNode.value?.credentials),
-);
-
-const hasForeignCredential = computed(() => foreignCredentials.value.length > 0);
-
 const inputPanelDisplayMode = computed(() => ndvStore.inputPanelDisplayMode);
 
 const outputPanelDisplayMode = computed(() => ndvStore.outputPanelDisplayMode);
@@ -327,7 +321,6 @@ const nodeSettingsProps = computed(() => ({
 	dragging: isDragging.value,
 	pushRef: pushRef.value,
 	nodeType: activeNodeType.value,
-	foreignCredentials: foreignCredentials.value,
 	readOnly: props.readOnly,
 	blockUI: blockUi.value && showTriggerPanel.value,
 	executable: !props.readOnly,
@@ -625,7 +618,6 @@ watch(
 						node_type: activeNodeType.value ? activeNodeType.value?.name : '',
 						workflow_id: workflowsStore.workflowId,
 						push_ref: pushRef.value,
-						is_editable: !hasForeignCredential.value,
 						parameters_pane_position: mainPanelPosition.value,
 						input_first_connector_runs: maxInputRun.value,
 						output_first_connector_runs: maxOutputRun.value,

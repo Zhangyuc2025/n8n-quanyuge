@@ -864,9 +864,7 @@ export function useCanvasOperations() {
 			}
 
 			workflowsStore.setNodePristine(nodeData.name, true);
-			nodeHelpers.matchCredentials(nodeData);
 			nodeHelpers.updateNodeParameterIssues(nodeData);
-			nodeHelpers.updateNodeCredentialIssues(nodeData);
 			nodeHelpers.updateNodeInputIssues(nodeData);
 
 			const isStickyNode = nodeData.type === STICKY_NODE_TYPE;
@@ -1767,7 +1765,6 @@ export function useCanvasOperations() {
 			const isUnknownNode =
 				!nodeTypesStore.getNodeType(node.type, node.typeVersion) &&
 				!nodeTypesStore.communityNodeType(node.type)?.nodeDescription;
-			nodeHelpers.matchCredentials(node);
 			// skip this step because nodeTypeDescription is missing for unknown nodes
 			if (!isUnknownNode) {
 				resolveNodeParameters(node, nodeTypeDescription);
@@ -1781,7 +1778,6 @@ export function useCanvasOperations() {
 	const initializeUnknownNodes = (nodes: INode[]) => {
 		nodes.forEach((node) => {
 			const nodeTypeDescription = requireNodeTypeDescription(node.type, node.typeVersion);
-			nodeHelpers.matchCredentials(node);
 			resolveNodeParameters(node, nodeTypeDescription);
 			resolveNodeWebhook(node, nodeTypeDescription);
 			const nodeIndex = workflowsStore.workflow.nodes.findIndex((n) => {

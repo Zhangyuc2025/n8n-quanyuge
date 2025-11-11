@@ -632,13 +632,6 @@ function credentialSelected(updateInformation: INodeUpdatePropertiesInformation)
 	// Update the values on the node
 	workflowState.updateNodeProperties(updateInformation);
 
-	const updateNode = workflowsStore.getNodeByName(updateInformation.name);
-
-	if (updateNode) {
-		// Update the issues
-		nodeHelpers.updateNodeCredentialIssues(updateNode);
-	}
-
 	void externalHooks.run('nodeSettings.credentialSelected', { updateInformation });
 }
 

@@ -321,12 +321,6 @@ const blockUi = computed(
 	() => workflowsStore.isWorkflowRunning || isExecutionWaitingForWebhook.value,
 );
 
-const foreignCredentials = computed(() =>
-	nodeHelpers.getForeignCredentialsIfSharingEnabled(activeNode.value?.credentials),
-);
-
-const hasForeignCredential = computed(() => foreignCredentials.value.length > 0);
-
 const inputPanelDisplayMode = computed(() => ndvStore.inputPanelDisplayMode);
 
 const outputPanelDisplayMode = computed(() => ndvStore.outputPanelDisplayMode);
@@ -637,7 +631,6 @@ watch(
 						node_type: activeNodeType.value ? activeNodeType.value?.name : '',
 						workflow_id: workflowsStore.workflowId,
 						push_ref: pushRef.value,
-						is_editable: !hasForeignCredential.value,
 						parameters_pane_position: mainPanelPosition.value,
 						input_first_connector_runs: maxInputRun.value,
 						output_first_connector_runs: maxOutputRun.value,
@@ -765,7 +758,7 @@ onBeforeUnmount(() => {
 						:active-node-name="activeNode.name"
 						:current-node-name="inputNodeName"
 						:push-ref="pushRef"
-						:read-only="readOnly || hasForeignCredential"
+						:read-only="readOnly"
 						:is-production-execution-preview="isProductionExecutionPreview"
 						:search-shortcut="isInputPaneActive ? '/' : undefined"
 						:display-mode="inputPanelDisplayMode"
@@ -792,7 +785,7 @@ onBeforeUnmount(() => {
 						:run-index="outputRun"
 						:linked-runs="linked"
 						:push-ref="pushRef"
-						:is-read-only="readOnly || hasForeignCredential"
+						:is-read-only="readOnly"
 						:block-u-i="blockUi && isTriggerNode && !isExecutableTriggerNode"
 						:is-production-execution-preview="isProductionExecutionPreview"
 						:is-pane-active="isOutputPaneActive"
@@ -813,7 +806,6 @@ onBeforeUnmount(() => {
 						:event-bus="settingsEventBus"
 						:dragging="isDragging"
 						:push-ref="pushRef"
-						:foreign-credentials="foreignCredentials"
 						:read-only="readOnly"
 						:block-u-i="blockUi && showTriggerPanel"
 						:executable="!readOnly"

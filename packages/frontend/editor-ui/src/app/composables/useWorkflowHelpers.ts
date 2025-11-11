@@ -954,10 +954,6 @@ export function useWorkflowHelpers() {
 		workflowsStore.setWorkflowMetadata(workflowData.meta);
 		workflowsStore.setWorkflowScopes(workflowData.scopes);
 
-		if (workflowData.usedCredentials) {
-			workflowsStore.setUsedCredentials(workflowData.usedCredentials);
-		}
-
 		if (workflowData.sharedWithProjects) {
 			workflowsEEStore.setWorkflowSharedWith({
 				workflowId: workflowData.id,

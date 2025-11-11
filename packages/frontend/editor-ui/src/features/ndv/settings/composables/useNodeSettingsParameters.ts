@@ -143,7 +143,6 @@ export function useNodeSettingsParameters() {
 		});
 
 		nodeHelpers.updateNodeParameterIssuesByName(node.name);
-		nodeHelpers.updateNodeCredentialIssuesByName(node.name);
 		telemetry.trackNodeParametersValuesChange(nodeTypeDescription.name, parameterData);
 	}
 

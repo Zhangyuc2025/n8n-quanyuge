@@ -87,15 +87,8 @@ const save = async (): Promise<void> => {
 	try {
 		let workflowToUpdate: WorkflowDataUpdate | undefined;
 		if (currentWorkflowId !== PLACEHOLDER_EMPTY_WORKFLOW_ID) {
-			const {
-				createdAt,
-				updatedAt,
-				usedCredentials,
-				id,
-				homeProject,
-				sharedWithProjects,
-				...workflow
-			} = await workflowsStore.fetchWorkflow(props.data.id);
+			const { createdAt, updatedAt, id, homeProject, sharedWithProjects, ...workflow } =
+				await workflowsStore.fetchWorkflow(props.data.id);
 			workflowToUpdate = workflow;
 		}
 

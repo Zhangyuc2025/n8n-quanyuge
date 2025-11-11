@@ -147,10 +147,7 @@ const isExecutable = computed(() => {
 
 	if (!isDisplayed.value) return false;
 
-	const foreignCredentials = nodeHelpers.getForeignCredentialsIfSharingEnabled(
-		node.value.credentials,
-	);
-	return nodeHelpers.isNodeExecutable(node.value, !props.isCanvasReadOnly, foreignCredentials);
+	return nodeHelpers.isNodeExecutable(node.value, !props.isCanvasReadOnly, []);
 });
 
 const { workflowRunData } = useExecutionData({ node });

@@ -28,9 +28,6 @@ const nodeHelpers = useNodeHelpers();
 const ndvStore = useNDVStore();
 
 const activeNode = computed(() => workflowsStore.getNodeById(nodeId));
-const foreignCredentials = computed(() =>
-	nodeHelpers.getForeignCredentialsIfSharingEnabled(activeNode.value?.credentials),
-);
 const isWorkflowRunning = computed(() => uiStore.isActionActive.workflowRunning);
 const isExecutionWaitingForWebhook = computed(() => workflowsStore.executionWaitingForWebhook);
 const blockUi = computed(() => isWorkflowRunning.value || isExecutionWaitingForWebhook.value);
@@ -70,7 +67,6 @@ function handleCaptureWheelEvent(event: WheelEvent) {
 		:dragging="false"
 		:active-node="activeNode"
 		:push-ref="ndvStore.pushRef"
-		:foreign-credentials="foreignCredentials"
 		:read-only="isReadOnly"
 		:block-u-i="blockUi"
 		:executable="!isReadOnly"

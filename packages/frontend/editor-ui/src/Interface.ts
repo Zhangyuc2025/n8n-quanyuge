@@ -210,7 +210,6 @@ export interface IWorkflowDb {
 	homeProject?: ProjectSharingData;
 	scopes?: Scope[];
 	versionId: string;
-	usedCredentials?: IUsedCredential[];
 	meta?: WorkflowMetadata;
 	parentFolder?: {
 		id: string;
@@ -292,10 +291,7 @@ export type SortingAndPaginationUpdates = {
 	sort?: string;
 };
 
-export type WorkflowListItem = Omit<
-	IWorkflowDb,
-	'nodes' | 'connections' | 'pinData' | 'usedCredentials' | 'meta'
-> & {
+export type WorkflowListItem = Omit<IWorkflowDb, 'nodes' | 'connections' | 'pinData' | 'meta'> & {
 	resource: 'workflow';
 	description?: string;
 };
@@ -406,6 +402,7 @@ export type SimplifiedNodeType = Pick<
 	| 'outputs'
 > & {
 	tag?: string;
+	source?: 'builtin' | 'platform' | 'thirdParty' | 'custom';
 };
 export interface SubcategoryItemProps {
 	description?: string;

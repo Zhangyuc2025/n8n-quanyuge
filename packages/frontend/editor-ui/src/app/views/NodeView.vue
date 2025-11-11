@@ -513,7 +513,6 @@ async function initializeWorkspaceForExistingWorkflow(id: string) {
 
 function updateNodesIssues() {
 	nodeHelpers.updateNodesInputIssues();
-	nodeHelpers.updateNodesCredentialsIssues();
 	nodeHelpers.updateNodesParameterIssues();
 }
 
@@ -1910,6 +1909,35 @@ onMounted(() => {
 	addCommandBarEventBindings();
 	registerCustomActions();
 });
+
+// Watch for workspace changes and reinitialize NodeView
+watch(
+	() => projectsStore.currentProjectId,
+	async (newProjectId, oldProjectId) => {
+		// Only reinitialize if workspace actually changed and is valid
+		if (!newProjectId || newProjectId === oldProjectId) {
+			return;
+		}
+
+		// Reset workspace state to clear old data
+		resetWorkspace();
+
+		// Reinitialize with new workspace context
+		canvasStore.startLoading();
+		try {
+			await initializeData();
+			// If we're on a workflow route, reload it in the new workspace context
+			if (workflowId.value && workflowId.value !== NEW_WORKFLOW_ID) {
+				await initializeRoute();
+			}
+		} catch (error) {
+			console.error('[NodeView] Failed to reinitialize after workspace change:', error);
+			toast.showError(error as Error, i18n.t('workspaceSwitch.error'));
+		} finally {
+			canvasStore.stopLoading();
+		}
+	},
+);
 
 onActivated(() => {
 	addUndoRedoEventBindings();
