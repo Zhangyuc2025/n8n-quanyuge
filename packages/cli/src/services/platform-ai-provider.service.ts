@@ -5,6 +5,19 @@ import { Logger } from '@n8n/backend-common';
 import { BillingService } from './billing.service';
 import { NotFoundError } from '@/errors/response-errors/not-found.error';
 import { UserError } from 'n8n-workflow';
+import {
+	BaseAIProviderAdapter,
+	OpenAIAdapter,
+	AnthropicAdapter,
+	GoogleAdapter,
+	AzureOpenAIAdapter,
+	QwenAdapter,
+	ErnieAdapter,
+	GLMAdapter,
+	GiteeAIAdapter,
+	InfiniAIAdapter,
+	type ChatRequest,
+} from './ai-provider-adapters';
 
 /**
  * AI 服务提供商未找到错误
@@ -99,29 +112,6 @@ export interface ChatCompletionResponse {
 }
 
 /**
- * AI Provider 适配器接口
- *
- * 定义统一的 AI Provider 调用接口，屏蔽不同提供商的 API 差异
- */
-interface AIProviderAdapter {
-	/**
-	 * 调用 AI Provider API
-	 *
-	 * @param apiKey - API 密钥
-	 * @param endpoint - API 端点
-	 * @param modelId - 模型 ID
-	 * @param request - 聊天请求
-	 * @returns 标准化的响应
-	 */
-	call(
-		apiKey: string,
-		endpoint: string,
-		modelId: string,
-		request: ChatCompletionRequest,
-	): Promise<ChatCompletionResponse>;
-}
-
-/**
  * 平台 AI 服务提供商管理服务
  *
  * 负责管理平台托管的 AI 服务提供商（OpenAI、Anthropic 等）的配置、调用和计费
@@ -129,7 +119,7 @@ interface AIProviderAdapter {
 @Service()
 export class PlatformAIProviderService {
 	/** Provider 适配器缓存 */
-	private readonly adapters: Map<string, AIProviderAdapter> = new Map();
+	private readonly adapters = new Map<string, BaseAIProviderAdapter>();
 
 	constructor(
 		private readonly logger: Logger,
@@ -149,7 +139,11 @@ export class PlatformAIProviderService {
 		this.adapters.set('anthropic', new AnthropicAdapter(this.logger));
 		this.adapters.set('google', new GoogleAdapter(this.logger));
 		this.adapters.set('azure', new AzureOpenAIAdapter(this.logger));
-		// 可以继续添加其他 Provider
+		this.adapters.set('qwen', new QwenAdapter(this.logger));
+		this.adapters.set('ernie', new ErnieAdapter(this.logger));
+		this.adapters.set('glm', new GLMAdapter(this.logger));
+		this.adapters.set('gitee-ai', new GiteeAIAdapter(this.logger));
+		this.adapters.set('infini-ai', new InfiniAIAdapter(this.logger));
 	}
 
 	/**
@@ -235,7 +229,13 @@ export class PlatformAIProviderService {
 		}
 
 		// 5. 调用 AI API
-		const response = await this.callProviderAPI(provider.apiEndpoint, apiKey, modelId, request);
+		const response = await this.callProviderAPI(
+			providerKey,
+			provider.apiEndpoint,
+			apiKey,
+			modelId,
+			request,
+		);
 
 		// 6. 记录使用量并扣费
 		const actualTokens = response.usage.totalTokens;
@@ -251,8 +251,9 @@ export class PlatformAIProviderService {
 	}
 
 	/**
-	 * 调用提供商 API（抽象层）
+	 * 调用提供商 API（使用适配器）
 	 *
+	 * @param providerKey - 提供商标识
 	 * @param endpoint - API 端点
 	 * @param apiKey - API Key
 	 * @param modelId - 模型 ID
@@ -260,80 +261,57 @@ export class PlatformAIProviderService {
 	 * @returns API 响应
 	 * @throws {AIProviderError} 当 API 调用失败时
 	 */
-	/**
-	 * 调用 LiteLLM Proxy 执行 AI 请求
-	 *
-	 * LiteLLM Proxy 提供统一的 OpenAI 格式 API，自动处理：
-	 * - 不同提供商的 API 格式转换
-	 * - 请求重试和错误处理
-	 * - 负载均衡和模型回退
-	 * - 缓存和速率限制
-	 *
-	 * @param modelId - 模型 ID（配置在 config.yaml 的 model_name）
-	 * @param request - Chat completion 请求（支持多模态）
-	 * @returns AI 响应
-	 */
 	private async callProviderAPI(
-		endpoint: string, // 已废弃，保留参数为了兼容性
-		apiKey: string, // 已废弃，LiteLLM Proxy 从环境变量读取
+		providerKey: string,
+		endpoint: string,
+		apiKey: string,
 		modelId: string,
 		request: ChatCompletionRequest,
 	): Promise<ChatCompletionResponse> {
+		// 获取适配器
+		const adapter = this.adapters.get(providerKey);
+		if (!adapter) {
+			throw new AIProviderError(`No adapter found for provider: ${providerKey}`);
+		}
+
+		// 转换请求格式
+		const chatRequest: ChatRequest = {
+			model: modelId,
+			messages: request.messages.map((msg) => ({
+				role: msg.role as 'system' | 'user' | 'assistant',
+				content: msg.content,
+			})),
+			temperature: request.temperature,
+			max_tokens: request.maxTokens,
+		};
+
 		try {
-			// 调用 LiteLLM Proxy（标准 OpenAI 格式）
-			const response = await fetch(`${this.litellmProxyUrl}/v1/chat/completions`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					// LiteLLM Proxy 可选：设置代理 API Key（如果启用了认证）
-					// Authorization: `Bearer ${process.env.LITELLM_MASTER_KEY || ''}`,
+			// 调用适配器（带重试和熔断保护）
+			const response = await adapter.call(apiKey, endpoint, chatRequest);
+
+			// 转换响应格式
+			return {
+				id: response.id,
+				choices: response.choices.map((choice) => ({
+					message: {
+						role: choice.message.role,
+						content: choice.message.content,
+					},
+					finishReason: choice.finish_reason,
+				})),
+				usage: {
+					promptTokens: response.usage.prompt_tokens,
+					completionTokens: response.usage.completion_tokens,
+					totalTokens: response.usage.total_tokens,
 				},
-				body: JSON.stringify({
-					model: modelId,
-					messages: request.messages,
-					temperature: request.temperature ?? 0.7,
-					max_tokens: request.maxTokens,
-					// 其他 OpenAI 兼容参数
-					stream: false, // 当前不支持流式响应
-				}),
-			});
-
-			if (!response.ok) {
-				const errorText = await response.text();
-				this.logger.error('LiteLLM Proxy API error', {
-					status: response.status,
-					statusText: response.statusText,
-					error: errorText,
-					model: modelId,
-				});
-				throw new AIProviderError(
-					`LiteLLM Proxy error (${response.status}): ${response.statusText} - ${errorText}`,
-				);
-			}
-
-			const result = (await response.json()) as ChatCompletionResponse;
-
-			this.logger.debug('LiteLLM Proxy call successful', {
-				model: modelId,
-				promptTokens: result.usage.promptTokens,
-				completionTokens: result.usage.completionTokens,
-			});
-
-			return result;
+			};
 		} catch (error) {
-			if (error instanceof AIProviderError) {
-				throw error;
-			}
-
-			this.logger.error('Failed to call LiteLLM Proxy', {
-				error: error instanceof Error ? error.message : 'Unknown error',
+			this.logger.error('AI Provider API call failed', {
+				provider: providerKey,
 				model: modelId,
-				proxyUrl: this.litellmProxyUrl,
+				error: error instanceof Error ? error.message : 'Unknown error',
 			});
-
-			throw new AIProviderError(
-				`Failed to call AI model through LiteLLM Proxy: ${(error as Error).message}`,
-			);
+			throw error;
 		}
 	}
 

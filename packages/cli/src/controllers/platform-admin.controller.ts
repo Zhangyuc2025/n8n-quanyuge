@@ -199,6 +199,31 @@ export class PlatformAdminController {
 	}
 
 	/**
+	 * GET /platform-admin/me
+	 * Get current authenticated platform administrator
+	 *
+	 * Returns information about the currently authenticated platform administrator.
+	 * This endpoint is used for authentication checks and displaying admin info in the UI.
+	 *
+	 * @param req - Authenticated request object
+	 * @returns Current admin info (excluding password)
+	 */
+	@Get('/me')
+	async getCurrentAdmin(req: AuthenticatedRequest): Promise<Partial<PlatformAdmin>> {
+		// req.user can be either User or PlatformAdmin depending on the userType in JWT
+		// For platform-admin routes, it should be a PlatformAdmin
+		const admin = req.user as unknown as PlatformAdmin;
+
+		this.logger.debug('Platform admin info retrieved', {
+			adminId: admin.id,
+		});
+
+		// Return admin info without password
+		const { password: _, ...adminWithoutPassword } = admin;
+		return adminWithoutPassword;
+	}
+
+	/**
 	 * GET /platform-admin/status
 	 * Check platform initialization status
 	 *

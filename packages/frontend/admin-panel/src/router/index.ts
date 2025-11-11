@@ -25,7 +25,7 @@ const routes: RouteRecordRaw[] = [
 	},
 	{
 		path: '/',
-		redirect: '/telemetry/dashboard',
+		redirect: '/dashboard',
 	},
 	{
 		path: '/',
@@ -34,74 +34,49 @@ const routes: RouteRecordRaw[] = [
 			requiresAuth: true,
 		},
 		children: [
-			// Telemetry 模块
+			// Dashboard
 			{
-				path: 'telemetry',
-				redirect: '/telemetry/dashboard',
-			},
-			{
-				path: 'telemetry/dashboard',
-				name: 'TelemetryDashboard',
-				component: () => import('@/modules/telemetry/views/DashboardView.vue'),
+				path: 'dashboard',
+				name: 'Dashboard',
+				component: () => import('@/views/AdminDashboard.vue'),
 				meta: {
-					title: 'Telemetry 仪表板',
-					module: 'telemetry',
+					title: '仪表板',
 				},
 			},
+			// Statistics
 			{
-				path: 'telemetry/events',
-				name: 'TelemetryEvents',
-				component: () => import('@/modules/telemetry/views/EventsView.vue'),
+				path: 'statistics',
+				name: 'Statistics',
+				component: () => import('@/views/StatisticsView.vue'),
 				meta: {
-					title: '事件列表',
-					module: 'telemetry',
+					title: '统计分析',
 				},
 			},
+			// Workspaces
 			{
-				path: 'telemetry/events/:id',
-				name: 'TelemetryEventDetail',
-				component: () => import('@/modules/telemetry/views/EventDetailView.vue'),
+				path: 'workspaces',
+				name: 'Workspaces',
+				component: () => import('@/views/WorkspacesView.vue'),
 				meta: {
-					title: '事件详情',
-					module: 'telemetry',
+					title: '工作空间管理',
 				},
 			},
-			{
-				path: 'telemetry/analytics',
-				name: 'TelemetryAnalytics',
-				component: () => import('@/modules/telemetry/views/AnalyticsView.vue'),
-				meta: {
-					title: '数据分析',
-					module: 'telemetry',
-				},
-			},
-			{
-				path: 'telemetry/users',
-				name: 'TelemetryUsers',
-				component: () => import('@/modules/telemetry/views/UsersView.vue'),
-				meta: {
-					title: '用户统计',
-					module: 'telemetry',
-				},
-			},
-			// AI Providers 模块
+			// AI Providers
 			{
 				path: 'ai-providers',
 				name: 'AIProviders',
-				component: () => import('@/modules/ai-providers/views/AIProvidersView.vue'),
+				component: () => import('@/views/AiProvidersView.vue'),
 				meta: {
 					title: 'AI 服务提供商',
-					module: 'ai-providers',
 				},
 			},
-			// Platform Nodes 模块
+			// Platform Nodes
 			{
 				path: 'platform-nodes',
 				name: 'PlatformNodes',
-				component: () => import('@/modules/platform-nodes/views/PlatformNodesView.vue'),
+				component: () => import('@/views/PlatformNodesView.vue'),
 				meta: {
 					title: '平台节点管理',
-					module: 'platform-nodes',
 				},
 			},
 		],
@@ -161,7 +136,7 @@ router.beforeEach(async (to, _from, next) => {
 		// System is initialized, check authentication by testing an API call
 		// Use a lightweight endpoint that requires authentication
 		try {
-			const testResponse = await fetch('/rest/telemetry/stats/overview?days=1', {
+			const testResponse = await fetch('/rest/platform-admin/me', {
 				credentials: 'include',
 			});
 

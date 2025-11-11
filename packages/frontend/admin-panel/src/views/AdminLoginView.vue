@@ -66,7 +66,7 @@ const handleSubmit = async () => {
 		await systemStore.loginAdmin(formData.value);
 
 		// Redirect to dashboard after successful login
-		await router.push({ name: 'TelemetryDashboard' });
+		await router.push({ name: 'Dashboard' });
 	} catch (err) {
 		error.value = err instanceof Error ? err.message : t('adminPanel.login.errorMessage');
 	} finally {

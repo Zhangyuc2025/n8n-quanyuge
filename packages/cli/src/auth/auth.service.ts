@@ -91,7 +91,9 @@ export class AuthService {
 	}: CreateAuthMiddlewareOptions) {
 		return async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 			// Determine which cookie to read based on request path
-			const isAdminPath = req.path.startsWith('/admin') || req.path.startsWith('/platform-admin');
+			// Use baseUrl to check the full mounted path (e.g., /rest/platform-admin)
+			const fullPath = req.baseUrl + req.path;
+			const isAdminPath = fullPath.includes('/admin') || fullPath.includes('/platform-admin');
 			const cookieName = isAdminPath ? ADMIN_AUTH_COOKIE_NAME : AUTH_COOKIE_NAME;
 			const token = req.cookies[cookieName];
 

@@ -130,31 +130,31 @@ const selectedKeys = ref<string[]>([]);
 // Menu items
 const menuItems: MenuProps['items'] = [
 	{
-		key: '/admin/dashboard',
+		key: '/dashboard',
 		icon: () => h(DashboardOutlined),
 		label: '仪表板',
 		title: '仪表板',
 	},
 	{
-		key: '/admin/platform-nodes',
+		key: '/platform-nodes',
 		icon: () => h(ApiOutlined),
 		label: '平台节点',
 		title: '平台节点',
 	},
 	{
-		key: '/admin/ai-providers',
+		key: '/ai-providers',
 		icon: () => h(CloudOutlined),
 		label: 'AI 服务商',
 		title: 'AI 服务商',
 	},
 	{
-		key: '/admin/workspaces',
+		key: '/workspaces',
 		icon: () => h(TeamOutlined),
 		label: '工作空间',
 		title: '工作空间',
 	},
 	{
-		key: '/admin/statistics',
+		key: '/statistics',
 		icon: () => h(BarChartOutlined),
 		label: '系统统计',
 		title: '系统统计',
@@ -167,11 +167,11 @@ const breadcrumbItems = computed(() => {
 	const items: Array<{ title: string }> = [{ title: '首页' }];
 
 	const routeMap: Record<string, string> = {
-		'/admin/dashboard': '仪表板',
-		'/admin/platform-nodes': '平台节点',
-		'/admin/ai-providers': 'AI 服务商',
-		'/admin/workspaces': '工作空间',
-		'/admin/statistics': '系统统计',
+		'/dashboard': '仪表板',
+		'/platform-nodes': '平台节点',
+		'/ai-providers': 'AI 服务商',
+		'/workspaces': '工作空间',
+		'/statistics': '系统统计',
 	};
 
 	if (routeMap[path]) {

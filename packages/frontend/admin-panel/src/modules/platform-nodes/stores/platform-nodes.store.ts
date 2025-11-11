@@ -685,7 +685,7 @@ export const usePlatformNodesStore = defineStore('platform-nodes', () => {
 
 			// Update in the list
 			const index = customNodes.value.findIndex((n) => n.id === nodeId);
-			if (index !== -1) {
+			if (index !== -1 && updatedNode) {
 				customNodes.value[index] = updatedNode;
 			}
 
