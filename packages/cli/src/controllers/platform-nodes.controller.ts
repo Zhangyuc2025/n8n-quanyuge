@@ -6,6 +6,8 @@ import { assertPlatformAdmin } from '@/auth/platform-admin.guard';
 import { PlatformNodeService, NodeType } from '@/services/platform-node.service';
 import { BadRequestError } from '@/errors/response-errors/bad-request.error';
 import { NodeValidator } from '@/utils/node-validator';
+import { NodeCompilerService } from '@/services/node-compiler.service';
+import { NODE_TEMPLATES, getTemplateById, getTemplateCategories } from '@/constants/node-templates';
 
 /**
  * Query DTOs for PlatformNodesController
@@ -46,7 +48,10 @@ interface AdminListNodesQueryDto {
  */
 @RestController('/platform-nodes')
 export class PlatformNodesController {
-	constructor(private readonly platformNodeService: PlatformNodeService) {}
+	constructor(
+		private readonly platformNodeService: PlatformNodeService,
+		private readonly nodeCompilerService: NodeCompilerService,
+	) {}
 
 	/**
 	 * GET /platform-nodes
@@ -97,6 +102,46 @@ export class PlatformNodesController {
 		}
 
 		return await this.platformNodeService.searchNodes(query.q);
+	}
+
+	/**
+	 * GET /platform-nodes/templates
+	 * 获取节点模板列表
+	 *
+	 * 权限：所有登录用户（普通用户创建自定义节点也需要模板）
+	 *
+	 * @returns 模板列表
+	 */
+	@Get('/templates')
+	async getNodeTemplates(_req: AuthenticatedRequest, _res: Response) {
+		return {
+			templates: NODE_TEMPLATES,
+			categories: getTemplateCategories(),
+		};
+	}
+
+	/**
+	 * GET /platform-nodes/templates/:templateId
+	 * 获取指定模板详情
+	 *
+	 * 权限：所有登录用户
+	 *
+	 * @param templateId - 模板ID
+	 * @returns 模板详情
+	 */
+	@Get('/templates/:templateId')
+	async getNodeTemplate(
+		_req: AuthenticatedRequest,
+		_res: Response,
+		@Param('templateId') templateId: string,
+	) {
+		const template = getTemplateById(templateId);
+
+		if (!template) {
+			throw new BadRequestError(`Template '${templateId}' not found`);
+		}
+
+		return template;
 	}
 
 	/**
@@ -356,5 +401,60 @@ export class PlatformNodesController {
 		// 注意：这里需要在 PlatformNodeService 中实现 deleteNode 方法
 		// 暂时抛出未实现错误
 		throw new BadRequestError('Platform node deletion not yet implemented in PlatformNodeService');
+	}
+
+	/**
+	 * POST /platform-nodes/test
+	 * 测试节点代码（保存前测试，不写入数据库）
+	 *
+	 * 权限：所有登录用户（普通用户创建自定义节点也需要测试）
+	 *
+	 * @param body - 测试数据
+	 * @returns 测试结果
+	 */
+	@Post('/test')
+	async testNode(
+		_req: AuthenticatedRequest,
+		_res: Response,
+		@Body
+		body: {
+			nodeDefinition: Record<string, unknown>;
+			nodeCode?: string;
+			testInput?: any[];
+		},
+	) {
+		// 不需要管理员权限 - 所有登录用户都可以测试节点
+
+		// 验证必需字段
+		if (!body.nodeDefinition) {
+			throw new BadRequestError('nodeDefinition is required');
+		}
+
+		// 验证 nodeDefinition 结构
+		const validationResult = NodeValidator.validateNodeDefinition(body.nodeDefinition);
+		if (!validationResult.valid) {
+			const errorMessage = NodeValidator.formatErrors(validationResult);
+			throw new BadRequestError(`节点定义验证失败：\n${errorMessage}`);
+		}
+
+		// 如果没有提供 nodeCode，只验证 nodeDefinition
+		if (!body.nodeCode) {
+			return {
+				success: true,
+				message: 'Node definition is valid (no code to execute)',
+				logs: [],
+				executionTime: 0,
+			};
+		}
+
+		// 执行测试
+		const testInput = body.testInput || [{ json: {} }];
+		const result = await this.nodeCompilerService.compileAndExecute(
+			body.nodeCode,
+			body.nodeDefinition as any,
+			testInput,
+		);
+
+		return result;
 	}
 }

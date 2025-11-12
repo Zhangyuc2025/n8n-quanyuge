@@ -1,10 +1,5 @@
 import type { NotificationOptions as ElementNotificationOptions } from 'element-plus';
-import type {
-	FrontendSettings,
-	IUserManagementSettings,
-	IVersionNotificationSettings,
-	Role,
-} from '@n8n/api-types';
+import type { FrontendSettings, IUserManagementSettings, Role } from '@n8n/api-types';
 import type { ILogInStatus } from '@/features/settings/users/users.types';
 import type { Scope } from '@n8n/permissions';
 import type { NodeCreatorTag } from '@n8n/design-system';
@@ -32,7 +27,6 @@ import type {
 	ISourceData,
 	PublicInstalledPackage,
 } from 'n8n-workflow';
-import type { Version } from '@n8n/rest-api-client/api/versions';
 import type { Cloud, InstanceUsage } from '@n8n/rest-api-client/api/cloudPlans';
 import type {
 	WorkflowMetadata,

@@ -9,7 +9,7 @@ import { getNodesWithNormalizedPosition } from '@/app/utils/nodeViewUtils';
 import type { NodeTypeProvider } from '@/app/utils/nodeTypes/nodeTypeTransforms';
 import type { TemplateCredentialKey } from './templateTransforms';
 import { replaceAllTemplateNodeCredentials } from './templateTransforms';
-import type { INodeCredentialsDetails } from 'n8n-workflow';
+import type { INodeCredentialsDetails } from '../templates.types';
 import type { RouteLocationRaw, Router } from 'vue-router';
 import type { TemplatesStore } from '@/features/workflows/templates/templates.store';
 import type { NodeTypesStore } from '@/app/stores/nodeTypes.store';

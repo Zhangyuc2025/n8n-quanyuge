@@ -1,6 +1,5 @@
 import { SimpleChatModel } from '@langchain/core/language_models/chat_models';
 import type { BaseMessage } from '@langchain/core/messages';
-import { AIMessage } from '@langchain/core/messages';
 import type { CallbackManagerForLLMRun } from '@langchain/core/callbacks/manager';
 import {
 	NodeConnectionTypes,
@@ -8,7 +7,6 @@ import {
 	type INodeTypeDescription,
 	type ISupplyDataFunctions,
 	type SupplyData,
-	type INodeProperties,
 } from 'n8n-workflow';
 
 import { getConnectionHintNoticeField } from '@utils/sharedFields';
@@ -66,8 +64,8 @@ class PlatformChatModel extends SimpleChatModel {
 	 */
 	async _call(
 		messages: BaseMessage[],
-		options: this['ParsedCallOptions'],
-		runManager?: CallbackManagerForLLMRun,
+		_options: this['ParsedCallOptions'],
+		_runManager?: CallbackManagerForLLMRun,
 	): Promise<string> {
 		// 转换 LangChain 消息格式为标准 Chat API 格式
 		const formattedMessages = messages.map((message) => ({
@@ -169,7 +167,6 @@ export class LmChatPlatform implements INodeType {
 		outputNames: ['Model'],
 
 		// ✅ 不需要凭证！使用平台托管的 API Key
-		credentials: [],
 
 		properties: [
 			getConnectionHintNoticeField([NodeConnectionTypes.AiChain, NodeConnectionTypes.AiAgent]),
@@ -302,7 +299,7 @@ export class LmChatPlatform implements INodeType {
 	methods = {
 		listSearch: {
 			// ✅ 从后台 API 搜索模型列表
-			async searchModels(this: ISupplyDataFunctions, filter?: string) {
+			async searchModels(this: ISupplyDataFunctions | any, filter?: string) {
 				const providerKey = this.getNodeParameter('providerKey', 0) as string;
 
 				if (!providerKey) {

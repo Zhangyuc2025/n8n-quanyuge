@@ -25,16 +25,10 @@ import {
 	deepCopy,
 	ExpressionError,
 	NodeHelpers,
-	NodeOperationError,
 	UnexpectedError,
 } from 'n8n-workflow';
 
-import {
-	HTTP_REQUEST_AS_TOOL_NODE_TYPE,
-	HTTP_REQUEST_NODE_TYPE,
-	HTTP_REQUEST_TOOL_NODE_TYPE,
-	WAITING_TOKEN_QUERY_PARAM,
-} from '@/constants';
+import { WAITING_TOKEN_QUERY_PARAM } from '@/constants';
 import { InstanceSettings } from '@/instance-settings';
 
 import { cleanupParameterData } from './utils/cleanup-parameter-data';

@@ -81,38 +81,9 @@ export function useWorkflowCommands(): CommandGroup {
 		(workflowPermissions.value[permission] === true && !isReadOnly.value) ||
 		workflowsStore.isNewWorkflow;
 
+	// Note: Credential commands disabled since credentials system has been removed
 	const credentialCommands = computed<CommandBarItem[]>(() => {
-		const credentials = uniqBy(
-			editableWorkflow.value.nodes.map((node) => Object.values(node.credentials ?? {})).flat(),
-			(cred) => cred.id,
-		);
-		if (credentials.length === 0) {
-			return [];
-		}
-		return [
-			{
-				id: ITEM_ID.OPEN_CREDENTIAL,
-				title: i18n.baseText('commandBar.workflow.openCredential'),
-				section: i18n.baseText('commandBar.sections.credentials'),
-				children: [
-					...credentials.map((credential) => ({
-						id: credential.id as string,
-						title: credential.name,
-						handler: () => {
-							if (typeof credential.id === 'string') {
-								uiStore.openExistingCredential(credential.id);
-							}
-						},
-					})),
-				],
-				icon: {
-					component: N8nIcon,
-					props: {
-						icon: 'arrow-right',
-					},
-				},
-			},
-		];
+		return [];
 	});
 
 	const canvasActions = computed<CommandBarItem[]>(() => [

@@ -296,6 +296,28 @@ export const useCustomNodesStore = defineStore(STORES.CUSTOM_NODES, () => {
 	}
 
 	/**
+	 * Test custom node
+	 */
+	async function testNode(data: {
+		nodeDefinition: object;
+		nodeCode?: string;
+		testInput?: any[];
+	}): Promise<any> {
+		loading.value = true;
+		error.value = null;
+
+		try {
+			const response = await customNodesApi.testNode(rootStore.restApiContext, data);
+			return response;
+		} catch (err) {
+			error.value = err instanceof Error ? err.message : 'Failed to test node';
+			throw err;
+		} finally {
+			loading.value = false;
+		}
+	}
+
+	/**
 	 * Clear error
 	 */
 	function clearError() {
@@ -340,6 +362,7 @@ export const useCustomNodesStore = defineStore(STORES.CUSTOM_NODES, () => {
 		updateSharedConfig,
 		getSharedConfig,
 		toggleNode,
+		testNode,
 		getNodeByKey,
 		getNodeById,
 		clearError,

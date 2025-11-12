@@ -1,0 +1,18 @@
+
+> n8n-core@1.118.0 typecheck /home/zhang/n8n-quanyuge/packages/core
+> tsc --noEmit
+
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(873,2): error TS6133: 'requestOptions' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(875,2): error TS6133: 'additionalData' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(876,2): error TS6133: 'oAuth2Options' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(877,2): error TS6133: 'isN8nRequest' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(1007,17): error TS6133: 'requestWithAuthenticationPaginated' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(1215,4): error TS6133: 'credentialsType' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(1216,4): error TS6133: 'requestOptions' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(1222,4): error TS6133: 'credentialsType' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(1223,4): error TS6133: 'requestOptions' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(1224,4): error TS6133: 'oAuth2Options' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(1230,4): error TS6133: 'credentialsType' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(1231,4): error TS6133: 'oAuth2Options' is declared but its value is never read.
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  n8n-core@1.118.0 typecheck: `tsc --noEmit`
+Exit status 2

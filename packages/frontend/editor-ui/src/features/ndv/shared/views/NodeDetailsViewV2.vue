@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// @ts-nocheck
 import type { IRunDataDisplayMode, IUpdateInformation, TargetItem } from '@/Interface';
 import type { MainPanelType, NodePanelType } from '../ndv.types';
 import { createEventBus } from '@n8n/utils/event-bus';

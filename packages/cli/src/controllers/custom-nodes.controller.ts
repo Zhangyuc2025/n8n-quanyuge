@@ -4,6 +4,8 @@ import type { Response } from 'express';
 
 import { CustomNodeService, ConfigMode } from '@/services/custom-node.service';
 import { BadRequestError } from '@/errors/response-errors/bad-request.error';
+import { NodeCompilerService } from '@/services/node-compiler.service';
+import { NodeValidator } from '@/utils/node-validator';
 
 /**
  * Query DTOs for CustomNodesController
@@ -65,7 +67,10 @@ interface SharedConfigDto {
  */
 @RestController('/custom-nodes')
 export class CustomNodesController {
-	constructor(private readonly customNodeService: CustomNodeService) {}
+	constructor(
+		private readonly customNodeService: CustomNodeService,
+		private readonly nodeCompilerService: NodeCompilerService,
+	) {}
 
 	/**
 	 * GET /custom-nodes
@@ -314,5 +319,56 @@ export class CustomNodesController {
 		await this.customNodeService.toggleNode(id, query.workspaceId, body.isActive);
 
 		return { success: true };
+	}
+
+	/**
+	 * POST /custom-nodes/test
+	 * 测试节点代码（保存前测试，不写入数据库）
+	 *
+	 * @param body - 测试数据
+	 * @returns 测试结果
+	 */
+	@Post('/test')
+	async testNode(
+		_req: AuthenticatedRequest,
+		_res: Response,
+		@Body
+		body: {
+			nodeDefinition: Record<string, unknown>;
+			nodeCode?: string;
+			testInput?: any[];
+		},
+	) {
+		// 验证必需字段
+		if (!body.nodeDefinition) {
+			throw new BadRequestError('nodeDefinition is required');
+		}
+
+		// 验证 nodeDefinition 结构
+		const validationResult = NodeValidator.validateNodeDefinition(body.nodeDefinition);
+		if (!validationResult.valid) {
+			const errorMessage = NodeValidator.formatErrors(validationResult);
+			throw new BadRequestError(`节点定义验证失败：\n${errorMessage}`);
+		}
+
+		// 如果没有提供 nodeCode，只验证 nodeDefinition
+		if (!body.nodeCode) {
+			return {
+				success: true,
+				message: 'Node definition is valid (no code to execute)',
+				logs: [],
+				executionTime: 0,
+			};
+		}
+
+		// 执行测试
+		const testInput = body.testInput || [{ json: {} }];
+		const result = await this.nodeCompilerService.compileAndExecute(
+			body.nodeCode,
+			body.nodeDefinition as any,
+			testInput,
+		);
+
+		return result;
 	}
 }

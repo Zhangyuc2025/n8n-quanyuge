@@ -3,7 +3,6 @@ import type { Embeddings } from '@langchain/core/embeddings';
 import type { VectorStore } from '@langchain/core/vectorstores';
 import type {
 	IExecuteFunctions,
-	INodeCredentialDescription,
 	INodeProperties,
 	ILoadOptionsFunctions,
 	INodeListSearchResult,
@@ -24,7 +23,7 @@ export interface NodeMeta {
 	docsUrl: string;
 	icon: Icon;
 	iconColor?: ThemeIconColor;
-	credentials?: INodeCredentialDescription[];
+	// Note: credentials system has been removed
 	operationModes?: NodeOperationMode[];
 	categories?: string[];
 	subcategories?: Record<string, string[]>;

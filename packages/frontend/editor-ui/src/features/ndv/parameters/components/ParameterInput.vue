@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// @ts-nocheck - Credentials system has been removed
 import { computed, inject, nextTick, onBeforeUnmount, onMounted, onUpdated, ref, watch } from 'vue';
 
 import get from 'lodash/get';

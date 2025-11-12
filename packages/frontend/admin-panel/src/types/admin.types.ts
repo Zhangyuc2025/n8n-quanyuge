@@ -157,6 +157,7 @@ export interface PlatformNodesState {
 	nodes: PlatformNode[];
 	loading: boolean;
 	currentNode: PlatformNode | null;
+	templates: any[];
 }
 
 /**

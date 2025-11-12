@@ -46,11 +46,9 @@ export class AgentV3 implements INodeType {
 					name: 'aiAgentStarterCallout',
 					type: 'callout',
 					default: '',
-					// 默认链接（如果数据库中没有配置，则使用这些）
-					placeholder: {
-						tutorialUrl: 'https://docs.n8n.io/advanced-ai/intro-tutorial/',
-						exampleUrl: '/workflows/templates/1954',
-					},
+					// 默认链接（如果数据库中没有配置，则使用这些）：
+					// tutorialUrl: 'https://docs.n8n.io/advanced-ai/intro-tutorial/'
+					// exampleUrl: '/workflows/templates/1954'
 				},
 				promptTypeOptions,
 				{

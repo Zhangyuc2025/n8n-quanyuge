@@ -14,6 +14,21 @@
 			layout="vertical"
 			style="margin-top: 24px"
 		>
+			<!-- 模板选择器 -->
+			<a-form-item label="从模板创建（可选）">
+				<a-select
+					v-model:value="selectedTemplate"
+					placeholder="选择节点模板"
+					allow-clear
+					@change="loadTemplate"
+				>
+					<a-select-option v-for="template in templates" :key="template.id" :value="template.id">
+						{{ template.name }} - {{ template.description }}
+					</a-select-option>
+				</a-select>
+				<div class="form-item-hint">选择预设模板快速创建节点</div>
+			</a-form-item>
+
 			<a-row :gutter="16">
 				<a-col :span="12">
 					<a-form-item label="节点标识 (nodeKey)" name="nodeKey">
@@ -71,11 +86,12 @@
 			</a-form-item>
 
 			<a-form-item label="节点定义 (nodeDefinition)" name="nodeDefinition">
-				<a-textarea
-					v-model:value="nodeDefinitionText"
-					placeholder='{"name": "WeatherQuery", "type": "n8n-nodes-base.weatherQuery", ...}'
+				<CodeEditor
+					v-model="nodeDefinitionText"
+					language="json"
+					:height="300"
 					:rows="8"
-					style="font-family: 'Monaco', 'Menlo', 'Consolas', monospace; font-size: 12px"
+					placeholder='{"name": "WeatherQuery", "type": "n8n-nodes-base.weatherQuery", ...}'
 				/>
 				<div class="form-item-hint">
 					JSON 格式，符合 n8n INodeTypeDescription 规范
@@ -149,24 +165,40 @@
 			</a-form-item>
 
 			<a-form-item label="节点代码 (nodeCode)" name="nodeCode">
-				<a-textarea
-					v-model:value="formData.nodeCode"
-					placeholder="class WeatherQuery { ... }"
+				<CodeEditor
+					v-model="formData.nodeCode"
+					language="typescript"
+					:height="400"
 					:rows="10"
-					style="font-family: 'Monaco', 'Menlo', 'Consolas', monospace; font-size: 12px"
+					placeholder="class WeatherQuery { ... }"
 				/>
 				<div class="form-item-hint">
 					TypeScript/JavaScript 代码（可选，如果不提供则使用内置实现）
 				</div>
 			</a-form-item>
+
+			<!-- 测试功能区域 -->
+			<a-collapse style="margin-top: 24px">
+				<a-collapse-panel key="test" header="🧪 测试节点">
+					<NodeTester
+						:node-definition="parsedNodeDefinition"
+						:node-code="formData.nodeCode"
+						api-endpoint="/platform-nodes/test"
+						@test-result="handleTestResult"
+					/>
+				</a-collapse-panel>
+			</a-collapse>
 		</a-form>
 	</a-modal>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, watch } from 'vue';
+import { ref, reactive, watch, computed } from 'vue';
 import { message } from 'ant-design-vue';
 import type { FormInstance, Rule } from 'ant-design-vue/es/form';
+import CodeEditor from '@/components/shared/CodeEditor.vue';
+import NodeTester from '@/components/shared/NodeTester.vue';
+import { usePlatformNodesStore } from '@/stores/platformNodes.store';
 
 // 验证结果接口
 interface ValidationError {
@@ -181,7 +213,7 @@ interface ValidationResult {
 	warnings: ValidationError[];
 }
 
-defineProps<{
+const props = defineProps<{
 	open: boolean;
 }>();
 
@@ -203,6 +235,8 @@ const emit = defineEmits<{
 	): void;
 }>();
 
+const platformNodesStore = usePlatformNodesStore();
+
 const formRef = ref<FormInstance>();
 const loading = ref(false);
 const showNodeDefinitionHelp = ref(false);
@@ -210,6 +244,19 @@ const validationResult = ref<ValidationResult>({
 	valid: true,
 	errors: [],
 	warnings: [],
+});
+
+// 模板相关
+const templates = ref<any[]>([]);
+const selectedTemplate = ref<string>('');
+
+// 计算解析后的节点定义（用于测试）
+const parsedNodeDefinition = computed(() => {
+	try {
+		return nodeDefinitionText.value ? JSON.parse(nodeDefinitionText.value) : null;
+	} catch {
+		return null;
+	}
 });
 
 const formData = reactive({
@@ -471,6 +518,47 @@ function validateNodeDefinitionStructure(nodeDefText: string): ValidationResult 
 watch(nodeDefinitionText, (newValue) => {
 	validationResult.value = validateNodeDefinitionStructure(newValue);
 });
+
+// 监听对话框打开状态，打开时获取模板
+watch(
+	() => props.open,
+	async (isOpen) => {
+		if (isOpen && templates.value.length === 0) {
+			try {
+				await platformNodesStore.fetchNodeTemplates();
+				templates.value = platformNodesStore.templates || [];
+			} catch (error) {
+				console.error('Failed to fetch templates:', error);
+				// 静默失败，不影响对话框打开
+			}
+		}
+	},
+);
+
+/**
+ * 加载模板数据
+ */
+const loadTemplate = (templateId: string): void => {
+	if (!templateId) return;
+
+	const template = templates.value.find((t) => t.id === templateId);
+	if (!template) return;
+
+	nodeDefinitionText.value = JSON.stringify(template.nodeDefinition, null, 2);
+	formData.nodeCode = template.nodeCode || '';
+	message.success(`已加载模板：${template.name}`);
+};
+
+/**
+ * 处理测试结果
+ */
+const handleTestResult = (result: any): void => {
+	if (result.success) {
+		message.success('节点测试通过 ✅');
+	} else {
+		message.error('节点测试失败 ❌');
+	}
+};
 </script>
 
 <style scoped lang="scss">

@@ -7,6 +7,7 @@ export const usePlatformNodesStore = defineStore('platformNodes', {
 		nodes: [],
 		loading: false,
 		currentNode: null,
+		templates: [],
 	}),
 
 	actions: {
@@ -198,6 +199,19 @@ export const usePlatformNodesStore = defineStore('platformNodes', {
 		 */
 		clearCurrentNode(): void {
 			this.currentNode = null;
+		},
+
+		/**
+		 * 获取节点模板列表
+		 */
+		async fetchNodeTemplates(): Promise<void> {
+			try {
+				const response = await adminApiClient.get('/platform-nodes/templates');
+				this.templates = response.data.templates || [];
+			} catch (error) {
+				console.error('Failed to fetch node templates:', error);
+				throw error;
+			}
 		},
 	},
 

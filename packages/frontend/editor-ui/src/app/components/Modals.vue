@@ -33,10 +33,7 @@ import {
 	TAGS_MANAGER_MODAL_KEY,
 } from '@/features/shared/tags/tags.constants';
 import { VARIABLE_MODAL_KEY } from '@/features/settings/environments.ee/environments.constants';
-import {
-	CREDENTIAL_EDIT_MODAL_KEY,
-	CREDENTIAL_SELECT_MODAL_KEY,
-} from '@/features/credentials/credentials.constants';
+// Note: Credential modals removed since credentials system has been removed
 import {
 	DELETE_USER_MODAL_KEY,
 	INVITE_USER_MODAL_KEY,

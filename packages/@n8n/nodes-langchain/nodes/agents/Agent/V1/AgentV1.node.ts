@@ -283,29 +283,6 @@ export class AgentV1 implements INodeType {
 				})($parameter.agent, $parameter.hasOutputParser === undefined || $parameter.hasOutputParser === true)
 			}}`,
 			outputs: [NodeConnectionTypes.Main],
-			credentials: [
-				{
-					name: 'mySql',
-					required: true,
-					testedBy: 'mysqlConnectionTest',
-					displayOptions: {
-						show: {
-							agent: ['sqlAgent'],
-							'/dataSource': ['mysql'],
-						},
-					},
-				},
-				{
-					name: 'postgres',
-					required: true,
-					displayOptions: {
-						show: {
-							agent: ['sqlAgent'],
-							'/dataSource': ['postgres'],
-						},
-					},
-				},
-			],
 			properties: [
 				{
 					displayName:

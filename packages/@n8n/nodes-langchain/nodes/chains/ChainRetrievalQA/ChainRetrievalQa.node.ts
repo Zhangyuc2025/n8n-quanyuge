@@ -60,7 +60,6 @@ export class ChainRetrievalQa implements INodeType {
 			},
 		],
 		outputs: [NodeConnectionTypes.Main],
-		credentials: [],
 		properties: [
 			getTemplateNoticeField(1960),
 			{

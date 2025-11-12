@@ -252,18 +252,7 @@ export class ChatTrigger extends Node {
 			];
 		 })() }}`,
 		outputs: [NodeConnectionTypes.Main],
-		credentials: [
-			{
-				// eslint-disable-next-line n8n-nodes-base/node-class-description-credentials-name-unsuffixed
-				name: 'httpBasicAuth',
-				required: true,
-				displayOptions: {
-					show: {
-						authentication: ['basicAuth'],
-					},
-				},
-			},
-		],
+		// Note: credentials system has been removed
 		webhooks: [
 			{
 				name: 'setup',

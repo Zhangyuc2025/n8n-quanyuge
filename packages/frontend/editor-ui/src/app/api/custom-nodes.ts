@@ -193,3 +193,18 @@ export async function toggleCustomNode(
 		isActive,
 	});
 }
+
+/**
+ * Test custom node
+ * POST /custom-nodes/test
+ */
+export async function testNode(
+	context: IRestApiContext,
+	data: {
+		nodeDefinition: object;
+		nodeCode?: string;
+		testInput?: any[];
+	},
+): Promise<any> {
+	return await makeRestApiRequest(context, 'POST', '/custom-nodes/test', data);
+}

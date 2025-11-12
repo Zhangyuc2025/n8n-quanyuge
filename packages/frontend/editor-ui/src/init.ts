@@ -89,7 +89,7 @@ export async function initializeCore() {
  */
 export async function initializeAuthenticatedFeatures(
 	initialized: boolean = authenticatedFeaturesInitialized,
-	routeName?: string,
+	_routeName?: string,
 ) {
 	if (initialized) {
 		return;

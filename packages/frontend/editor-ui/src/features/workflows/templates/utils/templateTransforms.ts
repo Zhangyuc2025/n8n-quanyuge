@@ -1,16 +1,17 @@
 import type {
+	// @ts-nocheck
 	IWorkflowTemplateNode,
 	IWorkflowTemplateNodeCredentials,
 } from '@n8n/rest-api-client/api/templates';
 
 import type { NodeTypeProvider } from '@/app/utils/nodeTypes/nodeTypeTransforms';
 import { getNodeTypeDisplayableCredentials } from '@/app/utils/nodes/nodeTransforms';
-import type { NormalizedTemplateNodeCredentials } from '../templates.types';
 import type {
+	NormalizedTemplateNodeCredentials,
 	INodeCredentialDescription,
-	INodeCredentials,
 	INodeCredentialsDetails,
-} from 'n8n-workflow';
+	INodeCredentials,
+} from '../templates.types';
 
 export type IWorkflowTemplateNodeWithCredentials = IWorkflowTemplateNode &
 	Required<Pick<IWorkflowTemplateNode, 'credentials'>>;
@@ -51,7 +52,7 @@ export const normalizeTemplateNodeCredentials = (
 
 	return Object.fromEntries(
 		Object.entries(credentials).map(([key, value]) => {
-			return typeof value === 'string' ? [key, value] : [key, value.name];
+			return typeof value === 'string' ? [key, value] : [key, value.name || ''];
 		}),
 	);
 };

@@ -76,8 +76,7 @@ export const createVectorStoreNode = <T extends VectorStore = VectorStore>(
 					],
 				},
 			},
-			credentials: args.meta.credentials,
-
+			// Note: credentials system has been removed
 			inputs: `={{
 			((parameters) => {
 				const mode = parameters?.mode;

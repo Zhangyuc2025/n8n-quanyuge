@@ -24,7 +24,7 @@ const props = withDefaults(
 	},
 );
 
-const emit = defineEmits<{
+const _emit = defineEmits<{
 	credentialSelected: [event: { credentialUsageKey: TemplateCredentialKey; credentialId: string }];
 	credentialDeselected: [event: { credentialUsageKey: TemplateCredentialKey }];
 }>();
@@ -58,7 +58,7 @@ const nodeNames = computed(() => {
 
 //#region Methods
 
-const onCredentialModalOpened = () => {
+const _onCredentialModalOpened = () => {
 	telemetry.track('User opened Credential modal', {
 		source: 'cred_setup',
 		credentialType: props.credentials.credentialType,

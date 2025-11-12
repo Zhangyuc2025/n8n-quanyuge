@@ -1,5 +1,5 @@
 import type { RawAxiosRequestHeaders } from 'axios';
-import type { INode, INodeCredentialsDetails } from 'n8n-workflow';
+import type { INode } from 'n8n-workflow';
 
 import type { WorkflowData } from './workflows';
 import { get } from '../utils';
@@ -9,12 +9,12 @@ export interface IWorkflowTemplateNode
 		INode,
 		'name' | 'type' | 'position' | 'parameters' | 'typeVersion' | 'webhookId' | 'id' | 'disabled'
 	> {
-	// The credentials in a template workflow have a different type than in a regular workflow
+	// Note: credentials system has been removed, keeping for template compatibility
 	credentials?: IWorkflowTemplateNodeCredentials;
 }
 
 export interface IWorkflowTemplateNodeCredentials {
-	[key: string]: string | INodeCredentialsDetails;
+	[key: string]: string | { id: string; name?: string };
 }
 
 export interface IWorkflowTemplate {
@@ -27,6 +27,8 @@ export interface IWorkflowTemplate {
 
 export interface ITemplatesNode {
 	id: number;
+	name?: string;
+	displayName?: string;
 	categories?: ITemplatesCategory[];
 }
 

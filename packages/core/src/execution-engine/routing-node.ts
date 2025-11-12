@@ -528,7 +528,7 @@ export class RoutingNode {
 		executeSingleFunctions: IExecuteSingleFunctions,
 		itemIndex: number,
 		runIndex: number,
-		credentialType?: string,
+		_credentialType?: string,
 		requestOperations?: IN8nRequestOperations,
 	): Promise<INodeExecutionData[]> {
 		let responseData: INodeExecutionData[];

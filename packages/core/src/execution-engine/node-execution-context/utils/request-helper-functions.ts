@@ -7,21 +7,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 
 import { Logger } from '@n8n/backend-common';
-import type {
-	ClientOAuth2Options,
-	ClientOAuth2RequestObject,
-	ClientOAuth2TokenData,
-	OAuth2CredentialData,
-} from '@n8n/client-oauth2';
-import { ClientOAuth2 } from '@n8n/client-oauth2';
 import { Container } from '@n8n/di';
-import type { AxiosError, AxiosHeaders, AxiosRequestConfig, AxiosResponse } from 'axios';
+import type { AxiosHeaders, AxiosRequestConfig, AxiosResponse } from 'axios';
 import axios from 'axios';
-import crypto, { createHmac } from 'crypto';
+import crypto from 'crypto';
 import FormData from 'form-data';
 import { IncomingMessage } from 'http';
 import { type AgentOptions } from 'https';
-import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import merge from 'lodash/merge';
 import pick from 'lodash/pick';
@@ -38,7 +30,6 @@ import {
 import type {
 	GenericValue,
 	IAllExecuteFunctions,
-	IDataObject,
 	IExecuteData,
 	IExecuteFunctions,
 	IHttpRequestOptions,
@@ -57,13 +48,10 @@ import type {
 	Workflow,
 	WorkflowExecuteMode,
 } from 'n8n-workflow';
-import type { Token } from 'oauth-1.0a';
-import clientOAuth1 from 'oauth-1.0a';
 import { stringify } from 'qs';
 import { Readable } from 'stream';
 
 import { createHttpProxyAgent, createHttpsProxyAgent } from '@/http-proxy';
-import type { IResponseError } from '@/interfaces';
 
 import { binaryToString } from './binary-helper-functions';
 import { parseIncomingMessage } from './parse-incoming-message';
@@ -882,11 +870,11 @@ export function applyPaginationRequestData(
 export async function requestOAuth2(
 	this: IAllExecuteFunctions,
 	credentialsType: string,
-	requestOptions: IHttpRequestOptions | IRequestOptions,
+	_requestOptions: IHttpRequestOptions | IRequestOptions,
 	node: INode,
-	additionalData: IWorkflowExecuteAdditionalData,
-	oAuth2Options?: IOAuth2Options,
-	isN8nRequest = false,
+	_additionalData: IWorkflowExecuteAdditionalData,
+	_oAuth2Options?: IOAuth2Options,
+	_isN8nRequest = false,
 ): Promise<never> {
 	throw new ApplicationError(
 		'OAuth2 authentication is no longer supported - credentials system has been removed',
@@ -902,8 +890,8 @@ export async function requestOAuth2(
 export async function requestOAuth1(
 	this: IAllExecuteFunctions,
 	credentialsType: string,
-	requestOptions: IHttpRequestOptions | IRequestOptions,
-	isN8nRequest = false,
+	_requestOptions: IHttpRequestOptions | IRequestOptions,
+	_isN8nRequest = false,
 ): Promise<never> {
 	throw new ApplicationError(
 		'OAuth1 authentication is no longer supported - credentials system has been removed',
@@ -920,8 +908,8 @@ export async function refreshOAuth2Token(
 	this: IAllExecuteFunctions,
 	credentialsType: string,
 	node: INode,
-	additionalData: IWorkflowExecuteAdditionalData,
-	oAuth2Options?: IOAuth2Options,
+	_additionalData: IWorkflowExecuteAdditionalData,
+	_oAuth2Options?: IOAuth2Options,
 ): Promise<never> {
 	throw new ApplicationError(
 		'OAuth2 token refresh is no longer supported - credentials system has been removed',
@@ -936,11 +924,11 @@ export async function refreshOAuth2Token(
  */
 export async function httpRequestWithAuthentication(
 	this: IAllExecuteFunctions,
-	credentialsType: string,
+	_credentialsType: string,
 	requestOptions: IHttpRequestOptions,
-	workflow: Workflow,
-	node: INode,
-	additionalData: IWorkflowExecuteAdditionalData,
+	_workflow: Workflow,
+	_node: INode,
+	_additionalData: IWorkflowExecuteAdditionalData,
 ) {
 	removeEmptyBody(requestOptions);
 
@@ -960,12 +948,12 @@ export async function httpRequestWithAuthentication(
  */
 export async function requestWithAuthentication(
 	this: IAllExecuteFunctions,
-	credentialsType: string,
+	_credentialsType: string,
 	requestOptions: IRequestOptions,
 	workflow: Workflow,
 	node: INode,
 	additionalData: IWorkflowExecuteAdditionalData,
-	itemIndex?: number,
+	_itemIndex?: number,
 ) {
 	removeEmptyBody(requestOptions);
 
@@ -1016,12 +1004,13 @@ export const getRequestHelperFunctions = (
 	};
 
 	// eslint-disable-next-line complexity
-	async function requestWithAuthenticationPaginated(
+	// @ts-ignore - Function kept for future reference but not currently used
+	async function _requestWithAuthenticationPaginated(
 		this: IExecuteFunctions,
 		requestOptions: IRequestOptions,
 		itemIndex: number,
 		paginationOptions: PaginationOptions,
-		credentialsType?: string,
+		_credentialsType?: string,
 	): Promise<any[]> {
 		const responseData = [];
 		if (!requestOptions.qs) {
@@ -1224,23 +1213,23 @@ export const getRequestHelperFunctions = (
 			await proxyRequestToAxios(workflow, additionalData, node, uriOrObject, options),
 		requestOAuth1: async function (
 			this: IAllExecuteFunctions,
-			credentialsType: string,
-			requestOptions: IRequestOptions,
+			_credentialsType: string,
+			_requestOptions: IRequestOptions,
 		): Promise<any> {
 			throw new Error('OAuth1 authentication has been removed from this system');
 		},
 		requestOAuth2: async function (
 			this: IAllExecuteFunctions,
-			credentialsType: string,
-			requestOptions: IRequestOptions,
-			oAuth2Options?: IOAuth2Options,
+			_credentialsType: string,
+			_requestOptions: IRequestOptions,
+			_oAuth2Options?: IOAuth2Options,
 		): Promise<any> {
 			throw new Error('OAuth2 authentication has been removed from this system');
 		},
 		refreshOAuth2Token: async function (
 			this: IAllExecuteFunctions,
-			credentialsType: string,
-			oAuth2Options?: IOAuth2Options,
+			_credentialsType: string,
+			_oAuth2Options?: IOAuth2Options,
 		): Promise<any> {
 			throw new Error('OAuth2 token refresh has been removed from this system');
 		},

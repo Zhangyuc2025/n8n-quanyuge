@@ -24,6 +24,17 @@ export interface NodeCodeValidationResult {
 }
 
 /**
+ * 节点测试执行结果
+ */
+export interface NodeTestResult {
+	success: boolean;
+	output?: any[];
+	logs: Array<{ type: 'log' | 'warn' | 'error'; message: string; timestamp: string }>;
+	error?: string;
+	executionTime: number;
+}
+
+/**
  * 节点代码编译服务
  *
  * 负责安全地编译和验证节点代码
@@ -264,5 +275,125 @@ export class NodeCompilerService {
 		}
 
 		return results;
+	}
+
+	/**
+	 * 编译并测试执行节点代码
+	 *
+	 * @param code - 节点代码字符串
+	 * @param nodeDefinition - 节点定义
+	 * @param testInput - 测试输入数据
+	 * @returns 测试执行结果
+	 */
+	async compileAndExecute(
+		code: string,
+		nodeDefinition: INodeTypeDescription,
+		testInput: any[],
+	): Promise<NodeTestResult> {
+		const startTime = Date.now();
+		const logs: Array<{ type: 'log' | 'warn' | 'error'; message: string; timestamp: string }> = [];
+
+		try {
+			// 使用 vm2 提供安全的代码执行环境
+			const { VM } = require('vm2');
+
+			// 创建日志收集函数
+			const createLogHandler = (type: 'log' | 'warn' | 'error') => {
+				return (...args: unknown[]) => {
+					const message = args
+						.map((arg) => {
+							if (typeof arg === 'object') {
+								try {
+									return JSON.stringify(arg, null, 2);
+								} catch {
+									return String(arg);
+								}
+							}
+							return String(arg);
+						})
+						.join(' ');
+
+					logs.push({
+						type,
+						message,
+						timestamp: new Date().toISOString(),
+					});
+
+					// 同时输出到后端日志
+					if (type === 'error') {
+						this.logger.error('Node test console.error:', { message });
+					} else if (type === 'warn') {
+						this.logger.warn('Node test console.warn:', { message });
+					} else {
+						this.logger.debug('Node test console.log:', { message });
+					}
+				};
+			};
+
+			const vm = new VM({
+				timeout: 5000, // 5秒超时
+				sandbox: {
+					require: this.createSandboxRequire(),
+					console: {
+						log: createLogHandler('log'),
+						error: createLogHandler('error'),
+						warn: createLogHandler('warn'),
+					},
+				},
+			});
+
+			// 执行代码编译
+			const NodeClass = vm.run(code);
+
+			// 验证导出的是一个类
+			if (typeof NodeClass !== 'function') {
+				throw new UserError('Node code must export a class (constructor function)');
+			}
+
+			// 实例化节点
+			const nodeInstance: INodeType = new NodeClass();
+
+			// 验证 execute 方法存在
+			if (typeof nodeInstance.execute !== 'function') {
+				throw new UserError('Node must have an execute() method');
+			}
+
+			// 构造 execute 方法所需的 this 上下文（模拟 n8n 环境）
+			const mockThis = {
+				getNodeParameter: (parameterName: string, itemIndex: number) => {
+					// 简单模拟：从 nodeDefinition 的 defaults 或 properties 获取默认值
+					const property = nodeDefinition.properties?.find((p: any) => p.name === parameterName);
+					return property?.default ?? null;
+				},
+				helpers: {
+					returnJsonArray: (data: any) => {
+						return Array.isArray(data) ? data : [data];
+					},
+				},
+			};
+
+			// 执行节点
+			const output = await nodeInstance.execute.call(mockThis);
+
+			const executionTime = Date.now() - startTime;
+
+			return {
+				success: true,
+				output: output || [],
+				logs,
+				executionTime,
+			};
+		} catch (error) {
+			const executionTime = Date.now() - startTime;
+
+			this.logger.error('Node test execution failed:', error);
+
+			return {
+				success: false,
+				logs,
+				error: error.message || String(error),
+				executionTime,
+			};
+		}
 	}
 }

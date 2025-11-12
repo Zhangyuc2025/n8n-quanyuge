@@ -1,0 +1,42 @@
+
+> n8n-core@1.118.0 typecheck /home/zhang/n8n-quanyuge/packages/core
+> tsc --noEmit
+
+src/execution-engine/node-execution-context/node-execution-context.ts(28,2): error TS6133: 'NodeOperationError' is declared but its value is never read.
+src/execution-engine/node-execution-context/node-execution-context.ts(33,2): error TS6133: 'HTTP_REQUEST_AS_TOOL_NODE_TYPE' is declared but its value is never read.
+src/execution-engine/node-execution-context/node-execution-context.ts(34,2): error TS6133: 'HTTP_REQUEST_NODE_TYPE' is declared but its value is never read.
+src/execution-engine/node-execution-context/node-execution-context.ts(35,2): error TS6133: 'HTTP_REQUEST_TOOL_NODE_TYPE' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(10,1): error TS6192: All imports in import declaration are unused.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(16,1): error TS6133: 'ClientOAuth2' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(18,15): error TS6196: 'AxiosError' is declared but never used.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(20,18): error TS6133: 'createHmac' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(24,1): error TS6133: 'get' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(41,2): error TS6196: 'IDataObject' is declared but never used.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(60,1): error TS6133: 'Token' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(61,1): error TS6133: 'clientOAuth1' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(66,1): error TS6133: 'IResponseError' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(885,2): error TS6133: 'requestOptions' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(887,2): error TS6133: 'additionalData' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(888,2): error TS6133: 'oAuth2Options' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(889,2): error TS6133: 'isN8nRequest' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(905,2): error TS6133: 'requestOptions' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(906,2): error TS6133: 'isN8nRequest' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(923,2): error TS6133: 'additionalData' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(924,2): error TS6133: 'oAuth2Options' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(939,2): error TS6133: 'credentialsType' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(941,2): error TS6133: 'workflow' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(942,2): error TS6133: 'node' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(943,2): error TS6133: 'additionalData' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(963,2): error TS6133: 'credentialsType' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(968,2): error TS6133: 'itemIndex' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(1019,17): error TS6133: 'requestWithAuthenticationPaginated' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(1024,3): error TS6133: 'credentialsType' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(1227,4): error TS6133: 'credentialsType' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(1228,4): error TS6133: 'requestOptions' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(1234,4): error TS6133: 'credentialsType' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(1235,4): error TS6133: 'requestOptions' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(1236,4): error TS6133: 'oAuth2Options' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(1242,4): error TS6133: 'credentialsType' is declared but its value is never read.
+src/execution-engine/node-execution-context/utils/request-helper-functions.ts(1243,4): error TS6133: 'oAuth2Options' is declared but its value is never read.
+src/execution-engine/routing-node.ts(531,3): error TS6133: 'credentialType' is declared but its value is never read.
+ ELIFECYCLE  Command failed with exit code 2.

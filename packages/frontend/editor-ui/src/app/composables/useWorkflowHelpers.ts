@@ -10,7 +10,6 @@ import type {
 	IExecuteData,
 	INode,
 	INodeConnection,
-	INodeCredentials,
 	INodeExecutionData,
 	INodeParameters,
 	INodeProperties,
@@ -649,40 +648,7 @@ export function useWorkflowHelpers() {
 			);
 			nodeData.parameters = nodeParameters !== null ? nodeParameters : {};
 
-			// Add the node credentials if there are some set and if they should be displayed
-			if (node.credentials !== undefined && nodeType.credentials !== undefined) {
-				const saveCredentials: INodeCredentials = {};
-				for (const nodeCredentialTypeName of Object.keys(node.credentials)) {
-					if (
-						nodeHelpers.hasProxyAuth(node) ||
-						Object.keys(node.parameters).includes('genericAuthType')
-					) {
-						saveCredentials[nodeCredentialTypeName] = node.credentials[nodeCredentialTypeName];
-						continue;
-					}
-
-					const credentialTypeDescription = nodeType.credentials
-						// filter out credentials with same name in different node versions
-						.filter((c) => nodeHelpers.displayParameter(node.parameters, c, '', node))
-						.find((c) => c.name === nodeCredentialTypeName);
-
-					if (credentialTypeDescription === undefined) {
-						continue;
-					}
-
-					if (!nodeHelpers.displayParameter(node.parameters, credentialTypeDescription, '', node)) {
-						continue;
-					}
-
-					saveCredentials[nodeCredentialTypeName] = node.credentials[nodeCredentialTypeName];
-				}
-
-				// Set credential property only if it has content
-				if (Object.keys(saveCredentials).length !== 0) {
-					nodeData.credentials = saveCredentials;
-				}
-			}
-		} else {
+			// Note: Credentials system has been removed
 			// Node-Type is not known so save the data as it is
 			nodeData.credentials = node.credentials;
 			nodeData.parameters = node.parameters;
@@ -894,30 +860,7 @@ export function useWorkflowHelpers() {
 		}
 	}
 
-	function removeForeignCredentialsFromWorkflow(
-		workflow: WorkflowData | WorkflowDataUpdate,
-		usableCredentials: ICredentialsResponse[],
-	): void {
-		(workflow.nodes ?? []).forEach((node: INode) => {
-			if (!node.credentials) {
-				return;
-			}
-
-			node.credentials = Object.entries(node.credentials).reduce<INodeCredentials>(
-				(acc, [credentialType, credential]) => {
-					const isUsableCredential = usableCredentials.some(
-						(ownCredential) => `${ownCredential.id}` === `${credential.id}`,
-					);
-					if (credential.id && isUsableCredential) {
-						acc[credentialType] = node.credentials![credentialType];
-					}
-
-					return acc;
-				},
-				{},
-			);
-		});
-	}
+	// Note: removeForeignCredentialsFromWorkflow function removed - credentials system has been removed
 
 	function getWorkflowProjectRole(workflowId: string): 'owner' | 'sharee' | 'member' {
 		const workflow = workflowsStore.workflowsById[workflowId];

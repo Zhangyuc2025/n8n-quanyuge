@@ -5,87 +5,36 @@ import {
 } from '@/app/constants';
 import type { INodeUi } from '@/Interface';
 import type { NodeTypeProvider } from '@/app/utils/nodeTypes/nodeTypeTransforms';
-import type {
-	INodeCredentialDescription,
-	FromAIArgument,
-	INodePropertyOptions,
-} from 'n8n-workflow';
+import type { FromAIArgument, INodePropertyOptions } from 'n8n-workflow';
 import { NodeHelpers, traverseNodeParameters } from 'n8n-workflow';
 import { useNodeTypesStore } from '@/app/stores/nodeTypes.store';
 
-/**
- * Returns the credentials that are displayable for the given node.
- */
+// Note: Credentials system has been removed - these functions return defaults
 export function getNodeTypeDisplayableCredentials(
-	nodeTypeProvider: NodeTypeProvider,
-	node: Pick<INodeUi, 'parameters' | 'type' | 'typeVersion'>,
-): INodeCredentialDescription[] {
-	const nodeType = nodeTypeProvider.getNodeType(node.type, node.typeVersion);
-	if (!nodeType?.credentials) {
-		return [];
-	}
-
-	const nodeTypeCreds = nodeType.credentials;
-
-	// We must populate the node's parameters with the default values
-	// before we can check which credentials are available, because
-	// credentials can have conditional requirements that depend on
-	// node parameters.
-	const nodeParameters =
-		NodeHelpers.getNodeParameters(
-			nodeType.properties,
-			node.parameters,
-			true,
-			false,
-			node,
-			nodeType,
-		) ?? node.parameters;
-
-	const displayableCredentials = nodeTypeCreds.filter((credentialTypeDescription) => {
-		return NodeHelpers.displayParameter(nodeParameters, credentialTypeDescription, node, nodeType);
-	});
-
-	return displayableCredentials;
+	_nodeTypeProvider: NodeTypeProvider,
+	_node: Pick<INodeUi, 'parameters' | 'type' | 'typeVersion'>,
+) {
+	return [];
 }
 
-/**
- * Checks if the given node has credentials that can be filled.
- */
 export function doesNodeHaveCredentialsToFill(
 	nodeTypeProvider: NodeTypeProvider,
 	node: Pick<INodeUi, 'parameters' | 'type' | 'typeVersion'>,
 ): boolean {
 	const requiredCredentials = getNodeTypeDisplayableCredentials(nodeTypeProvider, node);
-
 	return requiredCredentials.length > 0;
 }
 
-/**
- * Does node has the given credential filled
- *
- * @param credentialName E.g. "telegramApi"
- */
-export function hasNodeCredentialFilled(
-	node: Pick<INodeUi, 'credentials'>,
-	credentialName: string,
-): boolean {
-	if (!node.credentials) {
-		return false;
-	}
-
-	return !!node.credentials[credentialName];
+export function hasNodeCredentialFilled(_node: any, _credentialName: string): boolean {
+	return false;
 }
 
-/**
- * Checks if the given node has all credentials filled.
- */
 export function doesNodeHaveAllCredentialsFilled(
 	nodeTypeProvider: NodeTypeProvider,
-	node: Pick<INodeUi, 'parameters' | 'type' | 'typeVersion' | 'credentials'>,
+	node: Pick<INodeUi, 'parameters' | 'type' | 'typeVersion'> & { credentials?: any },
 ): boolean {
 	const requiredCredentials = getNodeTypeDisplayableCredentials(nodeTypeProvider, node);
-
-	return requiredCredentials.every((cred) => hasNodeCredentialFilled(node, cred.name));
+	return requiredCredentials.every((cred: any) => hasNodeCredentialFilled(node, cred.name));
 }
 
 /**
@@ -94,51 +43,33 @@ export function doesNodeHaveAllCredentialsFilled(
 export function needsAgentInput(node: Pick<INodeUi, 'parameters' | 'type'>) {
 	const nodeTypesNeedModal = [
 		WIKIPEDIA_TOOL_NODE_TYPE,
-		AI_MCP_TOOL_NODE_TYPE,
 		AI_CODE_TOOL_LANGCHAIN_NODE_TYPE,
+		AI_MCP_TOOL_NODE_TYPE,
 	];
-	const collectedArgs: FromAIArgument[] = [];
-	traverseNodeParameters(node.parameters, collectedArgs);
-	return (
-		collectedArgs.length > 0 ||
-		nodeTypesNeedModal.includes(node.type) ||
-		(node.type.includes('vectorStore') && node.parameters?.mode === 'retrieve-as-tool')
-	);
+	return node.type ? nodeTypesNeedModal.includes(node.type) : false;
 }
 
 /**
- * Filters out options that should not be displayed
+ * Gets the options with from_ai if they exist
  */
-export function getParameterDisplayableOptions(
-	options: INodePropertyOptions[],
-	node: INodeUi | null,
-): INodePropertyOptions[] {
-	if (!node) return options;
+export function getNodeParametersFromAIOptions(
+	node: Pick<INodeUi, 'parameters' | 'type' | 'typeVersion'>,
+	path: string,
+	nodeTypeVersion?: number,
+): INodePropertyOptions[] | undefined {
+	const nodeType = useNodeTypesStore().getNodeType(node.type, nodeTypeVersion ?? node.typeVersion);
+	if (!nodeType) return undefined;
 
-	const nodeType = node?.type ? useNodeTypesStore().getNodeType(node.type, node.typeVersion) : null;
+	let parameterOptions: INodePropertyOptions[] = [];
+	traverseNodeParameters(nodeType.properties, (parameter) => {
+		if (parameter.name === path) {
+			parameterOptions = parameter.options as INodePropertyOptions[];
+			return true;
+		}
+		return false;
+	});
 
-	if (!nodeType || !Array.isArray(nodeType.properties)) return options;
-
-	const nodeParameters =
-		NodeHelpers.getNodeParameters(
-			nodeType.properties,
-			node.parameters,
-			true,
-			false,
-			node,
-			nodeType,
-		) ?? node.parameters;
-
-	return options.filter((option) => {
-		if (!option.displayOptions && !option.disabledOptions) return true;
-
-		return NodeHelpers.displayParameter(
-			nodeParameters,
-			option,
-			node,
-			nodeType,
-			undefined,
-			'displayOptions',
-		);
+	return parameterOptions?.filter((option) => {
+		return !!(option.fromAI as FromAIArgument | undefined);
 	});
 }

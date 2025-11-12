@@ -10,6 +10,16 @@ export default defineConfig({
 		alias: {
 			'@': resolve(__dirname, 'src'),
 		},
+		// Dedupe @codemirror packages to prevent multiple instances
+		dedupe: [
+			'@codemirror/state',
+			'@codemirror/view',
+			'@codemirror/language',
+			'@codemirror/commands',
+			'@codemirror/lint',
+			'@codemirror/lang-javascript',
+			'@codemirror/lang-json',
+		],
 	},
 	server: {
 		port: 5679,
@@ -39,6 +49,10 @@ export default defineConfig({
 		rollupOptions: {
 			output: {
 				manualChunks(id) {
+					// CodeMirror 单独分块（避免多实例冲突）
+					if (id.includes('@codemirror')) {
+						return 'codemirror';
+					}
 					// Ant Design Vue 单独分块
 					if (id.includes('ant-design-vue')) {
 						return 'ant-design-vue';
@@ -95,6 +109,16 @@ export default defineConfig({
 			'@ant-design/icons-vue',
 			'echarts',
 			'dayjs',
+		],
+		// 排除 @codemirror 包，避免预构建导致多实例问题
+		exclude: [
+			'@codemirror/state',
+			'@codemirror/view',
+			'@codemirror/language',
+			'@codemirror/commands',
+			'@codemirror/lint',
+			'@codemirror/lang-javascript',
+			'@codemirror/lang-json',
 		],
 	},
 });

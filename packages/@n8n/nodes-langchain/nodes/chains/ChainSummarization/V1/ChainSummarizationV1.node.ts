@@ -46,7 +46,6 @@ export class ChainSummarizationV1 implements INodeType {
 				},
 			],
 			outputs: [NodeConnectionTypes.Main],
-			credentials: [],
 			properties: [
 				getTemplateNoticeField(1951),
 				{

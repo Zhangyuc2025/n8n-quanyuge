@@ -1,20 +1,9 @@
 import { DataSource } from '@n8n/typeorm';
-import { type IExecuteFunctions } from 'n8n-workflow';
+import { ApplicationError, type IExecuteFunctions } from 'n8n-workflow';
 
+// Note: This function has been disabled because the credentials system has been removed
 export async function getMysqlDataSource(this: IExecuteFunctions): Promise<DataSource> {
-	const credentials = await this.getCredentials('mySql');
-
-	const dataSource = new DataSource({
-		type: 'mysql',
-		host: credentials.host as string,
-		port: credentials.port as number,
-		username: credentials.user as string,
-		password: credentials.password as string,
-		database: credentials.database as string,
-		ssl: {
-			rejectUnauthorized: credentials.ssl as boolean,
-		},
-	});
-
-	return dataSource;
+	throw new ApplicationError(
+		'MySQL data source is no longer supported - credentials system has been removed',
+	);
 }

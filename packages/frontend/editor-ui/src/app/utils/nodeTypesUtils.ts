@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/ban-ts-comment */
 import type { AppliedThemeOption, INodeUi, NodeAuthenticationOption } from '@/Interface';
 import type { ITemplatesNode } from '@n8n/rest-api-client/api/templates';
 import {
@@ -13,7 +14,6 @@ import { isJsonKeyObject } from '@/app/utils/typesUtils';
 import {
 	isResourceLocatorValue,
 	type IDataObject,
-	type INodeCredentialDescription,
 	type INodeExecutionData,
 	type INodeProperties,
 	type INodeTypeDescription,
@@ -110,10 +110,7 @@ export const hasOnlyListMode = (parameter: INodeProperties): boolean => {
  * A credential type is considered required if it has no dependencies
  * or if it's only dependency is the main authentication fields
  */
-export const isRequiredCredential = (
-	nodeType: INodeTypeDescription | null,
-	credential: INodeCredentialDescription,
-): boolean => {
+export const isRequiredCredential = (nodeType: INodeTypeDescription | null): boolean => {
 	if (!credential.displayOptions?.show) {
 		return true;
 	}
@@ -233,37 +230,24 @@ export const getNodeAuthOptions = (
 	return options;
 };
 
+// Note: getAllNodeCredentialForAuthType disabled - credentials system has been removed
 export const getAllNodeCredentialForAuthType = (
-	nodeType: INodeTypeDescription | null,
-	authType: string,
-): INodeCredentialDescription[] => {
-	if (nodeType) {
-		return (
-			nodeType.credentials?.filter(
-				(cred) => cred.displayOptions?.show && authType in (cred.displayOptions.show || {}),
-			) ?? []
-		);
-	}
-
+	_nodeType: INodeTypeDescription | null,
+	_authType: string,
+): any[] => {
 	return [];
 };
 
+// Note: getNodeCredentialForSelectedAuthType disabled - credentials system has been removed
 export const getNodeCredentialForSelectedAuthType = (
-	nodeType: INodeTypeDescription,
-	authType: string,
-): INodeCredentialDescription | null => {
-	const authField = getMainAuthField(nodeType);
-	const authFieldName = authField ? authField.name : '';
-	return (
-		nodeType.credentials?.find((cred) =>
-			cred.displayOptions?.show?.[authFieldName]?.includes(authType),
-		) || null
-	);
+	_nodeType: INodeTypeDescription,
+	_authType: string,
+): null => {
+	return null;
 };
 
 export const getAuthTypeForNodeCredential = (
 	nodeType: INodeTypeDescription | null | undefined,
-	credentialType: INodeCredentialDescription | null | undefined,
 ): NodeAuthenticationOption | null => {
 	if (nodeType && credentialType) {
 		const authField = getMainAuthField(nodeType);
@@ -334,7 +318,6 @@ export const isNodeFieldMatchingNodeVersion = (
 
 export const getCredentialsRelatedFields = (
 	nodeType: INodeTypeDescription | null,
-	credentialType: INodeCredentialDescription | null,
 ): INodeProperties[] => {
 	let fields: INodeProperties[] = [];
 	if (nodeType && credentialType?.displayOptions?.show) {

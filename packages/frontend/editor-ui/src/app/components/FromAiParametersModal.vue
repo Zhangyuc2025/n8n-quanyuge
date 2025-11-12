@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/ban-ts-comment */
 <script setup lang="ts">
 import Modal from '@/app/components/Modal.vue';
 import { useI18n } from '@n8n/i18n';

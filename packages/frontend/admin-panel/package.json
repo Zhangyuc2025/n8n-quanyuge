@@ -20,7 +20,15 @@
     "@n8n/shared": "workspace:*",
     "@n8n/i18n": "workspace:*",
     "@n8n/api-types": "workspace:*",
-    "@ant-design/icons-vue": "^7.0.0"
+    "@ant-design/icons-vue": "^7.0.0",
+    "@codemirror/autocomplete": "^6.16.0",
+    "@codemirror/commands": "^6.5.0",
+    "@codemirror/lang-javascript": "^6.2.2",
+    "@codemirror/lang-json": "^6.0.1",
+    "@codemirror/language": "^6.10.1",
+    "@codemirror/lint": "^6.8.0",
+    "@codemirror/state": "^6.4.1",
+    "@codemirror/view": "^6.26.3"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.4",

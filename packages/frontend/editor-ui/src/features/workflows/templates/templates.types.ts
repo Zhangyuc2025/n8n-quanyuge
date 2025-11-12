@@ -1,6 +1,16 @@
 import type { INodeUi } from '@/Interface';
-import type { INodeCredentialDescription, INodeCredentialsDetails } from 'n8n-workflow';
 import type { TemplateCredentialKey } from './utils/templateTransforms';
+
+// Note: Inline type definitions since credentials system has been removed
+export type INodeCredentialsDetails = { id: string; name?: string };
+export type INodeCredentialDescription = {
+	name: string;
+	required?: boolean;
+	displayOptions?: Record<string, unknown>;
+};
+export type INodeCredentials = {
+	[key: string]: INodeCredentialsDetails;
+};
 
 export type NodeCredentials = {
 	[key: string]: string | INodeCredentialsDetails;

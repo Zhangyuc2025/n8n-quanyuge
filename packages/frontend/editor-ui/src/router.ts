@@ -62,7 +62,6 @@ const SettingsLogStreamingView = async () =>
 const SigninView = async () => await import('@/features/core/auth/views/SigninView.vue');
 const SignupView = async () => await import('@/features/core/auth/views/SignupView.vue');
 const RegisterView = async () => await import('@/features/core/auth/views/RegisterView.vue');
-const HomepageView = async () => await import('@/views/HomepageView.vue');
 const PlatformNotReadyView = async () =>
 	await import('@/features/core/auth/views/PlatformNotReadyView.vue');
 const TemplatesCollectionView = async () =>
@@ -780,6 +779,25 @@ export const routes: RouteRecordRaw[] = [
 					},
 					telemetry: {
 						pageCategory: 'settings',
+					},
+				},
+			},
+			{
+				path: 'custom-nodes',
+				name: 'settings-custom-nodes',
+				components: {
+					settingsView: async () =>
+						await import('@/features/settings/custom-nodes/CustomNodesView.vue'),
+				},
+				meta: {
+					middleware: ['authenticated'],
+					telemetry: {
+						pageCategory: 'settings',
+						getProperties() {
+							return {
+								feature: 'custom-nodes',
+							};
+						},
 					},
 				},
 			},

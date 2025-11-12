@@ -63,7 +63,6 @@ export class ChainSummarizationV2 implements INodeType {
 
 			inputs: `={{ ((parameter) => { ${getInputs.toString()}; return getInputs(parameter) })($parameter) }}`,
 			outputs: [NodeConnectionTypes.Main],
-			credentials: [],
 			properties: [
 				getTemplateNoticeField(1951),
 				{

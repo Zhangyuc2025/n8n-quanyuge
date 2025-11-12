@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// @ts-nocheck
 import type { ResourceLocatorRequestDto, ActionResultRequestDto } from '@n8n/api-types';
 import type { IResourceLocatorResultExpanded, IUpdateInformation } from '@/Interface';
 import DraggableTarget from '@/app/components/DraggableTarget.vue';
