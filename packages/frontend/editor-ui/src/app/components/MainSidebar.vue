@@ -97,6 +97,16 @@ const mainMenuItems = computed<IMenuItem[]>(() => [
 		available: true,
 	},
 	{
+		id: 'chat',
+		icon: 'message-circle',
+		label: i18n.baseText('mainSidebar.chat'),
+		position: 'top',
+		route: { to: { name: CHAT_VIEW } },
+		available:
+			settingsStore.isChatFeatureEnabled &&
+			hasPermission(['rbac'], { rbac: { scope: 'chatHub:message' } }),
+	},
+	{
 		id: 'workflows',
 		icon: 'workflow',
 		label: i18n.baseText('mainSidebar.workflows'),
@@ -117,28 +127,6 @@ const mainMenuItems = computed<IMenuItem[]>(() => [
 		available: settingsStore.isCloudDeployment && hasPermission(['instanceOwner']),
 	},
 	{
-		id: 'chat',
-		icon: 'message-circle',
-		label: 'Chat',
-		position: 'top',
-		route: { to: { name: CHAT_VIEW } },
-		available:
-			settingsStore.isChatFeatureEnabled &&
-			hasPermission(['rbac'], { rbac: { scope: 'chatHub:message' } }),
-	},
-	{
-		// Link to in-app pre-built agent templates, available experiment is enabled
-		id: 'templates',
-		icon: 'package-open',
-		label: i18n.baseText('generic.templates'),
-		position: 'top',
-		available:
-			settingsStore.isTemplatesEnabled &&
-			calloutHelpers.isPreBuiltAgentsCalloutVisible.value &&
-			!isTemplatesExperimentEnabled.value,
-		route: { to: { name: VIEWS.PRE_BUILT_AGENT_TEMPLATES } },
-	},
-	{
 		// Link to personalized template modal, available when V2, V3 or data quality experiment is enabled
 		id: 'templates',
 		icon: 'package-open',
@@ -154,7 +142,6 @@ const mainMenuItems = computed<IMenuItem[]>(() => [
 		position: 'top',
 		available:
 			settingsStore.isTemplatesEnabled &&
-			!calloutHelpers.isPreBuiltAgentsCalloutVisible.value &&
 			templatesStore.hasCustomTemplatesHost &&
 			!isTemplatesExperimentEnabled.value,
 		route: { to: { name: VIEWS.TEMPLATES } },
@@ -167,7 +154,6 @@ const mainMenuItems = computed<IMenuItem[]>(() => [
 		position: 'top',
 		available:
 			settingsStore.isTemplatesEnabled &&
-			!calloutHelpers.isPreBuiltAgentsCalloutVisible.value &&
 			!templatesStore.hasCustomTemplatesHost &&
 			!isTemplatesExperimentEnabled.value,
 		link: {

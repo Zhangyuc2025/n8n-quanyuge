@@ -150,19 +150,19 @@ router.beforeEach(async (to, _from, next) => {
 			}
 
 			// Authenticated successfully or other status (proceed)
-			next();
+			return next();
 		} catch (authError) {
 			// Network error, allow access anyway (fail-open for development)
 			console.warn('[Router] Auth check error:', authError);
-			next();
+			return next();
 		}
 	} catch (error) {
 		console.error('[Router] Guard error:', error);
 		// On error, redirect to login
 		if (to.name !== 'AdminLogin' && to.name !== 'AdminSetup') {
-			next({ name: 'AdminLogin' });
+			return next({ name: 'AdminLogin' });
 		} else {
-			next();
+			return next();
 		}
 	}
 });

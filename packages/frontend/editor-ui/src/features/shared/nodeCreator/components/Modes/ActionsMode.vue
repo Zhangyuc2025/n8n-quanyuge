@@ -247,13 +247,7 @@ onMounted(() => {
 	trackActionsView();
 });
 
-const callouts = computed<INodeCreateElement[]>(() =>
-	getActiveViewCallouts(
-		useViewStacks().activeViewStack.title,
-		calloutHelpers.isPreBuiltAgentsCalloutVisible.value,
-		calloutHelpers.getPreBuiltAgentNodeCreatorItems(),
-	),
-);
+const callouts = computed<INodeCreateElement[]>(() => []);
 </script>
 
 <template>

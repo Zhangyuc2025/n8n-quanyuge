@@ -94,8 +94,6 @@ const TestRunDetailView = async () =>
 	await import('@/features/ai/evaluation.ee/views/TestRunDetailView.vue');
 const EvaluationRootView = async () =>
 	await import('@/features/ai/evaluation.ee/views/EvaluationsRootView.vue');
-const PrebuiltAgentTemplatesView = async () =>
-	await import('@/app/views/PrebuiltAgentTemplatesView.vue');
 
 function getTemplatesRedirect(defaultRedirect: VIEWS[keyof VIEWS]): { name: string } | false {
 	const settingsStore = useSettingsStore();
@@ -135,29 +133,6 @@ export const routes: RouteRecordRaw[] = [
 			},
 			getRedirect: getTemplatesRedirect,
 			middleware: ['authenticated'],
-		},
-	},
-	{
-		path: '/templates/agents',
-		name: VIEWS.PRE_BUILT_AGENT_TEMPLATES,
-		components: {
-			default: PrebuiltAgentTemplatesView,
-			sidebar: MainSidebar,
-		},
-		meta: {
-			templatesEnabled: true,
-			getRedirect: getTemplatesRedirect,
-			middleware: ['authenticated'],
-		},
-		beforeEnter: (_to, _from, next) => {
-			const calloutHelpers = useCalloutHelpers();
-			const templatesStore = useTemplatesStore();
-
-			if (!calloutHelpers.isPreBuiltAgentsCalloutVisible.value) {
-				window.location.href = templatesStore.websiteTemplateRepositoryURL;
-			} else {
-				next();
-			}
 		},
 	},
 	// Following two routes are kept in-app:
@@ -1000,8 +975,10 @@ router.beforeEach(async (to: RouteLocationNormalized, from, next) => {
 		}
 		if (isNavigationFailure(failure)) {
 			console.log(failure);
+			return next(false);
 		} else {
 			console.error(failure);
+			return next(false);
 		}
 	}
 });

@@ -15,7 +15,6 @@ import {
 	NPS_SURVEY_MODAL_KEY,
 	PROMPT_MFA_CODE_MODAL_KEY,
 	SETUP_CREDENTIALS_MODAL_KEY,
-	PRE_BUILT_AGENTS_MODAL_KEY,
 	WORKFLOW_ACTIVATION_CONFLICTING_WEBHOOK_MODAL_KEY,
 	WORKFLOW_ACTIVE_MODAL_KEY,
 	WORKFLOW_DIFF_MODAL_KEY,
@@ -72,7 +71,6 @@ import ModalRoot from '@/app/components/ModalRoot.vue';
 import NpsSurvey from '@/app/components/NpsSurvey.vue';
 // Personalization survey disabled (tracking removed)
 // import PersonalizationModal from '@/features/settings/users/components/PersonalizationModal.vue';
-import PreBuiltAgentsModal from '@/app/components/PreBuiltAgentsModal.vue';
 import ProjectMoveResourceModal from '@/features/collaboration/projects/components/ProjectMoveResourceModal.vue';
 import EventDestinationSettingsModal from '@/features/integrations/logStreaming.ee/components/EventDestinationSettingsModal.vue';
 import SetupWorkflowCredentialsModal from '@/features/workflows/templates/components/SetupWorkflowCredentialsModal.vue';
@@ -324,12 +322,6 @@ import VariableModal from '@/features/settings/environments.ee/components/Variab
 		<ModalRoot :name="EXPERIMENT_TEMPLATES_DATA_QUALITY_KEY">
 			<template #default="{ modalName, data }">
 				<NodeRecommendationModalTDQ :modal-name="modalName" :data="data" />
-			</template>
-		</ModalRoot>
-
-		<ModalRoot :name="PRE_BUILT_AGENTS_MODAL_KEY">
-			<template #default="{ modalName, data }">
-				<PreBuiltAgentsModal :modal-name="modalName" :data="data" />
 			</template>
 		</ModalRoot>
 

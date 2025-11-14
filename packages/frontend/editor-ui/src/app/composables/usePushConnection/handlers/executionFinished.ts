@@ -15,7 +15,6 @@ import { useUIStore } from '@/app/stores/ui.store';
 import { useWorkflowsStore } from '@/app/stores/workflows.store';
 import {
 	SampleTemplates,
-	isPrebuiltAgentTemplateId,
 	isTutorialTemplateId,
 } from '@/features/workflows/templates/utils/workflowSamples';
 import {
@@ -76,11 +75,6 @@ export async function executionFinished(
 			});
 		} else if (templateId.startsWith('37_onboarding_experiments_batch_aug11')) {
 			readyToRunWorkflowsStore.trackExecuteWorkflow(templateId.split('-').pop() ?? '', data.status);
-		} else if (isPrebuiltAgentTemplateId(templateId)) {
-			telemetry.track('User executed pre-built Agent', {
-				template: templateId,
-				status: data.status,
-			});
 		} else if (isTutorialTemplateId(templateId)) {
 			telemetry.track('User executed tutorial template', {
 				template: templateId,

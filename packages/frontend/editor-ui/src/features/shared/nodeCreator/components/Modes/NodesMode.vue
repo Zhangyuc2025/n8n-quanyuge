@@ -105,17 +105,6 @@ function getFilteredActions(
 }
 
 function onSelected(item: INodeCreateElement) {
-	if (item.key === PRE_BUILT_AGENTS_COLLECTION) {
-		void calloutHelpers.openPreBuiltAgentsCollection({
-			telemetry: {
-				source: 'nodeCreator',
-				section: activeViewStack.value.title,
-			},
-			resetStacks: false,
-		});
-		return;
-	}
-
 	if (item.type === 'subcategory') {
 		const subcategoryKey = camelCase(item.properties.title);
 		const title = i18n.baseText(`nodeCreator.subcategoryNames.${subcategoryKey}` as BaseTextKey);
@@ -284,11 +273,6 @@ const globalCallouts = computed<INodeCreateElement[]>(() => [
 	...getRootSearchCallouts(activeViewStack.value.search ?? '', {
 		isRagStarterCalloutVisible: calloutHelpers.isRagStarterCalloutVisible.value,
 	}),
-	...getActiveViewCallouts(
-		activeViewStack.value.title,
-		calloutHelpers.isPreBuiltAgentsCalloutVisible.value,
-		calloutHelpers.getPreBuiltAgentNodeCreatorItems(),
-	),
 ]);
 
 function arrowLeft() {

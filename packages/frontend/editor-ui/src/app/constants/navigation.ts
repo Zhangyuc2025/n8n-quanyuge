@@ -62,7 +62,6 @@ export const enum VIEWS {
 	SHARED_CREDENTIALS = 'SharedCredentials',
 	ENTITY_NOT_FOUND = 'EntityNotFound',
 	ENTITY_UNAUTHORIZED = 'EntityUnAuthorized',
-	PRE_BUILT_AGENT_TEMPLATES = 'PreBuiltAgentTemplates',
 	OAUTH_CONSENT = 'OAuthConsent',
 	BILLING = 'BillingView',
 }

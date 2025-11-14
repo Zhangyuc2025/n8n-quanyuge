@@ -990,7 +990,6 @@ export function useWorkflowHelpers() {
 		resolveExpression,
 		updateWorkflow,
 		updateNodePositions,
-		removeForeignCredentialsFromWorkflow,
 		getWorkflowProjectRole,
 		initState,
 		getNodeParametersWithResolvedExpressions,

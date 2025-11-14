@@ -24,7 +24,6 @@ import {
 	MODAL_CONFIRM,
 	VIEWS,
 } from '@/app/constants';
-import { useAITemplatesStarterCollectionStore } from '@/experiments/aiTemplatesStarterCollection/stores/aiTemplatesStarterCollection.store';
 import SuggestedWorkflowCard from '@/experiments/personalizedTemplates/components/SuggestedWorkflowCard.vue';
 import SuggestedWorkflows from '@/experiments/personalizedTemplates/components/SuggestedWorkflows.vue';
 import { usePersonalizedTemplatesStore } from '@/experiments/personalizedTemplates/stores/personalizedTemplates.store';
@@ -135,7 +134,6 @@ const tagsStore = useTagsStore();
 const foldersStore = useFoldersStore();
 const insightsStore = useInsightsStore();
 const templatesStore = useTemplatesStore();
-const aiStarterTemplatesStore = useAITemplatesStarterCollectionStore();
 const personalizedTemplatesStore = usePersonalizedTemplatesStore();
 const readyToRunWorkflowsStore = useReadyToRunWorkflowsStore();
 const personalizedTemplatesV2Store = usePersonalizedTemplatesV2Store();
@@ -431,43 +429,12 @@ const showArchivedOnlyHint = computed(() => {
 	);
 });
 
-const showAIStarterCollectionCallout = computed(() => {
-	return (
-		!loading.value &&
-		aiStarterTemplatesStore.isFeatureEnabled &&
-		!aiStarterTemplatesStore.calloutDismissed &&
-		!readOnlyEnv.value &&
-		// We want to show the callout only if the user has permissions to create folders and workflows
-		// but also on the overview page
-		(projectPages.isOverviewSubPage ||
-			(hasPermissionToCreateFolders.value && hasPermissionToCreateWorkflows.value))
-	);
-});
-
-const showPrebuiltAgentsCallout = computed(() => {
-	return (
-		!loading.value &&
-		calloutHelpers.isPreBuiltAgentsCalloutVisible.value &&
-		!calloutHelpers.isCalloutDismissed('preBuiltAgentsModalCallout') &&
-		!readOnlyEnv.value &&
-		// We want to show the callout only if the user has permissions to create folders and workflows
-		// but also on the overview page
-		(projectPages.isOverviewSubPage ||
-			(hasPermissionToCreateFolders.value && hasPermissionToCreateWorkflows.value))
-	);
-});
-
 const showPersonalizedTemplates = computed(
 	() => !loading.value && personalizedTemplatesStore.isFeatureEnabled(),
 );
 
 const hasActiveCallouts = computed(() => {
-	return (
-		showPrebuiltAgentsCallout.value ||
-		showAIStarterCollectionCallout.value ||
-		showPersonalizedTemplates.value ||
-		showReadyToRunWorkflowsCallout.value
-	);
+	return showPersonalizedTemplates.value || showReadyToRunWorkflowsCallout.value;
 });
 
 /**
@@ -932,49 +899,6 @@ function isValidProjectId(projectId: string) {
 	return projectsStore.availableProjects.some((project) => project.id === projectId);
 }
 
-const createAIStarterWorkflows = async (source: 'card' | 'callout') => {
-	try {
-		const projectId = projectPages.isOverviewSubPage
-			? personalProject.value?.id
-			: (route.params.projectId as string);
-		if (typeof projectId !== 'string') {
-			toast.showError(new Error(), i18n.baseText('workflows.ai.starter.collection.error'));
-			return;
-		}
-		const newFolder = await aiStarterTemplatesStore.createStarterWorkflows(
-			projectId,
-			currentFolderId.value ?? undefined,
-		);
-		// If we are on the overview page, navigate to the new folder
-		if (projectPages.isOverviewSubPage) {
-			await router.push({
-				name: VIEWS.PROJECTS_FOLDERS,
-				params: { projectId, folderId: newFolder.id },
-			});
-		} else {
-			// If we are in a specific folder, just add the new folder to the list
-			workflowsAndFolders.value.unshift({
-				id: newFolder.id,
-				name: newFolder.name,
-				resource: 'folder',
-				createdAt: newFolder.createdAt,
-				updatedAt: newFolder.updatedAt,
-				subFolderCount: 0,
-				workflowCount: 3,
-				parentFolder: newFolder.parentFolder,
-			});
-		}
-		aiStarterTemplatesStore.trackUserCreatedStarterCollection(source);
-	} catch (error) {
-		toast.showError(error, i18n.baseText('workflows.ai.starter.collection.error'));
-		return;
-	}
-};
-
-const openPrebuiltAgentsModal = (source: 'workflowsEmptyState' | 'workflowsList') => {
-	void calloutHelpers.openPreBuiltAgentsModal(source);
-};
-
 const handleCreateReadyToRunWorkflows = async (source: 'card' | 'callout') => {
 	try {
 		const projectId = projectPages.isOverviewSubPage
@@ -1015,17 +939,8 @@ const handleCreateReadyToRunWorkflows = async (source: 'card' | 'callout') => {
 	}
 };
 
-const dismissStarterCollectionCallout = () => {
-	aiStarterTemplatesStore.dismissCallout();
-	aiStarterTemplatesStore.trackUserDismissedCallout();
-};
-
 const dismissEasyAICallout = () => {
 	easyAICalloutVisible.value = false;
-};
-
-const dismissPreBuiltAgentsCallout = () => {
-	void calloutHelpers.dismissCallout('preBuiltAgentsModalCallout');
 };
 
 const openAIWorkflow = async (source: string) => {
@@ -1866,66 +1781,7 @@ const onNameSubmit = async (name: string) => {
 			</N8nTooltip>
 		</template>
 		<template #callout>
-			<N8nCallout
-				v-if="showPrebuiltAgentsCallout"
-				theme="secondary"
-				icon="bot"
-				icon-size="large"
-				:class="$style['easy-ai-workflow-callout']"
-			>
-				<N8nText size="small">
-					{{ i18n.baseText('workflows.preBuiltAgents.callout') }}
-					{{ ' ' }}
-					<N8nLink
-						theme="secondary"
-						size="small"
-						:bold="true"
-						:underline="true"
-						@click="openPrebuiltAgentsModal('workflowsEmptyState')"
-					>
-						{{ i18n.baseText('workflows.preBuiltAgents.linkText') }}
-					</N8nLink>
-				</N8nText>
-				<template #trailingContent>
-					<div :class="$style['callout-trailing-content']">
-						<N8nIcon
-							size="small"
-							icon="x"
-							:title="i18n.baseText('generic.dismiss')"
-							class="clickable"
-							@click="dismissPreBuiltAgentsCallout()"
-						/>
-					</div>
-				</template>
-			</N8nCallout>
-			<N8nCallout
-				v-else-if="showAIStarterCollectionCallout"
-				theme="secondary"
-				icon="gift"
-				:class="$style['easy-ai-workflow-callout']"
-			>
-				{{ i18n.baseText('workflows.ai.starter.collection.callout') }}
-				<template #trailingContent>
-					<div :class="$style['callout-trailing-content']">
-						<N8nButton
-							data-test-id="easy-ai-button"
-							size="small"
-							type="secondary"
-							@click="createAIStarterWorkflows('callout')"
-						>
-							{{ i18n.baseText('generic.startNow') }}
-						</N8nButton>
-						<N8nIcon
-							size="small"
-							icon="x"
-							:title="i18n.baseText('generic.dismiss')"
-							class="clickable"
-							@click="dismissStarterCollectionCallout"
-						/>
-					</div>
-				</template>
-			</N8nCallout>
-			<SuggestedWorkflows v-else-if="showPersonalizedTemplates">
+			<SuggestedWorkflows v-if="showPersonalizedTemplates">
 				<SuggestedWorkflowCard
 					v-for="workflow in personalizedTemplatesStore.suggestedWorkflows"
 					:key="workflow.id"
@@ -2134,45 +1990,7 @@ const onNameSubmit = async (name: string) => {
 						</div>
 					</N8nCard>
 					<N8nCard
-						v-if="showPrebuiltAgentsCallout"
-						:class="$style.emptyStateCard"
-						hoverable
-						data-test-id="prebuilt-agents-card"
-						@click="openPrebuiltAgentsModal('workflowsList')"
-					>
-						<div :class="$style.emptyStateCardContent">
-							<N8nIcon
-								:class="$style.emptyStateCardIcon"
-								:stroke-width="1.5"
-								icon="bot"
-								color="foreground-dark"
-							/>
-							<N8nText size="large" class="mt-xs pl-2xs pr-2xs">
-								{{ i18n.baseText('workflows.empty.preBuiltAgents') }}
-							</N8nText>
-						</div>
-					</N8nCard>
-					<N8nCard
-						v-else-if="showAIStarterCollectionCallout"
-						:class="$style.emptyStateCard"
-						hoverable
-						data-test-id="easy-ai-workflow-card"
-						@click="createAIStarterWorkflows('card')"
-					>
-						<div :class="$style.emptyStateCardContent">
-							<N8nIcon
-								:class="$style.emptyStateCardIcon"
-								:stroke-width="1.5"
-								icon="gift"
-								color="foreground-dark"
-							/>
-							<N8nText size="large" class="mt-xs pl-2xs pr-2xs">
-								{{ i18n.baseText('workflows.ai.starter.collection.card') }}
-							</N8nText>
-						</div>
-					</N8nCard>
-					<N8nCard
-						v-else-if="showEasyAIWorkflowCallout"
+						v-if="showEasyAIWorkflowCallout"
 						:class="$style.emptyStateCard"
 						hoverable
 						data-test-id="easy-ai-workflow-card"
