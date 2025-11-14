@@ -1,5 +1,5 @@
 import { ChatHubProvider } from '@n8n/api-types';
-import { WithTimestamps, DateTimeColumn, User, WorkflowEntity } from '@n8n/db';
+import { WithTimestamps, DateTimeColumn, User, WorkflowEntity, Project } from '@n8n/db';
 import {
 	Column,
 	Entity,
@@ -36,6 +36,20 @@ export class ChatHubSession extends WithTimestamps {
 	@ManyToOne('User', { onDelete: 'CASCADE' })
 	@JoinColumn({ name: 'ownerId' })
 	owner?: Relation<User>;
+
+	/**
+	 * Project ID (workspace) that owns this chat session.
+	 * Required for multi-tenant isolation.
+	 */
+	@Column({ type: String, name: 'projectId' })
+	projectId: string;
+
+	/**
+	 * Project (workspace) that owns this chat session.
+	 */
+	@ManyToOne('Project', { onDelete: 'CASCADE' })
+	@JoinColumn({ name: 'projectId' })
+	project?: Relation<Project>;
 
 	/*
 	 * Timestamp of the last active message in the session.

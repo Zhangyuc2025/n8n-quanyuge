@@ -16,8 +16,11 @@ export class ChatHubAgentService {
 		private readonly chatAgentRepository: ChatHubAgentRepository,
 	) {}
 
-	async getAgentsByUserIdAsModels(userId: string): Promise<ChatModelsResponse['custom-agent']> {
-		const agents = await this.getAgentsByUserId(userId);
+	async getAgentsByUserIdAsModels(
+		userId: string,
+		projectId: string,
+	): Promise<ChatModelsResponse['custom-agent']> {
+		const agents = await this.getAgentsByUserId(userId, projectId);
 
 		return {
 			models: agents.map((agent) => ({
@@ -33,12 +36,12 @@ export class ChatHubAgentService {
 		};
 	}
 
-	async getAgentsByUserId(userId: string): Promise<ChatHubAgent[]> {
-		return await this.chatAgentRepository.getManyByUserId(userId);
+	async getAgentsByUserId(userId: string, projectId: string): Promise<ChatHubAgent[]> {
+		return await this.chatAgentRepository.getManyByUserId(userId, projectId);
 	}
 
-	async getAgentById(id: string, userId: string): Promise<ChatHubAgent> {
-		const agent = await this.chatAgentRepository.getOneById(id, userId);
+	async getAgentById(id: string, userId: string, projectId: string): Promise<ChatHubAgent> {
+		const agent = await this.chatAgentRepository.getOneById(id, userId, projectId);
 		if (!agent) {
 			throw new NotFoundError('Chat agent not found');
 		}
@@ -54,6 +57,7 @@ export class ChatHubAgentService {
 			provider: ChatHubAgent['provider'];
 			model: string;
 		},
+		projectId: string,
 	): Promise<ChatHubAgent> {
 		// TODO: Validate API key for pay-per-use model
 		const id = uuidv4();
@@ -64,11 +68,12 @@ export class ChatHubAgentService {
 			description: data.description ?? null,
 			systemPrompt: data.systemPrompt,
 			ownerId: user.id,
+			projectId,
 			provider: data.provider,
 			model: data.model,
 		});
 
-		this.logger.info(`Chat agent created: ${id} by user ${user.id}`);
+		this.logger.info(`Chat agent created: ${id} by user ${user.id} in project ${projectId}`);
 		return agent;
 	}
 
@@ -82,9 +87,10 @@ export class ChatHubAgentService {
 			provider?: string;
 			model?: string;
 		},
+		projectId: string,
 	): Promise<ChatHubAgent> {
 		// First check if the agent exists and belongs to the user
-		const existingAgent = await this.chatAgentRepository.getOneById(id, user.id);
+		const existingAgent = await this.chatAgentRepository.getOneById(id, user.id, projectId);
 		if (!existingAgent) {
 			throw new NotFoundError('Chat agent not found');
 		}
@@ -101,19 +107,19 @@ export class ChatHubAgentService {
 
 		const agent = await this.chatAgentRepository.updateAgent(id, updateData);
 
-		this.logger.info(`Chat agent updated: ${id} by user ${user.id}`);
+		this.logger.info(`Chat agent updated: ${id} by user ${user.id} in project ${projectId}`);
 		return agent;
 	}
 
-	async deleteAgent(id: string, userId: string): Promise<void> {
+	async deleteAgent(id: string, userId: string, projectId: string): Promise<void> {
 		// First check if the agent exists and belongs to the user
-		const existingAgent = await this.chatAgentRepository.getOneById(id, userId);
+		const existingAgent = await this.chatAgentRepository.getOneById(id, userId, projectId);
 		if (!existingAgent) {
 			throw new NotFoundError('Chat agent not found');
 		}
 
 		await this.chatAgentRepository.deleteAgent(id);
 
-		this.logger.info(`Chat agent deleted: ${id} by user ${userId}`);
+		this.logger.info(`Chat agent deleted: ${id} by user ${userId} from project ${projectId}`);
 	}
 }

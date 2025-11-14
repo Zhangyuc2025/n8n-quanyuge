@@ -7,6 +7,7 @@ const table = {
 	credentials: 'credentials_entity',
 	workflows: 'workflow_entity',
 	executions: 'execution_entity',
+	project: 'project',
 } as const;
 
 export class CreateChatHubTables1760019379982 implements ReversibleMigration {
@@ -16,6 +17,7 @@ export class CreateChatHubTables1760019379982 implements ReversibleMigration {
 				column('id').uuid.primary,
 				column('title').varchar(256).notNull,
 				column('ownerId').uuid.notNull,
+				column('projectId').uuid.notNull,
 				column('lastMessageAt').timestampTimezone(),
 
 				column('credentialId').varchar(36),
@@ -29,6 +31,11 @@ export class CreateChatHubTables1760019379982 implements ReversibleMigration {
 			)
 			.withForeignKey('ownerId', {
 				tableName: table.user,
+				columnName: 'id',
+				onDelete: 'CASCADE',
+			})
+			.withForeignKey('projectId', {
+				tableName: table.project,
 				columnName: 'id',
 				onDelete: 'CASCADE',
 			})

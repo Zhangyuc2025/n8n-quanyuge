@@ -5,16 +5,14 @@ import { useToast } from '@/app/composables/useToast';
 import { useChatStore } from '@/features/ai/chatHub/chat.store';
 import ModelSelector from '@/features/ai/chatHub/components/ModelSelector.vue';
 import { useUIStore } from '@/app/stores/ui.store';
-import type { ChatHubProvider, ChatModelDto } from '@n8n/api-types';
+import type { ChatModelDto } from '@n8n/api-types';
 import { N8nButton, N8nHeading, N8nInput, N8nInputLabel } from '@n8n/design-system';
 import { useI18n } from '@n8n/i18n';
 import { assert } from '@n8n/utils/assert';
 import { createEventBus } from '@n8n/utils/event-bus';
 import { computed, ref, watch } from 'vue';
-import type { CredentialsMap } from '../chat.types';
 
 const props = defineProps<{
-	credentials: CredentialsMap;
 	agentId?: string;
 }>();
 
@@ -37,8 +35,6 @@ const selectedModel = ref<ChatModelDto | null>(null);
 const isSaving = ref(false);
 const isDeleting = ref(false);
 
-const agentSelectedCredentials = ref<CredentialsMap>({});
-
 const isEditMode = computed(() => !!props.agentId);
 const title = computed(() =>
 	isEditMode.value
@@ -59,13 +55,6 @@ const isValid = computed(() => {
 	);
 });
 
-const agentMergedCredentials = computed((): CredentialsMap => {
-	return {
-		...props.credentials,
-		...agentSelectedCredentials.value,
-	};
-});
-
 function loadAgent() {
 	const customAgent = chatStore.currentEditingAgent;
 
@@ -76,9 +65,8 @@ function loadAgent() {
 	systemPrompt.value = customAgent.systemPrompt;
 	selectedModel.value = chatStore.getAgent(customAgent) ?? null;
 
-	if (customAgent.credentialId) {
-		agentSelectedCredentials.value[customAgent.provider] = customAgent.credentialId;
-	}
+	// Note: SASA platform uses platformAiProvider instead of credentials
+	// credentialId has been removed from the agent model
 }
 
 function resetForm() {
@@ -86,7 +74,7 @@ function resetForm() {
 	description.value = '';
 	systemPrompt.value = '';
 	selectedModel.value = null;
-	agentSelectedCredentials.value = {};
+	// Note: agentSelectedCredentials removed - SASA uses platformAiProvider
 }
 
 // Watch for modal opening
@@ -102,13 +90,6 @@ watch(
 		}
 	},
 );
-
-function onCredentialSelected(provider: ChatHubProvider, credentialId: string) {
-	agentSelectedCredentials.value = {
-		...agentSelectedCredentials.value,
-		[provider]: credentialId,
-	};
-}
 
 function onModelChange(model: ChatModelDto) {
 	selectedModel.value = model;
@@ -126,26 +107,23 @@ async function onSave() {
 		assert(model);
 		assert(model.provider !== 'n8n' && model.provider !== 'custom-agent');
 
-		const credentialId = agentMergedCredentials.value[model.provider];
-
-		assert(credentialId);
-
+		// Note: SASA platform uses platformAiProvider instead of credentials
+		// No need to pass credentialId anymore
 		const payload = {
 			name: name.value.trim(),
 			description: description.value.trim() || undefined,
 			systemPrompt: systemPrompt.value.trim(),
 			...model,
-			credentialId,
 		};
 
 		if (isEditMode.value && props.agentId) {
-			await chatStore.updateCustomAgent(props.agentId, payload, props.credentials);
+			await chatStore.updateCustomAgent(props.agentId, payload);
 			toast.showMessage({
 				title: i18n.baseText('chatHub.agent.editor.success.update'),
 				type: 'success',
 			});
 		} else {
-			const agent = await chatStore.createCustomAgent(payload, props.credentials);
+			const agent = await chatStore.createCustomAgent(payload);
 			emit('createCustomAgent', agent);
 
 			toast.showMessage({
@@ -180,7 +158,8 @@ async function onDelete() {
 
 	isDeleting.value = true;
 	try {
-		await chatStore.deleteCustomAgent(props.agentId, props.credentials);
+		// Note: SASA platform uses platformAiProvider instead of credentials
+		await chatStore.deleteCustomAgent(props.agentId, {});
 		toast.showMessage({
 			title: i18n.baseText('chatHub.agent.editor.success.delete'),
 			type: 'success',
@@ -262,9 +241,7 @@ async function onDelete() {
 					<ModelSelector
 						:selectedAgent="selectedModel"
 						:include-custom-agents="false"
-						:credentials="agentMergedCredentials"
 						@change="onModelChange"
-						@select-credential="onCredentialSelected"
 					/>
 				</N8nInputLabel>
 			</div>

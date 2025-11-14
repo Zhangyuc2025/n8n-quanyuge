@@ -13,7 +13,7 @@ export class ChatHubAgentRepository extends Repository<ChatHubAgent> {
 	async createAgent(agent: Partial<ChatHubAgent>, trx?: EntityManager) {
 		return await withTransaction(this.manager, trx, async (em) => {
 			// Exclude relation properties for insert - only use column values
-			const { platformAiProvider, owner, ...agentData } = agent;
+			const { platformAiProvider, owner, project, ...agentData } = agent;
 			await em.insert(ChatHubAgent, agentData);
 			return await em.findOneOrFail(ChatHubAgent, {
 				where: { id: agent.id },
@@ -42,20 +42,20 @@ export class ChatHubAgentRepository extends Repository<ChatHubAgent> {
 		});
 	}
 
-	async getManyByUserId(userId: string) {
+	async getManyByUserId(userId: string, projectId: string) {
 		return await this.find({
-			where: { ownerId: userId },
+			where: { ownerId: userId, projectId },
 			order: { createdAt: 'DESC' },
 		});
 	}
 
-	async getOneById(id: string, userId: string, trx?: EntityManager) {
+	async getOneById(id: string, userId: string, projectId: string, trx?: EntityManager) {
 		return await withTransaction(
 			this.manager,
 			trx,
 			async (em) => {
 				return await em.findOne(ChatHubAgent, {
-					where: { id, ownerId: userId },
+					where: { id, ownerId: userId, projectId },
 				});
 			},
 			false,

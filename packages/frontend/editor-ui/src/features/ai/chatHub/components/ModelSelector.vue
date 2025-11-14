@@ -7,18 +7,12 @@ import {
 	chatHubLLMProviderSchema,
 	emptyChatModelsResponse,
 } from '@n8n/api-types';
-import type {
-	ChatHubProvider,
-	ChatHubLLMProvider,
-	ChatModelDto,
-	ChatModelsResponse,
-} from '@n8n/api-types';
+import type { ChatHubProvider, ChatModelDto, ChatModelsResponse } from '@n8n/api-types';
 import { providerDisplayNames } from '@/features/ai/chatHub/constants';
 import { onClickOutside } from '@vueuse/core';
 import { useI18n } from '@n8n/i18n';
 
 import type { CredentialsMap } from '../chat.types';
-import { useUIStore } from '@/app/stores/ui.store';
 import ChatAgentAvatar from '@/features/ai/chatHub/components/ChatAgentAvatar.vue';
 import {
 	fromStringToModel,
@@ -33,11 +27,11 @@ const NEW_AGENT_MENU_ID = 'agent::new';
 const {
 	selectedAgent,
 	includeCustomAgents = true,
-	credentials,
+	credentials = null,
 } = defineProps<{
 	selectedAgent: ChatModelDto | null;
 	includeCustomAgents?: boolean;
-	credentials: CredentialsMap | null;
+	credentials?: CredentialsMap | null;
 }>();
 
 const emit = defineEmits<{
@@ -46,22 +40,13 @@ const emit = defineEmits<{
 	selectCredential: [provider: ChatHubProvider, credentialId: string];
 }>();
 
-function handleSelectCredentials(provider: ChatHubProvider, id: string) {
-	emit('selectCredential', provider, id);
-}
-
 const i18n = useI18n();
 const agents = ref<ChatModelsResponse>(emptyChatModelsResponse);
 const dropdownRef = useTemplateRef('dropdownRef');
-const credentialSelectorProvider = ref<ChatHubLLMProvider | null>(null);
-const uiStore = useUIStore();
-const credentialsStore = useCredentialsStore();
 
-const credentialsName = computed(() =>
-	selectedAgent
-		? credentialsStore.getCredentialById(credentials?.[selectedAgent.model.provider] ?? '')?.name
-		: undefined,
-);
+// Note: SASA platform uses platformAiProvider instead of credentials
+// credentialsStore and credential selection logic have been removed
+const credentialsName = computed(() => undefined);
 
 const menu = computed(() => {
 	const menuItems: (typeof N8nNavigationDropdown)['menu'] = [];
@@ -133,19 +118,6 @@ const menu = computed(() => {
 
 const selectedLabel = computed(() => selectedAgent?.name ?? 'Select model');
 
-function openCredentialsSelectorOrCreate(provider: ChatHubLLMProvider) {
-	const credentialType = PROVIDER_CREDENTIAL_TYPE_MAP[provider];
-	const existingCredentials = credentialsStore.getCredentialsByType(credentialType);
-
-	if (existingCredentials.length === 0) {
-		uiStore.openNewCredential(credentialType);
-		return;
-	}
-
-	credentialSelectorProvider.value = provider;
-	uiStore.openModal('chatCredentialSelector');
-}
-
 function onSelect(id: string) {
 	if (id === NEW_AGENT_MENU_ID) {
 		emit('createCustomAgent');
@@ -164,7 +136,11 @@ function onSelect(id: string) {
 		parsedModel.provider !== 'n8n' &&
 		parsedModel.provider !== 'custom-agent'
 	) {
-		openCredentialsSelectorOrCreate(parsedModel.provider);
+		// Note: SASA platform uses platformAiProvider instead of credentials
+		// Credential configuration is not available
+		console.warn(
+			'Credential management is not available in SASA platform. Using platform AI providers instead.',
+		);
 		return;
 	}
 
@@ -177,10 +153,6 @@ function onSelect(id: string) {
 	}
 
 	emit('change', selected);
-}
-
-function handleCreateNewCredential(provider: ChatHubLLMProvider) {
-	uiStore.openNewCredential(PROVIDER_CREDENTIAL_TYPE_MAP[provider]);
 }
 
 onClickOutside(

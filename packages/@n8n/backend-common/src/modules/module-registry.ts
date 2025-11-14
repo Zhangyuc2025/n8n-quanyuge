@@ -34,6 +34,7 @@ export class ModuleRegistry {
 		'provisioning',
 		'breaking-changes',
 		'mcp',
+		'chat-hub',
 	];
 
 	private readonly activeModules: string[] = [];

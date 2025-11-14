@@ -12,7 +12,7 @@ import {
 	ChatHubUpdateAgentRequest,
 } from '@n8n/api-types';
 import { Logger } from '@n8n/backend-common';
-import { AuthenticatedRequest } from '@n8n/db';
+import { AuthenticatedRequest, ProjectRepository } from '@n8n/db';
 import {
 	RestController,
 	Post,
@@ -27,6 +27,7 @@ import type { Response } from 'express';
 import { strict as assert } from 'node:assert';
 
 import { ResponseError } from '@/errors/response-errors/abstract/response.error';
+import { NotFoundError } from '@/errors/response-errors/not-found.error';
 
 import { ChatHubService } from './chat-hub.service';
 import { ChatHubAgentService } from './chat-hub-agent.service';
@@ -38,7 +39,27 @@ export class ChatHubController {
 		private readonly chatService: ChatHubService,
 		private readonly chatAgentService: ChatHubAgentService,
 		private readonly logger: Logger,
+		private readonly projectRepository: ProjectRepository,
 	) {}
+
+	/**
+	 * Get user's personal project ID
+	 */
+	private async getPersonalProjectId(userId: string): Promise<string> {
+		const projectRelations = await this.projectRepository
+			.createQueryBuilder('project')
+			.innerJoin('project.projectRelations', 'relation')
+			.where('relation.userId = :userId', { userId })
+			.andWhere("project.type = 'personal'")
+			.select('project.id')
+			.getOne();
+
+		if (!projectRelations) {
+			throw new NotFoundError('Personal project not found for user');
+		}
+
+		return projectRelations.id;
+	}
 
 	@Post('/models')
 	@GlobalScope('chatHub:message')
@@ -47,7 +68,8 @@ export class ChatHubController {
 		_res: Response,
 		@Body _payload: ChatModelsRequestDto,
 	): Promise<ChatModelsResponse> {
-		return await this.chatService.getModels(req.user);
+		const projectId = await this.getPersonalProjectId(req.user.id);
+		return await this.chatService.getModels(req.user, projectId);
 	}
 
 	@Get('/conversations')
@@ -56,7 +78,8 @@ export class ChatHubController {
 		req: AuthenticatedRequest,
 		_res: Response,
 	): Promise<ChatHubConversationsResponse> {
-		return await this.chatService.getConversations(req.user.id);
+		const projectId = await this.getPersonalProjectId(req.user.id);
+		return await this.chatService.getConversations(req.user.id, projectId);
 	}
 
 	@Get('/conversations/:sessionId')
@@ -66,7 +89,8 @@ export class ChatHubController {
 		_res: Response,
 		@Param('sessionId') sessionId: ChatSessionId,
 	): Promise<ChatHubConversationResponse> {
-		return await this.chatService.getConversation(req.user.id, sessionId);
+		const projectId = await this.getPersonalProjectId(req.user.id);
+		return await this.chatService.getConversation(req.user.id, sessionId, projectId);
 	}
 
 	@GlobalScope('chatHub:message')
@@ -79,9 +103,11 @@ export class ChatHubController {
 		this.logger.debug(`Chat send request received: ${JSON.stringify(payload)}`);
 
 		try {
+			const projectId = await this.getPersonalProjectId(req.user.id);
 			await this.chatService.sendHumanMessage(res, req.user, {
 				...payload,
 				userId: req.user.id,
+				projectId,
 			});
 		} catch (error: unknown) {
 			assert(error instanceof Error);
@@ -123,11 +149,13 @@ export class ChatHubController {
 		this.logger.debug(`Chat edit request received: ${JSON.stringify(payload)}`);
 
 		try {
+			const projectId = await this.getPersonalProjectId(req.user.id);
 			await this.chatService.editMessage(res, req.user, {
 				...payload,
 				sessionId,
 				editId,
 				userId: req.user.id,
+				projectId,
 			});
 		} catch (error: unknown) {
 			assert(error instanceof Error);
@@ -169,11 +197,13 @@ export class ChatHubController {
 		this.logger.debug(`Chat retry request received: ${JSON.stringify(payload)}`);
 
 		try {
+			const projectId = await this.getPersonalProjectId(req.user.id);
 			await this.chatService.regenerateAIMessage(res, req.user, {
 				...payload,
 				sessionId,
 				retryId,
 				userId: req.user.id,
+				projectId,
 			});
 		} catch (error: unknown) {
 			assert(error instanceof Error);
@@ -213,7 +243,8 @@ export class ChatHubController {
 	) {
 		this.logger.debug(`Chat stop request received: ${JSON.stringify({ sessionId, messageId })}`);
 
-		await this.chatService.stopGeneration(req.user, sessionId, messageId);
+		const projectId = await this.getPersonalProjectId(req.user.id);
+		await this.chatService.stopGeneration(req.user, sessionId, messageId, projectId);
 		res.status(204).send();
 	}
 
@@ -225,11 +256,12 @@ export class ChatHubController {
 		@Param('sessionId') sessionId: ChatSessionId,
 		@Body payload: ChatHubUpdateConversationRequest,
 	): Promise<ChatHubConversationResponse> {
+		const projectId = await this.getPersonalProjectId(req.user.id);
 		if (Object.keys(payload).length > 0) {
-			await this.chatService.updateSession(req.user, sessionId, payload);
+			await this.chatService.updateSession(req.user, sessionId, payload, projectId);
 		}
 
-		return await this.chatService.getConversation(req.user.id, sessionId);
+		return await this.chatService.getConversation(req.user.id, sessionId, projectId);
 	}
 
 	@Delete('/conversations/:sessionId')
@@ -239,7 +271,8 @@ export class ChatHubController {
 		res: Response,
 		@Param('sessionId') sessionId: ChatSessionId,
 	): Promise<void> {
-		await this.chatService.deleteSession(req.user.id, sessionId);
+		const projectId = await this.getPersonalProjectId(req.user.id);
+		await this.chatService.deleteSession(req.user.id, sessionId, projectId);
 
 		res.status(204).send();
 	}
@@ -247,13 +280,15 @@ export class ChatHubController {
 	@Get('/agents')
 	@GlobalScope('chatHubAgent:list')
 	async getAgents(req: AuthenticatedRequest) {
-		return await this.chatAgentService.getAgentsByUserId(req.user.id);
+		const projectId = await this.getPersonalProjectId(req.user.id);
+		return await this.chatAgentService.getAgentsByUserId(req.user.id, projectId);
 	}
 
 	@Get('/agents/:agentId')
 	@GlobalScope('chatHubAgent:read')
 	async getAgent(req: AuthenticatedRequest, _res: Response, @Param('agentId') agentId: string) {
-		return await this.chatAgentService.getAgentById(agentId, req.user.id);
+		const projectId = await this.getPersonalProjectId(req.user.id);
+		return await this.chatAgentService.getAgentById(agentId, req.user.id, projectId);
 	}
 
 	@Post('/agents')
@@ -263,7 +298,8 @@ export class ChatHubController {
 		_res: Response,
 		@Body payload: ChatHubCreateAgentRequest,
 	) {
-		return await this.chatAgentService.createAgent(req.user, payload);
+		const projectId = await this.getPersonalProjectId(req.user.id);
+		return await this.chatAgentService.createAgent(req.user, payload, projectId);
 	}
 
 	@Post('/agents/:agentId')
@@ -274,7 +310,8 @@ export class ChatHubController {
 		@Param('agentId') agentId: string,
 		@Body payload: ChatHubUpdateAgentRequest,
 	) {
-		return await this.chatAgentService.updateAgent(agentId, req.user, payload);
+		const projectId = await this.getPersonalProjectId(req.user.id);
+		return await this.chatAgentService.updateAgent(agentId, req.user, payload, projectId);
 	}
 
 	@Delete('/agents/:agentId')
@@ -284,7 +321,8 @@ export class ChatHubController {
 		res: Response,
 		@Param('agentId') agentId: string,
 	): Promise<void> {
-		await this.chatAgentService.deleteAgent(agentId, req.user.id);
+		const projectId = await this.getPersonalProjectId(req.user.id);
+		await this.chatAgentService.deleteAgent(agentId, req.user.id, projectId);
 
 		res.status(204).send();
 	}

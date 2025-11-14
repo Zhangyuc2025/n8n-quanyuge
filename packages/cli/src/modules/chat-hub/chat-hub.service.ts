@@ -70,7 +70,7 @@ export class ChatHubService {
 		private readonly chatHubWorkflowService: ChatHubWorkflowService,
 	) {}
 
-	async getModels(user: User): Promise<ChatModelsResponse> {
+	async getModels(user: User, projectId: string): Promise<ChatModelsResponse> {
 		// TODO: Implement pay-per-use authentication for LLM providers
 		const providers = chatHubProviderSchema.options;
 
@@ -78,7 +78,7 @@ export class ChatHubService {
 			providers.map<Promise<[ChatHubProvider, ChatModelsResponse[ChatHubProvider]]>>(
 				async (provider: ChatHubProvider) => {
 					try {
-						return [provider, await this.fetchModelsForProvider(user, provider)];
+						return [provider, await this.fetchModelsForProvider(user, provider, projectId)];
 					} catch {
 						return [
 							provider,
@@ -101,6 +101,7 @@ export class ChatHubService {
 	private async fetchModelsForProvider(
 		user: User,
 		provider: ChatHubProvider,
+		projectId: string,
 	): Promise<ChatModelsResponse[ChatHubProvider]> {
 		switch (provider) {
 			case 'openai':
@@ -115,7 +116,7 @@ export class ChatHubService {
 			case 'n8n':
 				return await this.fetchAgentWorkflowsAsModels(user);
 			case 'custom-agent':
-				return await this.chatHubAgentService.getAgentsByUserIdAsModels(user.id);
+				return await this.chatHubAgentService.getAgentsByUserIdAsModels(user.id, projectId);
 		}
 	}
 
@@ -201,15 +202,26 @@ export class ChatHubService {
 		return undefined;
 	}
 
-	async sendHumanMessage(res: Response, user: User, payload: HumanMessagePayload) {
-		const { sessionId, messageId, message, model, previousMessageId } = payload;
+	async sendHumanMessage(
+		res: Response,
+		user: User,
+		payload: HumanMessagePayload & { projectId: string },
+	) {
+		const { sessionId, messageId, message, model, previousMessageId, projectId } = payload;
 		const { provider } = model;
 
 		const selectedModel = this.getModelWithCredentials(model);
 
 		const { executionData, workflowData } = await this.messageRepository.manager.transaction(
 			async (trx) => {
-				const session = await this.getChatSession(user, sessionId, selectedModel, true, trx);
+				const session = await this.getChatSession(
+					user,
+					sessionId,
+					selectedModel,
+					true,
+					trx,
+					projectId,
+				);
 				await this.ensurePreviousMessage(previousMessageId, sessionId, trx);
 				const messages = Object.fromEntries((session.messages ?? []).map((m) => [m.id, m]));
 				const history = this.buildMessageHistory(messages, previousMessageId);
@@ -235,6 +247,7 @@ export class ChatHubService {
 						history,
 						message,
 						trx,
+						projectId,
 					);
 				}
 
@@ -270,14 +283,25 @@ export class ChatHubService {
 		}
 	}
 
-	async editMessage(res: Response, user: User, payload: EditMessagePayload) {
-		const { sessionId, editId, messageId, message, model } = payload;
+	async editMessage(
+		res: Response,
+		user: User,
+		payload: EditMessagePayload & { projectId: string },
+	) {
+		const { sessionId, editId, messageId, message, model, projectId } = payload;
 		const { provider } = model;
 
 		const selectedModel = this.getModelWithCredentials(model);
 
 		const workflow = await this.messageRepository.manager.transaction(async (trx) => {
-			const session = await this.getChatSession(user, sessionId, selectedModel, true, trx);
+			const session = await this.getChatSession(
+				user,
+				sessionId,
+				selectedModel,
+				true,
+				trx,
+				projectId,
+			);
 			const messageToEdit = await this.getChatMessage(session.id, editId, [], trx);
 
 			if (!['ai', 'human'].includes(messageToEdit.type)) {
@@ -318,6 +342,7 @@ export class ChatHubService {
 						history,
 						message,
 						trx,
+						projectId,
 					);
 				}
 
@@ -352,8 +377,12 @@ export class ChatHubService {
 		);
 	}
 
-	async regenerateAIMessage(res: Response, user: User, payload: RegenerateMessagePayload) {
-		const { sessionId, retryId, model } = payload;
+	async regenerateAIMessage(
+		res: Response,
+		user: User,
+		payload: RegenerateMessagePayload & { projectId: string },
+	) {
+		const { sessionId, retryId, model, projectId } = payload;
 		const { provider } = model;
 
 		const selectedModel = this.getModelWithCredentials(model);
@@ -363,7 +392,7 @@ export class ChatHubService {
 			retryOfMessageId,
 			previousMessageId,
 		} = await this.messageRepository.manager.transaction(async (trx) => {
-			const session = await this.getChatSession(user, sessionId, undefined, false, trx);
+			const session = await this.getChatSession(user, sessionId, undefined, false, trx, projectId);
 			const messageToRetry = await this.getChatMessage(session.id, retryId, [], trx);
 
 			if (messageToRetry.type !== 'ai') {
@@ -406,6 +435,7 @@ export class ChatHubService {
 					history,
 					message,
 					trx,
+					projectId,
 				);
 			} else {
 				workflow = await this.prepareBaseChatWorkflow(
@@ -471,8 +501,9 @@ export class ChatHubService {
 		history: ChatHubMessage[],
 		message: string,
 		trx: EntityManager,
+		projectId: string,
 	) {
-		const agent = await this.chatHubAgentService.getAgentById(agentId, user.id);
+		const agent = await this.chatHubAgentService.getAgentById(agentId, user.id, projectId);
 
 		if (!agent) {
 			throw new BadRequestError('Agent not found');
@@ -607,8 +638,20 @@ export class ChatHubService {
 		}
 	}
 
-	async stopGeneration(user: User, sessionId: ChatSessionId, messageId: ChatMessageId) {
-		const session = await this.getChatSession(user, sessionId);
+	async stopGeneration(
+		user: User,
+		sessionId: ChatSessionId,
+		messageId: ChatMessageId,
+		projectId: string,
+	) {
+		const session = await this.getChatSession(
+			user,
+			sessionId,
+			undefined,
+			false,
+			undefined,
+			projectId,
+		);
 		const message = await this.getChatMessage(session.id, messageId, [
 			'execution',
 			'execution.workflow',
@@ -971,8 +1014,14 @@ export class ChatHubService {
 		selectedModel?: ModelWithCredentials,
 		initialize: boolean = false,
 		trx?: EntityManager,
+		projectId?: string,
 	) {
-		const existing = await this.sessionRepository.getOneById(sessionId, user.id, trx);
+		const existing = await this.sessionRepository.getOneById(
+			sessionId,
+			user.id,
+			projectId ?? '',
+			trx,
+		);
 		if (existing) {
 			return existing;
 		} else if (!initialize) {
@@ -983,7 +1032,11 @@ export class ChatHubService {
 
 		if (selectedModel?.provider === 'custom-agent') {
 			// Find the agent to get its name
-			const agent = await this.chatHubAgentService.getAgentById(selectedModel.agentId!, user.id);
+			const agent = await this.chatHubAgentService.getAgentById(
+				selectedModel.agentId!,
+				user.id,
+				projectId ?? '',
+			);
 			if (!agent) {
 				throw new BadRequestError('Agent not found for chat session initialization');
 			}
@@ -1020,6 +1073,7 @@ export class ChatHubService {
 			{
 				id: sessionId,
 				ownerId: user.id,
+				projectId: projectId ?? '',
 				title: 'New Chat',
 				agentName,
 				...selectedModel,
@@ -1044,8 +1098,8 @@ export class ChatHubService {
 	/**
 	 * Get all conversations for a user
 	 */
-	async getConversations(userId: string): Promise<ChatHubConversationsResponse> {
-		const sessions = await this.sessionRepository.getManyByUserId(userId);
+	async getConversations(userId: string, projectId: string): Promise<ChatHubConversationsResponse> {
+		const sessions = await this.sessionRepository.getManyByUserId(userId, projectId);
 
 		return sessions.map((session) => ({
 			id: session.id,
@@ -1065,8 +1119,12 @@ export class ChatHubService {
 	/**
 	 * Get a single conversation with messages and ready to render timeline of latest messages
 	 * */
-	async getConversation(userId: string, sessionId: string): Promise<ChatHubConversationResponse> {
-		const session = await this.sessionRepository.getOneById(sessionId, userId);
+	async getConversation(
+		userId: string,
+		sessionId: string,
+		projectId: string,
+	): Promise<ChatHubConversationResponse> {
+		const session = await this.sessionRepository.getOneById(sessionId, userId, projectId);
 		if (!session) {
 			throw new NotFoundError('Chat session not found');
 		}
@@ -1147,8 +1205,13 @@ export class ChatHubService {
 	/**
 	 * Updates the title of a session
 	 */
-	async updateSessionTitle(userId: string, sessionId: ChatSessionId, title: string) {
-		const session = await this.sessionRepository.getOneById(sessionId, userId);
+	async updateSessionTitle(
+		userId: string,
+		sessionId: ChatSessionId,
+		title: string,
+		projectId: string,
+	) {
+		const session = await this.sessionRepository.getOneById(sessionId, userId, projectId);
 
 		if (!session) {
 			throw new NotFoundError('Session not found');
@@ -1171,8 +1234,9 @@ export class ChatHubService {
 			agentId?: string | null;
 			agentName?: string | null;
 		},
+		projectId: string,
 	) {
-		const session = await this.sessionRepository.getOneById(sessionId, user.id);
+		const session = await this.sessionRepository.getOneById(sessionId, user.id, projectId);
 
 		if (!session) {
 			throw new NotFoundError('Session not found');
@@ -1208,7 +1272,11 @@ export class ChatHubService {
 
 		if (updates.agentId) {
 			// Validate the agent exists and is accessible
-			const agent = await this.chatHubAgentService.getAgentById(updates.agentId, user.id);
+			const agent = await this.chatHubAgentService.getAgentById(
+				updates.agentId,
+				user.id,
+				projectId,
+			);
 
 			if (!agent) {
 				throw new BadRequestError('Agent not found');
@@ -1237,8 +1305,8 @@ export class ChatHubService {
 	/**
 	 * Deletes a session
 	 */
-	async deleteSession(userId: string, sessionId: ChatSessionId) {
-		const session = await this.sessionRepository.getOneById(sessionId, userId);
+	async deleteSession(userId: string, sessionId: ChatSessionId, projectId: string) {
+		const session = await this.sessionRepository.getOneById(sessionId, userId, projectId);
 
 		if (!session) {
 			throw new NotFoundError('Session not found');

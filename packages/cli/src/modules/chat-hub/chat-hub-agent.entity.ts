@@ -1,6 +1,13 @@
 import { ChatHubProvider } from '@n8n/api-types';
-import { WithTimestamps, User, PlatformAIProvider } from '@n8n/db';
-import { Column, Entity, ManyToOne, JoinColumn, PrimaryGeneratedColumn } from '@n8n/typeorm';
+import { WithTimestamps, User, PlatformAIProvider, Project } from '@n8n/db';
+import {
+	Column,
+	Entity,
+	ManyToOne,
+	JoinColumn,
+	PrimaryGeneratedColumn,
+	type Relation,
+} from '@n8n/typeorm';
 
 @Entity({ name: 'chat_hub_agents' })
 export class ChatHubAgent extends WithTimestamps {
@@ -37,6 +44,20 @@ export class ChatHubAgent extends WithTimestamps {
 	@ManyToOne('User', { onDelete: 'CASCADE' })
 	@JoinColumn({ name: 'ownerId' })
 	owner?: User;
+
+	/**
+	 * Project ID (workspace) that owns this chat agent.
+	 * Required for multi-tenant isolation.
+	 */
+	@Column({ type: String, name: 'projectId' })
+	projectId: string;
+
+	/**
+	 * Project (workspace) that owns this chat agent.
+	 */
+	@ManyToOne('Project', { onDelete: 'CASCADE' })
+	@JoinColumn({ name: 'projectId' })
+	project?: Relation<Project>;
 
 	/*
 	 * Enum value of the LLM provider to use, e.g. 'openai', 'anthropic', 'google', 'n8n' (if applicable).

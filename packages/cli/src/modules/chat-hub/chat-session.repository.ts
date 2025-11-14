@@ -56,20 +56,20 @@ export class ChatHubSessionRepository extends Repository<ChatHubSession> {
 		});
 	}
 
-	async getManyByUserId(userId: string) {
+	async getManyByUserId(userId: string, projectId: string) {
 		return await this.find({
-			where: { ownerId: userId },
+			where: { ownerId: userId, projectId },
 			order: { lastMessageAt: 'DESC', id: 'ASC' },
 		});
 	}
 
-	async getOneById(id: string, userId: string, trx?: EntityManager) {
+	async getOneById(id: string, userId: string, projectId: string, trx?: EntityManager) {
 		return await withTransaction(
 			this.manager,
 			trx,
 			async (em) => {
 				return await em.findOne(ChatHubSession, {
-					where: { id, ownerId: userId },
+					where: { id, ownerId: userId, projectId },
 					relations: ['messages'],
 				});
 			},

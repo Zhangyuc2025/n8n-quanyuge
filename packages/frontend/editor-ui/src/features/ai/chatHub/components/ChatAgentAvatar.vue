@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type ChatModelDto, PROVIDER_CREDENTIAL_TYPE_MAP } from '@n8n/api-types';
+import { type ChatModelDto } from '@n8n/api-types';
 import { N8nAvatar, N8nIcon, N8nTooltip } from '@n8n/design-system';
 
 defineProps<{

@@ -45,6 +45,7 @@ export type PublicFrontendSettings = Pick<
 	| 'oauthCallbackUrls'
 	| 'previewMode'
 	| 'telemetry'
+	| 'activeModules'
 > & {
 	enterprise: PublicEnterpriseSettings;
 };
@@ -448,6 +449,7 @@ export class FrontendService {
 			previewMode,
 			telemetry,
 			enterprise,
+			activeModules,
 		} = this.getSettings();
 
 		const { saml, ldap, oidc } = enterprise;
@@ -466,6 +468,7 @@ export class FrontendService {
 			previewMode,
 			telemetry,
 			enterprise: { saml, ldap, oidc },
+			activeModules,
 		};
 	}
 

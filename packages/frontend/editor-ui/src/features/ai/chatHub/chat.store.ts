@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia';
 import { CHAT_STORE } from './constants';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { v4 as uuidv4 } from 'uuid';
+import { useProjectsStore } from '@/features/collaboration/projects/projects.store';
 import {
 	fetchChatModelsApi,
 	sendMessageApi,
@@ -48,12 +49,30 @@ import { createAiMessageFromStreamingState, flattenModel } from './chat.utils';
 
 export const useChatStore = defineStore(CHAT_STORE, () => {
 	const rootStore = useRootStore();
+	const projectsStore = useProjectsStore();
 	const agents = ref<ChatModelsResponse>();
 	const sessions = ref<ChatHubSessionDto[]>();
 	const currentEditingAgent = ref<ChatHubAgentDto | null>(null);
 	const streaming = ref<ChatStreamingState>();
 
 	const conversationsBySession = ref<Map<ChatSessionId, ChatConversation>>(new Map());
+
+	// Watch workspace changes to refresh sessions
+	const currentWorkspaceId = computed(() => projectsStore.currentWorkspaceId);
+	watch(currentWorkspaceId, async (newId, oldId) => {
+		// Only refresh if workspace actually changed (not initial load)
+		if (oldId && newId !== oldId) {
+			// Clear current data
+			sessions.value = undefined;
+			conversationsBySession.value.clear();
+			streaming.value = undefined;
+
+			// Fetch sessions for new workspace
+			if (newId) {
+				await fetchSessions();
+			}
+		}
+	});
 
 	const getConversation = (sessionId: ChatSessionId): ChatConversation | undefined =>
 		conversationsBySession.value.get(sessionId);
@@ -306,7 +325,6 @@ export const useChatStore = defineStore(CHAT_STORE, () => {
 				title: 'New Chat',
 				ownerId: '',
 				lastMessageAt: new Date().toISOString(),
-				credentialId: null,
 				agentName: null,
 				createdAt: new Date().toISOString(),
 				updatedAt: new Date().toISOString(),
@@ -621,7 +639,7 @@ export const useChatStore = defineStore(CHAT_STORE, () => {
 
 	async function createCustomAgent(
 		payload: ChatHubCreateAgentRequest,
-		credentials: CredentialsMap,
+		credentials?: CredentialsMap,
 	): Promise<ChatModelDto> {
 		const agent = await createAgentApi(rootStore.restApiContext, payload);
 		const agentModel = {
@@ -636,7 +654,8 @@ export const useChatStore = defineStore(CHAT_STORE, () => {
 		};
 		agents.value?.['custom-agent'].models.push(agentModel);
 
-		await fetchAgents(credentials);
+		// Note: SASA platform uses platformAiProvider instead of credentials
+		await fetchAgents(credentials || {});
 
 		return agentModel;
 	}
@@ -644,7 +663,7 @@ export const useChatStore = defineStore(CHAT_STORE, () => {
 	async function updateCustomAgent(
 		agentId: string,
 		payload: ChatHubUpdateAgentRequest,
-		credentials: CredentialsMap,
+		credentials?: CredentialsMap,
 	): Promise<ChatHubAgentDto> {
 		const agent = await updateAgentApi(rootStore.restApiContext, agentId, payload);
 
@@ -655,7 +674,8 @@ export const useChatStore = defineStore(CHAT_STORE, () => {
 			);
 		}
 
-		await fetchAgents(credentials);
+		// Note: SASA platform uses platformAiProvider instead of credentials
+		await fetchAgents(credentials || {});
 
 		return agent;
 	}

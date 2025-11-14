@@ -45,7 +45,7 @@ describe('chatHub', () => {
 
 	describe('getConversations', () => {
 		it('should list empty conversations', async () => {
-			const conversations = await chatHubService.getConversations(member.id);
+			const conversations = await chatHubService.getConversations(member.id, member.id);
 			expect(conversations).toBeDefined();
 			expect(conversations).toHaveLength(0);
 		});
@@ -54,29 +54,33 @@ describe('chatHub', () => {
 			const session1 = await sessionsRepository.createChatSession({
 				id: crypto.randomUUID(),
 				ownerId: member.id,
+				projectId: member.id,
 				title: 'session 1',
 				lastMessageAt: new Date('2025-01-03T00:00:00Z'),
 			});
 			const session2 = await sessionsRepository.createChatSession({
 				id: crypto.randomUUID(),
 				ownerId: member.id,
+				projectId: member.id,
 				title: 'session 2',
 				lastMessageAt: new Date('2025-01-02T00:00:00Z'),
 			});
 			const session3 = await sessionsRepository.createChatSession({
 				id: crypto.randomUUID(),
 				ownerId: member.id,
+				projectId: member.id,
 				title: 'session 3',
 				lastMessageAt: new Date('2025-01-01T00:00:00Z'),
 			});
 			await sessionsRepository.createChatSession({
 				id: crypto.randomUUID(),
 				ownerId: admin.id,
+				projectId: admin.id,
 				title: 'admin session',
 				lastMessageAt: new Date('2025-01-01T00:00:00Z'),
 			});
 
-			const conversations = await chatHubService.getConversations(member.id);
+			const conversations = await chatHubService.getConversations(member.id, member.id);
 			expect(conversations).toHaveLength(3);
 			expect(conversations[0].id).toBe(session1.id);
 			expect(conversations[1].id).toBe(session2.id);
@@ -87,7 +91,11 @@ describe('chatHub', () => {
 	describe('getConversation', () => {
 		it('should fail to get non-existing conversation', async () => {
 			await expect(
-				chatHubService.getConversation(member.id, '00000000-4040-4040-4040-000000000000'),
+				chatHubService.getConversation(
+					member.id,
+					'00000000-4040-4040-4040-000000000000',
+					member.id,
+				),
 			).rejects.toThrow('Chat session not found');
 		});
 
@@ -95,22 +103,24 @@ describe('chatHub', () => {
 			const session = await sessionsRepository.createChatSession({
 				id: crypto.randomUUID(),
 				ownerId: admin.id,
+				projectId: admin.id,
 				title: 'admin session',
 				lastMessageAt: new Date('2025-01-01T00:00:00Z'),
 			});
-			await expect(chatHubService.getConversation(member.id, session.id)).rejects.toThrow(
-				'Chat session not found',
-			);
+			await expect(
+				chatHubService.getConversation(member.id, session.id, member.id),
+			).rejects.toThrow('Chat session not found');
 		});
 
 		it('should get conversation with no messages', async () => {
 			const session = await sessionsRepository.createChatSession({
 				id: crypto.randomUUID(),
 				ownerId: member.id,
+				projectId: member.id,
 				title: 'session 1',
 				lastMessageAt: new Date('2025-01-03T00:00:00Z'),
 			});
-			const conversation = await chatHubService.getConversation(member.id, session.id);
+			const conversation = await chatHubService.getConversation(member.id, session.id, member.id);
 			expect(conversation).toBeDefined();
 			expect(conversation.session.id).toBe(session.id);
 			expect(conversation.conversation.messages).toEqual({});
@@ -166,7 +176,7 @@ describe('chatHub', () => {
 				createdAt: new Date('2025-01-03T00:15:00Z'),
 			});
 
-			const response = await chatHubService.getConversation(member.id, session.id);
+			const response = await chatHubService.getConversation(member.id, session.id, member.id);
 			expect(response.session.id).toBe(session.id);
 			expect(response).toBeDefined();
 
@@ -257,7 +267,7 @@ describe('chatHub', () => {
 				createdAt: new Date('2025-01-03T00:25:00Z'),
 			});
 
-			const response = await chatHubService.getConversation(member.id, session.id);
+			const response = await chatHubService.getConversation(member.id, session.id, member.id);
 			expect(response.session.id).toBe(session.id);
 			expect(response).toBeDefined();
 
@@ -326,7 +336,7 @@ describe('chatHub', () => {
 				createdAt: new Date('2025-01-03T00:15:00Z'),
 			});
 
-			const response = await chatHubService.getConversation(member.id, session.id);
+			const response = await chatHubService.getConversation(member.id, session.id, member.id);
 			expect(response.session.id).toBe(session.id);
 			expect(response).toBeDefined();
 
@@ -400,7 +410,7 @@ describe('chatHub', () => {
 				createdAt: new Date('2025-01-03T00:20:00Z'),
 			});
 
-			const response = await chatHubService.getConversation(member.id, session.id);
+			const response = await chatHubService.getConversation(member.id, session.id, member.id);
 			expect(response).toBeDefined();
 			expect(response.session.id).toBe(session.id);
 
@@ -534,7 +544,7 @@ describe('chatHub', () => {
 				createdAt: new Date('2025-01-03T00:45:00Z'),
 			});
 
-			const response = await chatHubService.getConversation(member.id, session.id);
+			const response = await chatHubService.getConversation(member.id, session.id, member.id);
 			expect(response).toBeDefined();
 			expect(response.session.id).toBe(session.id);
 
