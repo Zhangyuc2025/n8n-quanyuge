@@ -1,5 +1,6 @@
 # 日志文件
 *.log
+*.stylelintcache
 
 # 构建产物
 dist/

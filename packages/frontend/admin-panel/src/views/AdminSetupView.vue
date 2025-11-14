@@ -22,6 +22,15 @@
 					/>
 				</a-form-item>
 
+				<a-form-item label="管理员姓名" name="name">
+					<a-input
+						v-model:value="formData.name"
+						size="large"
+						placeholder="请输入姓名"
+						:disabled="loading"
+					/>
+				</a-form-item>
+
 				<a-form-item label="管理员密码" name="password">
 					<a-input-password
 						v-model:value="formData.password"
@@ -61,6 +70,7 @@ const loading = ref(false);
 
 const formData = ref({
 	email: '',
+	name: '',
 	password: '',
 	confirmPassword: '',
 });
@@ -69,6 +79,10 @@ const rules: Record<string, Rule[]> = {
 	email: [
 		{ required: true, message: '请输入管理员邮箱', trigger: 'blur' },
 		{ type: 'email', message: '请输入有效的邮箱地址', trigger: 'blur' },
+	],
+	name: [
+		{ required: true, message: '请输入管理员姓名', trigger: 'blur' },
+		{ min: 1, message: '姓名不能为空', trigger: 'blur' },
 	],
 	password: [
 		{ required: true, message: '请输入密码', trigger: 'blur' },
@@ -91,7 +105,7 @@ const rules: Record<string, Rule[]> = {
 async function handleSubmit() {
 	loading.value = true;
 	try {
-		const response = await fetch('/rest/admin/setup', {
+		const response = await fetch('/rest/platform-admin/setup', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -99,6 +113,7 @@ async function handleSubmit() {
 			credentials: 'include',
 			body: JSON.stringify({
 				email: formData.value.email,
+				name: formData.value.name,
 				password: formData.value.password,
 			}),
 		});

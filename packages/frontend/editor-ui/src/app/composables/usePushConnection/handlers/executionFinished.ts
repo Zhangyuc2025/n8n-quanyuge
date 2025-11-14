@@ -8,9 +8,7 @@ import { useWorkflowHelpers } from '@/app/composables/useWorkflowHelpers';
 import { useWorkflowSaving } from '@/app/composables/useWorkflowSaving';
 import { WORKFLOW_SETTINGS_MODAL_KEY } from '@/app/constants';
 import { codeNodeEditorEventBus, globalLinkActionsEventBus } from '@/app/event-bus';
-import { useAITemplatesStarterCollectionStore } from '@/experiments/aiTemplatesStarterCollection/stores/aiTemplatesStarterCollection.store';
 import { useReadyToRunWorkflowsStore } from '@/experiments/readyToRunWorkflows/stores/readyToRunWorkflows.store';
-import { useReadyToRunWorkflowsV2Store } from '@/experiments/readyToRunWorkflowsV2/stores/readyToRunWorkflowsV2.store';
 import { useNodeTypesStore } from '@/app/stores/nodeTypes.store';
 import { useSettingsStore } from '@/app/stores/settings.store';
 import { useUIStore } from '@/app/stores/ui.store';
@@ -54,9 +52,7 @@ export async function executionFinished(
 ) {
 	const workflowsStore = useWorkflowsStore();
 	const uiStore = useUIStore();
-	const aiTemplatesStarterCollectionStore = useAITemplatesStarterCollectionStore();
 	const readyToRunWorkflowsStore = useReadyToRunWorkflowsStore();
-	const readyToRunWorkflowsV2Store = useReadyToRunWorkflowsV2Store();
 
 	options.workflowState.executingNode.lastAddedExecutingNode = null;
 
@@ -78,24 +74,8 @@ export async function executionFinished(
 			telemetry.track('User executed test AI workflow', {
 				status: data.status,
 			});
-		} else if (templateId.startsWith('035_template_onboarding')) {
-			aiTemplatesStarterCollectionStore.trackUserExecutedWorkflow(
-				templateId.split('-').pop() ?? '',
-				data.status,
-			);
 		} else if (templateId.startsWith('37_onboarding_experiments_batch_aug11')) {
 			readyToRunWorkflowsStore.trackExecuteWorkflow(templateId.split('-').pop() ?? '', data.status);
-		} else if (
-			templateId === 'ready-to-run-ai-workflow-v1' ||
-			templateId === 'ready-to-run-ai-workflow-v2' ||
-			templateId === 'ready-to-run-ai-workflow-v3' ||
-			templateId === 'ready-to-run-ai-workflow-v4'
-		) {
-			if (data.status === 'success') {
-				readyToRunWorkflowsV2Store.trackExecuteAiWorkflowSuccess();
-			} else {
-				readyToRunWorkflowsV2Store.trackExecuteAiWorkflow(data.status);
-			}
 		} else if (isPrebuiltAgentTemplateId(templateId)) {
 			telemetry.track('User executed pre-built Agent', {
 				template: templateId,

@@ -50,6 +50,43 @@ export function needsAgentInput(node: Pick<INodeUi, 'parameters' | 'type'>) {
 }
 
 /**
+ * Filters parameter options based on displayOptions
+ */
+export function getParameterDisplayableOptions(
+	options: INodePropertyOptions[],
+	node: INodeUi | null,
+): INodePropertyOptions[] {
+	if (!node) return options;
+
+	const nodeType = node?.type ? useNodeTypesStore().getNodeType(node.type, node.typeVersion) : null;
+
+	if (!nodeType || !Array.isArray(nodeType.properties)) return options;
+
+	const nodeParameters =
+		NodeHelpers.getNodeParameters(
+			nodeType.properties,
+			node.parameters,
+			true,
+			false,
+			node,
+			nodeType,
+		) ?? node.parameters;
+
+	return options.filter((option) => {
+		if (!option.displayOptions && !option.disabledOptions) return true;
+
+		return NodeHelpers.displayParameter(
+			nodeParameters,
+			option,
+			node,
+			nodeType,
+			undefined,
+			'displayOptions',
+		);
+	});
+}
+
+/**
  * Gets the options with from_ai if they exist
  */
 export function getNodeParametersFromAIOptions(

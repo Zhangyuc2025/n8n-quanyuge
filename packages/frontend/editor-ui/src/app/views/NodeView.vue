@@ -133,7 +133,6 @@ import { useLogsStore } from '@/app/stores/logs.store';
 import { canvasEventBus } from '@/features/workflows/canvas/canvas.eventBus';
 import CanvasChatButton from '@/features/workflows/canvas/components/elements/buttons/CanvasChatButton.vue';
 import { useFocusPanelStore } from '@/app/stores/focusPanel.store';
-import { useAITemplatesStarterCollectionStore } from '@/experiments/aiTemplatesStarterCollection/stores/aiTemplatesStarterCollection.store';
 import { useReadyToRunWorkflowsStore } from '@/experiments/readyToRunWorkflows/stores/readyToRunWorkflows.store';
 import { useKeybindings } from '@/app/composables/useKeybindings';
 import { type ContextMenuAction } from '@/features/shared/contextMenu/composables/useContextMenuItems';
@@ -198,7 +197,6 @@ const builderStore = useBuilderStore();
 
 const agentRequestStore = useAgentRequestStore();
 const logsStore = useLogsStore();
-const aiTemplatesStarterCollectionStore = useAITemplatesStarterCollectionStore();
 const readyToRunWorkflowsStore = useReadyToRunWorkflowsStore();
 const experimentalNdvStore = useExperimentalNdvStore();
 
@@ -468,12 +466,6 @@ async function initializeWorkspaceForExistingWorkflow(id: string) {
 
 		if (workflowData.meta?.onboardingId) {
 			trackOpenWorkflowFromOnboardingTemplate();
-		}
-
-		if (workflowData.meta?.templateId?.startsWith('035_template_onboarding')) {
-			aiTemplatesStarterCollectionStore.trackUserOpenedWorkflow(
-				workflowData.meta.templateId.split('-').pop() ?? '',
-			);
 		}
 
 		if (workflowData.meta?.templateId?.startsWith('37_onboarding_experiments_batch_aug11')) {
