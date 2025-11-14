@@ -1,3 +1,0 @@
- ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command "build:frontend" not found
-
-Did you mean "pnpm build:n8n"?

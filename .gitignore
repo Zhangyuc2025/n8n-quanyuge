@@ -1,46 +1,42 @@
-node_modules
-.DS_Store
-.tmp
-tmp
-dist
-coverage
-npm-debug.log*
-yarn.lock
-google-generated-credentials.json
-_START_PACKAGE
+# 日志文件
+*.log
+
+# 构建产物
+dist/
+build/
+*.tsbuildinfo
+
+# 依赖和缓存目录
+node_modules/
+.turbo/
+.cache/
+.pnpm-store/
+
+# 环境变量
 .env
+.env.local
+.env.*.local
+
+# IDE
 .vscode/*
 !.vscode/extensions.json
-!.vscode/settings.default.json
-.idea
-nodelinter.config.json
-**/package-lock.json
-packages/**/.turbo
-.turbo
-*.tsbuildinfo
-.stylelintcache
-*.swp
-CHANGELOG-*.md
-*.mdx
-build-storybook.log
-*.junit.xml
-junit.xml
-test-results.json
-*.0x
-packages/testing/playwright/playwright-report
-packages/testing/playwright/test-results
-packages/testing/playwright/ms-playwright-cache
-test-results/
-compiled_app_output
-trivy_report*
-compiled
-packages/cli/src/modules/my-feature
-.secrets
-packages/testing/**/.cursor/rules/
-.venv
-.ruff_cache
-__pycache__
-packages/cli/THIRD_PARTY_LICENSES.md
-.coverage
-.nyc_output
-packages/cli/src/commands/export/outputs
+!.vscode/launch.json
+!.vscode/settings.json
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 测试覆盖率
+coverage/
+
+# 临时文件
+*.tmp
+*.temp
+.temp/
+
+# 重要：以下目录包含待改造的节点备份，不要删除！
+# nodes-base-backup/
+# nodes-langchain-backup/
+# node-research/

@@ -19,7 +19,6 @@ import type { IUser } from 'n8n-workflow';
 import { type IconOrEmoji, isIconOrEmoji } from '@n8n/design-system/components/N8nIconPicker/types';
 import { useUIStore } from '@/app/stores/ui.store';
 import { PROJECT_DATA_TABLES } from '@/features/core/dataTable/constants';
-import ReadyToRunV2Button from '@/experiments/readyToRunWorkflowsV2/components/ReadyToRunV2Button.vue';
 
 import { N8nButton, N8nHeading, N8nText, N8nTooltip } from '@n8n/design-system';
 import { VARIABLE_MODAL_KEY } from '@/features/settings/environments.ee/environments.constants';
@@ -438,7 +437,6 @@ const onSelect = (action: string) => {
 					:content="i18n.baseText('readOnlyEnv.cantAdd.any')"
 				>
 					<div style="display: flex; gap: var(--spacing--xs); align-items: center">
-						<ReadyToRunV2Button :has-active-callouts="props.hasActiveCallouts" />
 						<ProjectCreateResource
 							data-test-id="add-resource-buttons"
 							:actions="menu"

@@ -1,127 +1,119 @@
-![Banner image](https://user-images.githubusercontent.com/10284570/173569848-c624317f-42b1-45a6-ab09-f0ea3c247648.png)
+# SASA Platform - n8n 全域阁多租户 SaaS 平台
 
-# n8n - 技术团队的安全工作流自动化平台
+**SASA Platform** 是基于 n8n 深度定制的多租户 SaaS 工作流自动化平台，专为企业级应用场景设计。
 
-n8n 是一个工作流自动化平台，为技术团队提供代码级别的灵活性，同时具备无代码的速度。通过 400+ 集成、原生 AI 能力和企业级功能，n8n 让您能够构建强大的自动化，同时保持对数据和部署的完全控制。
+## 📋 项目概述
 
-![n8n.io - Screenshot](https://raw.githubusercontent.com/n8n-io/n8n/master/assets/n8n-screenshot-readme.png)
+- **名称**: n8n-quanyuge (SASA Platform)
+- **版本**: 1.119.0
+- **基础**: n8n 开源工作流自动化平台
+- **类型**: 多租户 SaaS 平台
+- **当前分支**: 20251102
 
----
+## 🎯 核心特性
 
-## ⚠️ 二次开发说明
+### 多租户架构
+- **租户隔离**: 完整的数据和资源隔离
+- **独立工作空间**: 每个租户拥有独立的工作空间和配置
+- **灵活计费**: 支持按租户、用户、执行次数等多维度计费
 
-**本仓库为 n8n 的二次开发版本，已移除所有许可证验证系统。**
+### 三层节点架构
+- **内置节点**: n8n 官方提供的 400+ 集成节点
+- **平台节点**: SASA 平台统一提供的自定义节点
+- **租户节点**: 各租户自定义开发的私有节点
 
-### 🎯 主要变更
+### 企业级功能
+- ✅ LDAP/SAML/OIDC SSO
+- ✅ 高级权限管理和项目角色
+- ✅ Git 集成 (Source Control)
+- ✅ 工作流历史和版本控制
+- ✅ 环境变量和外部密钥管理
+- ✅ AI Assistant 和 LangChain 集成
 
-- ✅ **移除许可证验证**: 完全删除所有许可证检查代码（而非绕过）
-- ✅ **企业功能解锁**: 所有企业版功能默认启用，无需许可证
-- ✅ **无网络验证**: 移除与 license.n8n.io 的所有通信
-- ✅ **无限制使用**: 移除团队项目数量、用户数量等配额限制
+## 🏗️ 技术架构
 
-### 📦 默认启用的企业功能
+### Monorepo 结构
 
-本版本包含以下开箱即用的企业功能：
+```
+n8n-quanyuge/
+├── packages/
+│   ├── @n8n/                    # 核心包
+│   │   ├── api-types/           # TypeScript 类型定义
+│   │   ├── backend-common/      # 后端通用功能
+│   │   ├── config/              # 配置管理
+│   │   ├── db/                  # 数据库层
+│   │   ├── nodes-langchain/     # AI/LangChain 节点
+│   │   └── ...
+│   ├── frontend/                # 前端包
+│   │   ├── editor-ui/           # Vue 3 主编辑器
+│   │   ├── admin-panel/         # 管理面板
+│   │   ├── @n8n/
+│   │   │   ├── design-system/   # UI 组件库
+│   │   │   ├── i18n/            # 国际化
+│   │   │   ├── stores/          # Pinia 状态管理
+│   │   │   └── ...
+│   ├── cli/                     # Express 服务器和 CLI
+│   ├── core/                    # 工作流执行引擎
+│   ├── workflow/                # 工作流核心逻辑
+│   └── nodes-base/              # 内置节点集合
+├── CLAUDE.md                    # AI 助手指令文档
+└── package.json                 # Monorepo 配置
+```
 
-**认证与安全**
-- LDAP 登录
-- SAML SSO
-- OIDC SSO
-- 高级权限
-- 项目角色
+### 技术栈
 
-**协作与管理**
-- 工作流分享
-- 无限团队项目
-- 环境变量
-- 外部密钥
+**后端**
+- Node.js (>= 22.16)
+- TypeScript
+- Express.js
+- TypeORM (支持 SQLite/PostgreSQL/MySQL)
+- 依赖注入 (@n8n/di)
 
-**开发工具**
-- Source Control (Git 集成)
-- 工作流历史
-- AI Assistant
-- 高级执行过滤
+**前端**
+- Vue 3 + Composition API
+- TypeScript
+- Vite
+- Pinia (状态管理)
+- Element Plus (UI 组件)
 
-**分析与监控**
-- Insights & Analytics
-- 日志流
-- Provisioning
+**构建工具**
+- pnpm (>= 10.18.3) - 包管理器
+- Turbo - Monorepo 构建编排
+- Biome + ESLint - 代码质量
+- Lefthook - Git 钩子
 
-**API 功能**
-- 完整 Public API
-- API 密钥管理
+## 🚀 快速开始
 
-### 📋 技术细节
-
-查看 [`二次开发进度说明.md`](./二次开发进度说明.md) 获取详细的技术文档，包括：
-- 完整的修改清单（151 个文件）
-- 架构变更说明
-- 与原版的差异对比
-- 构建和部署指南
-
-### ⚠️ 重要提醒
-
-1. **仅供内部使用** - 本版本仅用于团队内部，不得对外发布或商业使用
-2. **自行承担风险** - 使用前请确保符合 n8n 的开源许可证要求
-3. **安全加固** - 移除许可证检查后，请自行实现必要的访问控制
-4. **更新风险** - 与上游同步时需重新应用所有许可证移除的修改
-
-### 🚀 当前状态
-
-- ✅ **编译成功** - 所有预提交检查通过
-- ✅ **代码质量** - TypeScript、Biome、Prettier 检查通过
-- ✅ **可运行** - 生产代码可正常启动
-- 📝 **文档完整** - 包含详细的技术文档
-
----
-
-## 核心功能
-
-- **需要时编写代码**：编写 JavaScript/Python、添加 npm 包或使用可视化界面
-- **原生 AI 平台**：基于 LangChain 构建 AI 代理工作流，使用您自己的数据和模型
-- **完全控制**：企业级自托管部署，完全掌控您的数据
-- **企业就绪**：高级权限、SSO 和气隙部署 *(本版本已默认启用)*
-- **活跃社区**：400+ 集成和 900+ 可直接使用的[模板](https://n8n.io/workflows)
-
-## 快速开始
-
-### 使用 pnpm（推荐）
+### 环境要求
 
 ```bash
-# 安装依赖
+Node.js >= 22.16
+pnpm >= 10.18.3
+```
+
+### 安装依赖
+
+```bash
 pnpm install
-
-# 开发模式启动
-pnpm dev
-
-# 生产构建
-pnpm build
-
-# 启动生产服务
-pnpm start
 ```
 
-### 使用 Docker
+### 开发模式
 
 ```bash
-docker volume create n8n_data
-docker run -it --rm --name n8n -p 5678:5678 -v n8n_data:/home/node/.n8n docker.n8n.io/n8nio/n8n
+# 启动后端服务 (端口 5678)
+pnpm dev:be
+
+# 启动前端编辑器 (端口 8080)
+pnpm dev:fe:main
+
+# 启动管理面板 (端口 5679)
+pnpm dev:fe:admin
+
+# 或同时启动所有服务
+pnpm dev
 ```
 
-在 http://localhost:5678 访问编辑器
-
-## 资源
-
-- 📚 [官方文档](https://docs.n8n.io)
-- 🔧 [400+ 集成](https://n8n.io/integrations)
-- 💡 [示例工作流](https://n8n.io/workflows)
-- 🤖 [AI 和 LangChain 指南](https://docs.n8n.io/advanced-ai/)
-- 👥 [社区论坛](https://community.n8n.io)
-- 📖 [社区教程](https://community.n8n.io/c/tutorials/28)
-
-## 开发指南
-
-### 构建命令
+### 生产构建
 
 ```bash
 # 完整构建
@@ -137,51 +129,150 @@ pnpm lint
 pnpm format
 ```
 
-### 当前分支
+## 📦 核心包说明
 
-- **分支**: `20251102`
-- **最新提交**: 901b241429
-- **状态**: ✅ 所有检查通过
+### 后端核心
 
-## 二次开发维护
+- **`@n8n/cli`** - Express 服务器、REST API、CLI 命令
+- **`@n8n/core`** - 工作流执行引擎
+- **`@n8n/workflow`** - 工作流接口和类型
+- **`@n8n/db`** - 数据库访问层
+- **`@n8n/backend-common`** - 后端共享逻辑
 
-### 与上游同步
+### 前端核心
 
-如需从 n8n 官方仓库同步更新：
+- **`editor-ui`** - 主编辑器界面
+- **`admin-panel`** - 管理员面板
+- **`@n8n/design-system`** - UI 组件库
+- **`@n8n/stores`** - Pinia 状态管理
+- **`@n8n/i18n`** - 国际化支持
+
+### 节点相关
+
+- **`nodes-base`** - 内置节点 (400+ 集成)
+- **`@n8n/nodes-langchain`** - AI/LangChain 节点
+- **`@n8n/node-cli`** - 节点开发 CLI 工具
+
+## 🔧 开发指南
+
+### 添加新节点
 
 ```bash
-# 添加上游仓库（首次）
-git remote add upstream https://github.com/n8n-io/n8n.git
-
-# 获取上游更新
-git fetch upstream
-
-# 合并更新（需要重新应用许可证移除）
-git merge upstream/master
+# 使用 node-dev CLI 创建节点
+pnpm --filter=@n8n/node-cli run:node-dev new <节点名称>
 ```
 
-**注意**: 合并后需要重新检查并移除新引入的许可证相关代码。
+### 开发最佳实践
 
-### 文档维护
+1. **TypeScript** - 禁止使用 `any`，优先使用类型守卫
+2. **错误处理** - 使用 `UnexpectedError`、`OperationalError` 或 `UserError`
+3. **国际化** - 所有 UI 文本必须使用 i18n
+4. **CSS** - 使用 CSS 变量，避免硬编码像素值
+5. **测试** - 在包目录内运行测试 (`cd packages/xxx && pnpm test`)
 
-重大修改后请更新以下文档：
-- `二次开发进度说明.md` - 技术细节和进度追踪
-- `README.md` - 本文件，项目概述
-- Git 提交信息 - 清晰标注二次开发内容
+### 代码质量检查
 
-## 支持
+```bash
+# 在修改的包目录中运行
+cd packages/cli
+pnpm lint
+pnpm typecheck
 
-本二次开发版本由内部团队维护。
+# 仅在准备 PR 时运行全量检查
+pnpm lint
+pnpm typecheck
+```
 
-原版 n8n 的官方支持请访问 [n8n 官网](https://n8n.io)。
+## 🗄️ 数据库支持
 
-## n8n 是什么意思？
+- SQLite (开发环境推荐)
+- PostgreSQL (生产环境推荐)
+- MySQL/MariaDB
 
-**简短回答：** 它意思是"nodemation"，发音为 n-eight-n。
+## 🔐 安全性
 
-**详细回答：** "我经常被问到这个问题（比我预期的更频繁），所以我认为最好在这里回答。当我寻找一个好名字和免费域名时，我很快就意识到我能想到的所有好名字都已经被占用了。所以最后，我选择了 nodemation。'node-' 指的是它使用节点视图并且使用 Node.js，'-mation' 来自 'automation'，这是这个项目应该帮助实现的。然而，我不喜欢这个名字有多长，也无法想象每次在 CLI 中写这么长的名字。那时我就最终选择了 'n8n'。" - **Jan Oberhauser，创始人兼 CEO，n8n.io**
+- 多租户数据隔离
+- 基于角色的访问控制 (RBAC)
+- SSO 集成 (LDAP/SAML/OIDC)
+- 环境变量和密钥管理
+- 审计日志
+
+## 📊 部署选项
+
+### Docker 部署
+
+```bash
+docker volume create n8n_data
+docker run -it --rm \
+  --name n8n \
+  -p 5678:5678 \
+  -v n8n_data:/home/node/.n8n \
+  <your-registry>/n8n-quanyuge:latest
+```
+
+### 环境变量
+
+```bash
+# 数据库配置
+DB_TYPE=postgresdb
+DB_POSTGRESDB_HOST=localhost
+DB_POSTGRESDB_PORT=5432
+DB_POSTGRESDB_DATABASE=n8n
+DB_POSTGRESDB_USER=n8n
+DB_POSTGRESDB_PASSWORD=n8n
+
+# 服务器配置
+N8N_HOST=0.0.0.0
+N8N_PORT=5678
+N8N_PROTOCOL=https
+N8N_BASE_URL=https://your-domain.com
+
+# 加密密钥
+N8N_ENCRYPTION_KEY=<your-encryption-key>
+```
+
+## 🧪 测试
+
+```bash
+# 运行所有测试
+pnpm test
+
+# 运行特定包的测试
+cd packages/cli
+pnpm test
+
+# E2E 测试
+pnpm --filter=n8n-playwright test:local
+```
+
+## 📝 文档
+
+- **`CLAUDE.md`** - AI 助手指令和开发规范
+- **`packages/frontend/CLAUDE.md`** - 前端开发规范和 CSS 变量
+
+## 🛠️ 故障排除
+
+### 常见问题
+
+1. **构建失败** - 确保使用 pnpm >= 10.18.3
+2. **端口占用** - 修改 `N8N_PORT` 环境变量
+3. **类型错误** - 运行 `pnpm build` 后再运行 `pnpm typecheck`
+
+## 🤝 贡献
+
+内部团队开发，遵循以下规范：
+
+1. 使用 Linear 进行任务跟踪
+2. 创建功能分支 (从 Linear 获取分支名)
+3. 提交前运行 `pnpm lint` 和 `pnpm typecheck`
+4. 使用规范的提交信息格式
+5. 创建 PR 并关联 Linear ticket
+
+## 📄 许可证
+
+基于 n8n 开源项目，遵循相应的开源许可证。
 
 ---
 
-*本版本基于 n8n 开源项目进行二次开发*
-*最后更新: 2025-11-03*
+**维护团队**: SASA Platform Team
+**最后更新**: 2025-11-14

@@ -18,7 +18,6 @@ import { onClickOutside } from '@vueuse/core';
 import { useI18n } from '@n8n/i18n';
 
 import type { CredentialsMap } from '../chat.types';
-import CredentialSelectorModal from './CredentialSelectorModal.vue';
 import { useUIStore } from '@/app/stores/ui.store';
 import ChatAgentAvatar from '@/features/ai/chatHub/components/ChatAgentAvatar.vue';
 import {
@@ -223,15 +222,6 @@ defineExpose({
 		</template>
 
 		<N8nButton :class="$style.dropdownButton" type="secondary" text>
-			<CredentialSelectorModal
-				v-if="credentialSelectorProvider"
-				:key="credentialSelectorProvider"
-				:provider="credentialSelectorProvider"
-				:initial-value="credentials?.[credentialSelectorProvider] ?? null"
-				@select="handleSelectCredentials"
-				@create-new="handleCreateNewCredential"
-			/>
-
 			<ChatAgentAvatar
 				v-if="selectedAgent"
 				:agent="selectedAgent"
