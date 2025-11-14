@@ -626,14 +626,6 @@ function handleSelectAction(params: INodeParameters) {
 			data-test-id="node-parameters"
 			@wheel.capture="emit('captureWheelBody', $event)"
 		>
-			<N8nNotice
-				v-if="hasForeignCredential && !isHomeProjectTeam"
-				:content="
-					i18n.baseText('nodeSettings.hasForeignCredential', {
-						interpolate: { owner: credentialOwnerName },
-					})
-				"
-			/>
 			<FreeAiCreditsCallout />
 			<NodeStorageLimitCallout />
 			<NodeActionsList

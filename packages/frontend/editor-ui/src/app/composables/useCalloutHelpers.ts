@@ -1,31 +1,20 @@
-import { computed, nextTick } from 'vue';
+import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useTelemetry } from '@/app/composables/useTelemetry';
 import { useRootStore } from '@n8n/stores/useRootStore';
-import { useI18n } from '@n8n/i18n';
 import { useUsersStore } from '@/features/settings/users/users.store';
 import { useWorkflowsStore } from '@/app/stores/workflows.store';
-import { useNDVStore } from '@/features/ndv/shared/ndv.store';
-import { useNodeCreatorStore } from '@/features/shared/nodeCreator/nodeCreator.store';
 import { useNodeTypesStore } from '@/app/stores/nodeTypes.store';
-import { useViewStacks } from '@/features/shared/nodeCreator/composables/useViewStacks';
 import { updateCurrentUserSettings } from '@n8n/rest-api-client/api/users';
+import { PRE_BUILT_AGENTS_MODAL_KEY, VIEWS } from '@/app/constants';
 import {
-	NODE_CREATOR_OPEN_SOURCES,
-	PRE_BUILT_AGENTS_MODAL_KEY,
-	REGULAR_NODE_CREATOR_VIEW,
-	VIEWS,
-} from '@/app/constants';
-import {
-	getPrebuiltAgents,
 	getRagStarterWorkflowJson,
 	getSampleWorkflowByTemplateId,
 	getTutorialTemplates,
-	isPrebuiltAgentTemplateId,
 	isTutorialTemplateId,
 	SampleTemplates,
 } from '@/features/workflows/templates/utils/workflowSamples';
-import type { INodeCreateElement, OpenTemplateElement } from '@/Interface';
+import type { OpenTemplateElement } from '@/Interface';
 import { useUIStore } from '@/app/stores/ui.store';
 import { useProjectsStore } from '@/features/collaboration/projects/projects.store';
 
@@ -33,14 +22,10 @@ export function useCalloutHelpers() {
 	const route = useRoute();
 	const router = useRouter();
 	const telemetry = useTelemetry();
-	const i18n = useI18n();
 
 	const rootStore = useRootStore();
 	const workflowsStore = useWorkflowsStore();
 	const usersStore = useUsersStore();
-	const ndvStore = useNDVStore();
-	const nodeCreatorStore = useNodeCreatorStore();
-	const viewStacks = useViewStacks();
 	const nodeTypesStore = useNodeTypesStore();
 	const uiStore = useUIStore();
 	const projectsStore = useProjectsStore();
@@ -139,11 +124,22 @@ export function useCalloutHelpers() {
 		});
 	};
 
+	// Pre-built agents callout visibility - currently always hidden
+	// This can be enhanced in the future when pre-built agents feature is implemented
+	const isPreBuiltAgentsCalloutVisible = computed(() => false);
+
+	const openPreBuiltAgentsCollection = () => {
+		// Open pre-built agents modal
+		uiStore.openModal(PRE_BUILT_AGENTS_MODAL_KEY);
+	};
+
 	return {
 		openSampleWorkflowTemplate,
 		getTutorialTemplatesNodeCreatorItems,
 		isRagStarterCalloutVisible,
 		isCalloutDismissed,
 		dismissCallout,
+		isPreBuiltAgentsCalloutVisible,
+		openPreBuiltAgentsCollection,
 	};
 }

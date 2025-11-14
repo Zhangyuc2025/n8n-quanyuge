@@ -28,6 +28,7 @@ export const FROM_AI_PARAMETERS_MODAL_KEY = 'fromAiParameters';
 export const WORKFLOW_EXTRACTION_NAME_MODAL_KEY = 'workflowExtractionName';
 export const WORKFLOW_DIFF_MODAL_KEY = 'workflowDiff';
 export const CHAT_HUB_SIDE_MENU_DRAWER_MODAL_KEY = 'chatHubSideMenuDrawer';
+export const PRE_BUILT_AGENTS_MODAL_KEY = 'preBuiltAgents';
 export const EXPERIMENT_TEMPLATE_RECO_V2_KEY = 'templateRecoV2';
 export const EXPERIMENT_TEMPLATE_RECO_V3_KEY = 'templateRecoV3';
 export const EXPERIMENT_TEMPLATES_DATA_QUALITY_KEY = 'templatesDataQuality';

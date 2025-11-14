@@ -72,18 +72,26 @@ const WORKFLOW_NAME_BP_TO_WIDTH: { [key: string]: number } = {
 	XL: 1000,
 };
 
-const props = defineProps<{
-	readOnly?: boolean;
-	id: IWorkflowDb['id'];
-	tags: IWorkflowDb['tags'];
-	name: IWorkflowDb['name'];
-	meta: IWorkflowDb['meta'];
-	scopes: IWorkflowDb['scopes'];
-	active: IWorkflowDb['active'];
-	currentFolder?: FolderShortInfo;
-	isArchived: IWorkflowDb['isArchived'];
-	description?: IWorkflowDb['description'];
-}>();
+const props = withDefaults(
+	defineProps<{
+		readOnly?: boolean;
+		id: IWorkflowDb['id'];
+		tags: IWorkflowDb['tags'];
+		name: IWorkflowDb['name'];
+		meta: IWorkflowDb['meta'];
+		scopes?: IWorkflowDb['scopes'];
+		active: IWorkflowDb['active'];
+		currentFolder?: FolderShortInfo;
+		isArchived: IWorkflowDb['isArchived'];
+		description?: IWorkflowDb['description'];
+	}>(),
+	{
+		scopes: () => [],
+		readOnly: false,
+		currentFolder: undefined,
+		description: undefined,
+	},
+);
 
 const emit = defineEmits<{
 	'workflow:deactivated': [];

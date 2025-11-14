@@ -1077,6 +1077,7 @@
 	"folder.delete.modal.confirmation": "我们应该如何处理此文件夹中的 {folders} {workflows}？",
 	"folder.count": "{count} 个文件夹 | {count} 个文件夹",
 	"workflow.count": "{count} 个工作流 | {count} 个工作流",
+	"workflow.description.tooltip": "编辑工作流描述",
 	"folder.and.workflow.separator": "和",
 	"folders.delete.action": "归档所有工作流并删除子文件夹",
 	"folders.delete.error.message": "删除文件夹时出现问题",
