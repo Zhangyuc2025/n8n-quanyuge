@@ -633,6 +633,7 @@ export class WorkflowRepository extends Repository<WorkflowEntity> {
 				'workflow.versionId',
 				'workflow.settings',
 				'workflow.description',
+				'workflow.projectId', // Required for permission calculation
 			]);
 			return;
 		}

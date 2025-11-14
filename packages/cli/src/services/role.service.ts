@@ -211,14 +211,12 @@ export class RoleService {
 			}
 		}
 
-		if (shared.length === 0) {
-			return entity;
-		}
-
 		if (!('active' in entity)) {
 			throw new UnexpectedError('Cannot detect if entity is a workflow.');
 		}
 
+		// Always compute scopes, even if shared is empty, to include global scopes
+		// (e.g., instance owner/admin should have permissions even without project membership)
 		entity.scopes = this.combineResourceScopes('workflow', user, shared, userProjectRelations);
 
 		return entity;
